@@ -66,10 +66,10 @@ expires = "2026-12-01"
 [[flake]]
 id = "DOCKERHUB-RATE-3"
 job = "python"
-step = "testcontainer image pulls (sqitch/postgis in tests/db)"
-pattern = "toomanyrequests.*pull rate limit|pull rate limit"
-evidence_runs = ["37992428702"]
-reason = "same Docker Hub unauthenticated pull-rate limit as DOCKERHUB-RATE-1/-2, on the python job's tests/db image pull"
+step = "testcontainer image pulls (sqitch/postgis in tests/db) + composed-test compose-up image pulls inside the python partition"
+pattern = "toomanyrequests.*pull rate limit|pull rate limit|429 Too Many Requests|unexpected status.*429"
+evidence_runs = ["37992428702", "43757226002"]
+reason = "same Docker Hub unauthenticated pull-rate limit as DOCKERHUB-RATE-1/-2, on the python job's image pulls; the 2026-11-15 run 43757226002 hit the BuildKit form (`failed to resolve source metadata for docker.io/library/alpine:3.21: unexpected status from HEAD request to https://registry-1.docker.io/...: 429 Too Many Requests`) across seven compose-up tests — the same class the 2026-10-20 flake_log row recorded as the pattern-unmatched form needing an operator-approved rerun; the alternation now names both surfaces"
 tracking = "same as DOCKERHUB-RATE-1 — three jobs on the same class; ESCALATED to the operator (OM-18 three-use rule)"
 expires = "2026-12-01"
 

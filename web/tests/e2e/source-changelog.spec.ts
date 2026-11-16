@@ -8,8 +8,10 @@
 // states what pre-release history is, the JSON twin serves the
 // sig.source-changelog/1 doc, and a registry-only source emits none (S-11).
 import { test, expect } from "@playwright/test";
+import t1ModuleEntries from "./t1-module-entries.json" with { type: "json" };
 
 const SRC = "okc_camera_registry";
+const T1_MODULE_ENTRIES = new Set<string>(t1ModuleEntries.entries);
 
 test.describe("the source changelog (T1)", () => {
   test("the page lists events newest-first, each dated by a named record clock", async ({ page }) => {
@@ -81,8 +83,20 @@ test.describe("the source changelog (T1)", () => {
     }
   });
 
-  test("the page is zero-JS (T1)", async ({ page }) => {
+  test("the page ships only inert allow-listed T1 modules (P37.61)", async ({ page }) => {
+    // P37.61 (ENH-01) mounts <sig-table> on the changelog table — a T1
+    // page may ship only allow-listed /_kit/ module entries; the static
+    // markup remains the complete no-JS view.
     await page.goto(`/sources/${SRC}/changelog/`);
-    expect(await page.locator("main script").count()).toBe(0);
+    const scripts = await page.$$eval("main script", (els) =>
+      els.map((el) => ({ src: el.getAttribute("src"), type: el.getAttribute("type") })),
+    );
+    for (const s of scripts) {
+      expect(s.type, `script ${s.src ?? "(inline)"} must be type=module`).toBe("module");
+      expect(
+        s.src !== null && T1_MODULE_ENTRIES.has(s.src),
+        `script ${s.src ?? "(inline)"} is not an allow-listed /_kit/ entry`,
+      ).toBe(true);
+    }
   });
 });

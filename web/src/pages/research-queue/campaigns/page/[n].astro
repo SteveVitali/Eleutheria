@@ -10,6 +10,7 @@ import QueueCampaignCard from "../../../../components/QueueCampaignCard.astro";
 import { pageCount, pageNumbers, pageSlice, queueCampaignsHref } from "../../../../lib/queue-hub";
 import { getQueueCampaigns } from "../../../../lib/data";
 import { withBase } from "../../../../lib/paths";
+import KitTable from "../../../../components/KitTable.astro";
 
 export function getStaticPaths() {
   const items = getQueueCampaigns();
@@ -30,7 +31,17 @@ const total = pageCount(CAMPAIGNS.length);
     <a href={withBase(n > 2 ? queueCampaignsHref(n - 1) : "research-queue/campaigns/")}>← previous</a>
     {n < total && <> · <a href={withBase(queueCampaignsHref(n + 1))}>next page →</a></>}
   </p>
+  <KitTable
+    filter
+    facets="place subject-class"
+    sort="place"
+    download="sig-queue-campaigns"
+    label="Queue campaigns"
+    itemLabel="Campaign"
+    paramPrefix="cmp."
+  >
   <ol class="sig-campaigns">
     {shown.map((c) => <QueueCampaignCard campaign={c} />)}
   </ol>
+  </KitTable>
 </BaseLayout>

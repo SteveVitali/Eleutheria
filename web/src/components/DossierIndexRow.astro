@@ -15,7 +15,7 @@ import type { IndexSpriteDoc } from "../lib/dossier-grouped-fixture";
 import type { FigureSpec } from "../lib/figures";
 import { dossierPath, dossierPrintPath, dossierJsonPath } from "../lib/dossier";
 import { displayJurisdiction, dossierDisplayTitle } from "../lib/jurisdictions";
-import { mapHrefFor, publicationRegime } from "../lib/dossier-index";
+import { indexRowFacet, indexRowSortValue, mapHrefFor, publicationRegime } from "../lib/dossier-index";
 import { withBase } from "../lib/paths";
 
 interface Props {
@@ -42,12 +42,23 @@ const nonSiteClasses = et ? Object.entries(et.other_classes ?? {}).filter(([, v]
 const hasPrint = !keyed || row.level === "country" || row.level === "state_province" || row.level === undefined;
 ---
 
+{/* P37.61 (ENH-01): the row restates the index's facet + sort vocabulary
+    as `data-facet-*`/`data-sort-*` so the `<sig-table>` list enhancement
+    chips/orders the same values the `/dossier/by/` + `/dossier/sort/`
+    routes mint — one vocabulary, never two. */}
 <li
   class="sig-dossier-index__item"
   data-testid="dossier-index-item"
   data-slug={row.slug_path ?? row.slug}
   data-level={row.level}
   data-depth={depth > 0 ? depth : undefined}
+  data-facet-level={indexRowFacet(row, "level") ?? undefined}
+  data-facet-single-source={indexRowFacet(row, "single-source") ?? undefined}
+  data-facet-evidence-type={indexRowFacet(row, "evidence-type") ?? undefined}
+  data-sort-name={indexRowSortValue(row, "name")}
+  data-sort-records={indexRowSortValue(row, "records")}
+  data-sort-sources={indexRowSortValue(row, "sources")}
+  data-sort-freshness={indexRowSortValue(row, "freshness")}
 >
   {/* The strict CSP ships style-src-attr 'none' — no style="" anywhere: the
       nesting indent is a data-depth attribute the stylesheet maps, and the

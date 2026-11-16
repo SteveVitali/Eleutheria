@@ -12,6 +12,7 @@
 // absence (`run_level_only`, `not_recorded`, `not_evaluable`, `not_typed`,
 // `not_published`) — never a bare 0 for "not measured" (K5-P4, SIG-ENG-042).
 import Figure from "./Figure.astro";
+import KitTable from "./KitTable.astro";
 import {
   DSRC_SORT_KEYS,
   SORT_ROUTE_THRESHOLD,
@@ -177,12 +178,24 @@ const showmapTarget = getLatestReleaseTarget();
         Page {paging.page} of {paging.pages} — rows {paging.first}–{paging.last} of {paging.total}.
       </p>
     )}
+    {/* P37.61 (ENH-01, K5 DSRC-05 sort-and-filter as a T1 kit use —
+        chart brushing stays deferred, C-20): `<sig-table>` upgrades this
+        complete server table in place. The facets restate the row's own
+        rendered fields. */}
+    <KitTable
+      filter
+      columns
+      facets="publisher-type licence located freshness"
+      download={`sig-dsources-${dossierSlug}`}
+      label={`Dossier sources — ${dossierSlug}`}
+      paramPrefix="dsrc."
+    >
     <table class="sig-table sig-dsrc-table" data-testid="dsrc-table">
       <thead>
         <tr>
-          <th>Source</th><th>Publisher type</th><th>Records</th><th>Share</th>
-          <th>Located / declared</th><th>Claims</th><th>First seen</th><th>Last seen</th>
-          <th>Latest run</th><th>Licence</th><th>Map / list</th>
+          <th data-col="source">Source</th><th data-col="publisher-type">Publisher type</th><th data-col="records">Records</th><th data-col="share">Share</th>
+          <th data-col="located">Located / declared</th><th data-col="claims">Claims</th><th data-col="first-seen">First seen</th><th data-col="last-seen">Last seen</th>
+          <th data-col="latest-run">Latest run</th><th data-col="licence">Licence</th><th data-col="links">Map / list</th>
         </tr>
       </thead>
       <tbody>
@@ -191,7 +204,14 @@ const showmapTarget = getLatestReleaseTarget();
           const last = lastSeenCell(s);
           const run = latestRunCell(s);
           return (
-            <tr data-source-id={s.source_id}>
+            <tr
+              data-source-id={s.source_id}
+              data-facet-publisher-type={s.publisher_type ?? "not_recorded"}
+              data-facet-licence={s.licence.spdx ?? "not_recorded"}
+              data-facet-located={s.located_by_point > 0 ? "located" : "declared-only"}
+              data-facet-freshness={s.freshness_state ?? "not_recorded"}
+              data-licence={s.licence.spdx ?? undefined}
+            >
               <td>
                 {link.linked ? <a href={link.href!}>{s.name}</a> : <>{s.name} <em class="sig-mut">(no source page in this release)</em></>}
                 {" "}<code class="sig-mut">{s.source_id}</code>
@@ -239,6 +259,7 @@ const showmapTarget = getLatestReleaseTarget();
         })}
       </tbody>
     </table>
+    </KitTable>
     {paging.pages > 1 && (
       <nav class="sig-pager" aria-label="Source table pages" data-testid="dsrc-pager">
         {paging.page > 1 && <a href={pageHref(paging.page - 1)}>‹ Previous</a>}{" "}

@@ -50,10 +50,13 @@ Run from repo root with `npm --prefix web run <script>` (or from `web/` with `np
    P35.50) is the single authority: look up the route's type before adding any client code —
    every built route is classified at `astro:build:done` and an unclassified or double-classified
    route **fails the build**; the emitted page-types manifest in `dist/` drives the e2e sweeps. T0: no `<script>` at
-   all. T1: a framework-free custom element that upgrades existing markup — today nothing may
-   load (the `type="module"` entry allow-list `tests/e2e/t1-module-entries.json` is empty until
-   UXK0-4 lands an element); the `nojs-parity` spec requires `main` text identical with JS off
-   minus `[data-enhancement]`. T2: a named island over a preserved no-JS fallback whose route
+   all. T1: a framework-free custom element that upgrades existing markup — the six
+   allow-listed `type="module"` entries in `tests/e2e/t1-module-entries.json`
+   (`/_kit/sig-{cite,copy,details,table,typeahead,activate}.js`, ADR-224)
+   are admitted **page-locally**: a `<script type="module" src="/_kit/…">` tag
+   sits beside the element markup it upgrades (P37.61's `KitTable.astro`
+   mount is the shared pattern); the `nojs-parity` spec requires `main` text
+   identical with JS off minus `[data-enhancement]`. T2: a named island over a preserved no-JS fallback whose route
    names its equivalent in the registry; stateful `sig.workspace-state` URLs show a JS-off
    notice. Budgets: `tests/e2e/page-budgets.json` is the single truth (`sig.page-budgets/1`,
    K0 §4.3 verbatim — P35.51; it superseded the P32.15/ADR-134

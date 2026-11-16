@@ -24,6 +24,7 @@ import {
   getResearchQueue,
 } from "../../../lib/data";
 import { withBase } from "../../../lib/paths";
+import KitTable from "../../../components/KitTable.astro";
 
 export function getStaticPaths() {
   return facetValues(getResearchQueue(), "task_type").map((t) => ({
@@ -56,9 +57,19 @@ const label = typeLabel(t);
       </>
     ))}
   </p>
+  <KitTable
+    filter
+    facets="type role effort place scope claimed status"
+    sort="title place effort"
+    download="sig-research-queue"
+    label="Research queue"
+    itemLabel="Task"
+    paramPrefix="rq."
+  >
   <ol class="sig-queue">
     {shown.map((card) => <QueueCard card={card} claims={CLAIMS} asOf={AS_OF} />)}
   </ol>
+  </KitTable>
   {total > 1 && (
     <p class="sig-queue-pagination" data-testid="queue-pagination">
       Page 1 of {total} — <a href={withBase(queueTypeHref(t, "priority", 2))}>next page →</a>

@@ -23,6 +23,7 @@ import {
   getResearchQueue,
 } from "../../../../../lib/data";
 import { withBase } from "../../../../../lib/paths";
+import KitTable from "../../../../../components/KitTable.astro";
 
 export function getStaticPaths() {
   const cards = getResearchQueue();
@@ -50,7 +51,17 @@ const total = pageCount(items.length);
     <a href={withBase(n > 2 ? queueTypeHref(t, "priority", n - 1) : `research-queue/type/${t}/`)}>← previous</a>
     {n < total && <> · <a href={withBase(queueTypeHref(t, "priority", n + 1))}>next page →</a></>}
   </p>
+  <KitTable
+    filter
+    facets="type role effort place scope claimed status"
+    sort="title place effort"
+    download="sig-research-queue"
+    label="Research queue"
+    itemLabel="Task"
+    paramPrefix="rq."
+  >
   <ol class="sig-queue">
     {shown.map((card) => <QueueCard card={card} claims={CLAIMS} asOf={AS_OF} />)}
   </ol>
+  </KitTable>
 </BaseLayout>

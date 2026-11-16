@@ -57,6 +57,7 @@ import {
   ENTITY_BROWSE_CAP,
 } from "../../../lib/source-page-b";
 import { getSourceChangelog, baselineSentence, eventSummary } from "../../../lib/source-changelog";
+import KitTable from "../../../components/KitTable.astro";
 
 export function getStaticPaths() {
   return getSourcePageIds().map((id) => ({ params: { id }, props: {} }));
@@ -621,6 +622,15 @@ const crumbs = [
             No issues are recorded for this source.
           </p>
         ) : (
+          /* P37.61 (ENH-01): kit mount — `iss.` keeps its URL state clear
+             of the other two mounts on this page. */
+          <KitTable
+            filter
+            facets="class kind open"
+            download="sig-source-issues"
+            label={`Source issues — ${id}`}
+            paramPrefix="iss."
+          >
           <table class="sig-table" data-testid="issues-table">
             <thead>
               <tr>
@@ -633,7 +643,11 @@ const crumbs = [
             </thead>
             <tbody>
               {sourceIssues.map((issue) => (
-                <tr>
+                <tr
+                  data-facet-class={issue.issue_class}
+                  data-facet-kind={issue.kind === "curated" ? "curated" : "auto"}
+                  data-facet-open={issue.closed_at === null || issue.closed_at === undefined ? "open" : "closed"}
+                >
                   <td>{issueClassLabel(issue.issue_class)}</td>
                   <td>{issue.kind === "curated" ? "curated" : "auto"}</td>
                   <td><time datetime={issue.opened_at}>{issue.opened_at}</time></td>
@@ -646,6 +660,7 @@ const crumbs = [
               ))}
             </tbody>
           </table>
+          </KitTable>
         )}
         <p data-copy="KI-08">
           The full append-only log is{" "}
@@ -743,6 +758,14 @@ const crumbs = [
         {targets === null ? (
           <p data-copy="SP-28" data-testid="targets-absent">This release's artifacts enumerate no per-target rows for this source — the section lists target endpoints, tenants or slices once the targets artifact ships.</p>
         ) : (
+          /* P37.61 (ENH-01): kit mount — `tgt.` namespaces its URL state. */
+          <KitTable
+            filter
+            facets="state"
+            download="sig-source-targets"
+            label={`Source targets — ${id}`}
+            paramPrefix="tgt."
+          >
           <table class="sig-table" aria-labelledby="targets-heading">
             <thead>
               <tr>
@@ -756,7 +779,7 @@ const crumbs = [
             </thead>
             <tbody>
               {targets.map((t, i) => (
-                <tr data-testid="target-row" id={`fig-target-${i}`}>
+                <tr data-testid="target-row" id={`fig-target-${i}`} data-facet-state={t.state}>
                   <td>{t.label}</td>
                   <td>{t.host}</td>
                   <td>{t.jurisdiction ?? "not declared"}</td>
@@ -767,6 +790,7 @@ const crumbs = [
               ))}
             </tbody>
           </table>
+          </KitTable>
         )}
       </section>
 
@@ -867,6 +891,13 @@ const crumbs = [
               recorded executions feed the conduct summary below.
             </p>
             {conduct.robotsByHost.length > 0 && (
+              /* P37.61 (ENH-01): kit mount — `rob.` namespaces its URL state. */
+              <KitTable
+                filter
+                download="sig-source-robots"
+                label={`Robots outcomes — ${id}`}
+                paramPrefix="rob."
+              >
               <table class="sig-table" aria-label="robots outcomes per host" data-testid="robots-table">
                 <thead>
                   <tr>
@@ -904,6 +935,7 @@ const crumbs = [
                   })}
                 </tbody>
               </table>
+              </KitTable>
             )}
             {m.extras.robots_registry_declared === "honor" && (conduct.robotsByHost.some((r) => (r.outcomes.disregarded ?? 0) > 0)) && (
               <p class="sig-notice" data-testid="robots-mismatch" data-copy="SP-69">

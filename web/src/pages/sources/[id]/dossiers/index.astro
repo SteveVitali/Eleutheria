@@ -15,6 +15,7 @@ import { fmtInt } from "../../../../lib/format";
 import { withBase } from "../../../../lib/paths";
 import { getSourcePage, type SourcePageModel } from "../../../../lib/source-page";
 import { resolveSourceId } from "../../../../lib/alias";
+import KitTable from "../../../../components/KitTable.astro";
 import {
   getPageBIds,
   getSourceVersions,
@@ -104,13 +105,21 @@ const BASIS_WORDS: Record<string, string> = {
       <Figure figure={fig("dossier-contributions")} order="inline">{fmtInt(contributions.length)}</Figure>{" "}
       dossier groupings.
     </p>
+    {/* P37.61 (ENH-01): the T1 kit mount — filter/facet/CSV over the
+        source's dossier contributions. */}
+    <KitTable
+      filter
+      facets="basis"
+      download="sig-source-dossiers"
+      label={`Source dossier contributions — ${id}`}
+    >
     <table class="sig-table" data-testid="contributions-table">
       <thead>
         <tr><th scope="col">Dossier</th><th scope="col">Records</th><th scope="col">Share of dossier</th><th scope="col">Assignment basis</th></tr>
       </thead>
       <tbody>
         {contributions.map((c, i) => (
-          <tr data-testid="contribution-row" id={`fig-contribution-${i}`}>
+          <tr data-testid="contribution-row" id={`fig-contribution-${i}`} data-facet-basis={c.basis}>
             <td>{c.dossier_slug ? <a href={withBase(`dossier/${c.dossier_slug}/`)}>{c.dossier_key}</a> : c.dossier_key}</td>
             <td><Figure figure={fig(`contribution-${i}`)} order="inline">{fmtInt(c.records)}</Figure></td>
             <td>{typeof c.share_of_dossier === "number" ? <Figure figure={fig(`contribution-${i}-share`)} order="inline">{fmtInt(c.share_of_dossier)}</Figure> : (c.share_of_dossier ?? "not recorded")}</td>
@@ -119,6 +128,7 @@ const BASIS_WORDS: Record<string, string> = {
         ))}
       </tbody>
     </table>
+    </KitTable>
     <p data-copy="DB-03">
       The dossier explorer renders the same rows filtered by dossier — the
       numbers cannot drift. Machine twin:{" "}

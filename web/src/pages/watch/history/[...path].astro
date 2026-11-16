@@ -21,6 +21,7 @@ import {
 } from "../../../lib/watch-v2";
 import type { WatchPlacePage } from "../../../lib/watch-v2";
 import { withBase } from "../../../lib/paths";
+import KitTable from "../../../components/KitTable.astro";
 
 export function getStaticPaths() {
   const { envelope, pages } = watchContext();
@@ -56,9 +57,18 @@ const days = envelope.build?.windows?.recently_decided_days ?? 30;
     Older items age out of this archive with the release cadence; nothing here
     is a claim that no earlier decision happened.
   </p>
+  <KitTable
+    filter
+    facets="kind certainty status technology vendor contested"
+    sort="date place title"
+    download="sig-watch-items"
+    label="Watch items"
+    itemLabel="Item"
+  >
   <ol class="sig-watch-list">
     {shown.map((item) => <WatchList item={item} pages={pages} />)}
   </ol>
+  </KitTable>
   {total > 1 && (
     <p class="sig-watch-pagination">
       Page {n} of {total} —

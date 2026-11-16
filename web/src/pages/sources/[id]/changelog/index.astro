@@ -18,6 +18,7 @@ import { fmtInt } from "../../../../lib/format";
 import { withBase } from "../../../../lib/paths";
 import { getSourcePage, type SourcePageModel } from "../../../../lib/source-page";
 import { resolveSourceId } from "../../../../lib/alias";
+import KitTable from "../../../../components/KitTable.astro";
 import {
   getPageBIds,
   getSourceVersions,
@@ -130,6 +131,14 @@ const crumbs = [
             figure={fig("changelog-page")}
           />
         )}
+        {/* P37.61 (ENH-01): the T1 kit mount — filter/facet/CSV over this
+            complete server table (the append-only changelog rows). */}
+        <KitTable
+          filter
+          facets="kind basis"
+          download="sig-source-changelog"
+          label={`Source changelog — ${id}`}
+        >
         <table class="sig-table" data-testid="changelog-table">
           <thead>
             <tr>
@@ -140,7 +149,7 @@ const crumbs = [
           </thead>
           <tbody>
             {slice.map((ev) => (
-              <tr data-testid="changelog-event" data-kind={ev.kind}>
+              <tr data-testid="changelog-event" data-kind={ev.kind} data-facet-kind={ev.kind} data-facet-basis={ev.clock_basis}>
                 <td><time datetime={ev.at}>{ev.at}</time></td>
                 <td>
                   {eventSummary(ev)}
@@ -153,6 +162,7 @@ const crumbs = [
             ))}
           </tbody>
         </table>
+        </KitTable>
       </>
     )}
     {doc.disclosures.map((d, i) => <p class="mut" data-copy={i === 0 ? "SCL-23" : "SCL-24"}>{d}</p>)}

@@ -11,6 +11,22 @@ All notable changes to this project are documented here. The format is based on
 
 ### Added
 
+- **P37.61 / R11-K13-ENH-01 (SIG-UI-091; SIG-DSRC-006 cited; ADR-249)** — T1
+  table and filter enhancements rollout: `<sig-table>` now upgrades
+  server-rendered lists (`ol`/`ul`) as well as tables — text filtering,
+  multi-facet chips, licence-aware CSV download, `hidden`-row filtering
+  and URL state — and mounts on `/sources/**`, the dossier sources
+  explorers, `/dossier/`, `/watch/`, `/evidence/` and `/research-queue/`
+  as progressive enhancement over the same complete HTML (never new
+  islands; the no-JS GET routes are unchanged). `param-prefix`
+  namespaces each mount's URL params (`src.`/`iss.`/`tgt.`/`rob.`/`cmp.`/
+  `dsrc.`/`ev.`/`lst.`) so multi-mount pages cannot collide; interactive
+  headers get a toolbar "Sort by" menu rather than a nested control;
+  `data-facet-label-<dim>` lets identifier-valued facets (the queue's
+  place slug) label chips with the human name the row renders while the
+  machine value stays the URL key. Chart brushing stays deferred (C-20).
+  `live_verification=false`.
+
 - **P37.58 / R11-DEBT-02 (SIG-STORE-045 cited; BL-049)** — generated-vs-deployed
   schema conformance: ADR-248 records `db/sqitch.plan` +
   `db/deploy|revert|verify` as the sole authority for the deployed physical

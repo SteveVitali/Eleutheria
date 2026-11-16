@@ -807,8 +807,8 @@
       "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
     },
     "enhancement-kit--light-1440.png": {
-      "ticket": "P37.60",
-      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+      "ticket": "P37.61",
+      "note": "P37.61 K13 ENH-01 mount: the sig-table toolbar (filter input, facet disclosure rows, CSV action, sort control) renders above the rollout tables/lists — authored chrome, adopted from run 43768279012's linux actuals"
     },
     "enhancement-kit--light-320.png": {
       "ticket": "P37.60",
@@ -1083,28 +1083,28 @@
       "note": "baseline adopted from the CI visual-leg artifact (run 43720292907, the linux canonical render) — supersedes the arm64 container mint, which drifted ~0.02-0.04 pixel ratio on the canonical runner"
     },
     "evidence-facet--dark-1440.png": {
-      "ticket": "P37.60",
-      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+      "ticket": "P37.61",
+      "note": "P37.61 K13 ENH-01 mount: the sig-table toolbar (filter input, facet disclosure rows, CSV action, sort control) renders above the rollout tables/lists — authored chrome, adopted from run 43768279012's linux actuals"
     },
     "evidence-facet--dark-320.png": {
-      "ticket": "P37.60",
-      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+      "ticket": "P37.61",
+      "note": "P37.61 K13 ENH-01 mount: the sig-table toolbar (filter input, facet disclosure rows, CSV action, sort control) renders above the rollout tables/lists — authored chrome, adopted from run 43768279012's linux actuals"
     },
     "evidence-facet--dark-390.png": {
-      "ticket": "P37.60",
-      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+      "ticket": "P37.61",
+      "note": "P37.61 K13 ENH-01 mount: the sig-table toolbar (filter input, facet disclosure rows, CSV action, sort control) renders above the rollout tables/lists — authored chrome, adopted from run 43768279012's linux actuals"
     },
     "evidence-facet--light-1440.png": {
-      "ticket": "P37.60",
-      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+      "ticket": "P37.61",
+      "note": "P37.61 K13 ENH-01 mount: the sig-table toolbar (filter input, facet disclosure rows, CSV action, sort control) renders above the rollout tables/lists — authored chrome, adopted from run 43768279012's linux actuals"
     },
     "evidence-facet--light-320.png": {
-      "ticket": "P37.60",
-      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+      "ticket": "P37.61",
+      "note": "P37.61 K13 ENH-01 mount: the sig-table toolbar (filter input, facet disclosure rows, CSV action, sort control) renders above the rollout tables/lists — authored chrome, adopted from run 43768279012's linux actuals"
     },
     "evidence-facet--light-390.png": {
-      "ticket": "P37.60",
-      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+      "ticket": "P37.61",
+      "note": "P37.61 K13 ENH-01 mount: the sig-table toolbar (filter input, facet disclosure rows, CSV action, sort control) renders above the rollout tables/lists — authored chrome, adopted from run 43768279012's linux actuals"
     },
     "evidence-index--dark-1440.png": {
       "ticket": "P37.60",
@@ -1467,28 +1467,28 @@
       "note": "baseline adopted from the CI visual-leg artifact (run 43720292907, the linux canonical render) — supersedes the arm64 container mint, which drifted ~0.02-0.04 pixel ratio on the canonical runner"
     },
     "research-queue-campaigns--dark-1440.png": {
-      "ticket": "P37.60",
-      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+      "ticket": "P37.61",
+      "note": "P37.61 K13 ENH-01 mount: the sig-table toolbar (filter input, facet disclosure rows, CSV action, sort control) renders above the rollout tables/lists — authored chrome, adopted from run 43768279012's linux actuals"
     },
     "research-queue-campaigns--dark-320.png": {
-      "ticket": "P37.60",
-      "note": "baseline adopted from the CI visual-leg artifact (run 43720292907, the linux canonical render) — supersedes the arm64 container mint, which drifted ~0.02-0.04 pixel ratio on the canonical runner"
+      "ticket": "P37.61",
+      "note": "P37.61 K13 ENH-01 mount: the sig-table toolbar (filter input, facet disclosure rows, CSV action, sort control) renders above the rollout tables/lists — authored chrome, adopted from run 43768279012's linux actuals"
     },
     "research-queue-campaigns--dark-390.png": {
-      "ticket": "P37.60",
-      "note": "baseline adopted from the CI visual-leg artifact (run 43720292907, the linux canonical render) — supersedes the arm64 container mint, which drifted ~0.02-0.04 pixel ratio on the canonical runner"
+      "ticket": "P37.61",
+      "note": "P37.61 K13 ENH-01 mount: the sig-table toolbar (filter input, facet disclosure rows, CSV action, sort control) renders above the rollout tables/lists — authored chrome, adopted from run 43768279012's linux actuals"
     },
     "research-queue-campaigns--light-1440.png": {
-      "ticket": "P37.60",
-      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+      "ticket": "P37.61",
+      "note": "P37.61 K13 ENH-01 mount: the sig-table toolbar (filter input, facet disclosure rows, CSV action, sort control) renders above the rollout tables/lists — authored chrome, adopted from run 43768279012's linux actuals"
     },
     "research-queue-campaigns--light-320.png": {
-      "ticket": "P37.60",
-      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+      "ticket": "P37.61",
+      "note": "P37.61 K13 ENH-01 mount: the sig-table toolbar (filter input, facet disclosure rows, CSV action, sort control) renders above the rollout tables/lists — authored chrome, adopted from run 43768279012's linux actuals"
     },
     "research-queue-campaigns--light-390.png": {
-      "ticket": "P37.60",
-      "note": "baseline adopted from the CI visual-leg artifact (run 43720292907, the linux canonical render) — supersedes the arm64 container mint, which drifted ~0.02-0.04 pixel ratio on the canonical runner"
+      "ticket": "P37.61",
+      "note": "P37.61 K13 ENH-01 mount: the sig-table toolbar (filter input, facet disclosure rows, CSV action, sort control) renders above the rollout tables/lists — authored chrome, adopted from run 43768279012's linux actuals"
     },
     "research-queue-index--dark-1440.png": {
       "ticket": "P37.60",
@@ -1515,76 +1515,76 @@
       "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
     },
     "research-queue-place--dark-1440.png": {
-      "ticket": "P37.60",
-      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+      "ticket": "P37.61",
+      "note": "P37.61 K13 ENH-01 mount: the sig-table toolbar (filter input, facet disclosure rows, CSV action, sort control) renders above the rollout tables/lists — authored chrome, adopted from run 43768279012's linux actuals"
     },
     "research-queue-place--dark-320.png": {
-      "ticket": "P37.60",
-      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+      "ticket": "P37.61",
+      "note": "P37.61 K13 ENH-01 mount: the sig-table toolbar (filter input, facet disclosure rows, CSV action, sort control) renders above the rollout tables/lists — authored chrome, adopted from run 43768279012's linux actuals"
     },
     "research-queue-place--dark-390.png": {
-      "ticket": "P37.60",
-      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+      "ticket": "P37.61",
+      "note": "P37.61 K13 ENH-01 mount: the sig-table toolbar (filter input, facet disclosure rows, CSV action, sort control) renders above the rollout tables/lists — authored chrome, adopted from run 43768279012's linux actuals"
     },
     "research-queue-place--light-1440.png": {
-      "ticket": "P37.60",
-      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+      "ticket": "P37.61",
+      "note": "P37.61 K13 ENH-01 mount: the sig-table toolbar (filter input, facet disclosure rows, CSV action, sort control) renders above the rollout tables/lists — authored chrome, adopted from run 43768279012's linux actuals"
     },
     "research-queue-place--light-320.png": {
-      "ticket": "P37.60",
-      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+      "ticket": "P37.61",
+      "note": "P37.61 K13 ENH-01 mount: the sig-table toolbar (filter input, facet disclosure rows, CSV action, sort control) renders above the rollout tables/lists — authored chrome, adopted from run 43768279012's linux actuals"
     },
     "research-queue-place--light-390.png": {
-      "ticket": "P37.60",
-      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+      "ticket": "P37.61",
+      "note": "P37.61 K13 ENH-01 mount: the sig-table toolbar (filter input, facet disclosure rows, CSV action, sort control) renders above the rollout tables/lists — authored chrome, adopted from run 43768279012's linux actuals"
     },
     "research-queue-role--dark-1440.png": {
-      "ticket": "P37.60",
-      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+      "ticket": "P37.61",
+      "note": "P37.61 K13 ENH-01 mount: the sig-table toolbar (filter input, facet disclosure rows, CSV action, sort control) renders above the rollout tables/lists — authored chrome, adopted from run 43768279012's linux actuals"
     },
     "research-queue-role--dark-320.png": {
-      "ticket": "P37.60",
-      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+      "ticket": "P37.61",
+      "note": "P37.61 K13 ENH-01 mount: the sig-table toolbar (filter input, facet disclosure rows, CSV action, sort control) renders above the rollout tables/lists — authored chrome, adopted from run 43768279012's linux actuals"
     },
     "research-queue-role--dark-390.png": {
-      "ticket": "P37.60",
-      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+      "ticket": "P37.61",
+      "note": "P37.61 K13 ENH-01 mount: the sig-table toolbar (filter input, facet disclosure rows, CSV action, sort control) renders above the rollout tables/lists — authored chrome, adopted from run 43768279012's linux actuals"
     },
     "research-queue-role--light-1440.png": {
-      "ticket": "P37.60",
-      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+      "ticket": "P37.61",
+      "note": "P37.61 K13 ENH-01 mount: the sig-table toolbar (filter input, facet disclosure rows, CSV action, sort control) renders above the rollout tables/lists — authored chrome, adopted from run 43768279012's linux actuals"
     },
     "research-queue-role--light-320.png": {
-      "ticket": "P37.60",
-      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+      "ticket": "P37.61",
+      "note": "P37.61 K13 ENH-01 mount: the sig-table toolbar (filter input, facet disclosure rows, CSV action, sort control) renders above the rollout tables/lists — authored chrome, adopted from run 43768279012's linux actuals"
     },
     "research-queue-role--light-390.png": {
-      "ticket": "P37.60",
-      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+      "ticket": "P37.61",
+      "note": "P37.61 K13 ENH-01 mount: the sig-table toolbar (filter input, facet disclosure rows, CSV action, sort control) renders above the rollout tables/lists — authored chrome, adopted from run 43768279012's linux actuals"
     },
     "research-queue-type--dark-1440.png": {
-      "ticket": "P37.60",
-      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+      "ticket": "P37.61",
+      "note": "P37.61 K13 ENH-01 mount: the sig-table toolbar (filter input, facet disclosure rows, CSV action, sort control) renders above the rollout tables/lists — authored chrome, adopted from run 43768279012's linux actuals"
     },
     "research-queue-type--dark-320.png": {
-      "ticket": "P37.60",
-      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+      "ticket": "P37.61",
+      "note": "P37.61 K13 ENH-01 mount: the sig-table toolbar (filter input, facet disclosure rows, CSV action, sort control) renders above the rollout tables/lists — authored chrome, adopted from run 43768279012's linux actuals"
     },
     "research-queue-type--dark-390.png": {
-      "ticket": "P37.60",
-      "note": "baseline adopted from the CI visual-leg artifact (run 43720292907, the linux canonical render) — supersedes the arm64 container mint, which drifted ~0.02-0.04 pixel ratio on the canonical runner"
+      "ticket": "P37.61",
+      "note": "P37.61 K13 ENH-01 mount: the sig-table toolbar (filter input, facet disclosure rows, CSV action, sort control) renders above the rollout tables/lists — authored chrome, adopted from run 43768279012's linux actuals"
     },
     "research-queue-type--light-1440.png": {
-      "ticket": "P37.60",
-      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+      "ticket": "P37.61",
+      "note": "P37.61 K13 ENH-01 mount: the sig-table toolbar (filter input, facet disclosure rows, CSV action, sort control) renders above the rollout tables/lists — authored chrome, adopted from run 43768279012's linux actuals"
     },
     "research-queue-type--light-320.png": {
-      "ticket": "P37.60",
-      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+      "ticket": "P37.61",
+      "note": "P37.61 K13 ENH-01 mount: the sig-table toolbar (filter input, facet disclosure rows, CSV action, sort control) renders above the rollout tables/lists — authored chrome, adopted from run 43768279012's linux actuals"
     },
     "research-queue-type--light-390.png": {
-      "ticket": "P37.60",
-      "note": "baseline adopted from the CI visual-leg artifact (run 43720292907, the linux canonical render) — supersedes the arm64 container mint, which drifted ~0.02-0.04 pixel ratio on the canonical runner"
+      "ticket": "P37.61",
+      "note": "P37.61 K13 ENH-01 mount: the sig-table toolbar (filter input, facet disclosure rows, CSV action, sort control) renders above the rollout tables/lists — authored chrome, adopted from run 43768279012's linux actuals"
     },
     "search--dark-1440.png": {
       "ticket": "P37.60",
@@ -1659,76 +1659,76 @@
       "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
     },
     "source-changelog--dark-1440.png": {
-      "ticket": "P37.60",
-      "note": "baseline adopted from the CI visual-leg artifact (run 43720292907, the linux canonical render) — supersedes the arm64 container mint, which drifted ~0.02-0.04 pixel ratio on the canonical runner"
+      "ticket": "P37.61",
+      "note": "P37.61 K13 ENH-01 mount: the sig-table toolbar (filter input, facet disclosure rows, CSV action, sort control) renders above the rollout tables/lists — authored chrome, adopted from run 43768279012's linux actuals"
     },
     "source-changelog--dark-320.png": {
       "ticket": "P37.60",
       "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
     },
     "source-changelog--dark-390.png": {
-      "ticket": "P37.60",
-      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+      "ticket": "P37.61",
+      "note": "P37.61 K13 ENH-01 mount: the sig-table toolbar (filter input, facet disclosure rows, CSV action, sort control) renders above the rollout tables/lists — authored chrome, adopted from run 43768279012's linux actuals"
     },
     "source-changelog--light-1440.png": {
-      "ticket": "P37.60",
-      "note": "baseline adopted from the CI visual-leg artifact (run 43720292907, the linux canonical render) — supersedes the arm64 container mint, which drifted ~0.02-0.04 pixel ratio on the canonical runner"
+      "ticket": "P37.61",
+      "note": "P37.61 K13 ENH-01 mount: the sig-table toolbar (filter input, facet disclosure rows, CSV action, sort control) renders above the rollout tables/lists — authored chrome, adopted from run 43768279012's linux actuals"
     },
     "source-changelog--light-320.png": {
       "ticket": "P37.60",
       "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
     },
     "source-changelog--light-390.png": {
-      "ticket": "P37.60",
-      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+      "ticket": "P37.61",
+      "note": "P37.61 K13 ENH-01 mount: the sig-table toolbar (filter input, facet disclosure rows, CSV action, sort control) renders above the rollout tables/lists — authored chrome, adopted from run 43768279012's linux actuals"
     },
     "source-dossiers--dark-1440.png": {
-      "ticket": "P37.60",
-      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+      "ticket": "P37.61",
+      "note": "P37.61 K13 ENH-01 mount: the sig-table toolbar (filter input, facet disclosure rows, CSV action, sort control) renders above the rollout tables/lists — authored chrome, adopted from run 43768279012's linux actuals"
     },
     "source-dossiers--dark-320.png": {
       "ticket": "P37.60",
       "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
     },
     "source-dossiers--dark-390.png": {
-      "ticket": "P37.60",
-      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+      "ticket": "P37.61",
+      "note": "P37.61 K13 ENH-01 mount: the sig-table toolbar (filter input, facet disclosure rows, CSV action, sort control) renders above the rollout tables/lists — authored chrome, adopted from run 43768279012's linux actuals"
     },
     "source-dossiers--light-1440.png": {
-      "ticket": "P37.60",
-      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+      "ticket": "P37.61",
+      "note": "P37.61 K13 ENH-01 mount: the sig-table toolbar (filter input, facet disclosure rows, CSV action, sort control) renders above the rollout tables/lists — authored chrome, adopted from run 43768279012's linux actuals"
     },
     "source-dossiers--light-320.png": {
       "ticket": "P37.60",
       "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
     },
     "source-dossiers--light-390.png": {
-      "ticket": "P37.60",
-      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+      "ticket": "P37.61",
+      "note": "P37.61 K13 ENH-01 mount: the sig-table toolbar (filter input, facet disclosure rows, CSV action, sort control) renders above the rollout tables/lists — authored chrome, adopted from run 43768279012's linux actuals"
     },
     "source-entities--dark-1440.png": {
-      "ticket": "P37.60",
-      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+      "ticket": "P37.61",
+      "note": "P37.61 K13 ENH-01 mount: the sig-table toolbar (filter input, facet disclosure rows, CSV action, sort control) renders above the rollout tables/lists — authored chrome, adopted from run 43768279012's linux actuals"
     },
     "source-entities--dark-320.png": {
       "ticket": "P37.60",
       "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
     },
     "source-entities--dark-390.png": {
-      "ticket": "P37.60",
-      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+      "ticket": "P37.61",
+      "note": "P37.61 K13 ENH-01 mount: the sig-table toolbar (filter input, facet disclosure rows, CSV action, sort control) renders above the rollout tables/lists — authored chrome, adopted from run 43768279012's linux actuals"
     },
     "source-entities--light-1440.png": {
-      "ticket": "P37.60",
-      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+      "ticket": "P37.61",
+      "note": "P37.61 K13 ENH-01 mount: the sig-table toolbar (filter input, facet disclosure rows, CSV action, sort control) renders above the rollout tables/lists — authored chrome, adopted from run 43768279012's linux actuals"
     },
     "source-entities--light-320.png": {
       "ticket": "P37.60",
       "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
     },
     "source-entities--light-390.png": {
-      "ticket": "P37.60",
-      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+      "ticket": "P37.61",
+      "note": "P37.61 K13 ENH-01 mount: the sig-table toolbar (filter input, facet disclosure rows, CSV action, sort control) renders above the rollout tables/lists — authored chrome, adopted from run 43768279012's linux actuals"
     },
     "source-page--dark-1440.png": {
       "ticket": "P37.60",
@@ -2091,28 +2091,28 @@
       "note": "baseline adopted from the CI visual-leg artifact (run 43720292907, the linux canonical render) — supersedes the arm64 container mint, which drifted ~0.02-0.04 pixel ratio on the canonical runner"
     },
     "watch-facet--dark-1440.png": {
-      "ticket": "P37.60",
-      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+      "ticket": "P37.61",
+      "note": "P37.61 K13 ENH-01 mount: the sig-table toolbar (filter input, facet disclosure rows, CSV action, sort control) renders above the rollout tables/lists — authored chrome, adopted from run 43768279012's linux actuals"
     },
     "watch-facet--dark-320.png": {
-      "ticket": "P37.60",
-      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+      "ticket": "P37.61",
+      "note": "P37.61 K13 ENH-01 mount: the sig-table toolbar (filter input, facet disclosure rows, CSV action, sort control) renders above the rollout tables/lists — authored chrome, adopted from run 43768279012's linux actuals"
     },
     "watch-facet--dark-390.png": {
-      "ticket": "P37.60",
-      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+      "ticket": "P37.61",
+      "note": "P37.61 K13 ENH-01 mount: the sig-table toolbar (filter input, facet disclosure rows, CSV action, sort control) renders above the rollout tables/lists — authored chrome, adopted from run 43768279012's linux actuals"
     },
     "watch-facet--light-1440.png": {
-      "ticket": "P37.60",
-      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+      "ticket": "P37.61",
+      "note": "P37.61 K13 ENH-01 mount: the sig-table toolbar (filter input, facet disclosure rows, CSV action, sort control) renders above the rollout tables/lists — authored chrome, adopted from run 43768279012's linux actuals"
     },
     "watch-facet--light-320.png": {
-      "ticket": "P37.60",
-      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+      "ticket": "P37.61",
+      "note": "P37.61 K13 ENH-01 mount: the sig-table toolbar (filter input, facet disclosure rows, CSV action, sort control) renders above the rollout tables/lists — authored chrome, adopted from run 43768279012's linux actuals"
     },
     "watch-facet--light-390.png": {
-      "ticket": "P37.60",
-      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+      "ticket": "P37.61",
+      "note": "P37.61 K13 ENH-01 mount: the sig-table toolbar (filter input, facet disclosure rows, CSV action, sort control) renders above the rollout tables/lists — authored chrome, adopted from run 43768279012's linux actuals"
     },
     "watch-feeds--dark-1440.png": {
       "ticket": "P37.60",
@@ -2139,52 +2139,52 @@
       "note": "baseline adopted from the CI visual-leg artifact (run 43720292907, the linux canonical render) — supersedes the arm64 container mint, which drifted ~0.02-0.04 pixel ratio on the canonical runner"
     },
     "watch-history--dark-1440.png": {
-      "ticket": "P37.60",
-      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+      "ticket": "P37.61",
+      "note": "P37.61 K13 ENH-01 mount: the sig-table toolbar (filter input, facet disclosure rows, CSV action, sort control) renders above the rollout tables/lists — authored chrome, adopted from run 43768279012's linux actuals"
     },
     "watch-history--dark-320.png": {
-      "ticket": "P37.60",
-      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+      "ticket": "P37.61",
+      "note": "P37.61 K13 ENH-01 mount: the sig-table toolbar (filter input, facet disclosure rows, CSV action, sort control) renders above the rollout tables/lists — authored chrome, adopted from run 43768279012's linux actuals"
     },
     "watch-history--dark-390.png": {
-      "ticket": "P37.60",
-      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+      "ticket": "P37.61",
+      "note": "P37.61 K13 ENH-01 mount: the sig-table toolbar (filter input, facet disclosure rows, CSV action, sort control) renders above the rollout tables/lists — authored chrome, adopted from run 43768279012's linux actuals"
     },
     "watch-history--light-1440.png": {
-      "ticket": "P37.60",
-      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+      "ticket": "P37.61",
+      "note": "P37.61 K13 ENH-01 mount: the sig-table toolbar (filter input, facet disclosure rows, CSV action, sort control) renders above the rollout tables/lists — authored chrome, adopted from run 43768279012's linux actuals"
     },
     "watch-history--light-320.png": {
-      "ticket": "P37.60",
-      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+      "ticket": "P37.61",
+      "note": "P37.61 K13 ENH-01 mount: the sig-table toolbar (filter input, facet disclosure rows, CSV action, sort control) renders above the rollout tables/lists — authored chrome, adopted from run 43768279012's linux actuals"
     },
     "watch-history--light-390.png": {
-      "ticket": "P37.60",
-      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+      "ticket": "P37.61",
+      "note": "P37.61 K13 ENH-01 mount: the sig-table toolbar (filter input, facet disclosure rows, CSV action, sort control) renders above the rollout tables/lists — authored chrome, adopted from run 43768279012's linux actuals"
     },
     "watch-index--dark-1440.png": {
-      "ticket": "P37.60",
-      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+      "ticket": "P37.61",
+      "note": "P37.61 K13 ENH-01 mount: the sig-table toolbar (filter input, facet disclosure rows, CSV action, sort control) renders above the rollout tables/lists — authored chrome, adopted from run 43768279012's linux actuals"
     },
     "watch-index--dark-320.png": {
       "ticket": "P37.60",
       "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
     },
     "watch-index--dark-390.png": {
-      "ticket": "P37.60",
-      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+      "ticket": "P37.61",
+      "note": "P37.61 K13 ENH-01 mount: the sig-table toolbar (filter input, facet disclosure rows, CSV action, sort control) renders above the rollout tables/lists — authored chrome, adopted from run 43768279012's linux actuals"
     },
     "watch-index--light-1440.png": {
-      "ticket": "P37.60",
-      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+      "ticket": "P37.61",
+      "note": "P37.61 K13 ENH-01 mount: the sig-table toolbar (filter input, facet disclosure rows, CSV action, sort control) renders above the rollout tables/lists — authored chrome, adopted from run 43768279012's linux actuals"
     },
     "watch-index--light-320.png": {
       "ticket": "P37.60",
       "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
     },
     "watch-index--light-390.png": {
-      "ticket": "P37.60",
-      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+      "ticket": "P37.61",
+      "note": "P37.61 K13 ENH-01 mount: the sig-table toolbar (filter input, facet disclosure rows, CSV action, sort control) renders above the rollout tables/lists — authored chrome, adopted from run 43768279012's linux actuals"
     },
     "watch-item--dark-1440.png": {
       "ticket": "P37.60",

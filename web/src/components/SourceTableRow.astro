@@ -59,6 +59,13 @@ const sigChange = changeCell(row.sigChange);
   data-status={row.lifecycle}
   data-lane={row.lane}
   data-freshness={row.freshnessState}
+  data-facet-status={row.lifecycle}
+  data-facet-lane={row.lane}
+  data-facet-freshness={row.freshnessState}
+  data-facet-class={row.classes === null ? "not_typed" : row.classes.join("|")}
+  data-facet-publisher-type={row.publisherType}
+  data-facet-licence={row.licenceSpdx ?? "not_reviewed"}
+  data-licence={row.licenceSpdx ?? undefined}
 >
   {view === "overview" && (
     <>
