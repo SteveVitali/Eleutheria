@@ -1,0 +1,204 @@
+{
+  "checks": {
+    "absence": {
+      "count": 24,
+      "failed": 4,
+      "probes": [
+        {
+          "detail": "absent (HTTP 404)",
+          "name": "absent-apex-curate",
+          "ok": true,
+          "url": "https://surveillancegraph.org/curate/"
+        },
+        {
+          "detail": "absent (HTTP 404)",
+          "name": "absent-apex-curate-submit",
+          "ok": true,
+          "url": "https://surveillancegraph.org/curate/submit/"
+        },
+        {
+          "detail": "absent (HTTP 404)",
+          "name": "absent-apex-demo-task",
+          "ok": true,
+          "url": "https://surveillancegraph.org/task/new/demo_roundtrip/"
+        },
+        {
+          "detail": "present (HTTP 403)",
+          "name": "absent-apex-task-new",
+          "ok": false,
+          "url": "https://surveillancegraph.org/task/new/"
+        },
+        {
+          "detail": "absent (HTTP 404)",
+          "name": "absent-apex-releases",
+          "ok": true,
+          "url": "https://surveillancegraph.org/releases/"
+        },
+        {
+          "detail": "absent (HTTP 404)",
+          "name": "absent-apex-research-dossier",
+          "ok": true,
+          "url": "https://surveillancegraph.org/research-dossier/"
+        },
+        {
+          "detail": "absent (HTTP 404)",
+          "name": "absent-apex-intake",
+          "ok": true,
+          "url": "https://surveillancegraph.org/intake/"
+        },
+        {
+          "detail": "present (HTTP 200)",
+          "name": "absent-apex-visual-language",
+          "ok": false,
+          "url": "https://surveillancegraph.org/visual-language/"
+        },
+        {
+          "detail": "absent (HTTP 404)",
+          "name": "absent-web-curate",
+          "ok": true,
+          "url": "https://sig-web-e5ctyx36jq-uc.a.run.app/curate/"
+        },
+        {
+          "detail": "absent (HTTP 404)",
+          "name": "absent-web-curate-submit",
+          "ok": true,
+          "url": "https://sig-web-e5ctyx36jq-uc.a.run.app/curate/submit/"
+        },
+        {
+          "detail": "absent (HTTP 404)",
+          "name": "absent-web-demo-task",
+          "ok": true,
+          "url": "https://sig-web-e5ctyx36jq-uc.a.run.app/task/new/demo_roundtrip/"
+        },
+        {
+          "detail": "present (HTTP 403)",
+          "name": "absent-web-task-new",
+          "ok": false,
+          "url": "https://sig-web-e5ctyx36jq-uc.a.run.app/task/new/"
+        },
+        {
+          "detail": "absent (HTTP 404)",
+          "name": "absent-web-releases",
+          "ok": true,
+          "url": "https://sig-web-e5ctyx36jq-uc.a.run.app/releases/"
+        },
+        {
+          "detail": "absent (HTTP 404)",
+          "name": "absent-web-research-dossier",
+          "ok": true,
+          "url": "https://sig-web-e5ctyx36jq-uc.a.run.app/research-dossier/"
+        },
+        {
+          "detail": "absent (HTTP 404)",
+          "name": "absent-web-intake",
+          "ok": true,
+          "url": "https://sig-web-e5ctyx36jq-uc.a.run.app/intake/"
+        },
+        {
+          "detail": "present (HTTP 200)",
+          "name": "absent-web-visual-language",
+          "ok": false,
+          "url": "https://sig-web-e5ctyx36jq-uc.a.run.app/visual-language/"
+        },
+        {
+          "detail": "absent (HTTP 404)",
+          "name": "absent-bucket-curate",
+          "ok": true,
+          "url": "https://storage.googleapis.com/zeta-medley-508121-u7-sig-web/curate/"
+        },
+        {
+          "detail": "absent (HTTP 404)",
+          "name": "absent-bucket-curate-submit",
+          "ok": true,
+          "url": "https://storage.googleapis.com/zeta-medley-508121-u7-sig-web/curate/submit/"
+        },
+        {
+          "detail": "absent (HTTP 404)",
+          "name": "absent-bucket-demo-task",
+          "ok": true,
+          "url": "https://storage.googleapis.com/zeta-medley-508121-u7-sig-web/task/new/demo_roundtrip/"
+        },
+        {
+          "detail": "absent (HTTP 404)",
+          "name": "absent-bucket-task-new",
+          "ok": true,
+          "url": "https://storage.googleapis.com/zeta-medley-508121-u7-sig-web/task/new/"
+        },
+        {
+          "detail": "absent (HTTP 404)",
+          "name": "absent-bucket-releases",
+          "ok": true,
+          "url": "https://storage.googleapis.com/zeta-medley-508121-u7-sig-web/releases/"
+        },
+        {
+          "detail": "absent (HTTP 404)",
+          "name": "absent-bucket-research-dossier",
+          "ok": true,
+          "url": "https://storage.googleapis.com/zeta-medley-508121-u7-sig-web/research-dossier/"
+        },
+        {
+          "detail": "absent (HTTP 404)",
+          "name": "absent-bucket-intake",
+          "ok": true,
+          "url": "https://storage.googleapis.com/zeta-medley-508121-u7-sig-web/intake/"
+        },
+        {
+          "detail": "absent (HTTP 404)",
+          "name": "absent-bucket-visual-language",
+          "ok": true,
+          "url": "https://storage.googleapis.com/zeta-medley-508121-u7-sig-web/visual-language/"
+        }
+      ],
+      "unresolved": [
+        "absent-api-release-unpromoted"
+      ],
+      "verdict": "fail"
+    },
+    "attribution_sample": {
+      "reason": "no --public-dir given",
+      "verdict": "skipped"
+    },
+    "handle_crawl": {
+      "repo_and_trees": {
+        "files_with_hits": {
+          "functional": 11,
+          "other": 0,
+          "retained": 6
+        },
+        "handles_checked": 32,
+        "hits": {
+          "functional": 434,
+          "other": 0,
+          "retained": 32
+        },
+        "verdict": "fail"
+      },
+      "sig_public_listing": {
+        "handle_hits": 0,
+        "objects": 150
+      },
+      "verdict": "fail"
+    },
+    "tile_sample": {
+      "count": 1,
+      "failed": 0,
+      "probes": [
+        {
+          "ok": true,
+          "status": 206,
+          "url": "https://surveillancegraph.org/tiles/sig_graph-sites.pmtiles"
+        }
+      ],
+      "verdict": "pass"
+    }
+  },
+  "generated_at": "2026-11-16T02:00:22Z",
+  "overall": "fail",
+  "probe": "route-allowlist",
+  "release": {
+    "built_at": "2026-11-16T01:59:34+00:00",
+    "release_id": "web-20261116T015934Z-1b90a07e"
+  },
+  "subject": {},
+  "version": "sig.probe-run/1"
+}
