@@ -1475,3 +1475,12 @@ seed-commit 178ecf57
 # (sha256 5e0db454…, recorded in the commit message). Scope: the two
 # append-only findings attributed to f4c5766c's rewritten lines only.
 seed-commit f4c5766c
+
+# 169f03fd — BUILD_INDEX row 489a PR cell `#516`→`#517`: the v2 head's
+# four closeout-repair commits lacked the OM-01 Harness trailer and
+# force-push is repo-rule-blocked, so the branch was replayed trailered
+# as v3 and #517 supersedes #516. In-place cell repair (one-row-per-
+# ticket — a second row would break the contract); pre-edit bytes
+# archived `reports/memory-repair/BUILD_INDEX_L682_pre-P37.61a-pr-
+# supersede.txt` (sha256 d556e718…, in the commit message).
+seed-commit 169f03fd
