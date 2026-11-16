@@ -307,7 +307,13 @@ def build_parser() -> argparse.ArgumentParser:
         help="OCFL capture root for a live run (default .sig/captures)",
     )
     runp.add_argument(
-        "--wacz", action="store_true", help="also capture HTML pages as WACZ (live, P02.2 path)"
+        "--wacz",
+        action="store_true",
+        help=(
+            "also store a WACZ 1.1.1 of each fetched HTML page (P37.56: deterministic "
+            "single-response packaging by default; the P02.2 Playwright builder seam "
+            "remains for rendered captures)"
+        ),
     )
     runp.add_argument(
         "--commit-chunk-size",

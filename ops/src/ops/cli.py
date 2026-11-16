@@ -1442,6 +1442,13 @@ def build_parser() -> argparse.ArgumentParser:
         help="P31.4: bound the run to its first N fetch targets (a measured slice; "
         "the completion is recorded partial)",
     )
+    ingest.add_argument(
+        "--wacz",
+        action="store_true",
+        help="P37.56 / BL-026: store a WACZ 1.1.1 in the evidence store for each "
+        "HTML capture and record the per-capture WACZ digests on the run row "
+        "(the cadence.toml wacz = true rows' job args carry this flag)",
+    )
 
     replay = sub.add_parser(
         "replay-ingest",
@@ -5278,6 +5285,7 @@ def _cmd_scheduled_ingest(args: argparse.Namespace) -> int:
             target_limit=args.target_limit,
             code_commit=os.environ.get("SIG_CODE_COMMIT", "").strip() or None,
             sweep_cursor=seed_cursor,
+            wacz=bool(args.wacz),
         )
         written = store_run_row(row, prefix=cadence.runs_gcs_prefix, gcs=gcs, local_dir=local_dir)
         print(json.dumps(row.as_json(), sort_keys=True))

@@ -381,6 +381,7 @@ note = "Atom feed of successful requests; request text never retained."
 [[sources]]
 id = "ccops_seattle"
 cadence = "monthly"
+wacz = true          # P37.56 / BL-026: the job runs `scheduled-ingest --wacz` — HTML captures carry a WACZ 1.1.1 in the evidence store
 cron = "0 5 8 * *"
 job = "sig-ingest-ccops-seattle"
 scheduler = "sig-sched-ccops-seattle"
@@ -389,6 +390,7 @@ note = "SIR index page → bounded disclosure-document fan-out."
 [[sources]]
 id = "ccops_nyc_post"
 cadence = "monthly"
+wacz = true          # P37.56 / BL-026: the job runs `scheduled-ingest --wacz` — HTML captures carry a WACZ 1.1.1 in the evidence store
 cron = "0 5 9 * *"
 job = "sig-ingest-ccops-nyc-post"
 scheduler = "sig-sched-ccops-nyc-post"
@@ -397,6 +399,7 @@ note = "POST Act index; nyc.gov WAF-challenges datacenter egress — a recorded 
 [[sources]]
 id = "ccops_sf"
 cadence = "monthly"
+wacz = true          # P37.56 / BL-026: the job runs `scheduled-ingest --wacz` — HTML captures carry a WACZ 1.1.1 in the evidence store
 cron = "0 5 10 * *"
 job = "sig-ingest-ccops-sf"
 scheduler = "sig-sched-ccops-sf"
@@ -405,6 +408,7 @@ note = "sf.gov serves a JS shell (202 interstitial recorded, SIG-INGEST-012 conf
 [[sources]]
 id = "pathways_rtcc_federation"
 cadence = "monthly"
+wacz = true          # P37.56 / BL-026: the job runs `scheduled-ingest --wacz` — HTML captures carry a WACZ 1.1.1 in the evidence store
 cron = "0 5 11 * *"
 job = "sig-ingest-pathways-rtcc"
 scheduler = "sig-sched-pathways-rtcc"
@@ -413,6 +417,7 @@ note = "EFF-published pathway document; reviewed-term claims only."
 [[sources]]
 id = "pathways_fr_css_forensics"
 cadence = "monthly"
+wacz = true          # P37.56 / BL-026: the job runs `scheduled-ingest --wacz` — HTML captures carry a WACZ 1.1.1 in the evidence store
 cron = "0 5 12 * *"
 job = "sig-ingest-pathways-fr-css"
 scheduler = "sig-sched-pathways-fr-css"
@@ -421,6 +426,7 @@ note = "EFF face-recognition issue page."
 [[sources]]
 id = "pathways_acoustic_drone_location"
 cadence = "monthly"
+wacz = true          # P37.56 / BL-026: the job runs `scheduled-ingest --wacz` — HTML captures carry a WACZ 1.1.1 in the evidence store
 cron = "0 5 13 * *"
 job = "sig-ingest-pathways-drones"
 scheduler = "sig-sched-pathways-drones"
@@ -453,6 +459,7 @@ note = "WAF-403s all egress (policy, proven 2026-09-16) — scheduled run record
 [[sources]]
 id = "ok_statute"
 cadence = "monthly"
+wacz = true          # P37.56 / BL-026: the job runs `scheduled-ingest --wacz` — HTML captures carry a WACZ 1.1.1 in the evidence store
 cron = "0 5 17 * *"
 job = "sig-ingest-ok-statute"
 scheduler = "sig-sched-ok-statute"
@@ -461,6 +468,7 @@ note = "OSCN robots.txt is Disallow:/ — probed + recorded, never gating (GL-GA
 [[sources]]
 id = "okcpd_policy"
 cadence = "monthly"              # manual revisions are rare (ticket spec)
+wacz = true          # P37.56 / BL-026: the job runs `scheduled-ingest --wacz` — HTML captures carry a WACZ 1.1.1 in the evidence store
 cron = "0 5 18 * *"
 job = "sig-ingest-okcpd-policy"
 scheduler = "sig-sched-okcpd-policy"
@@ -524,6 +532,7 @@ note = "P26.5: pub-{tenant}.escribemeetings.com GetCalendarMeetings JSON webmeth
 [[sources]]
 id = "eyes_on_flock"
 cadence = "weekly"
+wacz = true          # P37.56 / BL-026: the job runs `scheduled-ingest --wacz` — HTML captures carry a WACZ 1.1.1 in the evidence store
 cron = "0 5 * * 0"               # P35.1b sweep correction: was "0 5 23 * 0" —
                                  # dom+dow restricted → cron OR-fired day 23
                                  # AND Sundays (F-280). Clean weekly = Sundays
@@ -1101,6 +1110,7 @@ note = "Round-11 batch r11-ate-01 (I8 \u00a77.1; ACQ-01 generated; created --pau
 [[batches]]
 id = "r11-disclosures-01"
 cadence = "monthly"
+wacz = true          # P37.56 / BL-026: the job runs `scheduled-ingest --wacz` — HTML captures carry a WACZ 1.1.1 in the evidence store
 cron = "27 7 21 * *"
 job = "sig-ingest-r11-disclosures-01"
 scheduler = "sig-sched-r11-disclosures-01"
@@ -1115,6 +1125,7 @@ note = "Round-11 batch r11-disclosures-01 (I8 \u00a77.1; ACQ-01 generated; creat
 [[batches]]
 id = "r11-disclosures-02"
 cadence = "monthly"
+wacz = true          # P37.56 / BL-026: the job runs `scheduled-ingest --wacz` — HTML captures carry a WACZ 1.1.1 in the evidence store
 cron = "27 7 22 * *"
 job = "sig-ingest-r11-disclosures-02"
 scheduler = "sig-sched-r11-disclosures-02"
@@ -1129,6 +1140,7 @@ note = "Round-11 batch r11-disclosures-02 (I8 \u00a77.1; ACQ-01 generated; creat
 [[batches]]
 id = "r11-documents-01"
 cadence = "monthly"
+wacz = true          # P37.56 / BL-026: the job runs `scheduled-ingest --wacz` — HTML captures carry a WACZ 1.1.1 in the evidence store
 cron = "27 7 23 * *"
 job = "sig-ingest-r11-documents-01"
 scheduler = "sig-sched-r11-documents-01"
@@ -1197,6 +1209,7 @@ note = "Round-11 batch r11-procurement-01 (I8 \u00a77.1; ACQ-01 generated; creat
 [[batches]]
 id = "r11-tier2-01"
 cadence = "monthly"
+wacz = true          # P37.56 / BL-026: the job runs `scheduled-ingest --wacz` — HTML captures carry a WACZ 1.1.1 in the evidence store
 cron = "37 7 25 * *"
 job = "sig-ingest-r11-tier2-01"
 scheduler = "sig-sched-r11-tier2-01"
@@ -1211,6 +1224,7 @@ note = "Round-11 Wave-D batch r11-tier2-01 (I8 \u00a77.1 days 25\u201327 07:37Z;
 [[batches]]
 id = "r11-tier2-02"
 cadence = "monthly"
+wacz = true          # P37.56 / BL-026: the job runs `scheduled-ingest --wacz` — HTML captures carry a WACZ 1.1.1 in the evidence store
 cron = "37 7 26 * *"
 job = "sig-ingest-r11-tier2-02"
 scheduler = "sig-sched-r11-tier2-02"
@@ -1225,6 +1239,7 @@ note = "Round-11 Wave-D batch r11-tier2-02 (I8 \u00a77.1 days 25\u201327 07:37Z;
 [[batches]]
 id = "r11-tier2-03"
 cadence = "monthly"
+wacz = true          # P37.56 / BL-026: the job runs `scheduled-ingest --wacz` — HTML captures carry a WACZ 1.1.1 in the evidence store
 cron = "37 7 27 * *"
 job = "sig-ingest-r11-tier2-03"
 scheduler = "sig-sched-r11-tier2-03"
@@ -1283,6 +1298,7 @@ note = "BSCC Annual Report 2022/2023 (GOV.UK accessible-HTML edition); LicenseRe
 [[sources]]
 id = "ccops_oakland"
 cadence = "monthly"
+wacz = true          # P37.56 / BL-026: the job runs `scheduled-ingest --wacz` — HTML captures carry a WACZ 1.1.1 in the evidence store
 cron = "9 6 18 * *"              # day 18, 06:09 UTC
 job = "sig-ingest-ccops-oakland"
 scheduler = "sig-sched-ccops-oakland"
@@ -1291,6 +1307,7 @@ note = "Oakland PAC index → bounded §9.64 filing fan-out (max_documents=8; AL
 [[sources]]
 id = "ccops_cambridge"
 cadence = "monthly"
+wacz = true          # P37.56 / BL-026: the job runs `scheduled-ingest --wacz` — HTML captures carry a WACZ 1.1.1 in the evidence store
 cron = "9 6 19 * *"              # day 19, 06:09 UTC
 job = "sig-ingest-ccops-cambridge"
 scheduler = "sig-sched-ccops-cambridge"
@@ -1299,6 +1316,7 @@ note = "Cambridge LegiFile 18518 → FileOpen.aspx combined annual-surveillance-
 [[sources]]
 id = "ccops_somerville"
 cadence = "monthly"
+wacz = true          # P37.56 / BL-026: the job runs `scheduled-ingest --wacz` — HTML captures carry a WACZ 1.1.1 in the evidence store
 cron = "9 6 20 * *"              # day 20, 06:09 UTC
 job = "sig-ingest-ccops-somerville"
 scheduler = "sig-sched-ccops-somerville"
@@ -1322,6 +1340,7 @@ note = "USAspending assistance-listing 97.067 prime-award slices (bounded 2-page
 [[sources]]
 id = "camreg_tribal_all_leaders_directory"
 cadence = "monthly"              # the upstream 'most recent weekly update' rides the monthly floor
+wacz = true          # P37.56 / BL-026: the job runs `scheduled-ingest --wacz` — HTML captures carry a WACZ 1.1.1 in the evidence store
 cron = "41 7 24 * *"             # day 24, 07:41 UTC — first fire after Wave A
 job = "sig-ingest-camreg-tribal-all-leaders-directory"
 scheduler = "sig-sched-camreg-tribal-all-leaders-directory"
@@ -1335,6 +1354,7 @@ note = "ADR-185 S8 screened lane (B-37 'TR facts+cite'): dossier_documents claus
 [[sources]]
 id = "legis_tribal_tohono_oodham_notice"
 cadence = "monthly"              # irregular upstream — on-change floor
+wacz = true          # P37.56 / BL-026: the job runs `scheduled-ingest --wacz` — HTML captures carry a WACZ 1.1.1 in the evidence store
 cron = "43 7 24 * *"             # day 24, 07:43 UTC — first fire after Wave A
 job = "sig-ingest-legis-tribal-tohono-oodham-notice"
 scheduler = "sig-sched-legis-tribal-tohono-oodham-notice"

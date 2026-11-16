@@ -1722,15 +1722,15 @@ kind = "leg"
 obligations = []
 obligations_cell = '''raw-ok archive write (raw/index.json; P8 screen; new-capture reserialisation) + push + rehearsal'''
 gates_cell = '''`hosted` archive write + publish; NEVER pre-authorised (Part VIII families) — verbatim go only; AR-3+AR-2 (x 03:00-06:30Z + AR-3 batch windows); exposure rides P37.65 HG-11'''
-operator_cell = '''the operator's verbatim go (SIG_RAWARCHIVE_AUTHOR env-only), ADC + SIG_GCP_PROJECT present; kill switch = R2_MIRROR_RUNBOOK.md'''
-rerun_cell = '''`implement-spec spec=docs/tickets/460_P37.36__raw-archive.md live_verification=true` (archive write + push + rehearsal)'''
+operator_cell = '''operator verbatim go (SIG_RAWARCHIVE_AUTHOR env-only), ADC + SIG_GCP_PROJECT; kill switch = R2_MIRROR_RUNBOOK.md'''
+rerun_cell = '''implement-spec spec=docs/tickets/460_P37.36__raw-archive.md live_verification=true (write+push+rehearsal)'''
 
   [[row.legs]]
   id = "P37.36-archive-write"
   obligations = []
   earliest = '''the operator's explicit verbatim go — never pre-authorised (OM-20); inside AR-3 + AR-2'''
   excluded = ["x 03:00-06:30Z", "AR-3 batch windows"]
-  go = '''verbatim-go: operator explicit verbatim go (never pre-authorised, OM-20) — SIG_RAWARCHIVE_AUTHOR'''
+  go = '''verbatim-go: explicit verbatim go (never pre-auth, OM-20) — SIG_RAWARCHIVE_AUTHOR'''
   rerun = '''implement-spec spec=docs/tickets/460_P37.36__raw-archive.md live_verification=true'''
   live_dependants = ["P37.65a", "P37.65b"]
 
@@ -1739,41 +1739,41 @@ key = "P37.42"
 kind = "leg"
 obligations = ["D-P37.42-1"]
 obligations_cell = '''D-P37.42-1'''
-gates_cell = '''OM-20 never-list (an API roll that changes a public route's response); the operator's explicit verbatim go — never pre-authorised; AR-3 + AR-2 (x 03:00-06:30Z + AR-3 batch windows)'''
-operator_cell = '''the operator's explicit verbatim go + ADC + `SIG_GCP_PROJECT`'''
+gates_cell = '''OM-20 never-list (API roll changing a public route's response); explicit verbatim go, never pre-auth; AR-3+AR-2 (x 03:00-06:30Z + AR-3 batch windows)'''
+operator_cell = '''explicit verbatim go + ADC + `SIG_GCP_PROJECT`'''
 rerun_cell = '''implement-spec spec=docs/tickets/466_P37.42__api-parity.md live_verification=true'''
 
   [[row.legs]]
   id = "P37.42-api-roll"
   obligations = ["D-P37.42-1"]
-  earliest = '''the operator's explicit verbatim go — never pre-authorised (OM-20); inside AR-3 + AR-2'''
+  earliest = '''explicit verbatim go (never pre-auth, OM-20); inside AR-3+AR-2'''
   excluded = ["x 03:00-06:30Z", "AR-3 batch windows"]
-  go = '''verbatim-go: the operator's explicit verbatim go (never pre-authorised, OM-20)'''
+  go = '''verbatim-go: explicit verbatim go (never pre-auth, OM-20)'''
   rerun = '''implement-spec spec=docs/tickets/466_P37.42__api-parity.md live_verification=true'''
 [[row]]
 key = "P37.54"
 kind = "leg"
 obligations = []
-obligations_cell = '''Wave-D L0→L11 (open → ACQ-19…26 family days → S6 extras day → materialize+delta+resume); dossier seats + never-sources excluded'''
-gates_cell = '''`hosted`, never pre-auth; excl. outside-14:00-20:00Z, outside 2026-11-23→12-04 / 2026-12-14→12-18, the AR-3 freeze 12-06→12-13, the 2026-12-15 release-cut day, materialize/G2 slot; verbatim ING-GO-D (GATE-G6 `b91f8e58`) + `wave-d-gate` per leg'''
-operator_cell = '''OP-26 flips (HG-03 — the `WAVE_D_FLIP_LIST` set, 146 flag rows) + `date -u`; `wave-d.sh --apply --leg L0|…|L11 --inputs <json>` (no-go→42); window-2 sources ship in the 2027-01-15 cadence cut'''
+obligations_cell = '''Wave-D L0→L11 (open → family days → S6 extras → materialize+delta+resume); dossier seats + never-sources excluded'''
+gates_cell = '''`hosted`, never pre-auth; excl. outside-14:00-20:00Z, outside 2026-11-23→12-04 / 2026-12-14→12-18, AR-3 freeze 12-06→12-13, 2026-12-15 release-cut, materialize/G2 slot; verbatim ING-GO-D (GATE-G6 `b91f8e58`) + `wave-d-gate` per leg'''
+operator_cell = '''OP-26 flips (HG-03 `WAVE_D_FLIP_LIST`, 146 rows) + `date -u`; `wave-d.sh --apply --leg L0|…|L11 --inputs <json>` (no-go→42); window-2 sources in the 2027-01-15 cadence cut'''
 rerun_cell = '''`implement-spec spec=docs/tickets/481_P37.54__wave-d-activation.md live_verification=true`'''
 
   [[row.legs]]
   id = "P37.54-window-1-live-legs"
   obligations = []
-  earliest = '''2026-11-23 — Wave-D window 1 opens; a window-1 day in-band with the verbatim ING-GO-D recorded, AR-2 `SUCCESSFUL`, OM-14 pre-state + `cadence --check` green; legs run ordered L0→L11, one family per day, the day's OP-26 flips recorded executed'''
-  excluded = ["outside-14:00-20:00Z", "outside 2026-11-23→12-04 / 2026-12-14→12-18", "the AR-3 freeze 12-06→12-13", "materialize/G2 slot"]
-  go = '''verbatim-go: ING-GO-D (the GATE-G6 GATE DECISIONS 2026-11-05T15:20Z recording on `b91f8e58`, byte-exact — a re-entry re-collects it verbatim) + `sig-ops wave-d-gate --inputs <json>` admit go (exit 0) on fresh recorded inputs — the ordered prefix green or held-reported and `flips.L*` recorded'''
+  earliest = '''2026-11-23 — window 1 opens; in-band day, verbatim ING-GO-D recorded, AR-2 `SUCCESSFUL`, OM-14 pre-state + `cadence --check` green; legs ordered L0→L11, one family/day, day's OP-26 flips recorded executed'''
+  excluded = ["outside-14:00-20:00Z", "outside 2026-11-23→12-04 / 2026-12-14→12-18", "AR-3 freeze 12-06→12-13", "materialize/G2 slot"]
+  go = '''verbatim-go: ING-GO-D byte-exact (GATE-G6 2026-11-05T15:20Z on `b91f8e58` — a re-entry re-collects it verbatim) + `sig-ops wave-d-gate --inputs <json>` exit 0 on fresh inputs — ordered prefix green or held-reported, `flips.L*` recorded'''
   rerun = '''implement-spec spec=docs/tickets/481_P37.54__wave-d-activation.md live_verification=true'''
   live_dependants = ["P37.66"]
 
   [[row.legs]]
   id = "P37.54-window-2-live-legs"
   obligations = []
-  earliest = '''2026-12-14 — Wave-D window 2 opens; the held legs' make-up window (a leg held in window 1 runs here, reported, never silently skipped) + the closing leg L11 if it lands here; the release-cut day inside the window is excluded'''
-  excluded = ["outside-14:00-20:00Z", "outside 2026-11-23→12-04 / 2026-12-14→12-18", "the 2026-12-15 release-cut day", "materialize/G2 slot"]
-  go = '''verbatim-go: the same gate — ING-GO-D in force (byte-exact), the ordered prefix green or held-reported, `flips.L*` recorded, `sig-ops wave-d-gate` admit go (exit 0)'''
+  earliest = '''2026-12-14 — window 2 opens; make-up for legs held in window 1 (reported, never silently skipped) + closing leg L11 if it lands here; the in-window release-cut day excluded'''
+  excluded = ["outside-14:00-20:00Z", "outside 2026-11-23→12-04 / 2026-12-14→12-18", "2026-12-15 release-cut", "materialize/G2 slot"]
+  go = '''verbatim-go: same gate — ING-GO-D byte-exact, ordered prefix green or held-reported, `flips.L*` recorded, `sig-ops wave-d-gate` exit 0'''
   rerun = '''implement-spec spec=docs/tickets/481_P37.54__wave-d-activation.md live_verification=true'''
   live_dependants = ["P37.66"]
 
@@ -1781,15 +1781,15 @@ rerun_cell = '''`implement-spec spec=docs/tickets/481_P37.54__wave-d-activation.
 key = "P37.55"
 kind = "leg"
 obligations = []
-obligations_cell = '''queued archival legs (obligation rides P21.5, T5 γ)'''
-gates_cell = '''external archival request (no person contacted); in-ticket pause, never pre-auth (OM-20); verbatim go per leg'''
-operator_cell = '''verbatim go per leg: `sig-ops swh-save --now --scan-report <report>`; OP-19 `deposit-package` publish → DOIs in `DEPOSITS.md`'''
+obligations_cell = '''archival legs (obligation rides P21.5, T5 γ)'''
+gates_cell = '''external request (no person contacted); in-ticket pause, never pre-auth (OM-20); verbatim go per leg'''
+operator_cell = '''verbatim go per leg: `sig-ops swh-save --now --scan-report <report>`; OP-19 `deposit-package` → DOIs in `DEPOSITS.md`'''
 rerun_cell = '''`implement-spec spec=docs/tickets/482_P37.55__archival-deposits.md live_verification=true`'''
 
   [[row.legs]]
   id = "P37.55-swh-save-now"
   obligations = []
-  earliest = '''operator's verbatim go after the row lands; scan re-runs clean on the submitted head (Q-E2-23)'''
+  earliest = '''operator verbatim go after the row lands; scan re-runs clean on the submitted head (Q-E2-23)'''
   excluded = []
   go = '''verbatim-go: + clean `sig.history-scan/1`; `sig-ops swh-save --now --scan-report <report>`'''
   rerun = '''implement-spec spec=docs/tickets/482_P37.55__archival-deposits.md live_verification=true'''
@@ -1798,8 +1798,25 @@ rerun_cell = '''`implement-spec spec=docs/tickets/482_P37.55__archival-deposits.
   [[row.legs]]
   id = "P37.55-zenodo-publish"
   obligations = []
-  earliest = '''operator's verbatim go after the P34.21b-republished export is packaged; OP-19'''
+  earliest = '''operator verbatim go after the P34.21b-republished export packages; OP-19'''
   excluded = []
   go = '''verbatim-go: OP-19 publish (web upload or `sig-exports deposit --in <pkg> --production` + `SIG_ZENODO_TOKEN`)'''
   rerun = '''implement-spec spec=docs/tickets/482_P37.55__archival-deposits.md live_verification=true'''
   live_dependants = []
+
+[[row]]
+key = "P37.56"
+kind = "leg"
+obligations = []
+obligations_cell = 'queued capture leg'
+gates_cell = 'pre-authorised: GATE-G6 §4 (expiry next GATE); AR-3+AR-2; excl. inside 03:00-10:00Z daily; needs SIG_GCP_PROJECT+ADC+SIG_WACZ_AUTHOR'
+operator_cell = '`prepared_not_executed` until env lands (`ops/gcp/wacz-capture.sh`)'
+rerun_cell = '`implement-spec spec=docs/tickets/483_P37.56__wacz-capture-html-sources.md live_verification=true`'
+
+  [[row.legs]]
+  id = "P37.56-wacz-capture"
+  obligations = []
+  earliest = 'outside 03:00-10:00Z; SIG_GCP_PROJECT+ADC+SIG_WACZ_AUTHOR'
+  excluded = ["inside 03:00-10:00Z daily"]
+  go = 'pre-authorised: GATE-G6 §4 (expiry next GATE)'
+  rerun = 'implement-spec spec=docs/tickets/483_P37.56__wacz-capture-html-sources.md live_verification=true'

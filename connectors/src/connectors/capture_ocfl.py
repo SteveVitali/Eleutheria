@@ -20,10 +20,13 @@ The mapping (SIG-EVID-004/005, §17.3):
   (§17: what was fetched, from where, and when) — the fetch *record* carries no
   content, but the capture carries the headers so a reviewer can audit the
   retrieval (Content-Type, ETag, robots-relevant signals);
-* for an HTML page an optional **WACZ** logical file is written through the P02.2
-  Playwright capture path when a ``wacz_builder`` is supplied (``--wacz``);
-  the byte-addressed content still content-addresses stably (LD-F02/LD-H02:
-  live-connector WACZ per run).
+* for an HTML page an optional **WACZ** logical file is written under
+  ``--wacz`` (``capture_wacz=True``) — by default a deterministic
+  single-response WACZ 1.1.1 packaged from the fetched bytes via
+  :func:`evidence.capture.build_wacz` (P37.56 / BL-026), with the P02.2
+  Playwright capture path still wiring in through the ``wacz_builder`` seam
+  when a rendered capture is required; the byte-addressed content still
+  content-addresses stably (LD-F02/LD-H02: live-connector WACZ per run).
 
 The returned :class:`~connectors.stages.CaptureRef` carries the **connectors'**
 multihash (identical to :class:`~connectors.stages.InMemoryCaptureStore`), so the
@@ -35,7 +38,8 @@ from __future__ import annotations
 
 import json
 from collections.abc import Callable, Mapping
-from datetime import datetime
+from datetime import UTC, datetime
+from typing import Any
 
 from evidence.digest import multihash
 from evidence.ocfl import OcflStore
@@ -95,16 +99,34 @@ class OcflCaptureStore:
         source_uri: str,
         retrieved_at: datetime | None = None,
         headers: Mapping[str, str] | None = None,
+        status: int | None = None,
     ) -> CaptureRef:
         """Archive ``data`` as an OCFL version and return its content-addressed ref.
 
         The connectors' multihash is the address (so replay is byte-identical to
         the in-memory store); the OCFL object records the bytes plus a metadata
-        sidecar (retrieval time, source URI, media type, response headers).
+        sidecar (retrieval time, source URI, media type, response headers, the
+        response status). Under ``capture_wacz`` an HTML capture additionally
+        carries a deterministic single-response WACZ (P37.56) whose digest is
+        recorded on the sidecar and returned on the ref.
         """
         digest = multihash(data)
         object_id = capture_object_id(digest)
-        metadata = {
+        wacz: bytes | None = None
+        if self._should_capture_wacz(media_type):
+            wacz = (
+                self._wacz_builder(source_uri, data)
+                if self._wacz_builder is not None
+                else self._package_wacz(
+                    data,
+                    media_type=media_type,
+                    source_uri=source_uri,
+                    retrieved_at=retrieved_at,
+                    headers=headers,
+                    status=status,
+                )
+            )
+        metadata: dict[str, Any] = {
             "digest": digest,
             "source_uri": source_uri,
             "media_type": media_type,
@@ -113,16 +135,20 @@ class OcflCaptureStore:
             # Response headers are retrieval provenance (§17), NOT content — the
             # fetch record excludes them; the capture keeps them for audit.
             "headers": dict(headers) if headers else {},
+            "status": status,
         }
+        if wacz is not None:
+            # The WACZ member's own content address + size — the availability
+            # record a run row audits against, never implied by presence alone.
+            metadata["wacz"] = {"digest": multihash(wacz), "byte_size": len(wacz)}
         files: dict[str, bytes] = {
             CAPTURE_LOGICAL_PATH: data,
             METADATA_LOGICAL_PATH: json.dumps(metadata, sort_keys=True, ensure_ascii=False).encode(
                 "utf-8"
             ),
         }
-        if self._should_capture_wacz(media_type):
-            assert self._wacz_builder is not None  # guarded by _should_capture_wacz
-            files[WACZ_LOGICAL_PATH] = self._wacz_builder(source_uri, data)
+        if wacz is not None:
+            files[WACZ_LOGICAL_PATH] = wacz
         self._store.add_version(
             object_id,
             files,
@@ -141,6 +167,7 @@ class OcflCaptureStore:
             retrieved_at=retrieved_at,
             ocfl_object_id=object_id,
             ocfl_version=version,
+            wacz_digest=multihash(wacz) if wacz is not None else None,
         )
 
     def put_derivative(
@@ -245,10 +272,52 @@ class OcflCaptureStore:
         return self._store.read_inventory(capture_object_id(digest))["head"]
 
     def _should_capture_wacz(self, media_type: str) -> bool:
-        return (
-            self._capture_wacz
-            and self._wacz_builder is not None
-            and media_type.split(";", 1)[0].strip() in {"text/html", "application/xhtml+xml"}
+        # The flag alone enables the WACZ path (P37.56): no builder needed —
+        # the deterministic packager covers the fetched-response shape, and a
+        # supplied ``wacz_builder`` (P02.2 Playwright) still takes precedence.
+        return self._capture_wacz and media_type.split(";", 1)[0].strip() in {
+            "text/html",
+            "application/xhtml+xml",
+        }
+
+    def _package_wacz(
+        self,
+        data: bytes,
+        *,
+        media_type: str,
+        source_uri: str,
+        retrieved_at: datetime | None,
+        headers: Mapping[str, str] | None,
+        status: int | None,
+    ) -> bytes:
+        """A deterministic single-response WACZ 1.1.1 over the fetched bytes.
+
+        Records the response exactly as the fetch stage observed it — the real
+        status and headers, never a synthesized render (the Playwright
+        ``wacz_builder`` seam remains the path for a JS-rendered capture). A
+        caller that bypassed the fetch stage and supplied no status archives a
+        conventional 200 only as a packaging default — the sidecar records the
+        truthful ``status: null``.
+        """
+        from evidence.capture import CapturedResponse, RawCapture, build_wacz
+
+        return build_wacz(
+            RawCapture(
+                url=source_uri,
+                responses=(
+                    CapturedResponse(
+                        url=source_uri,
+                        status=status if status is not None else 200,
+                        body=data,
+                        content_type=media_type,
+                        headers=dict(headers or {}),
+                    ),
+                ),
+                # The fetch path holds no render — no screenshot to record.
+                screenshot_png=b"",
+                raw_html=data,
+                captured_at=retrieved_at if retrieved_at is not None else datetime.now(UTC),
+            )
         )
 
 

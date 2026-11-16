@@ -258,6 +258,8 @@ for s in doc.get("sources", []):
                 extra,
                 s.get("task_timeout", ""),
                 s.get("state", "enabled"),
+                # P37.56 / BL-026: the row's declared --wacz posture.
+                "1" if s.get("wacz") else "0",
             ]
         )
     )
@@ -296,6 +298,9 @@ for b in doc.get("batches", []):
                 b.get("task_timeout", ""),
                 b.get("state", "enabled"),
                 str(b.get("paused_until", "")),
+                # P37.56 / BL-026: the row's declared --wacz posture (HTML
+                # members carry WACZ; non-HTML members are unaffected).
+                "1" if b.get("wacz") else "0",
             ]
         )
     )
@@ -548,11 +553,15 @@ sched_upsert "${SIG_SCHEDULER_JOB_PROBE}" "${SIG_SCHEDULER_CRON_PROBE}" "${SIG_R
 #    trigger is reconciled, and a declared-paused row's trigger is created
 #    then held PAUSED (its own wave resume enables it, never this script).
 _log "-- per-source reingestion (run rows → gs://…-sig-restricted/ops/runs/) --"
-while IFS='|' read -r src cad cron job sched existing extra ttimeout sstate; do
+while IFS='|' read -r src cad cron job sched existing extra ttimeout sstate swacz; do
   [ -z "${src}" ] && continue
   secrets="SIG_PG_PASSWORD=${SIG_SECRET_PG_PASSWORD}:latest"
   [ -n "${extra}" ] && secrets="${secrets},${extra}"
-  _log "  ${src} (${cad} ${cron}${sstate:+ state=${sstate}}) -> ${job}"
+  # P37.56 / BL-026: a `wacz = true` row's job invokes `scheduled-ingest --wacz`
+  # — its HTML captures carry a WACZ in the evidence store.
+  wargs=""
+  [ "${swacz:-0}" = "1" ] && wargs=" --wacz"
+  _log "  ${src} (${cad} ${cron}${sstate:+ state=${sstate}}${wargs:+ wacz}) -> ${job}"
   # P26.6: agenda-platform jobs now also fetch the bounded per-tenant document
   # window (≤ doc_per_tenant docs × tenants, ≤ doc_run_cap/run) on top of the
   # index sweep — the largest platform (CivicClerk, ~295 index + ≤350 docs)
@@ -563,7 +572,7 @@ while IFS='|' read -r src cad cron job sched existing extra ttimeout sstate; do
     --image "${IMAGE}" --region "${SIG_GCP_REGION}" --project "${SIG_GCP_PROJECT}" \
     --service-account "${SIG_INGEST_SA_EMAIL}" \
     --command sh \
-    --args "-c,exec sig-ops scheduled-ingest --source ${src} --sink pg" \
+    --args "-c,exec sig-ops scheduled-ingest --source ${src} --sink pg${wargs}" \
     --tasks 1 --task-timeout "${ttimeout:-60m}" --max-retries 0 \
     --execution-environment gen2 \
     --remove-volume-mount "${CAPTURE_MOUNT}" --remove-volume captures \
@@ -621,7 +630,7 @@ done < <(read_cadence_rows)
 #    mirror, and the live batch jobs already run 36h (P31.4 aligned this script,
 #    which used to say 120m, with the deployed jobs so a re-apply cannot shrink it).
 _log "-- grouped batches (run rows per member → ops/runs/<source>/) --"
-while IFS='|' read -r bid bcad bcron bjob bsched bcount btimeout bstate bpuntil; do
+while IFS='|' read -r bid bcad bcron bjob bsched bcount btimeout bstate bpuntil bwacz; do
   [ -z "${bid}" ] && continue
   # P37.2 (FEA-15): a covering paused_until makes the row's effective
   # posture paused for trigger reconcile even when `state` says enabled —
@@ -630,12 +639,16 @@ while IFS='|' read -r bid bcad bcron bjob bsched bcount btimeout bstate bpuntil;
   if [[ -n "${bpuntil}" && "$(date -u +%F)" < "${bpuntil:0:10}~" ]]; then
     beff="paused"  # today <= the ISO bound's date (lexical compare on YYYY-MM-DD)
   fi
-  _log "  batch ${bid} (${bcount} member sources, ${bcad} ${bcron}${beff:+ state=${beff}}) -> ${bjob} (task-timeout ${btimeout:-36h})"
+  # P37.56 / BL-026: a `wacz = true` batch invokes `scheduled-ingest --wacz`
+  # — each HTML member's captures carry a WACZ; non-HTML members unchanged.
+  bwargs=""
+  [ "${bwacz:-0}" = "1" ] && bwargs=" --wacz"
+  _log "  batch ${bid} (${bcount} member sources, ${bcad} ${bcron}${beff:+ state=${beff}}${bwargs:+ wacz}) -> ${bjob} (task-timeout ${btimeout:-36h})"
   run gcloud run jobs deploy "${bjob}" \
     --image "${IMAGE}" --region "${SIG_GCP_REGION}" --project "${SIG_GCP_PROJECT}" \
     --service-account "${SIG_INGEST_SA_EMAIL}" \
     --command sh \
-    --args "-c,exec sig-ops scheduled-ingest --batch ${bid} --sink pg" \
+    --args "-c,exec sig-ops scheduled-ingest --batch ${bid} --sink pg${bwargs}" \
     --tasks 1 --task-timeout "${btimeout:-36h}" --max-retries 0 \
     --execution-environment gen2 \
     --remove-volume-mount "${CAPTURE_MOUNT}" --remove-volume captures \

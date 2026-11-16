@@ -128,6 +128,11 @@ class SourceCadence:
     #: to ``"enabled"``. Under the per-source trigger shape a paused row's
     #: trigger is created/held PAUSED, mirroring its live posture.
     state: str = "enabled"
+    #: P37.56 / BL-026: the row declares the job runs ``scheduled-ingest
+    #: --wacz`` — HTML document captures additionally carry a deterministic
+    #: single-response WACZ 1.1.1 in the evidence store (non-HTML media types
+    #: are unaffected; the flag only widens the HTML path).
+    wacz: bool = False
 
 
 @dataclass(frozen=True)
@@ -163,6 +168,11 @@ class BatchCadence:
     #: never fire early). An expired bound is inert record — the
     #: removal-with-record idiom; it is never cleaned up.
     paused_until: str = ""
+    #: P37.56 / BL-026: the batch job runs ``scheduled-ingest --wacz`` — each
+    #: member's HTML captures carry a WACZ; non-HTML members are unaffected
+    #: (the flag is media-type self-limiting inside the capture store, so a
+    #: mixed batch enables it without changing non-HTML members' output).
+    wacz: bool = False
 
 
 @dataclass(frozen=True)
@@ -472,6 +482,7 @@ def parse_cadence_doc(doc: dict[str, Any]) -> CadenceConfig:
             cron_or_semantics_ok=_annotation(s.get("cron_or_semantics_ok")),
             task_timeout=str(s.get("task_timeout", "")),
             state=str(s.get("state", "enabled")).lower(),
+            wacz=bool(s.get("wacz", False)),
         )
         for s in doc.get("sources", [])
     )
@@ -488,6 +499,7 @@ def parse_cadence_doc(doc: dict[str, Any]) -> CadenceConfig:
             task_timeout=str(b.get("task_timeout", "")),
             state=str(b.get("state", "enabled")).lower(),
             paused_until=str(b.get("paused_until", "")),
+            wacz=bool(b.get("wacz", False)),
         )
         for b in doc.get("batches", [])
     )
@@ -996,6 +1008,15 @@ class RunRow:
     #: the spine's completion row name each other. Empty when no run was written
     #: (a refused run, a memory sink, or an exception before the report).
     ingest_run_id: str = ""
+    #: P37.56 / BL-026: the run executed under ``scheduled-ingest --wacz``.
+    #: Recorded regardless of outcome so "WACZ enabled, none produced" is
+    #: distinguishable from "WACZ disabled" on the audit row.
+    wacz: bool = False
+    #: ``{capture_digest: wacz_digest}`` for each capture whose OCFL object
+    #: carries a ``page.wacz`` member — the availability record's honest
+    #: per-capture binding (empty for a non-HTML run, and for an HTML run
+    #: that produced none).
+    wacz_captures: dict[str, str] = field(default_factory=dict)
 
     def as_json(self) -> dict[str, object]:
         return {
@@ -1012,6 +1033,8 @@ class RunRow:
             "detail": self.detail,
             "fetch_record": self.fetch_record,
             "ingest_run_id": self.ingest_run_id,
+            "wacz": self.wacz,
+            "wacz_captures": dict(self.wacz_captures),
         }
 
 
@@ -1046,6 +1069,7 @@ def scheduled_ingest(
     target_limit: int | None = None,
     code_commit: str | None = None,
     sweep_cursor: int | None = None,
+    wacz: bool = False,
 ) -> RunRow:
     """Run one source live through the gated connector and shape the run row.
 
@@ -1086,6 +1110,7 @@ def scheduled_ingest(
     exit_code = 0
     claims = 0
     digests: tuple[str, ...] = ()
+    wacz_map: dict[str, str] = {}
     refusal = ""
     detail = ""
     fetch_record: dict[str, Any] = {}
@@ -1103,6 +1128,10 @@ def scheduled_ingest(
         # P37.11 / ADR-236: the persisted rotating sweep cursor, seeded from the
         # previous run row (see ``latest_sweep_cursor``).
         extra["sweep_cursor"] = int(sweep_cursor)
+    if wacz:
+        # P37.56 / BL-026: forward to the runner — HTML captures gain a WACZ
+        # member in the evidence store; non-HTML media types are unaffected.
+        extra["wacz"] = True
     try:
         report = runner(
             source_id,
@@ -1118,6 +1147,15 @@ def scheduled_ingest(
         emitted = getattr(report, "emitted", None)
         claims = int(emitted) if isinstance(emitted, int) else len(report.claims)
         digests = tuple(str(c.digest) for c in report.captures if hasattr(c, "digest"))
+        # P37.56: per-capture WACZ availability — binds each capture's digest to
+        # the digest of the page.wacz member its OCFL object carries (only a
+        # capture that actually produced one appears; a store without WACZ
+        # support leaves the map empty, which the row records honestly).
+        wacz_map = {
+            str(c.digest): str(c.wacz_digest)
+            for c in report.captures
+            if getattr(c, "wacz_digest", None)
+        }
         if report.fetch_record is not None:
             fetch_record = dict(report.fetch_record.to_dict())
         parts: list[str] = []
@@ -1155,6 +1193,10 @@ def scheduled_ingest(
         nxt = getattr(fr, "sweep_cursor_next", None)
         if cur is not None or nxt is not None:
             parts.append(f"sweep cursor {cur}→{nxt}")
+        if wacz:
+            # P37.56: the honest count — a wacz-enabled run records its WACZ
+            # total even when it is zero (vs a non-wacz run's absent field).
+            parts.append(f"{len(wacz_map)} WACZ capture(s)")
         detail = "; ".join(parts)
     except Exception as exc:  # noqa: BLE001 - the outcome IS the exception class
         name = type(exc).__name__
@@ -1187,6 +1229,8 @@ def scheduled_ingest(
         detail=scrub_secrets(detail),
         fetch_record=fetch_record,
         ingest_run_id=ingest_run_id,
+        wacz=wacz,
+        wacz_captures=wacz_map,
     )
 
 

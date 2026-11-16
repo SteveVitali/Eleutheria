@@ -143,3 +143,79 @@ def test_no_wacz_for_non_html_even_with_a_builder(tmp_path) -> None:  # type: ig
     inventory = store.read_inventory(capture_object_id(ref.digest))
     logical = [p for paths in inventory["versions"]["v1"]["state"].values() for p in paths]
     assert WACZ_LOGICAL_PATH not in logical
+
+
+def test_wacz_packaged_from_the_fetched_response_without_a_builder(
+    tmp_path,  # type: ignore[no-untyped-def]
+) -> None:
+    # P37.56 / BL-026: capture_wacz alone enables the WACZ path — the default
+    # packager builds a deterministic single-response WACZ 1.1.1 from the
+    # fetched bytes (the Playwright builder seam still overrides).
+    import io
+    import json
+    import zipfile
+
+    from evidence.digest import multihash
+
+    store = OcflStore(LocalFileStore(str(tmp_path)))
+    adapter = OcflCaptureStore(store, capture_wacz=True)
+    ref = adapter.put(
+        b"<html><body>doc</body></html>",
+        media_type="text/html",
+        source_uri="https://x.test/doc",
+        retrieved_at=datetime(2026, 11, 14, 12, 0, tzinfo=UTC),
+        status=200,
+        headers={"ETag": '"v1"'},
+    )
+    assert ref.wacz_digest is not None
+    wacz = store.resolve(capture_object_id(ref.digest), ref.ocfl_version, WACZ_LOGICAL_PATH)
+    # the ref's availability binding is the member's own content address
+    assert ref.wacz_digest == multihash(wacz)
+    with zipfile.ZipFile(io.BytesIO(wacz)) as zf:
+        datapackage = json.loads(zf.read("datapackage.json"))
+        warc = zf.read("archive/data.warc")
+    assert datapackage["wacz_version"] == "1.1.1"
+    assert datapackage["mainPageUrl"] == "https://x.test/doc"
+    # the WARC response record carries the fetch stage's real status + headers
+    assert b"HTTP/1.1 200" in warc
+    assert b'ETag: "v1"' in warc
+    assert b"<html><body>doc</body></html>" in warc
+    # the sidecar records the same availability the ref returns
+    meta = adapter.metadata(ref.digest)
+    assert meta["status"] == 200
+    assert meta["wacz"]["digest"] == ref.wacz_digest
+    assert meta["wacz"]["byte_size"] == len(wacz)
+
+
+def test_no_wacz_member_when_the_flag_is_off(tmp_path) -> None:  # type: ignore[no-untyped-def]
+    store = OcflStore(LocalFileStore(str(tmp_path)))
+    adapter = OcflCaptureStore(store)  # capture_wacz defaults False
+    ref = adapter.put(b"<html>x</html>", media_type="text/html", source_uri="https://x.test/p")
+    inventory = store.read_inventory(capture_object_id(ref.digest))
+    logical = [p for paths in inventory["versions"]["v1"]["state"].values() for p in paths]
+    assert WACZ_LOGICAL_PATH not in logical
+    assert ref.wacz_digest is None
+    assert "wacz" not in adapter.metadata(ref.digest)
+
+
+def test_no_wacz_member_for_non_html_under_the_flag(tmp_path) -> None:  # type: ignore[no-untyped-def]
+    store = OcflStore(LocalFileStore(str(tmp_path)))
+    adapter = OcflCaptureStore(store, capture_wacz=True)
+    ref = adapter.put(b"{}", media_type="application/json", source_uri="https://x.test/j")
+    inventory = store.read_inventory(capture_object_id(ref.digest))
+    logical = [p for paths in inventory["versions"]["v1"]["state"].values() for p in paths]
+    assert WACZ_LOGICAL_PATH not in logical
+    assert ref.wacz_digest is None
+
+
+def test_a_supplied_builder_still_overrides_the_packager(tmp_path) -> None:  # type: ignore[no-untyped-def]
+    # the P02.2 Playwright seam wins when wired — the default packager covers
+    # the (flag, no-builder) shape the runner's --wacz path now uses.
+    def fake_wacz(url: str, data: bytes) -> bytes:
+        return b"PK-WACZ:" + url.encode()
+
+    store = OcflStore(LocalFileStore(str(tmp_path)))
+    adapter = OcflCaptureStore(store, wacz_builder=fake_wacz, capture_wacz=True)
+    ref = adapter.put(b"<html></html>", media_type="text/html", source_uri="https://x.test/p")
+    member = store.resolve(capture_object_id(ref.digest), ref.ocfl_version, WACZ_LOGICAL_PATH)
+    assert member == b"PK-WACZ:https://x.test/p"

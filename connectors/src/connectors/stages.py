@@ -279,6 +279,12 @@ class CaptureRef:
     upstream_modified_at: str | None = None
     upstream_token: str | None = None
     upstream_modified_basis: str | None = None
+    #: P37.56 / BL-026: the digest of the WACZ web-archive this capture's OCFL
+    #: object carries (HTML captures under ``--wacz``), so the run row's
+    #: availability record binds the real member — ``None`` means no WACZ was
+    #: written (non-HTML media type, WACZ disabled, or the in-memory store).
+    #: Never part of the content address — a sibling member, not the bytes.
+    wacz_digest: str | None = None
 
     def canonical(self) -> dict[str, Any]:
         # ``retrieved_at`` is retrieval metadata, deliberately excluded from the
@@ -312,6 +318,8 @@ class CaptureStore(Protocol):
         media_type: str,
         source_uri: str,
         retrieved_at: datetime | None = ...,
+        headers: Mapping[str, str] | None = ...,
+        status: int | None = ...,
     ) -> CaptureRef: ...
 
     def get(self, digest: str) -> bytes: ...
@@ -320,7 +328,12 @@ class CaptureStore(Protocol):
 
 
 class InMemoryCaptureStore:
-    """A content-addressed capture store held in memory (tests + replay)."""
+    """A content-addressed capture store held in memory (tests + replay).
+
+    ``headers``/``status`` (P37.56) are accepted for parity with the OCFL
+    adapter's provenance sidecar and ignored — the in-memory store's contract
+    is the byte-identical ref, not retrieval metadata.
+    """
 
     def __init__(self) -> None:
         self._blobs: dict[str, bytes] = {}
@@ -332,6 +345,8 @@ class InMemoryCaptureStore:
         media_type: str,
         source_uri: str,
         retrieved_at: datetime | None = None,
+        headers: Mapping[str, str] | None = None,
+        status: int | None = None,
     ) -> CaptureRef:
         digest = multihash(data)
         self._blobs[digest] = data
@@ -614,6 +629,11 @@ class Connector(ABC):
             media_type=fetched.media_type,
             source_uri=fetched.url,
             retrieved_at=fetched.retrieved_at,
+            # P37.56: the response's real status + headers are retrieval
+            # provenance (the OCFL sidecar + any WACZ member carry them,
+            # never a fabricated 200).
+            headers=fetched.headers,
+            status=fetched.status,
         )
 
     # -- interpretation (source-specific, pure functions of the capture) --
