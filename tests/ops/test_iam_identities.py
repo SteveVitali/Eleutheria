@@ -95,6 +95,7 @@ def test_declaration_parses_and_declares_the_contract(decl) -> None:
         "sig-api-rt",
         "sig-web-rt",
         "sig-alerts-rt",
+        "sig-intake-rt",
         "sig-ingest-rt",
         "sig-probe-rt",
         "sig-export-rt",
@@ -128,6 +129,7 @@ def test_declaration_parses_and_declares_the_contract(decl) -> None:
         ("sig-export-rt", "roles/cloudsql.client"),
         ("sig-materialize-rt", "roles/cloudsql.client"),
         ("sig-quality-probe-rt", "roles/cloudsql.client"),
+        ("sig-intake-rt", "roles/cloudsql.client"),
     ]
     assert ("sig-web-rt", "sig-web", "roles/storage.objectViewer") in [
         (r.service_account, r.bucket, r.role) for r in decl.bucket_roles
@@ -136,6 +138,7 @@ def test_declaration_parses_and_declares_the_contract(decl) -> None:
         ("sig-api", "sig-api-rt"),
         ("sig-web", "sig-web-rt"),
         ("sig-alerts", "sig-alerts-rt"),
+        ("sig-intake", "sig-intake-rt"),
     ]
     # sig-alerts: two leg-scoped invoker rules — the services-leg interim
     # (grant the recorded caller, revoke allUsers; G1-11) and the jobs-leg
@@ -155,14 +158,17 @@ def test_declaration_parses_and_declares_the_contract(decl) -> None:
     # the write-capable sig_materialize_login password; P37.12 adds the ten
     # keyed US 511 keys the ingest class alone consumes — declared, no
     # version until OP-13); P37.70 adds the two keyed AU keys
-    # (sig-qldtraffic-key + sig-nsw-live-key), likewise ingest-class-only); the services-leg
+    # (sig-qldtraffic-key + sig-nsw-live-key), likewise ingest-class-only); P37.59
+    # adds the four intake credentials (receiver+reviewer passwords and the two
+    # gate secrets — sig-intake-rt the only SA accessor, the reviewer secret's
+    # reader the symbolic `operator`); the services-leg
     # accessor grant set is sig-api-rt
     # on sig-pg-password plus the operator-approved D-P34.42a-1 option (a)
     # grant — sig-alerts-rt on its own sig-alert-webhook-token (the receiver
     # mounts it; the leg-1 refusal), the jobs-leg grants are the job-class
     # consumers, and the five job-only secrets carry a jobs_revoke on
     # default-compute.
-    assert len(decl.secrets) == 26
+    assert len(decl.secrets) == 30
     api_env = next(s for s in decl.secrets if s.name == "sig-api-env")
     assert api_env.consumers == ()  # recorded, 0 versions, never deleted
     hook = next(s for s in decl.secrets if s.name == "sig-alert-webhook-token")
@@ -253,8 +259,10 @@ def test_declaration_rejects_an_unbound_sa(tmp_path: Path) -> None:
 def test_plan_steps_cover_the_contract_mutation_list(decl) -> None:
     steps = plan_steps(decl, PROJECT, "us-central1", leg="services")
     flat = "\n".join(" ".join(s.command) for s in steps)
-    # (1) create the three SAs
-    for sa in ("sig-api-rt", "sig-web-rt", "sig-alerts-rt"):
+    # (1) create the service SAs — the three P34.42a identities plus
+    # sig-intake-rt (P37.59; its service is created by the deploy leg, the
+    # map binds the end state).
+    for sa in ("sig-api-rt", "sig-web-rt", "sig-alerts-rt", "sig-intake-rt"):
         assert f"service-accounts create {sa}" in flat
     # (2) least-privilege bindings + the per-consumer secret accessor
     assert (
@@ -277,13 +285,25 @@ def test_plan_steps_cover_the_contract_mutation_list(decl) -> None:
         "sig-alerts-rt@sig-test-project.iam.gserviceaccount.com "
         "--role=roles/secretmanager.secretAccessor" in flat
     )
+    # P37.59: sig-intake-rt is the declared accessor on the three
+    # service-mounted intake secrets (the reviewer password's `operator`
+    # consumer never renders an SA binding).
+    for sec in (
+        "sig-intake-receiver-password",
+        "sig-intake-form-secret",
+        "sig-intake-abuse-secret",
+    ):
+        assert f"secrets add-iam-policy-binding {sec}" in flat
     # No other secret gains a binding in this leg.
-    assert flat.count("secrets add-iam-policy-binding") == 2
-    # (3) one same-image revision per service with --service-account
+    assert flat.count("secrets add-iam-policy-binding") == 5
+    # (3) one same-image revision per service with --service-account —
+    # sig-intake's row binds the end state (the deploy leg creates the
+    # service already on this SA; the update converges).
     for svc, sa in (
         ("sig-api", "sig-api-rt"),
         ("sig-web", "sig-web-rt"),
         ("sig-alerts", "sig-alerts-rt"),
+        ("sig-intake", "sig-intake-rt"),
     ):
         assert (
             f"run services update {svc} --service-account={sa}@{PROJECT}.iam.gserviceaccount.com"

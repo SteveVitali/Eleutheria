@@ -4,19 +4,19 @@
 > compatibility cells remain the control authority. This view is derived from
 > the hashed `input-manifest/1` (`manifest.json`); it never writes control
 > state. Shadow mode — the single-writer cutover deferral is `D-R10-MEMORY-2`
-> input_commit: `e7239c01fe0215512e173aa5b976676f244d6740` · inputs hashed: 1281 · wall-clock receipt: `receipt.json`
+> input_commit: `f3151dbd59330e5b88c66894c91091dc073a313a` · inputs hashed: 1282 · wall-clock receipt: `receipt.json`
 
 ## Control (advisory read of LEDGER.md)
 
-- projectStatus `IN_PROGRESS` · round `11` · nextTicket `P37.59` · lastCompleted `P37.58`
-- chainTip `r11/P37.58-schema-conformance` · returnPass `P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b…` · updatedAt `2026-11-15T02:24Z`
+- projectStatus `IN_PROGRESS` · round `11` · nextTicket `P37.60` · lastCompleted `P37.59`
+- chainTip `r11/P37.59-intake-operation-dark` · returnPass `P21.5,P31.4,P32.18,P32.19,P32.20,P32.21,P32.22,P32.23a,P32.25,P34.3,P34.4,P34.5,P34.6,P34.17,P34.18,P34.21a,P34.21b,P34.38,P34.39b,P34.40,P34.42b,P34.43,P34.44b…` · updatedAt `2026-11-15T10:19Z`
 
 ## Obligations
 
-- 246 obligations · **162 owed** (159 OPEN, 3 PARTIAL) · 84 terminal
-- 761 events (59 transitions beyond anchors) · 15 status conflicts reconciled by recorded events · 8 documented in `reconciliations.json`
+- 247 obligations · **163 owed** (160 OPEN, 3 PARTIAL) · 84 terminal
+- 762 events (59 transitions beyond anchors) · 15 status conflicts reconciled by recorded events · 8 documented in `reconciliations.json`
 
-- `obligations` → see [obligations.md](obligations.md) (complete — 162 rows)
+- `obligations` → see [obligations.md](obligations.md) (complete — 163 rows)
 
 ## RETURN PASS — owed live legs (generated region)
 
@@ -36,7 +36,7 @@
 | — | HG-05 (old P23.1 row; no deferral) | none — operator action, not in `returnPass` |
 | P34.3 | D-P34.3-1 | `r11/P34.3-live-<n>` dispatch or `implement-spec spec=docs/tickets/204_P34.3__ops-data-protection.md live_verification=true` |
 | P34.4 | D-P34.4-1 D-P34.4-2 | `r11/P34.4-live-<n>` dispatch or `implement-spec spec=docs/tickets/205_P34.4__alerts-that-reach-a-human.md live_verification=true` |
-| P34.5 | D-P34.5-1 D-P34.5-2 D-P34.5-3 | -3: `implement-spec spec=docs/tickets/206_P34.5__cost-guard-budget-alert-billing-export.md live_verification=true` once exportcheck ≥1 row; -1: `cost-guard.sh -… |
+| P34.5 | D-P34.5-1 D-P34.5-2 D-P34.5-3 | -3: `implement-spec spec=docs/tickets/206_P34.5__cost-guard-budget-alert-billing-export.md live_verification=true`; -1: `cost-guard.sh --apply testbudget-delete… |
 | P34.6 | D-P34.6-2 D-P34.6-3 D-P34.6-4 D-P34.6-5 D-P34.6-6 | `logical-export.sh --apply export|lifecycle|relabel --go "…"`; `restore-drill.sh --apply fullrestore --go "…"`; -6: the drill re-run after P34.46's schema-chang… |
 | P34.50 | D-P34.50-1 | none — operator action; **P35.67** (row 263) is verifying probe row |
 | P34.17 | D-P34.17-1 | `implement-spec spec=docs/tickets/220_P34.17__web-honesty-wave-and-republish-1.md live_verification=true` (L2 `publish-web --apply` over `sig-2026-09-27-ce480ab… |
@@ -47,7 +47,7 @@
 | P34.39b | three monitoring legs (first-fire wave + `camreg_peel_on`) | `implement-spec spec=docs/tickets/248_P34.39b__first-fire-read-backs.md live_verification=true` |
 | P36.2 | D-P36.2-1 | `implement-spec spec=docs/tickets/350_P36.2__rights-flip-decline-batch-and-terms-capture.md live_verification=true` |
 | P34.40 | dark serving-topology roll — L1 `sig-web` digest roll, L2 `/v1/*` URL-map → `sig-api`; halves landed | `implement-spec spec=docs/tickets/249_P34.40__serving-topology-dark.md live_verification=true` (L1, then L2) |
-| P34.42b | jobs IAM leg (F-272 jobs + `roles/editor` removal); `live`-1 stopped at 88/100; `live`-2 on `live:P35.1a1` poststate | `implement-spec spec=docs/tickets/252_P34.42b__least-privilege-job-identities-remove-editor.md live_verification=true` |
+| P34.42b | jobs IAM leg (F-272 jobs + `roles/editor` removal); `live`-1 stopped at 88/100; `live`-2 on `live:P35.1a1` | `implement-spec spec=docs/tickets/252_P34.42b__least-privilege-job-identities-remove-editor.md live_verification=true` |
 | P34.43 | L1 exec-host + `sig_audit` legs + L2 `sig_recovery` login (SIG-CONF-013); halves landed | `implement-spec spec=docs/tickets/253_P34.43__execution-host-and-least-privilege-db-logins.md live_verification=true` |
 | P34.49 | L1 read-only scan + L2 protective-seal leg (F-406, I7 S1–S9, SIG-PUB-002; ADR-203 deny set) — halves landed | `implement-spec spec=docs/tickets/254_P34.49__part-viii-at-rest-audit.md live_verification=true` (L1 scan, then L2 seal) |
 | P34.44b | L1 `sig-quality-probe` job+trigger + L2 baseline run + `apply-baselines` write | `implement-spec spec=docs/tickets/256_P34.44b__quality-baseline-run-and-nightly-probe.md live_verification=true` |
@@ -55,29 +55,29 @@
 | P34.46 | L2 deploy slot (schema roll + ADR-159 + `sig-api` roll + `/status/` + trigger pause/resume) + L3 48 h soak | `implement-spec spec=docs/tickets/258_P34.46__round10-schema-allows-and-api-roll.md live_verification=true` |
 | P34.47 | 11A sweep + G4 packet leg: read-only crawl + counts + packet; `acceptance-sweep` → `sig.probe-run/1` | `implement-spec spec=docs/tickets/259_P34.47__sub-round-11a-acceptance.md live_verification=true` (sweep + packet) |
 | P35.57 | API-roll leg: mount promoted release's registry on `sig-api`, roll, verify `/v1/health` | `implement-spec spec=docs/tickets/261_P35.57__api-release-parity.md live_verification=true` (mount+roll+verify) |
-| P35.5 | R2-mirror leg: bucket + non-listable CDN, content-hash keys, immutable Cache-Control, $0 egress; limits/kill-switch landed | `implement-spec spec=docs/tickets/262_P35.5__zero-egress-distribution-host.md live_verification=true` (R2 push + origin-enable) |
+| P35.5 | R2-mirror leg: bucket + non-listable CDN, content-hash keys, $0 egress; limits/kill-switch landed | `implement-spec spec=docs/tickets/262_P35.5__zero-egress-distribution-host.md live_verification=true` (R2 push + origin-enable) |
 | P35.67 | L1 post-cutover probe post-OP-09 + L2 cert read ≈ 2026-11-22; read-only; landed | `implement-spec spec=docs/tickets/263_P35.67__post-dns-cutover-probe.md live_verification=true` |
 | P35.1a | write leg: reconcile Scheduler from cadence.toml (inert triggers + declared bundle) + `live`-diff; `live-1` stopped OM-18; P34.42b first | `implement-spec spec=docs/tickets/264_P35.1a__scheduler-of-record-live-diff-cron-lint.md live_verification=true` |
 | P35.1a1 | declared-job seed leg (row 287a): 12 declared-absent jobs on default-compute + `sig-scheduler` run.invoker + paused triggers | `implement-spec spec=docs/tickets/287a_P35.1a1__seed-declared-jobs-paused.md live_verification=true` |
 | P35.11 | Wave-A: L1 roll+seed+3-source ingest; L2 `+0` reruns; L3 resume+reconcile; S8 stays ingestion=false pending OP-26 | L2 |
 | P35.14a | `hosted`: `sqitch deploy closed_vocabulary` (INSERT-only — 280 predicates + 5,600 directness + CHECK) + verify + read-back | `implement-spec spec=docs/tickets/272_P35.14a__vocabulary-conformance-closed-vocabulary.md live_verification=true` |
 | P35.14b | `hosted` `sqitch deploy entity_typing_mobility_check` (ACCESS EXCLUSIVE) + INSERT (+0) + read-back | `implement-spec spec=docs/tickets/273_P35.14b__entity-typing-and-hosted-check-constraint.md live_verification=true` |
-| P35.15a | `hosted`: INSERT-only `technology` vocab registration (`closed_vocabulary`) + read-back; backfill = P35.15b | `implement-spec spec=docs/tickets/274_P35.15a__technology-typing-slug-and-facets.md live_verification=true` |
+| P35.15a | `hosted`: INSERT-only `technology` vocab registration + read-back; backfill = P35.15b | `implement-spec spec=docs/tickets/274_P35.15a__technology-typing-slug-and-facets.md live_verification=true` |
 | P35.15b | `hosted`: INSERT-only `technology` backfill on `sig-pg` (dry → apply → +0); no UPDATE/DELETE | `implement-spec spec=docs/tickets/275_P35.15b__technology-backfill.md live_verification=true` |
 | P36.12 | Wave-B L0→L10 (family days → probe → materialize+delta+resume); `doj_ctas_awards` never | … |
-| P35.1b | fleet-hygiene sweep (`fleet-sweep.sh --apply all`): prestate → cron reconciles + roll + name-checked deletes → `sig-alerts` | `implement-spec spec=docs/tickets/291_P35.1b__fleet-hygiene.md live_verification=true` |
-| P35.1c | dispatcher-consolidation (`--apply all`): prestate → `sig-sched-due` + hourly trigger → 89 `[[retire_triggers]]` retire → proof | `implement-spec spec=docs/tickets/291a_P35.1c__dispatcher-consolidation.md live_verification=true` |
+| P35.1b | fleet-hygiene sweep (`fleet-sweep.sh --apply all`): prestate → reconciles + roll + deletes → `sig-alerts` | `implement-spec spec=docs/tickets/291_P35.1b__fleet-hygiene.md live_verification=true` |
+| P35.1c | dispatcher-consolidation (`--apply all`): prestate → `sig-sched-due` + trigger → 89 `[[retire_triggers]]` retire → proof | `implement-spec spec=docs/tickets/291a_P35.1c__dispatcher-consolidation.md live_verification=true` |
 | P35.16 | `hosted` correction-write: `geometry-corrections --apply` — append-only INSERTs, 7 F-322 groups | `implement-spec spec=docs/tickets/296_P35.16__geometry-defects-at-ingest.md live_verification=true` |
-| P35.17 | `hosted` boundary-source capture: OCFL tiger+natural_earth (append-only) → `live` pack + registry | `implement-spec spec=docs/tickets/297_P35.17__jurisdiction-registry-and-boundary-pack.md live_verification=true` |
+| P35.17 | `hosted` boundary-source capture: OCFL tiger+natural_earth → `live` pack + registry | `implement-spec spec=docs/tickets/297_P35.17__jurisdiction-registry-and-boundary-pack.md live_verification=true` |
 | P35.24 | `hosted`: `sig-db subject-rekey --apply` (append-only; count re-derived) + `/status/` notice (A-20) | `implement-spec spec=docs/tickets/303_P35.24__truthful-subject-keys-and-re-keying.md live_verification=true` |
 | P35.25 | L1 merge · L2 `lineage-rematerialize --apply` + `/status/` notice (A-20) · L3 every-claim `id_namespace` | nothing until re-run; rollback forward-only |
 | P35.26 | L1 merge · L2 EFF+OSM role-aware re-ingest (OSM in-ODbL; pre-state counts) · L3 edge rematerialize — 1970 at zero | `implement-spec spec=docs/tickets/305_P35.26__roles-and-time-backend.md live_verification=true` |
-| P35.41 | connector-image roll: rebuild+redeploy image carrying `records_digest`, upstream marks + capture-mark headers | `implement-spec spec=docs/tickets/320_P35.41__freshness-semantics-v2.md live_verification=true` |
+| P35.41 | connector-image roll: image carrying `records_digest` + upstream/capture-mark headers | `implement-spec spec=docs/tickets/320_P35.41__freshness-semantics-v2.md live_verification=true` |
 | P35.53 | D-P35.53-1 | `SIG_RELEASE_AUTHOR=$(git config user.name) bash ops/gcp/release-infra.sh --apply all` or `implement-spec spec=docs/tickets/331_P35.53__release-pipeline-and-sta… |
 | P35.59 | dark cutover (`web-cutover.sh --apply all`): prestate → staged/v floor import → `conf/0`+carry → `sig-web` roll → `route-compare` | `SIG_CUTOVER_GO=<authority-name> ops/gcp/web-cutover.sh --apply all` or `implement-spec spec=docs/tickets/336_P35.59__dark-cutover-to-release-layout.md live_ver… |
 | P35.61 | `live` half of P32.22's recovery deferral (audit → pause → apply → +0 → freeze); packet `reports/p35.61-live-pass/` | `implement-spec spec=docs/tickets/338_P35.61__round10-live-pass-audit-apply-freeze.md live_verification=true` (`D-R10-LIVE-1` OPEN) |
-| P35.62 | `release-candidate` over `frozen_unpublished` → +0 → export → stage+IAM → web build + DR-C4-01 crawl; packet `reports/p35.62-production-candidate/` | `implement-spec spec=docs/tickets/339_P35.62__round10-production-candidate.md live_verification=true` |
-| P35.63 | release-exposure leg (home P32.25): staged cut → `class_s` → HG-11 readout → promote; packet `reports/p35.63-first-model-release/` | `implement-spec spec=docs/tickets/341_P35.63__first-model-release-to-production.md live_verification=true` (L2 resume) |
+| P35.62 | `release-candidate` over `frozen_unpublished` → +0 → export → stage+IAM → web build + DR-C4-01 crawl | `implement-spec spec=docs/tickets/339_P35.62__round10-production-candidate.md live_verification=true` |
+| P35.63 | release-exposure legs (home P32.25): staged cut → `class_s` → HG-11 readout → promote | `implement-spec spec=docs/tickets/341_P35.63__first-model-release-to-production.md live_verification=true` (L2 resume) |
 | P35.64 | 11B sweep + G5 packet: read-only crawl + counts + packet refresh; `acceptance-sweep-11b` → `sig.probe-run/1` + tools | `implement-spec spec=docs/tickets/342_P35.64__sub-round-11b-acceptance.md live_verification=true` |
 | P37.2 | Wave-C L1→L5 (pre-grow → tier bump → national run → 24 h soak → revert); packet `reports/p37.2-wave-c/` | … |
 | P35.2 | D-P35.2-1 | `implement-spec spec=docs/tickets/346_P35.2__alerting-as-code-and-escalation.md live_verification=true` |
@@ -113,6 +113,7 @@
 | P37.54 | Wave-D L0→L11 (open → family days → S6 extras → materialize+delta+resume); dossier seats + never-sources excluded | … |
 | P37.55 | archival legs (obligation rides P21.5, T5 γ) | `implement-spec spec=docs/tickets/482_P37.55__archival-deposits.md live_verification=true` |
 | P37.56 | queued capture leg | `implement-spec spec=docs/tickets/483_P37.56__wacz-capture-html-sources.md live_verification=true` |
+| P37.59 | D-P37.59-1 | `prepared_not_executed` until env lands — secrets provisioned (stdin `versions add`) + SIG_INTAKE_AUTHOR; `/intake/*` + `[intake].operational` never this leg's … |
 
 ## Known inconsistencies (preserved, never synthesized)
 

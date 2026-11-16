@@ -27,6 +27,18 @@ session first). The exact same statements live in ``db/deploy/audit_login.sql``
 so the sqitch deploy converges any database the leg ran early on (the deploy
 adds the two NEW-16 table grants this leg deliberately omits).
 ``tests/ops/test_db_logins.py`` pins the two surfaces to identical text.
+
+P37.59 (G2-activation step 6 / ACT-23, D-P32.16-1) adds the two intake
+logins the operating packet's §7 names: ``sig_intake_receiver_login``
+(membership in the ``sig_intake_receiver`` NOLOGIN group — the receiver
+service's credential) and ``sig_intake_reviewer_login`` (membership in
+``sig_intake_reviewer`` — the loopback moderation surface's credential).
+Both groups already exist on any spine carrying the ``intake_storage``
+deploy; ``requires_roles`` keeps the apply queued on a spine without them.
+Same credential shape — generated passwords to Secret Manager only, the
+receiver's accessor is ``sig-intake-rt`` while the reviewer's reader is the
+operator's loopback path (``operator``, the symbolic consumer). Provisioning
+stays the operator's act — every leg is ``prepared_not_executed``.
 """
 
 from __future__ import annotations
@@ -157,10 +169,86 @@ SIG_MATERIALIZE_LOGIN = LoginRole(
     rolconfig=(),
 )
 
+SIG_INTAKE_RECEIVER_LOGIN = LoginRole(
+    name="sig_intake_receiver_login",
+    statements=(
+        "CREATE ROLE sig_intake_receiver_login LOGIN NOBYPASSRLS NOSUPERUSER "
+        "NOCREATEDB NOCREATEROLE CONNECTION LIMIT 4",
+        "GRANT sig_intake_receiver TO sig_intake_receiver_login",
+    ),
+    secret_name="sig-intake-receiver-password",
+    consumer_sa="sig-intake-rt",
+    password_env="SIG_INTAKE_RECEIVER_PASSWORD",
+    # The NOLOGIN group ships in the intake_storage sqitch change (P32.16,
+    # deployed with the intake schema): on a spine without it the apply
+    # queues rather than mint a credential that holds nothing.
+    requires_roles=("sig_intake_receiver",),
+    connection_limit=4,
+    memberships=("sig_intake_receiver",),
+    # The receiver's whole read surface is the coarse public projection.
+    select_tables=("intake.report_public",),
+    pending_deploy_tables=(),
+    write_refusal_probes=(
+        # The canonical spine is unreachable — no claim/review/disposition
+        # grant exists for the receiver group (packet §2's isolation matrix).
+        "INSERT INTO ingest_run (run_id) VALUES (gen_random_uuid())",
+        "UPDATE claim SET claim_id = claim_id WHERE false",
+        "DELETE FROM claim WHERE false",
+        # The intake store is append-only at the role boundary too.
+        "DELETE FROM intake.report WHERE false",
+        # The writer guard refuses a non-received event under every role
+        # (under the LOGIN it refuses even 'received' — the app SET ROLEs to
+        # the group first, so the guard reads the group name, not the login).
+        "INSERT INTO intake.event (report_id, seq, kind, actor) "
+        "VALUES (gen_random_uuid(), 0, 'triaged', 'probe')",
+    ),
+    rolconfig=(),
+)
+
+SIG_INTAKE_REVIEWER_LOGIN = LoginRole(
+    name="sig_intake_reviewer_login",
+    statements=(
+        "CREATE ROLE sig_intake_reviewer_login LOGIN NOBYPASSRLS NOSUPERUSER "
+        "NOCREATEDB NOCREATEROLE CONNECTION LIMIT 2",
+        "GRANT sig_intake_reviewer TO sig_intake_reviewer_login",
+    ),
+    secret_name="sig-intake-reviewer-password",
+    # The reviewer credential's readers are the operator's loopback curation
+    # surface + the intake-purge schedule (packet §6/§8) — a human-held
+    # consumer, never a runtime SA accessor (`operator` is the symbolic
+    # member ops/iam_identities.toml records for that class).
+    consumer_sa="operator",
+    password_env="SIG_INTAKE_REVIEWER_PASSWORD",
+    requires_roles=("sig_intake_reviewer",),
+    connection_limit=2,
+    memberships=("sig_intake_reviewer",),
+    # The reviewer's read surface: payloads, the restricted contact table,
+    # receipts and the append-only event log.
+    select_tables=(
+        "intake.report",
+        "intake.reporter_contact",
+        "intake.receipt",
+        "intake.event",
+    ),
+    pending_deploy_tables=(),
+    write_refusal_probes=(
+        "INSERT INTO ingest_run (run_id) VALUES (gen_random_uuid())",
+        "UPDATE claim SET claim_id = claim_id WHERE false",
+        "DELETE FROM claim WHERE false",
+        # The reviewer cannot mint a report — only events and the
+        # security-definer maintenance functions reach it.
+        "INSERT INTO intake.report DEFAULT VALUES",
+        "DELETE FROM intake.event WHERE false",
+    ),
+    rolconfig=(),
+)
+
 ROLES: dict[str, LoginRole] = {
     SIG_AUDIT.name: SIG_AUDIT,
     SIG_RECOVERY_LOGIN.name: SIG_RECOVERY_LOGIN,
     SIG_MATERIALIZE_LOGIN.name: SIG_MATERIALIZE_LOGIN,
+    SIG_INTAKE_RECEIVER_LOGIN.name: SIG_INTAKE_RECEIVER_LOGIN,
+    SIG_INTAKE_REVIEWER_LOGIN.name: SIG_INTAKE_REVIEWER_LOGIN,
 }
 #: The names the leg script/declarations accept on `--role`.
 ROLE_ALIASES: dict[str, str] = {
@@ -169,6 +257,10 @@ ROLE_ALIASES: dict[str, str] = {
     "sig_recovery_login": "sig_recovery_login",
     "sig_materialize_login": "sig_materialize_login",
     "sig_er_rerun": "sig_materialize_login",
+    "sig_intake_receiver": "sig_intake_receiver_login",
+    "sig_intake_receiver_login": "sig_intake_receiver_login",
+    "sig_intake_reviewer": "sig_intake_reviewer_login",
+    "sig_intake_reviewer_login": "sig_intake_reviewer_login",
 }
 
 

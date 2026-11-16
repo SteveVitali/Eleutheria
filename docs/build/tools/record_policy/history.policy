@@ -1418,3 +1418,20 @@ seed-commit b7e827d3
 # finding attributed to 45687972's rewritten LEDGER.md line 1780 only; no
 # other commit borrows the exemption.
 seed-commit 45687972
+
+# P37.59 (row 487) records-repair — `3ad706e9`'s BUILD_INDEX fill of the new
+# row's `ci:` pending note used an unscoped str.replace that also rewrote
+# rows 461–463's identical '**ci: pending head-bound read**' cells (their
+# rows' own records — an authoring error, never a history rewrite). The
+# restore commit rewrites lines 653–655 back to their base bytes verbatim;
+# pre-edit bytes archived
+# `reports/memory-repair/BUILD_INDEX_L653-655_pre-P37.59-ci-note-restore.txt`
+# (sha256 recorded in the restore commit message). Scope: the append-only
+# and record-dates findings attributed to 3ad706e9's rewritten BUILD_INDEX
+# lines only; no other commit borrows the exemption.
+seed-commit 3ad706e9
+# 2a23f95f — the P37.59 restore commit itself: it rewrites BUILD_INDEX lines
+# 653–655 back to their base bytes verbatim (the same in-place repair class
+# as 45687972/458f4af8 — restoring, never rewriting history). Scope: the
+# append-only findings attributed to 2a23f95f's rewritten lines only.
+seed-commit 2a23f95f

@@ -181,7 +181,7 @@ obligations = ["D-P34.5-1", "D-P34.5-2", "D-P34.5-3"]
 obligations_cell = '''D-P34.5-1 D-P34.5-2 D-P34.5-3'''
 gates_cell = '''-1 human check → name-checked delete (`--fired-confirmed`); -2 operator console (OP-12); -3 on -2 + ~a day of rows'''
 operator_cell = '''confirm the $0.01 test budget's alert e-mail (record date + which e-mail in `runs/P34.5.md`); enable Billing → BigQuery export to `sig_billing_export` (OP-12)'''
-rerun_cell = '''-3: `implement-spec spec=docs/tickets/206_P34.5__cost-guard-budget-alert-billing-export.md live_verification=true` once exportcheck ≥1 row; -1: `cost-guard.sh --apply testbudget-delete --fired-confirmed "<confirmation>"`'''
+rerun_cell = '''-3: `implement-spec spec=docs/tickets/206_P34.5__cost-guard-budget-alert-billing-export.md live_verification=true`; -1: `cost-guard.sh --apply testbudget-delete --fired-confirmed "<confirmation>"`''''
 
   [[row.legs]]
   id = "P34.5-testbudget-delete"
@@ -457,9 +457,9 @@ rerun_cell = '''`implement-spec spec=docs/tickets/249_P34.40__serving-topology-d
 key = "P34.42b"
 kind = "leg"
 obligations = []
-obligations_cell = '''jobs IAM leg (F-272 jobs + `roles/editor` removal); `live`-1 stopped at 88/100; `live`-2 on `live:P35.1a1` poststate'''
-gates_cell = '''`hosted` (AR-3+AR-2): excl. 03:00-06:30Z/d, mid-class-run—42; weekday 14:00-20:00Z, operator present; one-leg go ("Full P34.42b leg") voided by `live`-1's 88-vs-100 read; on `live:P35.1a1`'''
-operator_cell = '''D-P34.42b-2 resolved 2026-10-14T19:34Z as "Create 12 paused jobs" — re-run on its own authorization'''
+obligations_cell = '''jobs IAM leg (F-272 jobs + `roles/editor` removal); `live`-1 stopped at 88/100; `live`-2 on `live:P35.1a1`'''
+gates_cell = '''`hosted` (AR-3+AR-2): excl. 03:00-06:30Z/d, mid-class-run—42; weekday 14:00-20:00Z; one-leg go voided by `live`-1's 88-vs-100 read; on `live:P35.1a1`'''
+operator_cell = '''D-P34.42b-2 resolved as "Create 12 paused jobs" — re-run on its own authorization'''
 rerun_cell = '''`implement-spec spec=docs/tickets/252_P34.42b__least-privilege-job-identities-remove-editor.md live_verification=true`'''
 
   [[row.legs]]
@@ -467,7 +467,7 @@ rerun_cell = '''`implement-spec spec=docs/tickets/252_P34.42b__least-privilege-j
   obligations = []
   earliest = '''the next weekday 14:00-20:00Z slot with the operator present (AR-3), after P35.1a1 records the 100-job poststate and the prestate is re-captured'''
   excluded = ["03:00-06:30Z/d"]
-  go = '''operator: D-P34.42b-2 resolved 2026-10-14T19:34Z as "Create 12 paused jobs" — re-run on its own authorization'''
+  go = '''operator: D-P34.42b-2 resolved as "Create 12 paused jobs" — re-run on its own authorization'''
   rerun = '''implement-spec spec=docs/tickets/252_P34.42b__least-privilege-job-identities-remove-editor.md live_verification=true'''
   live_dependants = ["P34.43", "P34.49"]
 
@@ -476,8 +476,8 @@ key = "P34.43"
 kind = "leg"
 obligations = []
 obligations_cell = '''L1 exec-host + `sig_audit` legs + L2 `sig_recovery` login (SIG-CONF-013); halves landed'''
-gates_cell = '''`hosted` (AR-3+AR-2): L1 ≥ 2026-10-13T12:00Z excl. 03:00-06:30Z/d; pre-authorised: S5-3 (11A list; expires GATE-G4); then 11B list or in-ticket go; waits on `live:P34.46`; void: red-probe/restore-fail; AR-2 + `sig-pg` backup'''
-operator_cell = '''nothing until window + gate + ADC — dry-run; `audit_login` deploy is P34.46's; rollback drops prestate-proven resources'''
+gates_cell = '''`hosted` (AR-3+AR-2): L1 ≥ 2026-10-13T12:00Z excl. 03:00-06:30Z/d; pre-authorised: S5-3 (11A list; expires GATE-G4); then 11B list or in-ticket go; waits on `live:P34.46`; void: red-probe/restore-fail; AR-2 + backup'''
+operator_cell = '''nothing until window + gate + ADC — dry-run; `audit_login` deploy is P34.46's; rollback drops prestate resources'''
 rerun_cell = '''`implement-spec spec=docs/tickets/253_P34.43__execution-host-and-least-privilege-db-logins.md live_verification=true`'''
 
   [[row.legs]]
@@ -581,7 +581,7 @@ key = "P34.46"
 kind = "leg"
 obligations = []
 obligations_cell = '''L2 deploy slot (schema roll + ADR-159 + `sig-api` roll + `/status/` + trigger pause/resume) + L3 48 h soak'''
-gates_cell = '''`hosted`, never pre-auth (PAUSE — ACCESS-EXCL): L2 verbatim go, op present, 14-20Z ≥ 2026-10-14T14:00Z (x weekends + outside-14:00-20:00Z), `live:P34.39a` pass, AR-2 SUCCESSFUL; L3 48h after L2'''
+gates_cell = '''`hosted`, never pre-auth (PAUSE — ACCESS-EXCL): L2 verbatim go, op present, 14-20Z ≥ 2026-10-14T14:00Z (x weekends + outside 14:00-20:00Z), `live:P34.39a` pass, AR-2 SUCCESSFUL; L3 48h after L2'''
 operator_cell = '''record verbatim go (silence ≠ consent) + be present; no `hosted` `sqitch revert`'''
 rerun_cell = '''`implement-spec spec=docs/tickets/258_P34.46__round10-schema-allows-and-api-roll.md live_verification=true`'''
 
@@ -589,7 +589,7 @@ rerun_cell = '''`implement-spec spec=docs/tickets/258_P34.46__round10-schema-all
   id = "P34.46-slot"
   obligations = []
   earliest = '''2026-10-14T14:00Z'''
-  excluded = ["weekends + outside-14:00-20:00Z"]
+  excluded = ["weekends + outside 14:00-20:00Z"]
   go = '''verbatim-go: the in-ticket operator go recorded in GATE DECISIONS + `live:P34.39a` verdict `pass` + roll-gate green on fresh inputs'''
   rerun = '''implement-spec spec=docs/tickets/258_P34.46__round10-schema-allows-and-api-roll.md live_verification=true'''
   live_dependants = ["P34.43", "P34.45", "P35.11", "P35.61"]
@@ -624,7 +624,7 @@ key = "P35.57"
 kind = "leg"
 obligations = []
 obligations_cell = '''API-roll leg: mount promoted release's registry on `sig-api`, roll, verify `/v1/health`'''
-gates_cell = '''`hosted`, never pre-auth (PAUSE — public API bytes): G4§2 verbatim go recorded; needs `live:P34.46` L2, registry mount, promoted release, AR-2 SUCCESSFUL, roll-gate green, AR-3 slot (x weekends + outside-14:00-20:00Z)'''
+gates_cell = '''`hosted`, never pre-auth (PAUSE — public API bytes): G4§2 verbatim go recorded; needs `live:P34.46` L2, registry mount, promoted release, AR-2 SUCCESSFUL, roll-gate green, AR-3 slot (x weekends + outside 14:00-20:00Z)'''
 operator_cell = '''G4§2 go on record; roll in-slot + `/v1/health` verify; failed health rolls back'''
 rerun_cell = '''`implement-spec spec=docs/tickets/261_P35.57__api-release-parity.md live_verification=true` (mount+roll+verify)'''
 
@@ -632,7 +632,7 @@ rerun_cell = '''`implement-spec spec=docs/tickets/261_P35.57__api-release-parity
   id = "P35.57-api-roll"
   obligations = []
   earliest = '''bounded by live:P34.46 (its L2 deploy landed — `sig-api` must exist to roll) + the release-registry mount on the service + a promoted release in the bucket; then the next weekday 14:00-20:00Z slot'''
-  excluded = ["weekends + outside-14:00-20:00Z"]
+  excluded = ["weekends + outside 14:00-20:00Z"]
   go = '''verbatim-go: the GATE-G4 §2 go recorded in GATE DECISIONS ("Grant the go now" 2026-10-09T17:32Z) + AR-2 backup SUCCESSFUL + roll-gate green on fresh inputs + the registry mount present'''
   rerun = '''implement-spec spec=docs/tickets/261_P35.57__api-release-parity.md live_verification=true'''
   live_dependants = ["P35.58", "P35.59", "P35.60", "P35.61", "P35.63", "P36.38", "P37.20"]
@@ -640,16 +640,16 @@ rerun_cell = '''`implement-spec spec=docs/tickets/261_P35.57__api-release-parity
 key = "P35.5"
 kind = "leg"
 obligations = []
-obligations_cell = '''R2-mirror leg: bucket + non-listable CDN, content-hash keys, immutable Cache-Control, $0 egress; limits/kill-switch landed'''
-gates_cell = '''`hosted` mirror write; OM-20 conditional — after OP-09 while GATE-G4 OM-20 11B list (P35.5, expires GATE-G5) stands; AR-3+AR-2 14-20Z (x weekends + outside-14:00-20:00Z); R2 creds env-only (HG-09)'''
-operator_cell = '''OP-09 first (DNS_CUTOVER_RUNBOOK.md), then R2 creds (HG-09); kill switch = R2_MIRROR_RUNBOOK.md'''
+obligations_cell = '''R2-mirror leg: bucket + non-listable CDN, content-hash keys, $0 egress; limits/kill-switch landed'''
+gates_cell = '''`hosted` mirror write; OM-20 — after OP-09 while GATE-G4 OM-20 11B list (P35.5, expires GATE-G5) stands; AR-3+AR-2 14-20Z (x weekends + outside 14:00-20:00Z); R2 creds env-only (HG-09)'''
+operator_cell = '''OP-09 first, then R2 creds (HG-09); kill switch = R2_MIRROR_RUNBOOK.md'''
 rerun_cell = '''`implement-spec spec=docs/tickets/262_P35.5__zero-egress-distribution-host.md live_verification=true` (R2 push + origin-enable)'''
 
   [[row.legs]]
   id = "P35.5-r2-mirror"
   obligations = []
   earliest = '''bounded by the operator's OP-09 nameserver switch — dig must answer the Cloudflare pair — then the next weekday 14:00-20:00Z slot'''
-  excluded = ["weekends + outside-14:00-20:00Z"]
+  excluded = ["weekends + outside 14:00-20:00Z"]
   go = '''pre-authorised: GATE-G4 OM-20 11B list (P35.5, expires GATE-G5)'''
   rerun = '''implement-spec spec=docs/tickets/262_P35.5__zero-egress-distribution-host.md live_verification=true'''
   live_dependants = ["P35.67"]
@@ -684,7 +684,7 @@ key = "P35.1a"
 kind = "leg"
 obligations = []
 obligations_cell = '''write leg: reconcile Scheduler from cadence.toml (inert triggers + declared bundle) + `live`-diff; `live-1` stopped OM-18; P34.42b first'''
-gates_cell = '''`hosted` write; OM-20 — GATE-G4 11B list (expires GATE-G5); monthly-export PAUSED until D-P34.6-2's verbatim go; AR-3+AR-2 14:00-20:00Z (x weekends + outside-14:00-20:00Z), operator present; on `live:P34.42b`'''
+gates_cell = '''`hosted` write; OM-20 — GATE-G4 11B list (expires GATE-G5); monthly-export PAUSED until D-P34.6-2's verbatim go; AR-3+AR-2 14:00-20:00Z (x weekends + outside 14:00-20:00Z); on `live:P34.42b`'''
 operator_cell = '''nothing until `live:P34.42b`; then `P35.1a-live-2` `--apply --paused`; rollback = prestate'''
 rerun_cell = '''`implement-spec spec=docs/tickets/264_P35.1a__scheduler-of-record-live-diff-cron-lint.md live_verification=true`'''
 
@@ -692,7 +692,7 @@ rerun_cell = '''`implement-spec spec=docs/tickets/264_P35.1a__scheduler-of-recor
   id = "P35.1a-live-scheduled-ops"
   obligations = []
   earliest = '''the next weekday 14:00-20:00Z slot with the operator present (AR-3), after P34.42b's jobs-IAM leg lands and the AR-2 prestate is re-captured'''
-  excluded = ["weekends + outside-14:00-20:00Z"]
+  excluded = ["weekends + outside 14:00-20:00Z"]
   go = '''verbatim-go: the operator's "Use --paused" selection (2026-10-14) — `scheduled-ops.sh --apply --paused`; expires GATE-G5; the monthly-export trigger deploys PAUSED and stays inert until D-P34.6-2's own verbatim go'''
   rerun = '''implement-spec spec=docs/tickets/264_P35.1a__scheduler-of-record-live-diff-cron-lint.md live_verification=true'''
   live_dependants = ["P35.1b"]
@@ -701,7 +701,7 @@ key = "P35.1a1"
 kind = "leg"
 obligations = []
 obligations_cell = '''declared-job seed leg (row 287a): 12 declared-absent jobs on default-compute + `sig-scheduler` run.invoker + paused triggers'''
-gates_cell = '''`hosted` GATE DECISIONS row 321 verbatim "Create 12 paused jobs" (voided by failed AR-2/red probe); 14-20Z (x weekends + outside-14:00-20:00Z)'''
+gates_cell = '''`hosted` GATE DECISIONS row 321 verbatim "Create 12 paused jobs" (voided by failed AR-2/red probe); 14-20Z (x weekends + outside 14:00-20:00Z)'''
 operator_cell = '''nothing until window + ADC + standing go; rollback replays `created.txt`'''
 rerun_cell = '''`implement-spec spec=docs/tickets/287a_P35.1a1__seed-declared-jobs-paused.md live_verification=true`'''
 
@@ -709,7 +709,7 @@ rerun_cell = '''`implement-spec spec=docs/tickets/287a_P35.1a1__seed-declared-jo
   id = "P35.1a1-seed-declared-jobs-live"
   obligations = []
   earliest = '''the next weekday 14:00-20:00Z slot (AR-3), operator ADC armed + PR #296 head-bound CI green'''
-  excluded = ["weekends + outside-14:00-20:00Z"]
+  excluded = ["weekends + outside 14:00-20:00Z"]
   go = '''verbatim-go: GATE DECISIONS row 321 (2026-10-14T19:34Z) "Create 12 paused jobs" — scoped to the twelve job creates + invoker bindings + paused trigger creates; voided by a failed AR-2 capture, a red probe, or a contradicting production read'''
   rerun = '''implement-spec spec=docs/tickets/287a_P35.1a1__seed-declared-jobs-paused.md live_verification=true'''
   live_dependants = ["P34.42b"]
@@ -718,7 +718,7 @@ key = "P35.11"
 kind = "leg"
 obligations = []
 obligations_cell = '''Wave-A: L1 roll+seed+3-source ingest; L2 `+0` reruns; L3 resume+reconcile; S8 stays ingestion=false pending OP-26'''
-gates_cell = '''`hosted`, never pre-auth (GATE-G4 never-list): 14-20Z (x weekends + outside-14:00-20:00Z, outside 2026-10-19→23) — verbatim ING-GO-A + `wave-a-gate` exit 0, AR-2+prestate, serial, ordered-prefix'''
+gates_cell = '''`hosted`, never pre-auth (GATE-G4 never-list): 14-20Z (x weekends + outside 14:00-20:00Z, outside 2026-10-19→23) — verbatim ING-GO-A + `wave-a-gate` exit 0, AR-2+prestate, serial, ordered-prefix'''
 operator_cell = '''ING-GO-A verbatim + OP-26 flips, AR-2+prestate, `wave-a.sh --apply --leg <L1|L2|L3> --inputs <json>` (no-go→42)'''
 rerun_cell = '''`implement-spec spec=docs/tickets/271_P35.11__wave-a-activation.md live_verification=true`'''
 
@@ -726,7 +726,7 @@ rerun_cell = '''`implement-spec spec=docs/tickets/271_P35.11__wave-a-activation.
   id = "P35.11-l1-roll-seed-manual-runs"
   obligations = []
   earliest = '''2026-10-19 — Wave-A window opens; first admissible slot: a window weekday in-band with ING-GO-A + AR-2 SUCCESSFUL + OM-14 prestate + Legistar-trigger mitigation satisfied'''
-  excluded = ["weekends + outside-14:00-20:00Z", "outside 2026-10-19→23"]
+  excluded = ["weekends + outside 14:00-20:00Z", "outside 2026-10-19→23"]
   go = '''verbatim-go: ING-GO-A re-collected verbatim at wave open (the GATE-G4 §3 "Window + flips at open" 2026-10-09T17:32Z recording is the standing wording) + `sig-ops wave-a-gate --inputs <json>` go (exit 0) on fresh inputs'''
   rerun = '''implement-spec spec=docs/tickets/271_P35.11__wave-a-activation.md live_verification=true'''
   live_dependants = ["P36.12"]
@@ -735,7 +735,7 @@ rerun_cell = '''`implement-spec spec=docs/tickets/271_P35.11__wave-a-activation.
   id = "P35.11-l2-plus-zero-reruns"
   obligations = []
   earliest = '''immediately after L1 green in-window — rerun legistar + usa_spending + procportal_nyc_ny unchanged; each run-row read records `claims_added == 0`'''
-  excluded = ["weekends + outside-14:00-20:00Z", "outside 2026-10-19→23"]
+  excluded = ["weekends + outside 14:00-20:00Z", "outside 2026-10-19→23"]
   go = '''none beyond the ordered-prefix gate — L1 recorded green in the same window (the gate refuses unless `completed` is exactly ["L1"]) and ING-GO-A still in force'''
   rerun = '''implement-spec spec=docs/tickets/271_P35.11__wave-a-activation.md live_verification=true'''
   live_dependants = ["P36.12"]
@@ -744,7 +744,7 @@ rerun_cell = '''`implement-spec spec=docs/tickets/271_P35.11__wave-a-activation.
   id = "P35.11-l3-resume-schedules"
   obligations = []
   earliest = '''after L1+L2 green in-window — resume only triggers whose sources ran green (`scheduled-ops.sh --paused` incl. post-window tribal cadence + `sig-sched-legistar`)'''
-  excluded = ["weekends + outside-14:00-20:00Z", "outside 2026-10-19→23"]
+  excluded = ["weekends + outside 14:00-20:00Z", "outside 2026-10-19→23"]
   go = '''none beyond the ordered-prefix gate — L1 + L2 recorded green in the same window (the gate refuses unless `completed` is exactly ["L1", "L2"]) and ING-GO-A still in force'''
   rerun = '''implement-spec spec=docs/tickets/271_P35.11__wave-a-activation.md live_verification=true'''
   live_dependants = ["P36.12"]
@@ -753,7 +753,7 @@ key = "P35.14a"
 kind = "leg"
 obligations = []
 obligations_cell = '''`hosted`: `sqitch deploy closed_vocabulary` (INSERT-only — 280 predicates + 5,600 directness + CHECK) + verify + read-back'''
-gates_cell = '''`hosted` OM-20 pre-auth: GATE-G4 approve-all-19 (this row — INSERT-only vocabulary registration; expires next GATE, OM-10); AR-3 14-20Z post-freeze, op present, AR-2 prestate (x weekends + outside-14:00-20:00Z, before 2026-10-13T12:00Z AR-3 freeze)'''
+gates_cell = '''`hosted` OM-20 pre-auth: GATE-G4 approve-all-19 (this row — INSERT-only vocabulary registration; expires next GATE); AR-3 14-20Z post-freeze, op present, AR-2 prestate (x weekends + outside 14:00-20:00Z, before 2026-10-13T12:00Z AR-3 freeze)'''
 operator_cell = '''AR-2 prestate, `sqitch deploy closed_vocabulary` + read-back; rollback `sqitch revert`'''
 rerun_cell = '''`implement-spec spec=docs/tickets/272_P35.14a__vocabulary-conformance-closed-vocabulary.md live_verification=true`'''
 
@@ -761,8 +761,8 @@ rerun_cell = '''`implement-spec spec=docs/tickets/272_P35.14a__vocabulary-confor
   id = "P35.14a-live-vocab-seed"
   obligations = []
   earliest = '''2026-10-13 — first weekday 14:00-20:00Z slot at/after the freeze end (12:00Z), operator present, AR-2 prestate first'''
-  excluded = ["weekends + outside-14:00-20:00Z", "before 2026-10-13T12:00Z AR-3 freeze"]
-  go = '''pre-authorised: GATE-G4 approve-all-19 (this row — INSERT-only vocabulary registration; expires next GATE, OM-10)'''
+  excluded = ["weekends + outside 14:00-20:00Z", "before 2026-10-13T12:00Z AR-3 freeze"]
+  go = '''pre-authorised: GATE-G4 approve-all-19 (this row — INSERT-only vocabulary registration; expires next GATE)'''
   rerun = '''implement-spec spec=docs/tickets/272_P35.14a__vocabulary-conformance-closed-vocabulary.md live_verification=true'''
   live_dependants = ["P35.14b"]
 [[row]]
@@ -770,7 +770,7 @@ key = "P35.14b"
 kind = "leg"
 obligations = []
 obligations_cell = '''`hosted` `sqitch deploy entity_typing_mobility_check` (ACCESS EXCLUSIVE) + INSERT (+0) + read-back'''
-gates_cell = '''`hosted` never pre-auth (§3.3 ACCESS EXCLUSIVE): verbatim in-ticket go only; AR-2 SUCCESSFUL (x weekends + outside-14:00-20:00Z, 03:00-06:30Z/d, before 2026-10-13T12:00Z AR-3 freeze); `live` AC human-done'''
+gates_cell = '''`hosted` never pre-auth (§3.3): verbatim in-ticket go only; AR-2 SUCCESSFUL (x weekends + outside 14:00-20:00Z, 03:00-06:30Z/d, before 2026-10-13T12:00Z AR-3 freeze); `live` AC human-done'''
 operator_cell = '''verbatim go + `date -u`; AR-2 `SUCCESSFUL` + pre-state; `sqitch deploy --verify` + `lock_timeout`; dry → apply → read-back'''
 rerun_cell = '''`implement-spec spec=docs/tickets/273_P35.14b__entity-typing-and-hosted-check-constraint.md live_verification=true`'''
 
@@ -778,7 +778,7 @@ rerun_cell = '''`implement-spec spec=docs/tickets/273_P35.14b__entity-typing-and
   id = "P35.14b-live-typing-check"
   obligations = []
   earliest = '''2026-10-13 — first weekday 14:00-20:00Z slot at/after the freeze end (12:00Z), after operator's explicit verbatim in-ticket go, operator present, AR-2 restore point verified first'''
-  excluded = ["weekends + outside-14:00-20:00Z", "03:00-06:30Z/d", "before 2026-10-13T12:00Z AR-3 freeze"]
+  excluded = ["weekends + outside 14:00-20:00Z", "03:00-06:30Z/d", "before 2026-10-13T12:00Z AR-3 freeze"]
   go = '''verbatim-go: never pre-authorised (OM-20 / §3.3 named class) — only operator's explicit verbatim in-ticket go collected at execution time; no GATE-G4 list entry can authorise; silence is never consent'''
   rerun = '''implement-spec spec=docs/tickets/273_P35.14b__entity-typing-and-hosted-check-constraint.md live_verification=true'''
   live_dependants = []
@@ -786,17 +786,17 @@ rerun_cell = '''`implement-spec spec=docs/tickets/273_P35.14b__entity-typing-and
 key = "P35.15a"
 kind = "leg"
 obligations = []
-obligations_cell = '''`hosted`: INSERT-only `technology` vocab registration (`closed_vocabulary`) + read-back; backfill = P35.15b'''
-gates_cell = '''`hosted` pre-auth GATE-G4 approve-all-19 (this row — INSERT-only vocabulary registration; expires next GATE, OM-10); AR-2 prestate (x weekends + outside-14:00-20:00Z, 03:00-06:30Z/d, before 2026-10-13T12:00Z AR-3 freeze)'''
-operator_cell = '''AR-2 prestate; INSERT missing `vocab_predicate` rows + read-back; rollback = seed revert'''
+obligations_cell = '''`hosted`: INSERT-only `technology` vocab registration + read-back; backfill = P35.15b'''
+gates_cell = '''`hosted` pre-auth GATE-G4 approve-all-19 (this row — INSERT-only vocabulary registration; expires next GATE); AR-2 prestate (x weekends + outside 14:00-20:00Z, 03:00-06:30Z/d, before 2026-10-13T12:00Z AR-3 freeze)'''
+operator_cell = '''AR-2 prestate; INSERT missing `vocab_predicate` rows + read-back; rollback = revert'''
 rerun_cell = '''`implement-spec spec=docs/tickets/274_P35.15a__technology-typing-slug-and-facets.md live_verification=true`'''
 
   [[row.legs]]
   id = "P35.15a-live-technology-vocab"
   obligations = []
   earliest = '''2026-10-13 — first weekday 14:00-20:00Z slot at/after the freeze end (12:00Z), operator present, AR-2 prestate first, after the P35.14a `closed_vocabulary` deploy'''
-  excluded = ["weekends + outside-14:00-20:00Z", "03:00-06:30Z/d", "before 2026-10-13T12:00Z AR-3 freeze"]
-  go = '''pre-authorised: GATE-G4 approve-all-19 (this row — INSERT-only vocabulary registration; expires next GATE, OM-10)'''
+  excluded = ["weekends + outside 14:00-20:00Z", "03:00-06:30Z/d", "before 2026-10-13T12:00Z AR-3 freeze"]
+  go = '''pre-authorised: GATE-G4 approve-all-19 (this row — INSERT-only vocabulary registration; expires next GATE)'''
   rerun = '''implement-spec spec=docs/tickets/274_P35.15a__technology-typing-slug-and-facets.md live_verification=true'''
   live_dependants = ["P35.15b"]
 [[row]]
@@ -804,7 +804,7 @@ key = "P35.15b"
 kind = "leg"
 obligations = []
 obligations_cell = '''`hosted`: INSERT-only `technology` backfill on `sig-pg` (dry → apply → +0); no UPDATE/DELETE'''
-gates_cell = '''`hosted` pre-auth GATE-G4 approve-all-19 (INSERT-only claim backfill; expires GATE-G5); AR-2 SUCCESSFUL + pre-state (x weekends + outside-14:00-20:00Z, 03:00-06:30Z/d, before 2026-10-13T12:00Z AR-3 freeze, before `live:P35.15a`)'''
+gates_cell = '''`hosted` pre-auth GATE-G4 approve-all-19 (INSERT-only claim backfill; expires GATE-G5); AR-2 SUCCESSFUL + pre-state (x weekends + outside 14:00-20:00Z, 03:00-06:30Z/d, before 2026-10-13T12:00Z AR-3 freeze, before `live:P35.15a`)'''
 operator_cell = '''AR-2 + pre-state → dry → apply → read-back → +0; `n_tup_upd`/`n_tup_del` stay 0'''
 rerun_cell = '''`implement-spec spec=docs/tickets/275_P35.15b__technology-backfill.md live_verification=true`'''
 
@@ -812,7 +812,7 @@ rerun_cell = '''`implement-spec spec=docs/tickets/275_P35.15b__technology-backfi
   id = "P35.15b-live-technology-backfill"
   obligations = []
   earliest = '''2026-10-13 — first weekday 14:00-20:00Z slot at/after the freeze end (12:00Z), operator present, AR-2 restore point first, after `live:` P35.15a's hosted `technology` registrations are landed'''
-  excluded = ["weekends + outside-14:00-20:00Z", "03:00-06:30Z/d", "before 2026-10-13T12:00Z AR-3 freeze", "before `live:P35.15a`"]
+  excluded = ["weekends + outside 14:00-20:00Z", "03:00-06:30Z/d", "before 2026-10-13T12:00Z AR-3 freeze", "before `live:P35.15a`"]
   go = '''pre-authorised: GATE-G4 approve-all-19 (INSERT-only claim backfill; expires GATE-G5)'''
   rerun = '''implement-spec spec=docs/tickets/275_P35.15b__technology-backfill.md live_verification=true'''
   live_dependants = []
@@ -837,7 +837,7 @@ rerun_cell = '''`implement-spec spec=docs/tickets/290_P36.12__wave-b-activation.
   [[row.legs]]
   id = "P36.12-l1-acq08-layers-family-day"
   obligations = []
-  earliest = '''after L0 green inside the same window — the ACQ-08 (P36.4) family day: the eight `r11-layers-01` gated members + the Denver HALO / Seattle CCTV widen executions on their existing seats, serial, verified between'''
+  earliest = '''after L0 in-window — ACQ-08 family day: the eight `r11-layers-01` members + Denver HALO / Seattle CCTV widens, serial'''
   excluded = ["outside-14:00-20:00Z", "outside 2026-10-26→11-05", "AR-3 freeze/cut", "materialize/G2 slot"]
   go = '''verbatim-go: the ordered-prefix gate — L0 recorded green, the family's OP-26 flips recorded executed (`flips.L1`), ING-GO-B in force + `sig-ops wave-b-gate` admit go (exit 0)'''
   rerun = '''implement-spec spec=docs/tickets/290_P36.12__wave-b-activation.md live_verification=true'''
@@ -846,7 +846,7 @@ rerun_cell = '''`implement-spec spec=docs/tickets/290_P36.12__wave-b-activation.
   [[row.legs]]
   id = "P36.12-l2-acq09-flock-layers-family-day"
   obligations = []
-  earliest = '''next window day after L1 — ACQ-09 (P36.5) family day: the 15 `r11-layers-02` gated members (FDOT inventory + removal-status same-run), serial, verified'''
+  earliest = '''window day after L1 — ACQ-09 family day: the 15 `r11-layers-02` members (FDOT inventory + removal-status same-run), serial'''
   excluded = ["outside-14:00-20:00Z", "outside 2026-10-26→11-05", "AR-3 freeze/cut", "materialize/G2 slot"]
   go = '''verbatim-go: the ordered-prefix gate — L0–L1 green or held-reported, `flips.L2` recorded executed, ING-GO-B in force + `sig-ops wave-b-gate` admit go (exit 0)'''
   rerun = '''implement-spec spec=docs/tickets/290_P36.12__wave-b-activation.md live_verification=true'''
@@ -855,7 +855,7 @@ rerun_cell = '''`implement-spec spec=docs/tickets/290_P36.12__wave-b-activation.
   [[row.legs]]
   id = "P36.12-l3-acq10-ate-family-day"
   obligations = []
-  earliest = '''next window day after L2 — ACQ-10 (P36.6) family day: the 9 `r11-ate-01` members + 2 Chicago aggregate widen executions on `camreg_chicago_il`'s seat; `enforcement_count` registered+verified in hosted `vocab_*` first'''
+  earliest = '''window day after L2 — ACQ-10 family day: the 9 `r11-ate-01` members + 2 Chicago aggregate widens; `enforcement_count` registered in `vocab_*` first'''
   excluded = ["outside-14:00-20:00Z", "outside 2026-10-26→11-05", "AR-3 freeze/cut", "materialize/G2 slot"]
   go = '''verbatim-go: the ordered-prefix gate — L0–L2 green or held-reported, `flips.L3` recorded executed, the hosted `vocab_enforcement_count` registration recorded (the L3 vocab gate), ING-GO-B in force + `sig-ops wave-b-gate` admit go (exit 0)'''
   rerun = '''implement-spec spec=docs/tickets/290_P36.12__wave-b-activation.md live_verification=true'''
@@ -864,7 +864,7 @@ rerun_cell = '''`implement-spec spec=docs/tickets/290_P36.12__wave-b-activation.
   [[row.legs]]
   id = "P36.12-l4-acq11-procurement-family-day"
   obligations = []
-  earliest = '''next window day after L3 — ACQ-11 (P36.7) family day: the 3 `r11-procurement-01` registers; may share a day with ACQ-15 only; on 2026-10-29 peel-on first fire recorded cleared first'''
+  earliest = '''window day after L3 — ACQ-11 family day: the 3 `r11-procurement-01` registers; may share a day with ACQ-15 only; 2026-10-29 peel-on first fire cleared first'''
   excluded = ["outside-14:00-20:00Z", "outside 2026-10-26→11-05", "AR-3 freeze/cut", "materialize/G2 slot", "2026-10-29 peel-on first fire uncleared"]
   go = '''verbatim-go: the ordered-prefix gate — L0–L3 green or held-reported, `flips.L4` recorded executed, ING-GO-B in force + `sig-ops wave-b-gate` admit go (exit 0)'''
   rerun = '''implement-spec spec=docs/tickets/290_P36.12__wave-b-activation.md live_verification=true'''
@@ -873,7 +873,7 @@ rerun_cell = '''`implement-spec spec=docs/tickets/290_P36.12__wave-b-activation.
   [[row.legs]]
   id = "P36.12-l5-acq12-disclosures-01-family-day"
   obligations = []
-  earliest = '''next window day after L4 — ACQ-12 (P36.8) family day: the 10 `r11-disclosures-01` `statrep_*` ALPR-regime members, serial, verified'''
+  earliest = '''window day after L4 — ACQ-12 family day: the 10 `r11-disclosures-01` `statrep_*` members, serial'''
   excluded = ["outside-14:00-20:00Z", "outside 2026-10-26→11-05", "AR-3 freeze/cut", "materialize/G2 slot"]
   go = '''verbatim-go: the ordered-prefix gate — L0–L4 green or held-reported, `flips.L5` recorded executed, ING-GO-B in force + `sig-ops wave-b-gate` admit go (exit 0)'''
   rerun = '''implement-spec spec=docs/tickets/290_P36.12__wave-b-activation.md live_verification=true'''
@@ -882,7 +882,7 @@ rerun_cell = '''`implement-spec spec=docs/tickets/290_P36.12__wave-b-activation.
   [[row.legs]]
   id = "P36.12-l6-acq13-disclosures-02-family-day"
   obligations = []
-  earliest = '''next window day after L5 — ACQ-13a+13b (P36.9a+9b) family day: the 16 `r11-disclosures-02` members, serial, verified'''
+  earliest = '''window day after L5 — ACQ-13 family day: the 16 `r11-disclosures-02` members, serial'''
   excluded = ["outside-14:00-20:00Z", "outside 2026-10-26→11-05", "AR-3 freeze/cut", "materialize/G2 slot"]
   go = '''verbatim-go: the ordered-prefix gate — L0–L5 green or held-reported, `flips.L6` recorded executed, ING-GO-B in force + `sig-ops wave-b-gate` admit go (exit 0)'''
   rerun = '''implement-spec spec=docs/tickets/290_P36.12__wave-b-activation.md live_verification=true'''
@@ -891,7 +891,7 @@ rerun_cell = '''`implement-spec spec=docs/tickets/290_P36.12__wave-b-activation.
   [[row.legs]]
   id = "P36.12-l7-acq14-documents-family-day"
   obligations = []
-  earliest = '''next window day after L6 — ACQ-14 (P36.10) family day: the 16 gated `r11-documents-01` members + the 6 registered `ccops_*` rows (flips on this leg's list, single-source on the documents job)'''
+  earliest = '''window day after L6 — ACQ-14 family day: the 16 `r11-documents-01` members + the 6 `ccops_*` rows (single-source on the documents job)'''
   excluded = ["outside-14:00-20:00Z", "outside 2026-10-26→11-05", "AR-3 freeze/cut", "materialize/G2 slot"]
   go = '''verbatim-go: the ordered-prefix gate — L0–L6 green or held-reported, `flips.L7` recorded executed (gated + the six hosted rows), ING-GO-B in force + `sig-ops wave-b-gate` admit go (exit 0)'''
   rerun = '''implement-spec spec=docs/tickets/290_P36.12__wave-b-activation.md live_verification=true'''
@@ -900,7 +900,7 @@ rerun_cell = '''`implement-spec spec=docs/tickets/290_P36.12__wave-b-activation.
   [[row.legs]]
   id = "P36.12-l8-acq15-documents-family-day"
   obligations = []
-  earliest = '''next window day after L7 — ACQ-15 (P36.11) family day: the 12 `r11-documents-01` members + 2 OpenStates bill widen executions on `sig-ingest-openstates`; may share a day with ACQ-11 only'''
+  earliest = '''window day after L7 — ACQ-15 family day: the 12 `r11-documents-01` members + 2 OpenStates bill widens; may share a day with ACQ-11 only'''
   excluded = ["outside-14:00-20:00Z", "outside 2026-10-26→11-05", "AR-3 freeze/cut", "materialize/G2 slot"]
   go = '''verbatim-go: the ordered-prefix gate — L0–L7 green or held-reported, `flips.L8` recorded executed, ING-GO-B in force + `sig-ops wave-b-gate` admit go (exit 0)'''
   rerun = '''implement-spec spec=docs/tickets/290_P36.12__wave-b-activation.md live_verification=true'''
@@ -909,7 +909,7 @@ rerun_cell = '''`implement-spec spec=docs/tickets/290_P36.12__wave-b-activation.
   [[row.legs]]
   id = "P36.12-l9-flock-portal-probe"
   obligations = []
-  earliest = '''after L1–L8 green or held-reported inside the window — the P36.74 probe leg (WV-10/ADR-188): one polite request per committed portal (917), stop-and-record on any challenge; every outcome lands in the `sig.probe-run/1` record'''
+  earliest = '''after L1–L8 green or held-reported in-window — the P36.74 probe leg (WV-10/ADR-188): one polite request per committed portal, stop-and-record on any challenge; outcomes land in `sig.probe-run/1`'''
   excluded = ["outside-14:00-20:00Z", "outside 2026-10-26→11-05", "AR-3 freeze/cut", "materialize/G2 slot"]
   go = '''verbatim-go: the ordered-prefix gate — L0–L8 green or held-reported, `flips.L9` recorded executed (`flock_transparency_portals`' single flag), ING-GO-B in force + `sig-ops wave-b-gate` admit go (exit 0)'''
   rerun = '''implement-spec spec=docs/tickets/290_P36.12__wave-b-activation.md live_verification=true'''
@@ -918,7 +918,7 @@ rerun_cell = '''`implement-spec spec=docs/tickets/290_P36.12__wave-b-activation.
   [[row.legs]]
   id = "P36.12-l10-close-materialize-resume"
   obligations = []
-  earliest = '''after L9 inside the window — `sig-materialize` manually (outside ingest runs) → the coverage-delta read against the pre-wave snapshot → resume the seven paused `sig-sched-r11-*` triggers; each batch's next fire computed + recorded at resume (the four dom-16…19 fires land 11-16…19 inside Wave C's pause and carry FEA-15 dispositions)'''
+  earliest = '''after L9 in-window — `sig-materialize` manually → coverage-delta read vs the pre-wave snapshot → resume the seven paused `sig-sched-r11-*` triggers (each batch's next fire computed + recorded; the dom-16…19 fires land 11-16…19 inside Wave C's pause, FEA-15 dispositions)'''
   excluded = ["outside-14:00-20:00Z", "outside 2026-10-26→11-05", "AR-3 freeze/cut", "materialize/G2 slot"]
   go = '''verbatim-go: the ordered-prefix gate — L0–L9 green or held-reported, ING-GO-B in force + `sig-ops wave-b-gate` admit go (exit 0)'''
   rerun = '''implement-spec spec=docs/tickets/290_P36.12__wave-b-activation.md live_verification=true'''
@@ -927,34 +927,34 @@ rerun_cell = '''`implement-spec spec=docs/tickets/290_P36.12__wave-b-activation.
 key = "P35.1b"
 kind = "leg"
 obligations = []
-obligations_cell = '''fleet-hygiene sweep (`fleet-sweep.sh --apply all`): prestate → cron reconciles + roll + name-checked deletes → `sig-alerts`'''
-gates_cell = '''`hosted` OM-20 — GATE-G4 11B list (P35.1b; 2026-10-09T17:32Z; expires next GATE, OM-10); AR-3+AR-2 14-20Z (x weekends + outside-14:00-20:00Z); `SIG_SWEEP_AUTHOR` + AR-2 + prestate; after `--check` + #302'''
-operator_cell = '''nothing until window + ADC + `SIG_SWEEP_AUTHOR`; rollback replays prestate + per-job recipes; consolidation = P35.1c'''
+obligations_cell = '''fleet-hygiene sweep (`fleet-sweep.sh --apply all`): prestate → reconciles + roll + deletes → `sig-alerts`'''
+gates_cell = '''`hosted` OM-20 — GATE-G4 11B list (P35.1b; expires next GATE); AR-3+AR-2 14-20Z (x weekends + outside 14:00-20:00Z); `SIG_SWEEP_AUTHOR` + AR-2 + prestate; after `--check` + #302'''
+operator_cell = '''nothing until window + ADC + `SIG_SWEEP_AUTHOR`; rollback replays prestate + recipes; consolidation = P35.1c'''
 rerun_cell = '''`implement-spec spec=docs/tickets/291_P35.1b__fleet-hygiene.md live_verification=true`'''
 
   [[row.legs]]
   id = "P35.1b-fleet-sweep-live"
   obligations = []
   earliest = '''the next weekday 14:00-20:00Z slot (AR-3 + AR-2), operator ADC armed + `SIG_SWEEP_AUTHOR` set + PR #302 head-bound CI green; fresh prestate + backup legs run inside the same invocation before any destructive leg'''
-  excluded = ["weekends + outside-14:00-20:00Z"]
-  go = '''pre-authorised: GATE-G4 11B list (P35.1b; 2026-10-09T17:32Z; expires next GATE, OM-10)'''
+  excluded = ["weekends + outside 14:00-20:00Z"]
+  go = '''pre-authorised: GATE-G4 11B list (P35.1b; expires next GATE)'''
   rerun = '''implement-spec spec=docs/tickets/291_P35.1b__fleet-hygiene.md live_verification=true'''
   live_dependants = []
 [[row]]
 key = "P35.1c"
 kind = "leg"
 obligations = []
-obligations_cell = '''dispatcher-consolidation (`--apply all`): prestate → `sig-sched-due` + hourly trigger → 89 `[[retire_triggers]]` retire → proof'''
-gates_cell = '''`hosted` OM-20 never pre-auth — needs explicit GATE-G4 amendment naming row 291a (§4 names 291); x weekends + outside-14:00-20:00Z; `SIG_CONSOL_AUTHOR` + prestate'''
-operator_cell = '''explicit GATE-G4 amendment naming row 291a (§4 names 291 — predates C13); nothing until amendment + window + ADC; rollback deletes job + prestate'''
+obligations_cell = '''dispatcher-consolidation (`--apply all`): prestate → `sig-sched-due` + trigger → 89 `[[retire_triggers]]` retire → proof'''
+gates_cell = '''`hosted` OM-20 never pre-auth (needs explicit GATE-G4 amendment naming row 291a — §4 names 291); x weekends + outside 14:00-20:00Z; `SIG_CONSOL_AUTHOR` + prestate'''
+operator_cell = '''explicit GATE-G4 amendment naming row 291a; nothing until amendment + window + ADC; rollback deletes job + prestate'''
 rerun_cell = '''`implement-spec spec=docs/tickets/291a_P35.1c__dispatcher-consolidation.md live_verification=true`'''
 
   [[row.legs]]
   id = "P35.1c-dispatcher-consolidation-live"
   obligations = []
   earliest = '''a weekday 14:00-20:00Z slot (AR-3 + AR-2) AFTER the operator's GATE-G4 amendment explicitly names row 291a — operator ADC armed + `SIG_CONSOL_AUTHOR` set + PR #303 head-bound CI green; fresh prestate + verify legs run inside the same invocation before any destructive leg'''
-  excluded = ["weekends + outside-14:00-20:00Z"]
-  go = '''operator: explicit GATE-G4 amendment naming row 291a (§4 names 291 — predates C13)'''
+  excluded = ["weekends + outside 14:00-20:00Z"]
+  go = '''operator: explicit GATE-G4 amendment naming row 291a'''
   rerun = '''implement-spec spec=docs/tickets/291a_P35.1c__dispatcher-consolidation.md live_verification=true'''
   live_dependants = []
 [[row]]
@@ -978,9 +978,9 @@ rerun_cell = '''`implement-spec spec=docs/tickets/296_P35.16__geometry-defects-a
 key = "P35.17"
 kind = "leg"
 obligations = []
-obligations_cell = '''`hosted` boundary-source capture: OCFL tiger+natural_earth (append-only) → `live` pack + registry'''
-gates_cell = '''`hosted` HG-03 flips precondition (OP-26 — both stay `ingestion_permitted=false`); pre-auth GATE-G4 §4 (P35.17 "Approve all 19 (rec.)", 2026-10-09T17:32Z; expires next GATE, OM-10); append-only OCFL only; AR-3+AR-2 outside AR-3 freeze'''
-operator_cell = '''the HG-03 flips of both sources (operator-signed, OP-26), then re-run in-window'''
+obligations_cell = '''`hosted` boundary-source capture: OCFL tiger+natural_earth → `live` pack + registry'''
+gates_cell = '''`hosted` HG-03 flips precondition (OP-26 — both stay `ingestion_permitted=false`); pre-auth GATE-G4 §4 (P35.17 "Approve all 19 (rec.)"; expires next GATE); append-only OCFL only; AR-3+AR-2 outside AR-3 freeze'''
+operator_cell = '''the HG-03 flips of both sources (OP-26), then re-run in-window'''
 rerun_cell = '''`implement-spec spec=docs/tickets/297_P35.17__jurisdiction-registry-and-boundary-pack.md live_verification=true`'''
 
   [[row.legs]]
@@ -988,7 +988,7 @@ rerun_cell = '''`implement-spec spec=docs/tickets/297_P35.17__jurisdiction-regis
   obligations = []
   earliest = '''the OM-19 re-run invocation after the operator's HG-03 flips of both boundary sources land (OP-26) — the capture runs inside the authorised window'''
   excluded = ["AR-3 freeze"]
-  go = '''pre-authorised: GATE-G4 §4 (P35.17 "Approve all 19 (rec.)", 2026-10-09T17:32Z; expires next GATE, OM-10)'''
+  go = '''pre-authorised: GATE-G4 §4 (P35.17 "Approve all 19 (rec.)"; expires next GATE)'''
   rerun = '''implement-spec spec=docs/tickets/297_P35.17__jurisdiction-registry-and-boundary-pack.md live_verification=true'''
   live_dependants = []
 [[row]]
@@ -1047,9 +1047,9 @@ rerun_cell = '''`implement-spec spec=docs/tickets/305_P35.26__roles-and-time-bac
 key = "P35.41"
 kind = "leg"
 obligations = []
-obligations_cell = '''connector-image roll: rebuild+redeploy image carrying `records_digest`, upstream marks + capture-mark headers'''
-gates_cell = '''QUEUED (OM-19 — merge-cascade hold, 2026-10-20T15:53Z digest); OM-20 — GATE-G4 §4 (P35.41; 2026-10-09T17:32Z; expires next sub-round GATE, OM-10); AR-3+AR-2 14:00–20:00Z weekdays, never 03:00–06:30Z; roll + recording idempotent'''
-operator_cell = '''nothing until re-run; roll redeploys already-permitted connectors inside existing permission'''
+obligations_cell = '''connector-image roll: image carrying `records_digest` + upstream/capture-mark headers'''
+gates_cell = '''QUEUED (OM-19 merge-cascade hold); OM-20 — GATE-G4 §4 (P35.41; expires next sub-round GATE); AR-3+AR-2 14:00–20:00Z weekdays, never 03:00–06:30Z; roll idempotent'''
+operator_cell = '''nothing until re-run; redeploys already-permitted connectors'''
 rerun_cell = '''`implement-spec spec=docs/tickets/320_P35.41__freshness-semantics-v2.md live_verification=true`'''
 
   [[row.legs]]
@@ -1057,7 +1057,7 @@ rerun_cell = '''`implement-spec spec=docs/tickets/320_P35.41__freshness-semantic
   obligations = []
   earliest = '''the next AR-3 slot after the run's ~21Z close (preferred 14:00–20:00Z weekdays) with the AR-2 restore point first'''
   excluded = ["03:00–06:30Z"]
-  go = '''pre-authorised: GATE-G4 §4 (P35.41; 2026-10-09T17:32Z; expires next sub-round GATE, OM-10)'''
+  go = '''pre-authorised: GATE-G4 §4 (P35.41; expires next sub-round GATE)'''
   rerun = '''implement-spec spec=docs/tickets/320_P35.41__freshness-semantics-v2.md live_verification=true'''
   live_dependants = []
 
@@ -1084,8 +1084,8 @@ key = "P35.59"
 kind = "leg"
 obligations = []
 obligations_cell = '''dark cutover (`web-cutover.sh --apply all`): prestate → staged/v floor import → `conf/0`+carry → `sig-web` roll → `route-compare`'''
-gates_cell = '''`hosted` (x42 — 14:00–20:00Z weekdays, never 03:00–06:30Z); pre-auth GATE-G4 §4 (P35.59; expires next GATE, OM-10); needs `live:P35.53` + `live:P34.40` L2'''
-operator_cell = '''nothing until window + both prerequisites; rollback = traffic → prior revision (D-G3-7)'''
+gates_cell = '''`hosted` (x42 — 14:00–20:00Z weekdays, never 03:00–06:30Z); pre-auth GATE-G4 §4 (P35.59; expires next GATE); needs `live:P35.53` + `live:P34.40` L2'''
+operator_cell = '''nothing until window + both prerequisites; rollback = traffic → prior revision'''
 rerun_cell = '''`SIG_CUTOVER_GO=<authority-name> ops/gcp/web-cutover.sh --apply all` or `implement-spec spec=docs/tickets/336_P35.59__dark-cutover-to-release-layout.md live_verification=true`'''
 
   [[row.legs]]
@@ -1093,7 +1093,7 @@ rerun_cell = '''`SIG_CUTOVER_GO=<authority-name> ops/gcp/web-cutover.sh --apply 
   obligations = []
   earliest = '''the next AR-3 + AR-2 window (preferred 14:00–20:00Z weekdays, never 03:00–06:30Z) after `live:P35.53` (the release bucket exists) and `live:P34.40`-L2 checked (the `/v1/*` rule live or the still-paused step named at the next GATE — its GB-Q4 go expired at GATE-G4)'''
   excluded = ["03:00–06:30Z"]
-  go = '''pre-authorised: GATE-G4 §4 (P35.59; expires next GATE, OM-10)'''
+  go = '''pre-authorised: GATE-G4 §4 (P35.59; expires next GATE)'''
   rerun = '''implement-spec spec=docs/tickets/336_P35.59__dark-cutover-to-release-layout.md live_verification=true'''
   live_dependants = ["P35.60", "P35.62", "P35.63"]
 
@@ -1102,15 +1102,15 @@ key = "P35.61"
 kind = "leg"
 obligations = []
 obligations_cell = '''`live` half of P32.22's recovery deferral (audit → pause → apply → +0 → freeze); packet `reports/p35.61-live-pass/`'''
-gates_cell = '''`hosted` never pre-auth — L2 stop-and-pause, L3 verbatim go; 14:00–20:00Z weekdays excl. 03:00–06:30Z, weekends, before `live:P34.46` + 48 h soak, before `live:P34.43` L1+L2; ≥ 2026-10-26T14:00Z'''
-operator_cell = '''L2 operator review; L3 operator's verbatim in-ticket go naming the `--authority` scope — never silence'''
+gates_cell = '''`hosted` never pre-auth (L2 stop-and-pause, L3 verbatim go); 14:00–20:00Z weekdays excl. 03:00–06:30Z, weekends, before `live:P34.46`+48h soak, before `live:P34.43`; ≥ 2026-10-26T14:00Z'''
+operator_cell = '''L2 operator review; L3 operator's verbatim in-ticket go naming the `--authority` scope'''
 rerun_cell = '''`implement-spec spec=docs/tickets/338_P35.61__round10-live-pass-audit-apply-freeze.md live_verification=true` (`D-R10-LIVE-1` OPEN)'''
 
   [[row.legs]]
   id = "P35.61-live-pass"
   obligations = []
   earliest = '''the next weekday 14:00–20:00Z slot once `live:P34.46` (+ its 48 h soak) and `live:P34.43` L1+L2 hold — earliest Monday 2026-10-26T14:00Z'''
-  excluded = ["03:00–06:30Z", "weekends", "before `live:P34.46` + 48 h soak", "before `live:P34.43` L1+L2"]
+  excluded = ["03:00–06:30Z", "weekends", "before `live:P34.46`+48h soak", "before `live:P34.43`"]
   go = '''operator: operator's verbatim in-ticket go naming the `--authority` scope'''
   rerun = '''implement-spec spec=docs/tickets/338_P35.61__round10-live-pass-audit-apply-freeze.md live_verification=true'''
   live_dependants = ["P35.62"]
@@ -1118,8 +1118,8 @@ rerun_cell = '''`implement-spec spec=docs/tickets/338_P35.61__round10-live-pass-
 key = "P35.62"
 kind = "leg"
 obligations = []
-obligations_cell = '''`release-candidate` over `frozen_unpublished` → +0 → export → stage+IAM → web build + DR-C4-01 crawl; packet `reports/p35.62-production-candidate/`'''
-gates_cell = '''pre-authorised: GATE-G4 §4 (P35.62; expires next GATE, OM-10); 14:00–20:00Z weekdays excl. 03:00–06:30Z, weekends, before `live:P34.46` + 48 h soak, before `live:P34.43` L1+L2, before `live:P35.61` (snapshot), before `live:P35.53` (staged/ home); ≥ 2026-10-26T14:00Z'''
+obligations_cell = '''`release-candidate` over `frozen_unpublished` → +0 → export → stage+IAM → web build + DR-C4-01 crawl'''
+gates_cell = '''pre-authorised: GATE-G4 §4 (P35.62; expires next GATE); 14:00–20:00Z weekdays excl. 03:00–06:30Z, weekends, before `live:P34.46`+48h soak, before `live:P34.43`, before `live:P35.61`, before `live:P35.53`; ≥ 2026-10-26T14:00Z'''
 operator_cell = '''nothing until re-run — stages candidate; activate/rollback/promote = P35.63 (HG-11)'''
 rerun_cell = '''`implement-spec spec=docs/tickets/339_P35.62__round10-production-candidate.md live_verification=true`'''
 
@@ -1127,24 +1127,24 @@ rerun_cell = '''`implement-spec spec=docs/tickets/339_P35.62__round10-production
   id = "P35.62-staging-candidate"
   obligations = []
   earliest = '''the next weekday 14:00–20:00Z slot once `live:P34.46` (+ its 48 h soak), `live:P34.43` L1+L2, `live:P35.61` (the snapshot input) and `live:P35.53` (the staged/ home + staging origins) all hold — earliest 2026-10-26T14:00Z, later in practice'''
-  excluded = ["03:00–06:30Z", "weekends", "before `live:P34.46` + 48 h soak", "before `live:P34.43` L1+L2", "before `live:P35.61` (snapshot)", "before `live:P35.53` (staged/ home)"]
-  go = '''pre-authorised: GATE-G4 §4 (P35.62; expires next GATE, OM-10)'''
+  excluded = ["03:00–06:30Z", "weekends", "before `live:P34.46`+48h soak", "before `live:P34.43`", "before `live:P35.61`", "before `live:P35.53`"]
+  go = '''pre-authorised: GATE-G4 §4 (P35.62; expires next GATE)'''
   rerun = '''implement-spec spec=docs/tickets/339_P35.62__round10-production-candidate.md live_verification=true'''
   live_dependants = ["P35.63"]
 [[row]]
 key = "P35.63"
 kind = "leg"
 obligations = []
-obligations_cell = '''release-exposure leg (home P32.25): staged cut → `class_s` → HG-11 readout → promote; packet `reports/p35.63-first-model-release/`'''
-gates_cell = '''`hosted`, never pre-auth; L2 = verbatim signed HG-11 readout+go (operator); weekday 14:00–20:00Z excl. 03:00–06:30Z, weekends, before `live:P35.62` (staged candidate), before `live:P35.53` (staged/ home), before `live:P35.59` (dark cutover), before `live:P35.61` (snapshot input), before `live:P34.46` + 48 h soak, before `live:P34.43` L1+L2, before `live:P35.57` (API-roll leg); ≥ 2026-10-26T14:00Z'''
-operator_cell = '''L1 operator's in-slot go for the staged cut; L2 operator's verbatim signed HG-11 candidate-specific readout + go — never silence'''
+obligations_cell = '''release-exposure legs (home P32.25): staged cut → `class_s` → HG-11 readout → promote'''
+gates_cell = '''`hosted`, never pre-auth (L2 = verbatim signed HG-11 readout+go); weekday 14:00–20:00Z excl. 03:00–06:30Z, weekends, before `live:P35.62`, before `live:P35.53`, before `live:P35.59`, before `live:P35.61`, before `live:P34.46`+48h soak, before `live:P34.43`, before `live:P35.57`; ≥ 2026-10-26T14:00Z'''
+operator_cell = '''L1 operator's in-slot go for the staged cut; L2 operator's verbatim signed HG-11 candidate-specific readout + go'''
 rerun_cell = '''`implement-spec spec=docs/tickets/341_P35.63__first-model-release-to-production.md live_verification=true` (L2 resume)'''
 
   [[row.legs]]
   id = "P35.63-dispatch-stage-verify-readout"
   obligations = []
   earliest = '''the next weekday 14:00–20:00Z slot once `live:P35.62` (the staged candidate), `live:P35.53` (the staged/ home), `live:P35.59` (the dark cutover), `live:P35.61` (the snapshot input), `live:P34.46` (+ its 48 h soak), `live:P34.43` L1+L2 and `live:P35.57` (the API-roll leg) all hold — earliest 2026-10-26T14:00Z, later in practice'''
-  excluded = ["03:00–06:30Z", "weekends", "before `live:P35.62` (staged candidate)", "before `live:P35.53` (staged/ home)", "before `live:P35.59` (dark cutover)", "before `live:P35.61` (snapshot input)", "before `live:P34.46` + 48 h soak", "before `live:P34.43` L1+L2", "before `live:P35.57` (API-roll leg)"]
+  excluded = ["03:00–06:30Z", "weekends", "before `live:P35.62`", "before `live:P35.53`", "before `live:P35.59`", "before `live:P35.61`", "before `live:P34.46`+48h soak", "before `live:P34.43`", "before `live:P35.57`"]
   go = '''operator: operator's in-slot go for the staged cut'''
   rerun = '''implement-spec spec=docs/tickets/341_P35.63__first-model-release-to-production.md live_verification=true'''
   live_dependants = ["P35.64"]
@@ -1153,7 +1153,7 @@ rerun_cell = '''`implement-spec spec=docs/tickets/341_P35.63__first-model-releas
   id = "P35.63-promote-under-hg11"
   obligations = []
   earliest = '''only after L1 lands + operator's verbatim signed HG-11 readout exists — then the next weekday 14:00–20:00Z slot with the operator present; earliest 2026-10-26T14:00Z, later in practice'''
-  excluded = ["03:00–06:30Z", "weekends", "before `live:P35.62` (staged candidate)", "before `live:P35.53` (staged/ home)", "before `live:P35.59` (dark cutover)", "before `live:P35.61` (snapshot input)", "before `live:P34.46` + 48 h soak", "before `live:P34.43` L1+L2", "before `live:P35.57` (API-roll leg)"]
+  excluded = ["03:00–06:30Z", "weekends", "before `live:P35.62`", "before `live:P35.53`", "before `live:P35.59`", "before `live:P35.61`", "before `live:P34.46`+48h soak", "before `live:P34.43`", "before `live:P35.57`"]
   go = '''operator: operator's verbatim signed HG-11 candidate-specific readout + go'''
   rerun = '''implement-spec spec=docs/tickets/341_P35.63__first-model-release-to-production.md live_verification=true'''
   live_dependants = ["P35.64"]
@@ -1179,15 +1179,15 @@ key = "P37.2"
 kind = "leg"
 obligations = []
 obligations_cell = '''Wave-C L1→L5 (pre-grow → tier bump → national run → 24 h soak → revert); packet `reports/p37.2-wave-c/`'''
-gates_cell = '''`hosted`, never pre-auth (L2 go = own pause); excl. outside 2026-11-16→20 (strict; earliest unmet), 03:00–06:30Z, AR-3 freeze/cut, materialize/G2/manual run, Wave-B r11 batch crons not held (FEA-15), soak < 24 h from the recorded run end, outside the 48 h grace (through 2026-11-22T00:00Z); verbatim ING-GO-C + `wave-c-gate` per leg'''
-operator_cell = '''ING-GO-C recorded; verbatim in-ticket tier-bump go asked when L2 is due — never the ING-GO-C text; `wave-c.sh --apply --leg L1|…|L5 --inputs <json>` (no-go→42)'''
+gates_cell = '''`hosted`, never pre-auth; excl. outside 2026-11-16→20 (strict), 03:00–06:30Z, AR-3 freeze/cut, materialize/G2/manual run, Wave-B batch crons not held (FEA-15), soak < 24 h, outside the 48h grace (→2026-11-22T00:00Z); verbatim ING-GO-C + `wave-c-gate` per leg'''
+operator_cell = '''ING-GO-C recorded; verbatim in-ticket tier-bump go asked when L2 is due — never the ING-GO-C text; `wave-c.sh --apply --leg L1|…|L5 --inputs <json>`'''
 rerun_cell = '''`implement-spec spec=docs/tickets/345_P37.2__wave-c-osm-national-alpr-layer.md live_verification=true`'''
 
   [[row.legs]]
   id = "P37.2-l1-pregrow-disk"
   obligations = []
   earliest = '''a window day inside 2026-11-16 → 11-20 (strict) outside the never-band with the ING-GO-C recorded, AR-2 `SUCCESSFUL`, the OM-14 pre-state captured'''
-  excluded = ["outside 2026-11-16→20 (strict; earliest unmet)", "03:00–06:30Z", "AR-3 freeze/cut", "materialize/G2/manual run"]
+  excluded = ["outside 2026-11-16→20 (strict)", "03:00–06:30Z", "AR-3 freeze/cut", "materialize/G2/manual run"]
   go = '''verbatim-go: ING-GO-C (byte-exact) + `sig-ops wave-c-gate --inputs <json>` admit go (exit 0)'''
   rerun = '''implement-spec spec=docs/tickets/345_P37.2__wave-c-osm-national-alpr-layer.md live_verification=true'''
   live_dependants = ["P37.65a", "P37.66"]
@@ -1196,7 +1196,7 @@ rerun_cell = '''`implement-spec spec=docs/tickets/345_P37.2__wave-c-osm-national
   id = "P37.2-l2-tier-bump"
   obligations = []
   earliest = '''after L1 green inside the window — only after the in-ticket pause collects the verbatim tier-bump go'''
-  excluded = ["outside 2026-11-16→20 (strict; earliest unmet)", "03:00–06:30Z", "AR-3 freeze/cut", "materialize/G2/manual run"]
+  excluded = ["outside 2026-11-16→20 (strict)", "03:00–06:30Z", "AR-3 freeze/cut", "materialize/G2/manual run"]
   go = '''operator: verbatim in-ticket tier-bump go asked when L2 is due — never the ING-GO-C text'''
   rerun = '''implement-spec spec=docs/tickets/345_P37.2__wave-c-osm-national-alpr-layer.md live_verification=true'''
   live_dependants = ["P37.65a", "P37.66"]
@@ -1205,7 +1205,7 @@ rerun_cell = '''`implement-spec spec=docs/tickets/345_P37.2__wave-c-osm-national
   id = "P37.2-l3-national-run"
   obligations = []
   earliest = '''after L2 green inside the window — pause posture, one pinned digest, `12 8 24 * *` read-back, the manual `sig-ingest-osm-overpass` execute + §7.7 verify + `+0` replay + the ER rematerialize (≥95 % of 132,689, measured net-new, one lineage) + the exact two-target retirement'''
-  excluded = ["outside 2026-11-16→20 (strict; earliest unmet)", "03:00–06:30Z", "AR-3 freeze/cut", "materialize/G2/manual run", "Wave-B r11 batch crons not held (FEA-15)"]
+  excluded = ["outside 2026-11-16→20 (strict)", "03:00–06:30Z", "AR-3 freeze/cut", "materialize/G2/manual run", "Wave-B batch crons not held (FEA-15)"]
   go = '''verbatim-go: ordered prefix — L1–L2 green or held-reported, ING-GO-C in force + `sig-ops wave-c-gate` admit go (exit 0); `run_set == ["osm_overpass"]`'''
   rerun = '''implement-spec spec=docs/tickets/345_P37.2__wave-c-osm-national-alpr-layer.md live_verification=true'''
   live_dependants = ["P37.65a", "P37.66"]
@@ -1214,7 +1214,7 @@ rerun_cell = '''`implement-spec spec=docs/tickets/345_P37.2__wave-c-osm-national
   id = "P37.2-l4-soak-read"
   obligations = []
   earliest = '''≥24 h after the recorded L3 run end — read-only soak; the 48 h grace runs through 2026-11-22T00:00Z'''
-  excluded = ["soak < 24 h from the recorded run end", "outside the 48 h grace (through 2026-11-22T00:00Z)"]
+  excluded = ["soak < 24 h", "outside the 48h grace (→2026-11-22T00:00Z)"]
   go = '''verbatim-go: ordered prefix — L1–L3 green or held-reported, ING-GO-C in force + `sig-ops wave-c-gate` admit go (exit 0); read-only'''
   rerun = '''implement-spec spec=docs/tickets/345_P37.2__wave-c-osm-national-alpr-layer.md live_verification=true'''
   live_dependants = ["P37.65a", "P37.66"]
@@ -1223,7 +1223,7 @@ rerun_cell = '''`implement-spec spec=docs/tickets/345_P37.2__wave-c-osm-national
   id = "P37.2-l5-tier-revert"
   obligations = []
   earliest = '''after L4's soak read inside the window — revert to `db-custom-1-3840`, verify + post-state'''
-  excluded = ["outside 2026-11-16→20 (strict; earliest unmet)", "03:00–06:30Z", "AR-3 freeze/cut", "materialize/G2/manual run"]
+  excluded = ["outside 2026-11-16→20 (strict)", "03:00–06:30Z", "AR-3 freeze/cut", "materialize/G2/manual run"]
   go = '''verbatim-go: ordered prefix — L1–L4 green or held-reported, ING-GO-C in force + `sig-ops wave-c-gate` admit go (exit 0)'''
   rerun = '''implement-spec spec=docs/tickets/345_P37.2__wave-c-osm-national-alpr-layer.md live_verification=true'''
   live_dependants = ["P37.65a", "P37.66"]
@@ -1554,7 +1554,7 @@ key = "P37.3"
 kind = "leg"
 obligations = ["D-P37.3-1"]
 obligations_cell = '''D-P37.3-1'''
-gates_cell = '''pre-authorised: GATE-G6 §4 (expiry at the round-11 acceptance sitting) — 'Approve all 15 (rec.)' 2026-11-05T15:20Z; AR-3+AR-2; excl. inside 03:00-10:00Z daily + while an ingest execution runs (repoint leg); needs SIG_GCP_PROJECT + ADC + SIG_EVSTORE_AUTHOR (+SIG_BACKUP_PROJECT for export-copy)'''
+gates_cell = '''pre-authorised: GATE-G6 §4 (expiry at the round-11 acceptance sitting); AR-3+AR-2; excl. inside 03:00-10:00Z daily + while an ingest execution runs; needs SIG_GCP_PROJECT + ADC + SIG_EVSTORE_AUTHOR (+SIG_BACKUP_PROJECT for export-copy)'''
 operator_cell = "nothing until the leg-runner lands the env — packet committed `prepared_not_executed` (reports/p37.3-evidence-hardening/)"
 rerun_cell = "`implement-spec spec=docs/tickets/421_P37.3__evidence-store-hardening.md live_verification=true`"
 
@@ -1562,7 +1562,7 @@ rerun_cell = "`implement-spec spec=docs/tickets/421_P37.3__evidence-store-harden
   id = "P37.3-evidence-store"
   obligations = ["D-P37.3-1"]
   earliest = "outside 03:00-10:00Z with SIG_GCP_PROJECT + ADC + SIG_EVSTORE_AUTHOR exported"
-  excluded = ["inside 03:00-10:00Z daily", "while an ingest execution runs (repoint leg)"]
+  excluded = ["inside 03:00-10:00Z daily", "while an ingest execution runs"]
   go = "pre-authorised: GATE-G6 §4 (expiry at the round-11 acceptance sitting)"
   rerun = "implement-spec spec=docs/tickets/421_P37.3__evidence-store-hardening.md live_verification=true"
 [[row]]
@@ -1756,7 +1756,7 @@ kind = "leg"
 obligations = []
 obligations_cell = '''Wave-D L0→L11 (open → family days → S6 extras → materialize+delta+resume); dossier seats + never-sources excluded'''
 gates_cell = '''`hosted`, never pre-auth; excl. outside-14:00-20:00Z, outside 2026-11-23→12-04 / 2026-12-14→12-18, AR-3 freeze 12-06→12-13, 2026-12-15 release-cut, materialize/G2 slot; verbatim ING-GO-D (GATE-G6 `b91f8e58`) + `wave-d-gate` per leg'''
-operator_cell = '''OP-26 flips (HG-03 `WAVE_D_FLIP_LIST`, 146 rows) + `date -u`; `wave-d.sh --apply --leg L0|…|L11 --inputs <json>` (no-go→42); window-2 sources in the 2027-01-15 cadence cut'''
+operator_cell = '''OP-26 flips (HG-03 `WAVE_D_FLIP_LIST`, 146 rows) + `date -u`; `wave-d.sh --apply --leg L0|…|L11 --inputs <json>` (no-go→42)'''
 rerun_cell = '''`implement-spec spec=docs/tickets/481_P37.54__wave-d-activation.md live_verification=true`'''
 
   [[row.legs]]
@@ -1820,3 +1820,28 @@ rerun_cell = '`implement-spec spec=docs/tickets/483_P37.56__wacz-capture-html-so
   excluded = ["inside 03:00-10:00Z daily"]
   go = 'pre-authorised: GATE-G6 §4 (expiry next GATE)'
   rerun = 'implement-spec spec=docs/tickets/483_P37.56__wacz-capture-html-sources.md live_verification=true'
+
+[[row]]
+key = "P37.59"
+kind = "leg"
+obligations = ["D-P37.59-1"]
+obligations_cell = 'D-P37.59-1'
+gates_cell = '''GATE-G6 §4 names row 487 verbatim ("Approve all 15 (rec.)" 2026-11-05T15:20Z); `dark service only; AR-3 + AR-2` x 03:00-06:30Z + batch-window-day6T00:00Z-day13T12:00Z; needs SIG_GCP_PROJECT + ADC + SIG_INTAKE_AUTHOR + the 3 operator-provisioned secrets (HG-09); gos: GATE-G6 §4 (expiry: acceptance sitting) — ops/gcp/intake-roll.sh --apply · GATE-G6 §4 (expiry: acceptance sitting) — ops/gcp/db-logins.sh --role sig_intake_receiver|sig_intake_reviewer apply + credential (HG-09)'''
+operator_cell = '''`prepared_not_executed` until env lands — secrets provisioned (stdin `versions add`) + SIG_INTAKE_AUTHOR; `/intake/*` + `[intake].operational` never this leg's (D-P32.16-1)'''
+rerun_cell = '`implement-spec spec=docs/tickets/487_P37.59__intake-operation-dark.md live_verification=true`'
+
+  [[row.legs]]
+  id = "P37.59-intake-dark-deploy"
+  obligations = ["D-P37.59-1"]
+  earliest = 'inside `dark service only; AR-3 + AR-2`, with SIG_GCP_PROJECT + ADC + SIG_INTAKE_AUTHOR + the declared secret versions present'
+  excluded = ["03:00-06:30Z", "batch-window-day6T00:00Z-day13T12:00Z"]
+  go = 'pre-authorised: GATE-G6 §4 (expiry: acceptance sitting) — ops/gcp/intake-roll.sh --apply'
+  rerun = 'implement-spec spec=docs/tickets/487_P37.59__intake-operation-dark.md live_verification=true'
+
+  [[row.legs]]
+  id = "P37.59-intake-db-logins"
+  obligations = ["D-P37.59-1"]
+  earliest = 'inside `dark service only; AR-3 + AR-2`, on a spine carrying the sig_intake_receiver/sig_intake_reviewer NOLOGIN groups (absent → the apply queues exit 42)'
+  excluded = ["03:00-06:30Z", "batch-window-day6T00:00Z-day13T12:00Z"]
+  go = 'pre-authorised: GATE-G6 §4 (expiry: acceptance sitting) — ops/gcp/db-logins.sh --role sig_intake_receiver|sig_intake_reviewer apply + credential (HG-09)'
+  rerun = 'implement-spec spec=docs/tickets/487_P37.59__intake-operation-dark.md live_verification=true'

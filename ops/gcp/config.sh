@@ -483,3 +483,27 @@ export SIG_ER_RERUN_IMAGE="${SIG_ER_RERUN_IMAGE:-}"       # a ${SIG_API_IMAGE}:<
 # SIG_PROBE_WEB_URL from this at apply time (the *.run.app URL stays the documented
 # fallback until Google-managed TLS provisions on the domain).
 export SIG_WEB_CANONICAL_URL="https://${SIG_WEB_DOMAIN}"
+
+# --- the dark sig-intake receiver (P37.59 / G2 step 6, ACT-23, D-P32.16-1) --
+# The named mutation — the dark intake-service deploy (receiver not
+# operating; loopback only, no exposure) — rides ops/gcp/intake-roll.sh;
+# the two DB logins ride ops/gcp/db-logins.sh --role sig_intake_*.
+# `sig-intake-rt` is the dedicated least-privilege runtime identity (AR-8),
+# declared in ops/iam_identities.toml. Same OM-19 window shape as the other
+# legs: applies ≥ SIG_INTAKE_EARLIEST, never 03:00–06:30Z, never inside the
+# day-6→13 batch window; SIG_INTAKE_NOW overrides the clock for the offline
+# guard test only. SIG_INTAKE_AUTHOR is the recorded operator id every
+# mutating apply requires. B-8 (Q-27 'Email, no time promises'): the
+# receiver stays e-mail-only and dark — SIG_INTAKE_OPERATIONAL is never
+# set by the deploy.
+export SIG_INTAKE_EARLIEST="${SIG_EXEC_EARLIEST}"     # same AR-3 window
+export SIG_INTAKE_STATE_DIR="${SIG_INTAKE_STATE_DIR:-${TMPDIR:-/tmp}/p37.59-intake}"
+export SIG_INTAKE_AUTHOR="${SIG_INTAKE_AUTHOR:-}"     # the recorded operator id
+export SIG_INTAKE_SA="sig-intake-rt"                  # AR-8 dedicated identity
+export SIG_INTAKE_SA_EMAIL="${SIG_INTAKE_SA}@${SIG_GCP_PROJECT}.iam.gserviceaccount.com"
+export SIG_SECRET_INTAKE_FORM="sig-intake-form-secret"
+export SIG_SECRET_INTAKE_ABUSE="sig-intake-abuse-secret"
+export SIG_DB_ROLE_INTAKE_RECEIVER="sig_intake_receiver_login"
+export SIG_DB_ROLE_INTAKE_REVIEWER="sig_intake_reviewer_login"
+export SIG_SECRET_INTAKE_RECEIVER_PASSWORD="sig-intake-receiver-password"
+export SIG_SECRET_INTAKE_REVIEWER_PASSWORD="sig-intake-reviewer-password"

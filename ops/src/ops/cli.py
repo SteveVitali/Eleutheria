@@ -3366,6 +3366,13 @@ def build_parser() -> argparse.ArgumentParser:
         "plan|apply|verify over --dsn",
     )
     sub.add_parser(
+        "intake-op",
+        help="P37.59 / D-P32.16-1 (B-8, OM-20/GATE-G6 §4): the dark "
+        "intake-service declaration — plan renders the sig.intake-operation/1 "
+        "packet (sig-intake receiver_not_operating; SIG_INTAKE_OPERATIONAL "
+        "never set; prepared_not_executed)",
+    )
+    sub.add_parser(
         "at-rest",
         help="P34.49 / ADR-185 (F-406): the Part VIII at-rest audit — "
         "scan|seal-plan|seal-apply over the OCFL capture root "
@@ -6463,6 +6470,10 @@ def main(argv: list[str] | None = None) -> int:
         from . import db_logins
 
         return db_logins.main(raw[1:])
+    if raw and raw[0] == "intake-op":
+        from . import intake_operation
+
+        return intake_operation.main(raw[1:])
     if raw and raw[0] == "at-rest":
         from . import at_rest_audit
 

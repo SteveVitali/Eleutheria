@@ -390,11 +390,12 @@ def test_jobs_leg_plan_covers_the_contract_mutation_list(decl, cadence) -> None:
 
 
 def test_services_leg_plan_is_unchanged(decl, cadence) -> None:
-    # The P34.42a leg keeps its exact step list — the declaration grew, the
-    # services leg didn't.
+    # The services leg emits exactly one create step per bound service
+    # identity (three at P34.42a; sig-intake-rt joined at P37.59), never a
+    # jobs-leg or editor-removal step.
     steps = plan_steps(decl, PROJECT, "us-central1", cadence, "services")
     phases = [s.phase for s in steps]
-    assert phases.count("identities") == 3
+    assert phases.count("identities") == len(decl.services)
     assert "jobs" not in phases and "editor" not in phases
     flat = "\n".join(" ".join(s.command) for s in steps)
     assert "run jobs update" not in flat

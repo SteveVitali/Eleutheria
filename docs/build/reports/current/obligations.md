@@ -164,5 +164,6 @@
 | D-P37.69a-1 | OPEN | the next acquisition-class ticket that picks up the recorded lane | engineering landed (fixture-verified); the seats recorded enumerated, never fetch targets | each seat's `[[enumerated]]` row gains a committed concrete endpoint and graduates to `[[targets]]` under the file/layer lane that matches the URL's wire shape;… |
 | D-P37.69a-2 | OPEN | the next acquisition-class ticket that picks up the recorded lane | engineering landed (fixture-verified register-level read); per-entry enumeration deferred | the seat's `live_targets.toml` block gains a reviewed `index_listing`-shape target (or a dedicated adapter row) with the declared surveillance-relevance filter;… |
 | D-P37.69b-1 | OPEN | the next acquisition-class ticket that runs the Ipswich endpoint preflight | engineering landed (fixture-verified for the three wired seats); the seat recorded enumerated, never a fetch target | the seat's `[[enumerated]]` row gains a committed `service_url` + `typename` (or a `feature_type_selector = "sole"` contract) and graduates to `[[targets]]`; th… |
+| D-P37.59-1 | OPEN | the OM-19 leg-runner or the operator | RETURN PASS — P37.59 | `gcloud run services describe sig-intake` reads the declared shape (internal ingress, `sig-intake-rt`, `SIG_INTAKE_ENABLED=1`, no `SIG_INTAKE_OPERATIONAL`, the … |
 
 ← back: CURRENT.md
