@@ -72,7 +72,7 @@ tests/
 - **Don't assert the current value of a living build record** (BM-TEST-01, G6, P34.31 /
   SIG-ENG-040). The living paths are declared in
   `docs/build/tools/record_policy/living_records.toml` (LEDGER, BUILD_INDEX, DEFERRALS,
-  the coverage matrix, readouts, `reports/current/`, `reports/obligations/`, the build
+  the coverage matrix, readouts, `reports/obligations/`, the build
   README's row range, the manifest, …). Read them only through the validators
   (`audit_current_state`, `check_backlog`, …) or at an explicit snapshot commit
   (`git show <sha>:<path>`), and assert only what holds at every commit —

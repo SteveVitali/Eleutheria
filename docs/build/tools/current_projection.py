@@ -19,8 +19,14 @@ assessments / source docs). Wall-clock generation time lives only in
     generate [--out DIR]      write manifest.json + current.json + CURRENT.md
                               (+ obligations-N.md spill pages) + receipt.json
     verify [--out DIR]        recompute input digests + regenerate the payload;
-                              nonzero when any input hash changed (stale) or the
-                              committed output drifted
+                              nonzero when any input hash changed (stale), the
+                              generated output drifted, an inconsistency is
+                              unresolved, or a landing names no chain/BACKLOG row
+
+The output is generated on demand — never committed (ADR-250 / RULING E-2).
+`--out` defaults to `docs/build/reports/current/`, which is gitignored scratch;
+CI runs `generate --out <tmp> && verify --out <tmp>` and uploads the output as
+a workflow artifact.
 """
 
 from __future__ import annotations
@@ -38,6 +44,7 @@ import sys
 
 ROOT = pathlib.Path(__file__).resolve().parents[3]
 TOOLS = pathlib.Path(__file__).resolve().parent
+# default --out: gitignored scratch since ADR-250 (the output is never committed)
 OUT_DIR_REL = "docs/build/reports/current"
 OBLIGATIONS_REL = "docs/build/reports/obligations"
 MAX_LINES = 250

@@ -60,7 +60,6 @@ ALIAS_TABLE_OUT = REPO_ROOT / "policy/src/policy/data/source_aliases.json"
 SOURCES_TOML = REPO_ROOT / "connectors/src/connectors/data/sources.toml"
 TARGETS_TOML = REPO_ROOT / "connectors/src/connectors/data/camera_registry_targets.toml"
 ANNEX_ROOT = REPO_ROOT / "docs/build/reports/rights/annex"
-CURRENT_PROJECTION = REPO_ROOT / "docs/build/reports/current"
 
 RESTRICTED_MAP_SCHEMA = "sig/restricted-source-map/1.0.0"
 

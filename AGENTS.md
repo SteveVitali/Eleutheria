@@ -186,9 +186,14 @@ hand-edited.
 The Round-10 extension (ADR-120 → ADR-126/127) adds two advisory surfaces under `docs/build/reports/`:
 `obligations/` holds the append-only `obligation-event/1` + `coverage-assessment/1` ledgers
 (the `obligation_events` tool under `docs/build/tools/`; a DEFERRALS compatibility cell's leading
-token is derived from the event chain, never "last token wins"), and `current/` holds the
-deterministic **current-state projection** (the `current_projection` tool — `generate` writes it,
-`verify` fails when its hashed inputs drifted). Both are read-only orientation views: the LEDGER's
+token is derived from the event chain, never "last token wins"), and the deterministic
+**current-state projection** (`CURRENT.md`/`current.json` + spill pages) is generated **on demand**
+by the `current_projection` tool — `generate --out <tmp>` for a local view, or
+`generate --out docs/build/reports/current/` (gitignored scratch since ADR-250 / RULING E-2);
+the CI `docs` job regenerates into a temp dir and runs `verify` there — `verify` still fails on
+stale recorded digests, uncovered inputs, landing refs naming no chain row, or unresolved
+inconsistencies, but its output is uploaded as a workflow artifact, never committed. Both remain
+read-only orientation views: the LEDGER's
 CURRENT STATE and `docs/tickets/DEFERRALS.md` remain the control authority, and a compact view
 never replaces a ticket's Load list or erases an OPEN obligation. The single-writer closeout
 protocol (`closeout_protocol` under `docs/build/tools/`, ADR-127) is **shadow mode** until the
@@ -209,8 +214,9 @@ operator-approved `D-R10-MEMORY-1` cutover.
 ## Do
 
 - Read the ticket contract in `docs/tickets/` and the relevant build memory in `docs/build/` before
-  implementing; stamp the requirement ids you satisfy in the PR. The committed current-state
-  projection under `docs/build/reports/current/` is a bounded orientation view (obligations,
+  implementing; stamp the requirement ids you satisfy in the PR. The current-state projection
+  (`current_projection.py generate --out <tmp>`; `docs/build/reports/current/` is gitignored
+  scratch — never commit it, ADR-250) is a bounded orientation view (obligations,
   evidence domains, governing ADRs) — it links to the full history but never replaces the
   DEFERRALS-first rule or a ticket's Load list.
 - Run `make check` before every commit; commit regenerated artifacts **before** re-running it.

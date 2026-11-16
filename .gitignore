@@ -14,6 +14,11 @@ icpsr.html
 # Scratch
 scratch/
 docs/build/logs/
+# ADR-250 (RULING E-2): the generated current-state projection is never
+# committed — `current_projection.py generate` writes here by default;
+# CI generates + verifies into a temp dir and uploads the output as an
+# artifact.
+docs/build/reports/current/
 tmp/
 
 # Secrets — tokens/keys are env-only, never committed (RISK-P21-05, HG-09).
