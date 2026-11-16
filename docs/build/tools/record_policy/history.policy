@@ -1385,3 +1385,19 @@ seed-commit a8b29cbf
 # Scope: the append-only finding attributed to f45cf7ec's rewritten
 # BUILD_INDEX.md line 673 only; no other commit borrows the exemption.
 seed-commit f45cf7ec
+
+# P37.55 (row 482) closeout repair — BUILD_INDEX.md line 674's `ci:` cell was
+# committed as `` `ci:` recorded at closeout`` in `8e27ada5` (the build-memory
+# commit made before the PR existed, per the checkpoint-first convention) and
+# is rewritten in place to `ci: pending head-bound read` (#506;
+# `reports/ci/p37_55_pr506.json`; carried external `blockedOn`) by `b7e827d3`.
+# The append-only rule (BM-INDEX-01) takes only appended rows, but the index is
+# one-row-per-ticket — a second row for 482 would break the contract; the
+# repair is an in-place fill of the placeholder the row was designed to carry
+# (the same class as the committed 458f4af8/0025ea46/f45cf7ec repair pattern).
+# Pre-edit bytes archived
+# `reports/memory-repair/BUILD_INDEX_L674_pre-P37.55-ci.txt`
+# (sha256:ba95981cc82df8184fb16dd6afba3c08f7a9a4f7ac41e1ec68a6cbfda2db7c02).
+# Scope: the append-only finding attributed to b7e827d3's rewritten
+# BUILD_INDEX.md line 674 only; no other commit borrows the exemption.
+seed-commit b7e827d3

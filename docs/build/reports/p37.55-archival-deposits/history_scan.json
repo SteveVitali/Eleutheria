@@ -1,0 +1,112 @@
+{
+  "disclosed": {
+    "disclosure": "Retained-history class \u2014 disclosed by P34.18's correction note (docs/governance/identifier-rekey-note.md; OD-20 / A-0.4 = a). Recorded, never blocking.",
+    "handle_list": "loaded 32 tokens (gitignored; never committed or printed)",
+    "handle_token_hits": 13048,
+    "handle_tokens_matched": 32
+  },
+  "disposition": "clean",
+  "dispositions": {
+    "disclosed": {
+      "captured-truncated-domain-a": 1,
+      "captured-truncated-domain-b": 1,
+      "community-source-contact-alprwatch": 1,
+      "community-source-contact-deflockatlanta": 1,
+      "community-source-contact-deflockbhm": 1,
+      "community-source-contact-deflockoly": 1,
+      "community-source-contact-deflockthevalley": 1,
+      "community-source-contact-deflocktucson": 1,
+      "fixture-literal-a-b-co": 1,
+      "fixture-literal-officer-city-gov": 1,
+      "google-maps-browser-key-retained-history": 1,
+      "operator-own-address-a": 1,
+      "operator-own-address-b": 1,
+      "package-author-metadata": 1,
+      "public-contact-gov-edu-tlds": 30,
+      "public-contact-org-domains": 54,
+      "source-contact-catalog-sweep": 1
+    },
+    "errors": [],
+    "exempt": {
+      "aws-doc-example-key": 1
+    },
+    "path": "docs/build/reports/p37.55-archival-deposits/history_scan_dispositions.toml",
+    "stale": []
+  },
+  "email_shape": {
+    "classes": {
+      "example-domain": 28,
+      "example-literal": 4,
+      "example-prefix": 1,
+      "file-suffix": 6,
+      "github-noreply": 1,
+      "gserviceaccount": 46,
+      "project-domain": 9,
+      "unclassified": 98,
+      "vendor-noreply": 2
+    },
+    "dispositioned": {
+      "captured-truncated-domain-a": 1,
+      "captured-truncated-domain-b": 1,
+      "community-source-contact-alprwatch": 1,
+      "community-source-contact-deflockatlanta": 1,
+      "community-source-contact-deflockbhm": 1,
+      "community-source-contact-deflockoly": 1,
+      "community-source-contact-deflockthevalley": 1,
+      "community-source-contact-deflocktucson": 1,
+      "fixture-literal-a-b-co": 1,
+      "fixture-literal-officer-city-gov": 1,
+      "operator-own-address-a": 1,
+      "operator-own-address-b": 1,
+      "package-author-metadata": 1,
+      "public-contact-gov-edu-tlds": 30,
+      "public-contact-org-domains": 54,
+      "source-contact-catalog-sweep": 1
+    },
+    "distinct_tokens": 195,
+    "unclassified_remaining": 0
+  },
+  "findings": {},
+  "generated_at": "2026-11-14T08:58:40Z",
+  "repo": "/Users/stevenvitali/Eleutheria",
+  "rules": {
+    "path": [
+      "path:env-file",
+      "path:pem-file",
+      "path:ssh-private-key",
+      "path:credentials-json",
+      "path:service-account-key",
+      "path:gitignored-build-log"
+    ],
+    "restricted": [
+      "restricted:email-shape",
+      "restricted:handle-token"
+    ],
+    "secret": [
+      "secret:aws-access-key",
+      "secret:github-token",
+      "secret:slack-token",
+      "secret:openai-style-key",
+      "secret:google-api-key",
+      "secret:pem-private-key",
+      "secret:sig-credential-literal"
+    ]
+  },
+  "schema": "sig.history-scan/1",
+  "scope": {
+    "blobs_scanned": 27461,
+    "blobs_skipped_large": 2,
+    "bytes_scanned": 4711690516,
+    "commits": 3530,
+    "missing_namespaces": [
+      "refs/tags"
+    ],
+    "note": "Blob contents + tracked paths reachable from the public ref surface (ls-remote-advertised refs/heads/*, refs/pull/*, refs/tags/* mirrored under refs/remotes/{origin,pull} + refs/tags). Commit-author metadata is inherent git data, outside the remediation scope.",
+    "ref_namespaces": [
+      "refs/remotes/origin",
+      "refs/remotes/pull",
+      "refs/tags"
+    ],
+    "refs": 1044
+  }
+}

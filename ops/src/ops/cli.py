@@ -321,12 +321,25 @@ def build_parser() -> argparse.ArgumentParser:
     swh = sub.add_parser(
         "swh-save", help="build a Software Heritage save-code-now request (SIG-GOV-022/023/024)"
     )
-    swh.add_argument("--repo-url", default=None, help="the public repository origin URL to save.")
+    swh.add_argument(
+        "--repo-url",
+        default=None,
+        help="the public repository origin URL to save (default: the repo's `origin` "
+        "remote, then SIG_REPO_URL).",
+    )
     swh.add_argument("--visit-type", default="git", help="SWH visit type (default: git).")
+    swh.add_argument(
+        "--scan-report",
+        default=None,
+        help="the sig.history-scan/1 report discharging the Q-E2-23 scan-first "
+        "ordering; required with --now and must read disposition 'clean'.",
+    )
     swh.add_argument(
         "--now",
         action="store_true",
-        help="actually submit to Software Heritage (default: print the request only, untriggered).",
+        help="actually submit to Software Heritage (default: print the request only, "
+        "untriggered). Operator-only in-ticket verbatim go (P37.55, OM-20); requires "
+        "--scan-report with disposition 'clean'.",
     )
 
     degraded = sub.add_parser(
@@ -3783,13 +3796,14 @@ def _cmd_egress_report(args: argparse.Namespace) -> int:
 
 
 def _cmd_swh_save(args: argparse.Namespace) -> int:
-    from .swh import build_save_request, submit
+    from .swh import build_save_request, default_origin_url, scan_report_clean, submit
 
-    repo_url = args.repo_url or os.environ.get("SIG_REPO_URL")
+    repo_url = args.repo_url or os.environ.get("SIG_REPO_URL") or default_origin_url(_REPO_ROOT)
     if not repo_url:
         print(
-            "gate pending: no public repository URL to save (pass --repo-url or set "
-            "SIG_REPO_URL). Software Heritage save NOT triggered this run.",
+            "gate pending: no public repository URL to save (pass --repo-url, set "
+            "SIG_REPO_URL, or configure the `origin` remote). Software Heritage save "
+            "NOT triggered this run.",
             file=sys.stderr,
         )
         return 4
@@ -3798,11 +3812,27 @@ def _cmd_swh_save(args: argparse.Namespace) -> int:
     if not args.now:
         print(json.dumps(request.as_json(), indent=2, sort_keys=True))
         print(
-            "(untriggered — re-run with --now to submit to Software Heritage; "
-            "no token is needed for a public repo)",
+            "(untriggered — re-run with --now --scan-report <sig.history-scan/1 clean> "
+            "to submit to Software Heritage; no token is needed for a public repo; "
+            "the submission is the operator's explicit verbatim go — P37.55, OM-20)",
             file=sys.stderr,
         )
         return 0
+    scan_report = getattr(args, "scan_report", None)
+    if not scan_report:
+        print(
+            "gate pending: --now requires --scan-report naming a sig.history-scan/1 "
+            "report (Q-E2-23: scan the public history first, then submit). Wrote nothing.",
+            file=sys.stderr,
+        )
+        return 4
+    ok, reason = scan_report_clean(scan_report)
+    if not ok:
+        print(
+            f"gate pending: the history scan does not clear the save — {reason}. Wrote nothing.",
+            file=sys.stderr,
+        )
+        return 4
     result = submit(request)
     print(json.dumps(result, indent=2, sort_keys=True, default=str))
     return 0
