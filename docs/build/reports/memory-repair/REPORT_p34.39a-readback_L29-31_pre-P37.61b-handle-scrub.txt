@@ -1,0 +1,3 @@
+  ADR-178 renamed (`camreg_und_018` → `camreg_nurnazihah`,
+  `camreg_und_019` → `camreg_olsson`, `camreg_us_ny_001` →
+  `camreg_nyc_jgrayson_ny`, `camreg_us_ny_002` → `camreg_nyc_weltia_ny`) each
