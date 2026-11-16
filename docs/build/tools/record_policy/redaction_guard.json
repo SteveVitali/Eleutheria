@@ -1,0 +1,63 @@
+{
+  "schema": "sig.redaction-guard-policy/1",
+  "binding": "RULING E-1 (GATE DECISIONS 2026-11-15; docs/build/readouts/RULINGS-2026-11-15.md) + ADR-178 / SIG-PUB-002 (docs/adr/ADR-178-public-identifier-re-key-append-only-aliases.md)",
+  "note": "Committed digests only — the plaintext handle list stays gitignored at docs/build/logs/next-phase/C3/personal_like_ids.txt. Digests are sha256 of each listed handle, matching the sha256:<hex> precedent of policy/data/source_aliases.json. handle_lengths is derived metadata (distinct handle byte-lengths) so the scan only enumerates substrings at lengths that can match; it carries no plaintext.",
+  "handle_digests_sha256": [
+    "0315d6c130ed716beeff6980eb10de1954b69a881ce7a289d7856ea5c869eeaa",
+    "0dd5975e8239565d74b03ee71d6d3ba27199e745ed9dcf4d502f89c1c56c5679",
+    "109d60ddb241fbfa10e13a27722fea9d8f860e8252e5a26922da726a8c055c79",
+    "144e1507234fbfe4b4c437783bb612a064725c838b1c535a9e27a3993489197b",
+    "17df48b6f5e2f6578dab0231018927adaaead9e57f5e8044d45513b06888bcd5",
+    "22293a533d472512415869d82c619e61ad6f879d0448f759acf538c371777e96",
+    "37ecfce9b9499be15d732dcd4eba833499cc92c75ab048633a03a004aee0c79f",
+    "3dcfcdbb07f04cdb114cad20cd132f0b785053097c3acbaa7099a414898a8c8a",
+    "3fa28afb55e9c3076f4cbabadcaa5d76fba84822e16cc1fecda07fd736976d0b",
+    "52e2f74ceee2e6e267b1301f48f080076b2454e081b2268494cf34b4b2804015",
+    "5a736016bcb7c3d623168c6908124c47c4bda0a78bf6dbce5c11dccad2c6f0ac",
+    "60181fd5377b097099bf5684953c08c0ad7e661dec30698057b13faebe90821d",
+    "6777808c21f42a5cb99301d1edff6e30d8e3f447111ecd91f4414745dcaf225a",
+    "6f8f02add43578cc8c1970da5ba60ceb4b15679661f9b2998862b5567f9f0022",
+    "7cc62969910d3983f49aaba1cde2a97ccb70105d0afa8990b60e8dba545500ed",
+    "9d21f93a3f767a86900b7bf7314dab047f836432046c9f40d83c88108dce8084",
+    "a1950ee0df3fe8a93ef2756b6c2e7eb59ca7cb1ae8ffcc40370f7ce586907ab6",
+    "a271e25274fe90e3a279083492d544e38cc89478ed539321ebf3079c0f6b9fa0",
+    "a6ba3d3cd1de2cf48f586eb053a93c4c5a9fd2879e95f3e21661d5ad59c1219e",
+    "a9581cc578ca4889e11337aca37041fcb4041f37a687527fff5de17809137798",
+    "ae415fa4c0e6751437a6be7b7d30726e00ec9e278d4f23a774e6e7552a1b99f4",
+    "b40f5644b87fb55835b7cf8594530647539e160b29bf53a635a92bad176249ab",
+    "ba9983e6e8a01b0497fdd5a7d672538ace766810decdd4b436060deb80526ffe",
+    "c079770cc35eb43d7807c7fa91b6258f43807f5a5313b259030a6d3e0a602f22",
+    "c363573bd564f23078ae8343eee8d525a7950e8475f3fea6c3122dfdbfa09267",
+    "c91dfd7aae3a45ba26a85d493eebbfe173c8cbc854d51fd178ee6ce99c2227a9",
+    "ce1101693031b5ff1a3f4e3acae99db2ba053c42f3dfe8aba55f1ef3f3f897b6",
+    "cede6d2064991ae90ed0a28f5b6688ada6674a447f3a2108428409b22edd13a2",
+    "d2876a49c2725eeb55253c763b020e721dc315b9da712b30c9ff4ee74e81519e",
+    "e61557eb6fa6d721b2bda0421e74aed2d94714f7aac34adbf4475374fb3b6633",
+    "ec626b61991b5dd7773475138bf674ff107f04b6764615c1ab7f83b342d1ac94",
+    "fd9c744b4d2f285f54d1430ba469af10694a02f971ac950e5438f375c0828b40"
+  ],
+  "handle_lengths": [4, 12, 13, 14, 15, 16, 17, 18, 20, 22],
+  "forbidden_keys_anywhere": [
+    "item_owner"
+  ],
+  "forbidden_keys_in_sweeps": [
+    "owner",
+    "item_owner"
+  ],
+  "sweep_files": [
+    "docs/build/reports/catalog_sweep_2026-09-18.json",
+    "docs/build/reports/catalog_sweep_2026-09-18_qualified.json",
+    "docs/build/reports/catalog_sweep_2026-09-18_reviewed.json",
+    "docs/build/reports/catalog_sweep_2026-09-26_retry.json",
+    "docs/build/reports/p2616_dispositions.json"
+  ],
+  "sweep_globs": [
+    "docs/build/reports/catalog_sweep_*.json",
+    "docs/build/reports/*_dispositions.json"
+  ],
+  "self_exempt_paths": [
+    "docs/build/tools/redaction_guard.py",
+    "docs/build/tools/test_redaction_guard.py",
+    "docs/build/tools/record_policy/redaction_guard.json"
+  ]
+}
