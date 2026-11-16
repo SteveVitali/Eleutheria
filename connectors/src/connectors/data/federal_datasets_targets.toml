@@ -1,0 +1,213 @@
+# SPDX-License-Identifier: Apache-2.0
+# The `federal_datasets` connector's committed target inventory (P37.49 /
+# R11-ACQ-21, I8 §6.2). This table is DATA, not code (SIG-ENG-001 /
+# SIG-INGEST-038): the reviewed federal-dataset surfaces the I4/I6 discovery
+# named — identifiers + provenance only, a row is a URL, a kind, a source and
+# an evidence ref, never content. Every row is a public unauthenticated
+# surface (https, a committed host); all eight sources stay behind
+# `ingestion_permitted=false` — the loader gate REFUSES every live fetch
+# until the operator's OP-26 Wave-D flips under ING-GO-D (HG-03 RB-05 `a`).
+
+schema = "sig.federal-dataset-targets/1"
+
+[inventory]
+# Derivation provenance: the eight ACQ-21 plan rows
+# (data/acquisition_plan.csv AP-T2-002/-006/-011/-016/-034/-070/-087/-193,
+# candidates I4-C085 / I6-C024 / I6-C036+I4-C116 / I4-C280 / I4-C211 /
+# I4-C115 / I4-C027 / I4-C281), rights batch RB-05 (US federal works) with
+# AP-T2-193 additionally S3-flagged (IND-P8) — pointer lane only.
+source_ref = "docs/build/planning/2026-09-30-next-phase/data/acquisition_plan.csv (AP-T2-002/-006/-011/-016/-034/-070/-087/-193) + data/candidates_consolidated.csv (I4-C085, I6-C024, I6-C036+I4-C116, I4-C280, I4-C211, I4-C115, I4-C027, I4-C281)"
+captured_on = "2026-11-13"
+target_count = 13
+
+# --- Federal Register API term searches (fr_documents) -----------------------
+# legis_us_federal_register_api — the surveillance-technology document sweep
+# (I6-C024: one term per query; the API's OR is not relied on). Six committed
+# terms, one bounded first page each — deeper pagination is the cadence job's
+# windowed re-query, recorded not fabricated.
+[[inventory.targets]]
+id = "dhs_ai_inventory_index"
+source = "statrep_us_dhs_ai_use"
+kind = "federal_index"
+adapter = "index_links"
+url = "https://www.dhs.gov/ai/use-case-inventory"
+license_spdx = "CC0-1.0"
+publisher = "U.S. Department of Homeland Security (Office of the Chief Information Officer)"
+link_re = "(?i)(use-case|use_case|inventory)"
+expect = ["Use Case Inventory"]
+evidence = "I4-C115 / I4-F090 (candidates_consolidated.csv) — inventory page enumerates per-component inventories (214 DHS use cases across 12 components at review); page verified live-read 2026-11-13"
+
+# statrep_us_ice_287_participating — the 287(g) landing page resolves the
+# current dated participatingAgencies*.xlsx link (I4-C280: filename changes
+# each issue — link discovery, never a pinned stale name); the resolved
+# workbook is the federal_xlsx child target the roster adapter reads.
+[[inventory.targets]]
+id = "fr_term_aerostat"
+source = "statrep_tx_south_padre_island_faa"
+kind = "federal_json"
+adapter = "fr_documents"
+url = "https://www.federalregister.gov/api/v1/documents.json?conditions%5Bterm%5D=aerostat&per_page=100&page=1&fields%5B%5D=document_number&fields%5B%5D=title&fields%5B%5D=type&fields%5B%5D=publication_date&fields%5B%5D=citation&fields%5B%5D=html_url&fields%5B%5D=agencies"
+license_spdx = "CC0-1.0"
+publisher = "Office of the Federal Register (NARA) / GPO"
+expect = []
+evidence = "I4-C027 (candidates_consolidated.csv) — 'aerostat' term query surfaces the South Padre Island restricted-area NPRM (doc 2025-16236, Docket FAA-2025-2318); response shape verified live-read 2026-11-13"
+
+# --- Index lanes (index_links) -----------------------------------------------
+
+# camreg_us_nces_school_survey_on_crime — the NCES SSOCS public-use dataset
+# page (I4-C211): wave-file links enumerated as document pointers. The
+# public-use microdata are national prevalence context only — aggregate by
+# construction, never a place-level deployment source (the candidate's own
+# bound).
+[[inventory.targets]]
+id = "fr_term_body_worn_camera"
+source = "legis_us_federal_register_api"
+kind = "federal_json"
+adapter = "fr_documents"
+url = "https://www.federalregister.gov/api/v1/documents.json?conditions%5Bterm%5D=body-worn%20camera&per_page=100&page=1&fields%5B%5D=document_number&fields%5B%5D=title&fields%5B%5D=type&fields%5B%5D=publication_date&fields%5B%5D=citation&fields%5B%5D=html_url&fields%5B%5D=agencies"
+license_spdx = "CC0-1.0"
+publisher = "Office of the Federal Register (NARA) / GPO"
+expect = []
+evidence = "I6-C024 (candidates_consolidated.csv) — documents.json term search, count=48 for 'facial recognition' since 2023-01-01, 200 API GET 2026-09-30; response shape verified live-read 2026-11-13 (count/results/document_number/title/type/publication_date/citation/html_url/agencies)"
+
+[[inventory.targets]]
+id = "fr_term_cell_site_simulator"
+source = "legis_us_federal_register_api"
+kind = "federal_json"
+adapter = "fr_documents"
+url = "https://www.federalregister.gov/api/v1/documents.json?conditions%5Bterm%5D=cell-site%20simulator&per_page=100&page=1&fields%5B%5D=document_number&fields%5B%5D=title&fields%5B%5D=type&fields%5B%5D=publication_date&fields%5B%5D=citation&fields%5B%5D=html_url&fields%5B%5D=agencies"
+license_spdx = "CC0-1.0"
+publisher = "Office of the Federal Register (NARA) / GPO"
+expect = []
+evidence = "I6-C024 (candidates_consolidated.csv) — same documents.json contract; response shape verified live-read 2026-11-13"
+
+[[inventory.targets]]
+id = "fr_term_facial_recognition"
+source = "legis_us_federal_register_api"
+kind = "federal_json"
+adapter = "fr_documents"
+url = "https://www.federalregister.gov/api/v1/documents.json?conditions%5Bterm%5D=facial%20recognition&per_page=100&page=1&fields%5B%5D=document_number&fields%5B%5D=title&fields%5B%5D=type&fields%5B%5D=publication_date&fields%5B%5D=citation&fields%5B%5D=html_url&fields%5B%5D=agencies"
+license_spdx = "CC0-1.0"
+publisher = "Office of the Federal Register (NARA) / GPO"
+expect = []
+evidence = "I6-C024 (candidates_consolidated.csv) — the evidenced term itself: count=48 since 2023-01-01 (Q039); response shape verified live-read 2026-11-13"
+
+[[inventory.targets]]
+id = "fr_term_gunshot_detection"
+source = "legis_us_federal_register_api"
+kind = "federal_json"
+adapter = "fr_documents"
+url = "https://www.federalregister.gov/api/v1/documents.json?conditions%5Bterm%5D=gunshot%20detection&per_page=100&page=1&fields%5B%5D=document_number&fields%5B%5D=title&fields%5B%5D=type&fields%5B%5D=publication_date&fields%5B%5D=citation&fields%5B%5D=html_url&fields%5B%5D=agencies"
+license_spdx = "CC0-1.0"
+publisher = "Office of the Federal Register (NARA) / GPO"
+expect = []
+evidence = "I6-C024 (candidates_consolidated.csv) — same documents.json contract; response shape verified live-read 2026-11-13"
+
+[[inventory.targets]]
+id = "fr_term_license_plate_reader"
+source = "legis_us_federal_register_api"
+kind = "federal_json"
+adapter = "fr_documents"
+url = "https://www.federalregister.gov/api/v1/documents.json?conditions%5Bterm%5D=license%20plate%20reader&per_page=100&page=1&fields%5B%5D=document_number&fields%5B%5D=title&fields%5B%5D=type&fields%5B%5D=publication_date&fields%5B%5D=citation&fields%5B%5D=html_url&fields%5B%5D=agencies"
+license_spdx = "CC0-1.0"
+publisher = "Office of the Federal Register (NARA) / GPO"
+expect = []
+evidence = "I6-C024 (candidates_consolidated.csv) — same documents.json contract; response shape verified live-read 2026-11-13"
+
+[[inventory.targets]]
+id = "fr_term_wiretap"
+source = "legis_us_federal_register_api"
+kind = "federal_json"
+adapter = "fr_documents"
+url = "https://www.federalregister.gov/api/v1/documents.json?conditions%5Bterm%5D=wiretap&per_page=100&page=1&fields%5B%5D=document_number&fields%5B%5D=title&fields%5B%5D=type&fields%5B%5D=publication_date&fields%5B%5D=citation&fields%5B%5D=html_url&fields%5B%5D=agencies"
+license_spdx = "CC0-1.0"
+publisher = "Office of the Federal Register (NARA) / GPO"
+expect = []
+evidence = "I6-C024 (candidates_consolidated.csv) — same documents.json contract; response shape verified live-read 2026-11-13"
+
+# statrep_tx_south_padre_island_faa — the FAA restricted-area rulemakings for
+# CBP tethered-aerostat sites (I4-C027: exemplar doc 2025-16236, NPRM Docket
+# FAA-2025-2318). One committed term — 'aerostat' — whose recall of other
+# TARS sites the candidate noted untested; the query is verbatim.
+[[inventory.targets]]
+id = "ice_287g_landing"
+source = "statrep_us_ice_287_participating"
+kind = "federal_index"
+adapter = "index_links"
+url = "https://www.ice.gov/identify-and-arrest/287g"
+license_spdx = "CC0-1.0"
+publisher = "U.S. Immigration and Customs Enforcement, ERO"
+link_re = "(?i)participatingAgencies.*\\.xlsx"
+resolve_kind = "federal_xlsx"
+resolve_adapter = "ice_287g_roster_xlsx"
+expect = ["287(g)"]
+evidence = "I4-C280 / I4-F205/F206/F252 (candidates_consolidated.csv) — landing page links the dated participatingAgencies<MMDDYYYY>.xlsx roster (~2,597 agreement rows, 8 columns STATE/LEA/TYPE/COUNTY/SUPPORT TYPE/SIGNED/MOA/ADDENDUM); 200 GET landing + xlsx 2026-09-30"
+
+# statrep_us_ice_287_monthly — the SAME landing page's monthlyEncounter* /
+# encounterReport* PDF links as pointers ONLY (AP-T2-193 is S3-flagged,
+# IND-P8): the files' contents are never fetched, so no per-encounter or
+# person-level row can exist by construction — the aggregate-only screen is
+# structural.
+[[inventory.targets]]
+id = "ice_287g_monthly_index"
+source = "statrep_us_ice_287_monthly"
+kind = "federal_index"
+adapter = "index_links"
+url = "https://www.ice.gov/identify-and-arrest/287g"
+license_spdx = "CC0-1.0"
+publisher = "U.S. Immigration and Customs Enforcement, ERO"
+link_re = "(?i)(monthlyEncounter|encounterReport).*\\.pdf"
+expect = ["287(g)"]
+evidence = "I4-C281 / I4-F205 (candidates_consolidated.csv) — landing page links monthly PDFs Jan 2025 - Sep 2026 plus the Oct 2019 - Jan 2021 series; contents never read (fetch cap) — pointer lane only under S3"
+
+# statrep_us_wiretap_summary_tables — the annual Wiretap Report's data-table
+# index (I4-C085): the Wire 1-9 + appendix table pages enumerate as document
+# pointers. The tables' per-jurisdiction aggregates ride a follow-up —
+# judge/officer names are never read (the §43.4 S5 gate; Wire 2's
+# authorizations-by-judge table stays a pointer).
+[[inventory.targets]]
+id = "nces_ssocs_dataset_index"
+source = "camreg_us_nces_school_survey_on_crime"
+kind = "federal_index"
+adapter = "index_links"
+url = "https://nces.ed.gov/use-work/dataset/2021-22-school-survey-crime-and-safety-ssocs-public-use-data-files-and-users-manual"
+license_spdx = "CC0-1.0"
+publisher = "National Center for Education Statistics (IES, US Dept of Education)"
+link_re = "(?i)(ssocs|survey-crime-and-safety|\\.(zip|csv|sav|dat|dta|sas7bdat))"
+expect = ["SSOCS"]
+evidence = "I4-C211 / I4-F174/F175 (candidates_consolidated.csv) — dataset page enumerates 9 public-use waves 1999-2000..2021-22; 200 GET verified 2026-09-30"
+
+# statrep_us_dhs_ai_use — the DHS (S)AI Use-Case Inventory page (I4-C115):
+# the page's per-component inventory links enumerate as document pointers;
+# the full spreadsheet rides its own library-page link — pointers only,
+# never a guessed file URL. Page verified live-read 2026-11-13: component
+# links read 'SI Use Cases' under /ai/ and the library page is linked.
+[[inventory.targets]]
+id = "omb_ai_inventory_2024_csv"
+source = "statrep_us_2024_federal_agency"
+kind = "federal_csv"
+adapter = "ai_inventory_csv"
+url = "https://raw.githubusercontent.com/ombegov/2024-Federal-AI-Use-Case-Inventory/main/data/2024_consolidated_ai_inventory_raw.csv"
+license_spdx = "CC0-1.0"
+publisher = "Office of Management and Budget (via GitHub ombegov)"
+expect = []
+evidence = "I6-C036+I4-C116 / I4-F092/F093/L045 (candidates_consolidated.csv) — repo README: data/2024_consolidated_ai_inventory_raw.csv, 41 submissions/2,133 use cases as of 2025-01-23; header verified live-read 2026-11-13 (2_use_case_name,3_agency,8_topic_area,16_dev_stage,...)"
+[[inventory.targets]]
+id = "uscourts_wiretap_report_index"
+source = "statrep_us_wiretap_summary_tables"
+kind = "federal_index"
+adapter = "index_links"
+url = "https://www.uscourts.gov/data-news/reports/statistical-reports/wiretap-reports/wiretap-report-2024"
+license_spdx = "CC0-1.0"
+publisher = "Administrative Office of the U.S. Courts"
+link_re = "/data-news/data-tables/\\d{4}/12/31/wiretap/wire-[0-9a-z]+"
+expect = ["wiretap"]
+evidence = "I4-C085 / I4-F043/F254 (candidates_consolidated.csv) — report page links /data-news/data-tables/2024/12/31/wiretap/wire-{1..9,a1,b1} verified live-read 2026-11-13"
+
+# --- CSV lane (ai_inventory_csv) ---------------------------------------------
+
+# statrep_us_2024_federal_agency — the OMB consolidated 2024 Federal AI Use
+# Case Inventory raw CSV (I6-C036+I4-C116): the ombegov publication's
+# machine-readable file, verified live-read 2026-11-13 (main branch,
+# data/2024_consolidated_ai_inventory_raw.csv — the header literals the
+# vocab's field map binds).

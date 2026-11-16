@@ -173,6 +173,22 @@ CONNECTOR_FOR_SOURCE: dict[str, str] = {
     "ccops_dayton_oh": "government_mandated_disclosure",
     "ccops_anchorage_ak": "government_mandated_disclosure",
     "ccops_austin_tx": "government_mandated_disclosure",
+    # P37.49 / R11-ACQ-21 (I8 §6.2): the federal datasets family — one
+    # fetch-and-parse helper (CSV/XLSX/JSON + index enumeration) with small
+    # per-dataset adapters, serving the eight ACQ-21 registry seats. All
+    # stay `ingestion_permitted=false` (HG-03 RB-05 `a`; the ICE monthly-
+    # encounters row additionally S3-flagged IND-P8 — pointer lane only)
+    # pending the operator's OP-26 Wave-D flips under ING-GO-D (P37.5x);
+    # replay/shadow run over committed fixtures in
+    # `tests/connectors/fixtures/p37_49/`.
+    "camreg_us_nces_school_survey_on_crime": "federal_datasets",
+    "legis_us_federal_register_api": "federal_datasets",
+    "statrep_tx_south_padre_island_faa": "federal_datasets",
+    "statrep_us_2024_federal_agency": "federal_datasets",
+    "statrep_us_dhs_ai_use": "federal_datasets",
+    "statrep_us_ice_287_monthly": "federal_datasets",
+    "statrep_us_ice_287_participating": "federal_datasets",
+    "statrep_us_wiretap_summary_tables": "federal_datasets",
     "policy_houston_tx_hpd": "agency_policy",
     "policy_albuquerque_nm_apd": "agency_policy",
     "policy_bangor_me_pd": "agency_policy",

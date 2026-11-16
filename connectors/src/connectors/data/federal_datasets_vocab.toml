@@ -1,0 +1,147 @@
+# SPDX-License-Identifier: Apache-2.0
+# The versioned `federal_datasets` connector vocabulary (P37.49 / R11-ACQ-21,
+# I8 §6.2 — the federal datasets family). This table is DATA, not code
+# (SIG-ENG-001): the connector's predicate allowlist, its forbidden predicate
+# genres, the per-adapter field maps, the committed host set and the
+# person-level column screen are data rows reviewed on their own. Changes
+# after P37.49 are VERSIONED MIGRATIONS — bump `vocab_version` and add the
+# change, never silently rewrite a row (SIG-INGEST-017).
+#
+# NOTE ON TOML ORDERING: every top-level key MUST appear ABOVE the first
+# [table] header — otherwise TOML nests it under that table. The [adapters.*]
+# tables therefore come last.
+
+schema = "sig.federal-datasets-vocab/1"
+
+# The connector's own vocabulary version, stamped onto every run (§20).
+vocab_version = "2026.11.13"
+
+# The predicate allowlist enforced as a hard schema gate (SIG-INGEST-033):
+# the `federal_datasets` connector may write ONLY the document-pointer,
+# Federal Register document, AI-use-case and agency-registry predicates
+# below — the dataset's own metadata literals. Writing anything else — a
+# person name, a per-encounter row, a guessed technology slug, a sharing
+# edge — is a schema error.
+predicate_allowlist = [
+  "external_id",
+  "title",
+  "document",
+  "published_by",
+  "citation",
+  "platform",
+  "country",
+  "technology_category",
+  "in_use",
+  "agency_registry_entry",
+  "agency_name",
+  "agency_state",
+  "agency_county",
+  "agency_type",
+]
+
+# Predicate GENRES the connector MUST NOT write (scope-creep guard): sharing
+# edges, deployment assertions, person records, camera/device predicates and
+# procurement parties belong to other lanes and would over-assert what a
+# federal dataset actually states (a 287(g) roster row is a registry entry,
+# not a configured-access edge; an AI-inventory row is a declared use case,
+# not a deployment).
+forbidden_predicate_genres = [
+  "configured_access_edge",
+  "configured_sharing_partner",
+  "sharing_partner",
+  "observed_use_edge",
+  "deployment_exists",
+  "camera_latitude",
+  "camera_longitude",
+  "buyer",
+  "seller",
+  "vendor",
+  "person",
+  "in_use_without_policy_count",
+]
+
+# The person-level column-name tokens the tabular screen refuses on a served
+# CSV/XLSX header (Part VIII / §0.7 — schema vocabulary, never values). The
+# adapters emit only the declared field-map columns, so a dataset that also
+# SHIPS a person-level column is refused wholesale rather than partially
+# redacted: the field names below are the reviewed person-level markers.
+forbidden_field_tokens = [
+  "judge",
+  "officer",
+  "plate",
+  "victim",
+  "arrestee",
+  "defendant",
+  "inmate",
+  "ssn",
+  "date_of_birth",
+  "dob",
+  "driver",
+  "passenger",
+  "traveler",
+  "detainee",
+  "suspect",
+]
+
+# The committed https host set every target URL must resolve onto — the
+# federal publishers' own public hosts only. A resolved child link (the ICE
+# dated workbook) off this set refuses before egress (fail-closed).
+hosts = [
+  "www.uscourts.gov",
+  "www.federalregister.gov",
+  "www.ice.gov",
+  "www.dhs.gov",
+  "nces.ed.gov",
+  "github.com",
+  "raw.githubusercontent.com",
+]
+
+# --- [adapters.*] — the small per-dataset adapters -----------------------------
+# Each adapter declares the target kind it reads, the emitted record shape
+# and (for tabular lanes) the published column names it maps — column names
+# are the publisher's own verbatim literals; an absent declared column drops
+# the row to a recorded rejection, never a guessed field.
+
+# Federal Register documents.json search — one term per committed query row
+# (the API's Boolean OR is not relied on: the I6 evidence recorded it
+# returns 0 matches). Emits `federal_register_document` metadata records.
+[adapters.fr_documents]
+kind = "federal_json"
+publisher = "Office of the Federal Register (NARA) / GPO"
+license_spdx = "CC0-1.0"
+
+# Index-page link enumeration — the dataset's own index (a report page, an
+# inventory page, a landing page) emits document-pointer records only; the
+# linked bodies are never fetched (pointers, never content).
+[adapters.index_links]
+kind = "federal_index"
+
+# The OMB consolidated Federal AI Use Case Inventory CSV (ombegov
+# publication) — field names are the file's own numbered header literals,
+# verified 2026-11-13 against the published header row.
+[adapters.ai_inventory_csv]
+kind = "federal_csv"
+publisher = "Office of Management and Budget (via GitHub ombegov)"
+license_spdx = "CC0-1.0"
+[adapters.ai_inventory_csv.fields]
+id = "2_use_case_name"
+name = "2_use_case_name"
+agency = "3_agency"
+topic = "8_topic_area"
+stage = "16_dev_stage"
+
+# The ICE 287(g) participating-agencies workbook — field names are the
+# roster's own header literals (I4-C280 / I4-F206, 8 columns).
+[adapters.ice_287g_roster_xlsx]
+kind = "federal_xlsx"
+publisher = "U.S. Immigration and Customs Enforcement, ERO"
+license_spdx = "CC0-1.0"
+target_id = "ice_287g_roster"
+[adapters.ice_287g_roster_xlsx.fields]
+agency = "LAW ENFORCEMENT AGENCY"
+state = "STATE"
+county = "COUNTY"
+type = "TYPE"
+support_type = "SUPPORT TYPE"
+signed = "SIGNED"
+moa = "MOA"

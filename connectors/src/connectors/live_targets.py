@@ -124,6 +124,15 @@ def live_targets(source_id: str) -> list[dict[str, str]]:
         from .cooperative import cooperative_targets
 
         return cooperative_targets(source_id=source_id)
+    if kind == "federal_dataset_targets":
+        # P37.49 / R11-ACQ-21: the federal-dataset sources' live targets ARE
+        # the committed inventory in data/federal_datasets_targets.toml —
+        # the reviewed FR-API term queries, dataset files and index pages;
+        # every row stays ingestion_permitted=false pending the operator's
+        # OP-26 Wave-D flip under ING-GO-D.
+        from .federal_datasets import federal_dataset_targets
+
+        return federal_dataset_targets(source_id=source_id)
     if kind == "procurement_portal_tenants":
         # A procurement-portal source's live targets ARE its tenant rows in
         # data/procurement_portal_tenants.toml (P26.10): each expands to the

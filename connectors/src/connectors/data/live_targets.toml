@@ -2921,3 +2921,35 @@ kind = "dot_511_targets"
 
 [camreg_oakland_ca_shotspotter_2013_2015]
 kind = "dot_511_targets"
+
+# --- P37.49 (ACQ-21): federal datasets family --------------------------------
+# Eight gated sources — the reviewed FR-API term queries, the OMB AI-inventory
+# CSV, and the publisher index pages (wiretap tables, DHS AI inventory, ICE
+# 287(g) landing incl. the dated-workbook resolve, NCES SSOCS) in
+# data/federal_datasets_targets.toml. Rows record the endpoints the
+# operator's OP-26 Wave-D flips will drive; the live gate refuses before any
+# target is read.
+
+[statrep_us_wiretap_summary_tables]
+kind = "federal_dataset_targets"
+
+[legis_us_federal_register_api]
+kind = "federal_dataset_targets"
+
+[statrep_tx_south_padre_island_faa]
+kind = "federal_dataset_targets"
+
+[statrep_us_2024_federal_agency]
+kind = "federal_dataset_targets"
+
+[statrep_us_dhs_ai_use]
+kind = "federal_dataset_targets"
+
+[statrep_us_ice_287_participating]
+kind = "federal_dataset_targets"
+
+[statrep_us_ice_287_monthly]
+kind = "federal_dataset_targets"
+
+[camreg_us_nces_school_survey_on_crime]
+kind = "federal_dataset_targets"

@@ -144,3 +144,15 @@ note = "§11.8 — a registry-listed camera is a field device: its claims are ca
 [prefixes."usage_aggregate:"]
 entity_type = "usage_aggregate"
 note = "§11.16 — searching→source aggregate subjects; `audit_cell_redacted` claims mint them (audit_structural.py AGGREGATE_ID_PREFIX)."
+
+[prefixes."ai_use_case:"]
+entity_type = "deployment"
+note = "§11.7 — a federal AI use-case row is the publisher's declared organisational adoption of an AI capability (federal_datasets.py, P37.49); the inventory's own stage literal is the evidence, never a guessed deployment."
+
+[prefixes."federal_document:"]
+entity_type = "data_system"
+note = "§11.10 — a published federal dataset file/index document the family enumerates as a pointer (federal_datasets.py, P37.49); a reference artifact, never fetched content."
+
+[prefixes."federal_register_document:"]
+entity_type = "legal_instrument"
+note = "§11.14 — a Federal Register rule/proposed-rule/notice record is the federal register's own instrument document (federal_datasets.py, P37.49)."
