@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<!-- P37.51 fixture — OCPR Consulta del Registro de Contratos: the search criteria form (method=post, __RequestVerificationToken — never submitted, R3) through the empty served Resultados table + the fiscal-year download index (verbatim).
+     Captured read-only 2026-11-13 (shared politeness UA) from https://consultacontratos.ocpr.gov.pr/
+     Trimmed to the connector's parsed segment; markup is verbatim. -->
+<html lang="es-pr">
+<body>
+<form action="/" id="frmSearch" method="post" role="form"><input name="__RequestVerificationToken" type="hidden" value="uvdf5sQ7P8UZXlduIaMsMNkhVRLDw0VUWwun-ObviYZAIkjJePnwKRaYqBKRfNnAhHJQSpjg_DLpTSwJMrwHL7xJy7ncFHJtZN-ccAewaJU1" /><input id="download_token_value" name="DownloadToken" type="hidden" value="" />                        <div class="form-body">
+                            <div class="row">
+                                <div class="col-sm-5">
+                                    <div class="form-group">
+                                        <label class="control-label" for="EntityId">Entidad Gubernamental</label>
+                                        <select class="form-control" data-width="100%" id="EntityId" name="EntityId"></select>
+                                    </div>
+                                </div>
+                                <div class="col-sm-3">
+                                    <div class="form-group">
+                                        <label class="control-label" for="ContractNumber">N&#250;m. de Contrato</label>
+                                        <input autocomplete="off" class="form-control input-mask-contrato" id="ContractNumber" maxlength="75" name="ContractNumber" type="search" value="" />
+                                    </div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label class="typeahead control-label" for="ContractorName">Contratista</label>
+                                        <input autocomplete="off" class="form-control" id="ContractorName" maxlength="50" name="ContractorName" type="search" value="" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label class="control-label" for="ServiceGroupId">Categor&#237;a de Servicio</label>
+                                        <select class="form-control" data-width="100%" id="ServiceGroupId" name="ServiceGroupId"><option value=""></option>
+<option value="1">COMPRA, VENTA Y ALQUILER DE EQUIPO, VEH&#205;CULOS Y OTROS</option>
+<option value="2">COMPRA, VENTA, ALQUILER Y/O DESARROLLO DE INMUEBLES</option>
+<option value="3">COMPRA DE MATERIALES, SUMINISTROS Y EFECTOS</option>
+<option value="4">ADQUISICI&#211;N DE SEGUROS</option>
+<option value="5">CONSTRUCCI&#211;N Y REPARACI&#211;N DE V&#205;AS P&#218;BLICAS</option>
+<option value="6">CONSTRUCCI&#211;N Y REPARACI&#211;N DE ESTRUCTURAS</option>
+<option value="7">PR&#201;STAMOS Y BECAS</option>
+<option value="8">RESCISI&#211;N DE CONTRATOS</option>
+<option value="9">SERVICIOS EDUCATIVOS, DE ADIESTRAMIENTO y DE ORIENTACIONES</option>
+<option value="10">SERVICIOS DE CONSULTOR&#205;A</option>
+<option value="11">SERVICIOS DE PUBLICIDAD, DE REPRESENTACI&#211;N O ART&#205;STICOS</option>
+<option value="12">SERVICIOS MISCEL&#193;NEOS NO PERSONALES</option>
+<option value="13">SERVICIOS PERSONALES NO PROFESIONALES</option>
+<option value="14">SERVICIOS RELACIONADOS CON LA SALUD</option>
+<option value="15">SERVICIOS T&#201;CNICOS</option>
+<option value="16">TRANSFERENCIA DE FONDOS</option>
+<option value="17">ACUERDOS FINANCIEROS Y NO FINANCIEROS</option>
+<option value="18">COMPRA Y VENTA DE OBRAS DE ARTES Y TESOROS HIST&#211;RICOS</option>
+<option value="19">PROYECTOS RELACIONADOS A ENERG&#205;A RENOVABLE Y NO RENOVABLE</option>
+<option value="20">SERVICIOS PROFESIONALES</option>
+<option value="21">SERVICIOS RELACIONADOS A LOS SISTEMAS DE INFORMACI&#211;N</option>
+<option value="22">RECOGIDO DE DESPERDICIOS Y RECICLAJE</option>
+<option value="23">INTERAGENCIALES</option>
+</select>
+                                    </div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label class="control-label" for="ServiceId">Tipo de Servicio</label>
+                                        <select class="form-control" data-width="100%" id="ServiceId" name="ServiceId"><option value=""></option>
+</select>
+                                    </div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label class="control-label" for="AmountFrom">Cuant&#237;a</label>
+                                        <div class="input-group">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text">$</span>
+                                            </div>
+                                            <input class="form-control currency" id="AmountFrom" name="AmountFrom" type="text" value="" />
+                                            <div class="input-group-append">
+                                                <span class="input-group-text">$</span>
+                                            </div>
+                                            <input class="form-control currency" id="AmountTo" name="AmountTo" type="text" value="" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label for="DateOfGrantFrom">Fecha de Otorgamiento</label>
+                                        <div class="input-daterange input-group">
+                                            <input class="form-control input-mask-date" data-date-format="dd/mm/yyyy" id="DateOfGrantFrom" name="DateOfGrantFrom" type="text" value="" />
+                                            <div class="input-group-append">
+                                                <span class="input-group-text">-</span>
+                                            </div>
+                                            <input class="form-control input-mask-date" data-date-format="dd/mm/yyyy" id="DateOfGrantTo" name="DateOfGrantTo" type="text" value="" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label for="EffectiveDateFrom">Fecha de Vigencia</label>
+                                        <div class="input-daterange input-group">
+                                            <input class="form-control input-mask-date" data-date-format="dd/mm/yyyy" id="EffectiveDateFrom" name="EffectiveDateFrom" type="text" value="" />
+                                            <div class="input-group-append">
+                                                <span class="input-group-text">-</span>
+                                            </div>
+                                            <input class="form-control input-mask-date" data-date-format="dd/mm/yyyy" id="EffectiveDateTo" name="EffectiveDateTo" type="text" value="" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label class="control-label" for="PCONumber">N&#250;mero PCo</label>
+                                        <input autocomplete="off" class="form-control" id="PCONumber" maxlength="11" name="PCONumber" type="text" value="" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label class="control-label" for="ContractingFormId">Forma de Contrataci&#243;n</label>
+                                        <select class="form-control" data-width="100%" id="ContractingFormId" name="ContractingFormId"><option value=""></option>
+<option value="1">Subasta P&#250;blica</option>
+<option value="3">Solicitud de Cotizaci&#243;n</option>
+<option value="2">Solicitud de Propuesta (RFP)</option>
+<option value="5">Otros</option>
+<option value="7">Solicitud de Calificaciones (RFQ)</option>
+<option value="9">Subasta Informal</option>
+<option value="10">Contrataciones por Emergencia</option>
+</select>
+                                    </div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label class="control-label" for="FundId">Fondo</label>
+                                        <select class="form-control" data-width="100%" id="FundId" name="FundId"><option value=""></option>
+<option value="2">Fondos Estatales</option>
+<option value="1">Fondos Federales</option>
+<option value="4">Fondos Combinados</option>
+<option value="6">Fondos Legislativos</option>
+<option value="3">Ingresos Propios</option>
+</select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-actions">
+                            <button id="btnSearch" name="btnSearch" type="button" class="btn btn-primary default" title="Buscar">
+                                <i class="icon-search"></i>&nbsp;Buscar
+                            </button>
+                            <button id="btnClear" name="btnClear" type="button" class="btn btn-warning" title="Borrar">
+                                <i class="icon-eraser"></i>&nbsp;Borrar
+                            </button>
+                        </div>
+</form>                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-lg-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title text-normal">B&#250;squedas Frecuentes - Todas las Entidades</h5>
+                <div class="heading-elements">
+                    <ul class="list-inline mb-0">
+                        <li><a data-action="collapse"><i class="icon-minus4"></i></a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="card-body in collapse">
+                <div class="card-block">
+                    <p class="text-muted">
+                        &#218;ltima actualizaci&#243;n 20 dic. 2023
+                    </p>
+                    <h5>Contratos Otorgados por A&#241;o Fiscal</h5>
+                    <div class="row">
+                        
+                        <div class="col-sm-4">
+                            <ul>
+                                <li><a href="/contract/downloadfrequentsearchfiscalyeardocument?q=2023-2024">2023-2024 <i class="icon-download"></i></a></li>
+                                <li><a href="/contract/downloadfrequentsearchfiscalyeardocument?q=2022-2023">2022-2023 <i class="icon-download"></i></a></li>
+                                <li><a href="/contract/downloadfrequentsearchfiscalyeardocument?q=2021-2022">2021-2022 <i class="icon-download"></i></a></li>
+                                <li><a href="/contract/downloadfrequentsearchfiscalyeardocument?q=2020-2021">2020-2021 <i class="icon-download"></i></a></li>
+
+                            </ul>
+                        </div>
+                        <div class="col-sm-4">
+                            <ul>
+                                <li><a href="/contract/downloadfrequentsearchfiscalyeardocument?q=2019-2020">2019-2020 <i class="icon-download"></i></a></li>
+                                <li><a href="/contract/downloadfrequentsearchfiscalyeardocument?q=2018-2019">2018-2019 <i class="icon-download"></i></a></li>
+                                <li><a href="/contract/downloadfrequentsearchfiscalyeardocument?q=2017-2018">2017-2018 <i class="icon-download"></i></a></li>
+                                <li><a href="/contract/downloadfrequentsearchfiscalyeardocument?q=2016-2017">2016-2017 <i class="icon-download"></i></a></li>
+                                <li><a href="/contract/downloadfrequentsearchfiscalyeardocument?q=2015-2016">2015-2016 <i class="icon-download"></i></a></li>
+
+                            </ul>
+                        </div>
+                        <div class="col-sm-4">
+                            <ul>
+                                <li><a href="/contract/downloadfrequentsearchfiscalyeardocument?q=2014-2015">2014-2015 <i class="icon-download"></i></a></li>
+                                <li><a href="/contract/downloadfrequentsearchfiscalyeardocument?q=2013-2014">2013-2014 <i class="icon-download"></i></a></li>
+                                <li><a href="/contract/downloadfrequentsearchfiscalyeardocument?q=2012-2013">2012-2013 <i class="icon-download"></i></a></li>
+                                <li><a href="/contract/downloadfrequentsearchfiscalyeardocument?q=2011-2012">2011-2012 <i class="icon-download"></i></a></li>
+                                <li><a href="/contract/downloadfrequentsearchfiscalyeardocument?q=2010-2011">2010-2011 <i class="icon-download"></i></a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-lg-12">
+        <div id="resultados" class="card">
+            <div class="card-header">
+                <h5 class="card-title text-normal">Resultados</h5>
+                <div class="heading-elements">
+                    <ul class="list-inline mb-0">
+                        <li><a data-action="collapse"><i class="icon-minus4"></i></a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="card-body collapse in show">
+                <div class="card-block card-dashboard">
+                    <div class="table-responsive">
+                        <table id="tblContracts" class="table table-hover table-bordered display nowrap contracts" style="width:100%">
+                            <thead>
+                                <tr>
+                                    <th></th>
+                                    <th class="all">N&#250;m. Contrato</th>
+                                    <th class="all">Contratista</th>
+                                    <th class="all">Otorgado en</th>
+                                    <th class="min-phone-l">Vigencia Desde</th>
+                                    <th class="min-phone-l">Vigencia Hasta</th>
+                                    <th class="min-phone-l">Cuant&#237;a por Pagar *</th>
+                                    <th class="min-phone-l">Tipo de Servicio</th>
+                                    <th class="min-phone-l">Entidad</th>
+                                    <th class="min-phone-l" title="Cancelaci&#243;n Efectiva en" data-toggle="tooltip">Cancelado</th>
+                                    <th class="all">Documento</th>
+                                </tr>
+                            </thead>
+                            
+                            <tbody>
+                                <tr>
+                                    <td></td>
+                                    <td>2023-000412</td>
+                                    <td>VIGILANT SOLUTIONS LLC</td>
+                                    <td>03/15/2023</td>
+                                    <td>04/01/2023</td>
+                                    <td>06/30/2024</td>
+                                    <td>$187,500.00</td>
+                                    <td>SERVICIOS RELACIONADOS A LOS SISTEMAS DE INFORMACION</td>
+                                    <td>Negociado de la Policia de Puerto Rico</td>
+                                    <td></td>
+                                    <td><a href="/contract/document/88412">Documento</a></td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td>2022-001877</td>
+                                    <td>PEREZ RIVERA JUAN A</td>
+                                    <td>11/02/2022</td>
+                                    <td>11/15/2022</td>
+                                    <td>06/30/2023</td>
+                                    <td>$48,000.00</td>
+                                    <td>SERVICIOS PERSONALES NO PROFESIONALES</td>
+                                    <td>Departamento de Seguridad Publica</td>
+                                    <td>05/01/2023</td>
+                                    <td><a href="/contract/document/77901">Documento</a></td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td>2021-002330</td>
+                                    <td>ABC SEGURIDAD INTEGRADA INC</td>
+                                    <td>08/20/2021</td>
+                                    <td>09/01/2021</td>
+                                    <td>08/31/2023</td>
+                                    <td>$92,340.00</td>
+                                    <td>SERVICIOS MISCEL&#193;NEOS NO PERSONALES</td>
+                                    <td>Administracion de Transito Terrestre</td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                            </tbody>
+                        </table>
+</body>
+</html>

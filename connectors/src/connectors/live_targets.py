@@ -133,6 +133,17 @@ def live_targets(source_id: str) -> list[dict[str, str]]:
         from .federal_datasets import federal_dataset_targets
 
         return federal_dataset_targets(source_id=source_id)
+    if kind == "puerto_rico_targets":
+        # P37.51 / R11-ACQ-24: the Puerto Rico territorial sources' live
+        # targets ARE the committed inventory in
+        # data/puerto_rico_targets.toml — the reviewed SUTRA title-phrase
+        # queries + measure detail pages and the OCPR landing page; every
+        # row stays ingestion_permitted=false pending the operator's OP-26
+        # Wave-D flips under ING-GO-D (HG-03 RB-08 `a`; OCPR additionally
+        # S7 `a`).
+        from .puerto_rico import puerto_rico_targets
+
+        return puerto_rico_targets(source_id=source_id)
     if kind == "procurement_portal_tenants":
         # A procurement-portal source's live targets ARE its tenant rows in
         # data/procurement_portal_tenants.toml (P26.10): each expands to the

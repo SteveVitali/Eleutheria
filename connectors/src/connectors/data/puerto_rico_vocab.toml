@@ -1,0 +1,165 @@
+# SPDX-License-Identifier: Apache-2.0
+# The versioned `puerto_rico` connector vocabulary (P37.51 / R11-ACQ-24,
+# I8 §6.2 — the Puerto Rico territorial family: the SUTRA legislature
+# measures surface + the OCPR Consulta del Registro de Contratos). This table
+# is DATA, not code (SIG-ENG-001): the predicate allowlist, the forbidden
+# predicate genres, the per-adapter field maps, the committed host set and
+# the person-level column screen are data rows reviewed on their own.
+# Changes after P37.51 are VERSIONED MIGRATIONS — bump `vocab_version` and
+# add the change, never silently rewrite a row (SIG-INGEST-017).
+#
+# NOTE ON TOML ORDERING: every top-level key MUST appear ABOVE the first
+# [table] header — otherwise TOML nests it under that table. The [adapters.*]
+# tables therefore come last.
+
+schema = "sig.puerto-rico-vocab/1"
+
+# The connector's own vocabulary version, stamped onto every run (§20).
+vocab_version = "2026.11.13"
+
+# The predicate allowlist enforced as a hard schema gate (SIG-INGEST-033):
+# the `puerto_rico` connector may write ONLY the legislative-measure,
+# contract and document-pointer predicates below — the publisher's own
+# metadata literals. Writing anything else — a person name, a per-record
+# natural person, a guessed technology slug, a sharing edge — is a schema
+# error. Measure-author names are never emitted (S5-adjacent default-deny:
+# only the author COUNT rides the entity row, recorded as provenance).
+predicate_allowlist = [
+  "legislative_bill",
+  "bill_external_id",
+  "bill_identifier",
+  "bill_title",
+  "bill_session",
+  "bill_jurisdiction",
+  "bill_status",
+  "bill_status_date",
+  "bill_matched_keyword",
+  "filed_date",
+  "contract",
+  "external_id",
+  "buyer",
+  "seller",
+  "amount",
+  "currency",
+  "signed_date",
+  "start_date",
+  "end_date",
+  "document",
+  "title",
+  "description",
+  "published_by",
+  "platform",
+  "country",
+]
+
+# Predicate GENRES the connector MUST NOT write (scope-creep guard): sharing
+# edges, deployment assertions, person records, camera/device predicates and
+# per-encounter/per-person rows belong to other lanes and would over-assert
+# what a measure page or a contract-registry row actually states (a SUTRA
+# measure is proposed law under consideration — never a deployment; an OCPR
+# row is a public contract record — never the private contractor's person).
+forbidden_predicate_genres = [
+  "configured_access_edge",
+  "configured_sharing_partner",
+  "sharing_partner",
+  "observed_use_edge",
+  "deployment_exists",
+  "camera_latitude",
+  "camera_longitude",
+  "person",
+  "person_name",
+  "officer_name",
+  "individual_name",
+  "named_individual",
+  "in_use_without_policy_count",
+]
+
+# The person-level column-name tokens the tabular screen refuses on a served
+# OCPR results table (Part VIII / §0.7 — schema vocabulary, never values).
+# The adapters emit only the declared field-map columns, so a table that
+# also SHIPS a person-level column is refused wholesale rather than
+# partially redacted: the field names below are the reviewed person-level
+# markers, in both the registry's Spanish literals and English.
+forbidden_field_tokens = [
+  "ssn",
+  "seguro social",
+  "dob",
+  "fecha de nacimiento",
+  "driver",
+  "licencia de conducir",
+  "officer",
+  "oficial",
+  "judge",
+  "juez",
+  "victim",
+  "victima",
+  "arrestee",
+  "arrestado",
+  "defendant",
+  "acusado",
+  "suspect",
+  "sospechoso",
+  "passenger",
+  "pasajero",
+  "plate",
+  "tablilla",
+]
+
+# The committed https host set every target URL must resolve onto — the
+# territorial publishers' own public hosts only (SUTRA's oslpr.org app host,
+# the OCPR contract-consultation host). A resolved child link off this set
+# refuses before egress (fail-closed).
+hosts = [
+  "sutra.oslpr.org",
+  "consultacontratos.ocpr.gov.pr",
+]
+
+# --- [adapters.*] — the small per-surface adapters -----------------------------
+# Each adapter declares the target kind it reads and (for the tabular lane)
+# the published column literals it maps — column names are the publisher's
+# own verbatim literals; an absent declared column drops the row to a
+# recorded rejection, never a guessed field.
+
+# SUTRA medidas title-phrase search (GET /medidas?frase_titulo=<phrase>) —
+# the bounded first page of each committed phrase lane. Each result item is
+# a `sutra_measure` record (number, filed date, title, last completed
+# progress step, author COUNT — names dropped) keyed on the platform's own
+# numeric medida id.
+[adapters.sutra_search]
+kind = "sutra_index"
+publisher = "Asamblea Legislativa de Puerto Rico — Oficina de Servicios Legislativos"
+license_spdx = "LicenseRef-PublicRecord-FactualCompilation"
+
+# SUTRA medida detail page (/medidas/<id>) — the page's own header fields
+# (measure type + number, cuatrienio, filing date, title), the event list
+# (name + date verbatim) and the Documentos/SutraFilesGen document links as
+# pointers — a `sutra_measure` record; a pending measure is proposed law,
+# never a §11.14 LegalInstrument claim beyond legislative_bill.
+[adapters.sutra_measure_page]
+kind = "sutra_detail"
+publisher = "Asamblea Legislativa de Puerto Rico (via SUTRA)"
+license_spdx = "LicenseRef-PublicRecord-FactualCompilation"
+
+# The OCPR Consulta del Registro de Contratos landing page — the
+# fiscal-year bulk-download index enumerates as `ocpr_document` pointers
+# (contents never fetched by this connector), and a POPULATED #tblContracts
+# results table (the POST form is never submitted — R3; a served table is
+# parsed when present) emits `contract` records on the registry's own
+# column literals. The Contratista cell runs the S7 screen: a natural-
+# person-shaped contractor name mints no subject and no seller claim — a
+# recorded `puerto_rico_record_rejected`, never a claim.
+[adapters.ocpr_registry_index]
+kind = "ocpr_index"
+publisher = "Oficina de la Contralora de Puerto Rico (OCPR)"
+license_spdx = "LicenseRef-PublicRecord-FactualCompilation"
+[adapters.ocpr_registry_index.fields]
+contract_number = "Núm. Contrato"
+contractor = "Contratista"
+granted = "Otorgado en"
+valid_from = "Vigencia Desde"
+valid_to = "Vigencia Hasta"
+amount = "Cuantía por Pagar *"
+service = "Tipo de Servicio"
+entity = "Entidad"
+cancelled = "Cancelado"
+document = "Documento"

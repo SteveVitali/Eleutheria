@@ -254,6 +254,24 @@ CONNECTOR_FOR_SOURCE: dict[str, str] = {
     "agenda_tampa_fl_onbase_agenda_online": "procurement",
     "agenda_az_maricopa_county_board_of": "procurement",
     "agenda_nd_fargo_city_commission_agendas": "procurement",
+    # P37.51 (R11-ACQ-24, I8 §6.2): the Puerto Rico territorial family — the
+    # seven SUTRA legislature seats (one channel seat binding four committed
+    # title-phrase queries + six per-measure detail seats) and the OCPR
+    # contract-registry seat, all served by the `puerto_rico` connector
+    # (html_scraping; the SUTRA index/detail adapters + the OCPR index with
+    # the S7 natural-person contractor screen). All eight stay
+    # `ingestion_permitted=false` (HG-03 RB-08 `a` territorial public records;
+    # the OCPR row additionally S7 `a`) pending the operator's OP-26 Wave-D
+    # flips under ING-GO-D; replay/shadow run over committed fixtures in
+    # `tests/connectors/fixtures/p37_51/`.
+    "legis_pr_pc0489_ley_del": "puerto_rico",
+    "legis_pr_pc0560_plan_de": "puerto_rico",
+    "legis_pr_rc0740_investigaci_sobre": "puerto_rico",
+    "legis_pr_rc0787_resoluci_de": "puerto_rico",
+    "legis_pr_rcs0198_resoluci_conjunta": "puerto_rico",
+    "legis_pr_rs0604_resoluci_del": "puerto_rico",
+    "legis_pr_sistema_nico_de": "puerto_rico",
+    "procportal_pr_consulta_del_registro": "puerto_rico",
     "sam_gov": "procurement",
     "courtlistener_recap": "accountability",
     # P36.77 / R11-ACQ-32: the DocumentCloud/MuckRock released-materials
