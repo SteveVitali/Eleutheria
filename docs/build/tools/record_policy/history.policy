@@ -1516,3 +1516,20 @@ seed-commit 51bb02fb
 # mechanism as a58fa2fa/d130b54d above. Scope: the append-only findings
 # attributed to e3efcac5 only; no other commit borrows the exemption.
 seed-commit e3efcac5
+
+# ── P37.61c sanctioned deletion (row 489c; RULING E-2, 2026-11-16) ──────
+# 2f64b345 removes the whole `docs/build/reports/current/` subtree (14
+# generated files — CURRENT.md, adrs.md, coverage-1..5.md, current.json,
+# domains.md, funnel.md, manifest.json, obligations.md, receipt.json,
+# return-pass.md) in one commit under ADR-250 / RULING E-2 (GATE DECISIONS
+# 2026-11-15; readouts/RULINGS-2026-11-15.md): the deterministic
+# current-state projection is generated on demand and is never committed;
+# CI runs `generate --out <tmp> && verify --out <tmp>` and uploads the
+# output as a workflow artifact. The removed paths classify to no
+# protected record class (not ledger/deferrals/readout/index/manifest/
+# digest/jsonl/adr/contract/runpr/policy-ao), so the deletion is clean
+# under BM-HIST-01 — this declaration records the sanction explicitly as
+# the ruling requires (the 427c5efb/e3efcac5 precedent: the declaration
+# lands as a later commit in the same PR). Scope: findings attributed to
+# 2f64b345 only; no other commit borrows the exemption.
+seed-commit 2f64b345
