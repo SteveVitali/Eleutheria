@@ -1,0 +1,76 @@
+{
+  "schema": "ci-boundary/1",
+  "tool": "docs/build/tools/ci_boundary.py",
+  "requested_pr": 495,
+  "pr": 495,
+  "head_sha": "a0442c4a93a0cb44bac4c578a800c501f1c2425f",
+  "head_ref": "r11/P37.46b-organisation-cascade-materializer",
+  "base": "r11/P37.46a-organisation-crosswalk-intake",
+  "read_at": "2026-11-13T06:09:35Z",
+  "prefix": "r11/",
+  "scope": "the current r11/ PR and its open r11/ ancestors; never #141–#190",
+  "required": [
+    "python",
+    "docs",
+    "composed",
+    "security",
+    "web"
+  ],
+  "stack": [],
+  "stack_stop": "base `r11/P37.32-contract-expiring-detector` is #480, already merged",
+  "stack_digest": "33c9642a47baca205955ccaafa29bcf216c926abab87cbe855a6820a9977c94e",
+  "local_head": "a0442c4a93a0cb44bac4c578a800c501f1c2425f",
+  "external": {
+    "read_at": "2026-11-13T06:09:45Z",
+    "since": "2026-11-13",
+    "fetch": "ok",
+    "main_sha": "1acf1141f607c434d329d30f4bc4ebb2cdfa5935",
+    "chain_descends": false,
+    "descends_note": "origin/main 1acf114 is not an ancestor of the tip — main carries commits the chain does not contain (the chain trails main, merged late by the operator)",
+    "ancestry": [
+      {
+        "child": 495,
+        "parent": 494,
+        "ancestor": true
+      },
+      {
+        "child": 494,
+        "parent": 493,
+        "ancestor": true
+      },
+      {
+        "child": 493,
+        "parent": 492,
+        "ancestor": true
+      },
+      {
+        "child": 492,
+        "parent": 491,
+        "ancestor": true
+      },
+      {
+        "child": 491,
+        "parent": 490,
+        "ancestor": false
+      }
+    ]
+  },
+  "flake_entries": [
+    "LH-PERF-1",
+    "PY-SUBSTR-1",
+    "DOCKERHUB-RATE-1",
+    "DOCKERHUB-RATE-2",
+    "DOCKERHUB-RATE-3",
+    "NPM-AUDIT-503-1",
+    "PY-STUB-1"
+  ],
+  "reruns": [],
+  "checks": [],
+  "waivers": 5,
+  "polls": 0,
+  "waited_s": 0,
+  "state": "fail",
+  "kind": "stack",
+  "line": "blockedOn: CI stack on #495@a0442c4 (external): #491 does not contain its base #490's head e1e4520 — rebased or retargeted outside the documented procedure",
+  "exit": 3
+}

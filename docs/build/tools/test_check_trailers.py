@@ -193,6 +193,19 @@ def test_trailer_quoted_in_the_body_does_not_count(repo: Path) -> None:
     assert rc == 1 and classes(doc) == ["untrailered"]
 
 
+def test_conflicts_comment_block_does_not_swallow_the_trailer(repo: Path) -> None:
+    """A conflicted merge's stored message ends in git's `# Conflicts:` comment
+    block — comments are not content, so a real trailer before it still counts."""
+    commit(
+        repo,
+        "merge base tip — restores the stack\n\n"
+        "Harness: devin-desktop/swe-2-high/orchestrator\n\n"
+        "# Conflicts:\n#\tdocs/build/LEDGER.md\n",
+    )
+    rc, doc, _ = check(repo)
+    assert rc == 0 and classes(doc) == ["agent"]
+
+
 @pytest.mark.parametrize(
     "line",
     [

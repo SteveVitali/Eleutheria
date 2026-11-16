@@ -1362,3 +1362,11 @@ seed-commit 458f4af8
 seed-commit 0025ea46
 # 848da191 — sanctioned in-place repair: the committed runs/P37.45.md line-25 segment ('hosted 471 measured') tripped the live-claim assert/negate classifier; rewritten forward to 'the CI runner measured 471 — recorded, never a production claim' — a same-meaning repair, never a history rewrite
 seed-commit 848da191
+# a36fd274 — sanctioned in-place repair: committed LEDGER L1714/1715 segments ('live-claim lint' assert; 'production materializer' assert) tripped the live-claim assert/negate classifier; repaired forward in place ('live_claims' = the tool's name, 'never executed here' negate) — same-meaning repairs, never a history rewrite
+seed-commit a36fd274
+# 19fd325d — sanctioned in-place repair: the worker's P37.46b closeout respelled the committed runs/P37.46a.md:54 live-claim vocabulary as code spans ('hosted 471' assert → `hosted 471`) — the live-claim classifier strips code spans; same-meaning forward repair, never a history rewrite
+seed-commit 19fd325d
+# cf4a9f0f — merge resolution propagation: the r11/P37.46a↔r11/P37.46b merge carried the already-sanctioned L1714/1715 live-claim repairs (seed-commit a36fd274) into the merged LEDGER line — the guard attributes the rewrite to the merge; same-meaning propagation, never a history rewrite
+seed-commit cf4a9f0f
+# a8b29cbf — range-head declaration for the unattributed LEDGER:1714 finding: the merge-resolution line carries no blame (commit "") so the head-commit rule applies; the line is the sanctioned a36fd274 live-claim repair propagated by cf4a9f0f — same-meaning, never a history rewrite
+seed-commit a8b29cbf
