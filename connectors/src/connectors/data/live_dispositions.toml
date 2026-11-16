@@ -408,19 +408,12 @@ disposition = "link_only"
 # One promote row per generated source, naming its recorded class ticket
 # (HG-03 flip still required — never here).
 
+# P37.69b (R11-ACQ-23b): the OGC WFS family wired three of its four seats —
+# runny/south_skdc/clackmannanshire map to the `ogc_wfs` connector (a
+# connector-mapped source carries no disposition row, P25.6 exactly-once).
+# `camreg_gb_eng_ipswich_cctv_camera` stays enumerated: its committed record
+# evidences WMS only, no WFS endpoint (D-P37.69b-1) — the promote row stands.
 [sources.camreg_gb_eng_ipswich_cctv_camera]
-disposition = "promote"
-class_ticket = "P37.69b"
-
-[sources.camreg_gb_eng_runny_cctv_cameras]
-disposition = "promote"
-class_ticket = "P37.69b"
-
-[sources.camreg_gb_eng_south_skdc_cctv]
-disposition = "promote"
-class_ticket = "P37.69b"
-
-[sources.camreg_gb_sct_clackmannanshire_cctv]
 disposition = "promote"
 class_ticket = "P37.69b"
 

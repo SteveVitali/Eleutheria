@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- SYNTHETIC RECONSTRUCTION (P37.69b) — a statmap-shaped WFS 2.0
+     FeatureCollection for the selector-resolved `SKDC_INSPIRE_WFS:CCTV`
+     feature type (I5-C315). Coordinates are invented points inside the
+     published jurisdiction, never fetched records; see SOURCES.md. -->
+<wfs:FeatureCollection numberMatched="2" numberReturned="2"
+  xmlns:wfs="http://www.opengis.net/wfs/2.0"
+  xmlns:gml="http://www.opengis.net/gml/3.2"
+  xmlns:SKDC_INSPIRE_WFS="https://southkesteven.statmap.co.uk/map/inspire">
+  <wfs:member>
+    <SKDC_INSPIRE_WFS:CCTV gml:id="CCTV.1">
+      <SKDC_INSPIRE_WFS:geometry>
+        <gml:Point srsName="urn:ogc:def:crs:EPSG::4326">
+          <gml:pos>52.7864 -0.5859</gml:pos>
+        </gml:Point>
+      </SKDC_INSPIRE_WFS:geometry>
+      <SKDC_INSPIRE_WFS:site>Grantham town centre</SKDC_INSPIRE_WFS:site>
+    </SKDC_INSPIRE_WFS:CCTV>
+  </wfs:member>
+  <wfs:member>
+    <SKDC_INSPIRE_WFS:CCTV gml:id="CCTV.2">
+      <SKDC_INSPIRE_WFS:geometry>
+        <gml:Point srsName="urn:ogc:def:crs:EPSG::4326">
+          <gml:pos>52.9120 -0.6419</gml:pos>
+        </gml:Point>
+      </SKDC_INSPIRE_WFS:geometry>
+      <SKDC_INSPIRE_WFS:site>Stamford high street</SKDC_INSPIRE_WFS:site>
+    </SKDC_INSPIRE_WFS:CCTV>
+  </wfs:member>
+</wfs:FeatureCollection>

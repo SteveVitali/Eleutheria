@@ -3629,3 +3629,22 @@ organizations = [ "Commission nationale de l'informatique et des libertés" ]
 technologies = [ "video analysis", "CCTV" ]
 source_class = "primary_record"
 review_note = "The CNIL BriefCam enforcement decision (I9b-C103 — the regulator's own published decision page): existence, issuing authority and covered technology are institutional facts; the named communes' detail stays on the document, never per-entity claims."
+
+# =============================================================================
+# P37.69b (R11-ACQ-23b, I7 N1–N21 `a` / RB-06 `a`) — the OGC WFS family.
+# Every seat stays `ingestion_permitted=false`; leg B (the first real wire)
+# is the operator's act under ING-GO-D (OP-26). The three wired seats expand
+# from the committed inventory in ogc_wfs_targets.toml (GetCapabilities +
+# declared GetFeature rows; SKDC's GetFeature resolves from the captured
+# capabilities inside the run — the served document names the feature type).
+# `camreg_gb_eng_ipswich_cctv_camera` stays enumerated (D-P37.69b-1) — its
+# committed record evidences WMS only, never a WFS endpoint.
+# =============================================================================
+[camreg_gb_eng_runny_cctv_cameras]
+kind = "ogc_wfs_targets"
+
+[camreg_gb_eng_south_skdc_cctv]
+kind = "ogc_wfs_targets"
+
+[camreg_gb_sct_clackmannanshire_cctv]
+kind = "ogc_wfs_targets"

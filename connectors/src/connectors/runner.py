@@ -846,6 +846,20 @@ CONNECTOR_FOR_SOURCE: dict[str, str] = {
     "camreg_pt_11_lisboa_sistema_de": "dossier_documents",
     "camreg_es_md_madrid_c_maras_de": "dossier_documents",
     "statrep_fr_cnil_utilisation_de": "accountability",
+    # P37.69b (R11-ACQ-23b, I7 N1–N21 `a` / RB-06 `a`): the OGC WFS family —
+    # three gated seats ride the `ogc_wfs` connector (Runnymede's GeoServer
+    # layer + the Clackmannanshire Cadcorp layer wire declared
+    # wfs_capabilities + wfs_get_feature rows; South Kesteven's statmap
+    # INSPIRE seat records no typename, so its capabilities row carries
+    # `feature_type_selector = "sole"` and the served document resolves the
+    # bounded GetFeature follow-on). `camreg_gb_eng_ipswich_cctv_camera`
+    # stays enumerated — the committed record evidences WMS only
+    # (D-P37.69b-1) — and keeps its `promote` disposition. Every row stays
+    # `ingestion_permitted=false`; the flips are the operator's act under
+    # ING-GO-D (OP-26).
+    "camreg_gb_eng_runny_cctv_cameras": "ogc_wfs",
+    "camreg_gb_eng_south_skdc_cctv": "ogc_wfs",
+    "camreg_gb_sct_clackmannanshire_cctv": "ogc_wfs",
 }
 
 

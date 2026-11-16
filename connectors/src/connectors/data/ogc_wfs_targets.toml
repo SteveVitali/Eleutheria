@@ -1,0 +1,162 @@
+# SPDX-License-Identifier: Apache-2.0
+# The committed OGC WFS inventory (P37.69b / R11-ACQ-23b —
+# `sig.ogc-wfs-targets/1`). Every row is reviewed data: the service URL is
+# derived ONLY from the committed candidate record (the seat notes record
+# the derivation), the declared typename/selector is the seat's own literal
+# where the record carries one, and the bound (`count`) is the reviewed page
+# size. A row never invents an endpoint; the `[[enumerated]]` table records
+# seats whose concrete WFS endpoint is NOT evidenced by the committed
+# record (D-P37.69b-1).
+#
+# KINDS:
+#   wfs_capabilities — ONE `?service=WFS&request=GetCapabilities` document;
+#                      emits the ogc_service record (served feature-type
+#                      names + declared version); `expected_typenames` pins
+#                      names the document MUST serve; `feature_type_selector`
+#                      ("sole" or a literal name) resolves a bounded
+#                      wfs_get_feature follow-on inside the same run
+#                      (discover_more — the served document itself names the
+#                      feature type, never a guessed one).
+#   wfs_get_feature  — ONE bounded `…&request=GetFeature&typenames=<t>&
+#                      count=<n>` page; emits traffic_camera rows via the
+#                      shared CameraRegistryEntry emit + one open_data_index
+#                      count record.
+#
+# WFS 2.0.0 (`typenames` + `count`) is the declared family member; other
+# service versions are a later lane and fail at expansion.
+
+schema = "sig.ogc-wfs-targets/1"
+inventory_version = "2026.11.14"
+
+# ------------------------------------------------------ Runnymede (I5-C312) --
+# data.gov.uk dataset f723f4c5-… (CKAN license_id=uk-ogl). The committed
+# record names "GeoServer WFS community:cctv_cameras"; its first resource is
+# the WMS GetCapabilities URL on the same GeoServer virtual-service path —
+# the WFS sibling at /wfs is the recorded GeoServer mount (the conventional
+# OWS sibling of the committed /wms URL; the derivation is recorded here,
+# never hidden).
+
+[[targets]]
+id = "p37_69b_wfs_runny_capabilities"
+connector = "ogc_wfs"
+source_id = "camreg_gb_eng_runny_cctv_cameras"
+kind = "wfs_capabilities"
+service_url = "https://maps.runnymede.gov.uk/geoserver/community/cctv_cameras/wfs"
+service_id = "runnymede-geoserver-community"
+wfs_version = "2.0.0"
+expected_typenames = ["community:cctv_cameras"]
+jurisdiction = "GB-ENG"
+state = "GB-ENG"
+publisher = "Runnymede Borough Council"
+technology = "fixed-camera-cctv"
+license_spdx = "OGL-UK-3.0"
+dataset_license_id = "uk-ogl"
+sensitivity_class = "C1"
+title = "CCTV Cameras"
+
+[[targets]]
+id = "p37_69b_wfs_runny_getfeature"
+connector = "ogc_wfs"
+source_id = "camreg_gb_eng_runny_cctv_cameras"
+kind = "wfs_get_feature"
+service_url = "https://maps.runnymede.gov.uk/geoserver/community/cctv_cameras/wfs"
+typename = "community:cctv_cameras"
+wfs_version = "2.0.0"
+count = 500
+expected_srs = ["urn:ogc:def:crs:EPSG::4326", "http://www.opengis.net/def/crs/EPSG/0/4326", "EPSG:4326"]
+expected_markers = ["cctv_cameras"]
+jurisdiction = "GB-ENG"
+state = "GB-ENG"
+publisher = "Runnymede Borough Council"
+technology = "fixed-camera-cctv"
+license_spdx = "OGL-UK-3.0"
+dataset_license_id = "uk-ogl"
+sensitivity_class = "C1"
+title = "CCTV Cameras"
+
+# --------------------------------------------------- South Kesteven (I5-C315)
+# data.gov.uk dataset d83968ab-… (CKAN license_id=uk-ogl). The committed
+# record names the statmap INSPIRE WFS/WMS service at
+# `…/map/wfs.svc/SKDC_INSPIRE_WFS` — a WFS service endpoint, with NO
+# feature-type name recorded. The seat's single GetCapabilities document is
+# the discovery surface: `feature_type_selector = "sole"` resolves a
+# bounded GetFeature follow-on only when the service serves exactly one
+# feature type (a single-dataset INSPIRE download service); a multi-type
+# service is ContentDrift, never a guessed typename.
+
+[[targets]]
+id = "p37_69b_wfs_skdc_capabilities"
+connector = "ogc_wfs"
+source_id = "camreg_gb_eng_south_skdc_cctv"
+kind = "wfs_capabilities"
+service_url = "https://southkesteven.statmap.co.uk/map/wfs.svc/SKDC_INSPIRE_WFS"
+service_id = "skdc-inspire-wfs"
+wfs_version = "2.0.0"
+feature_type_selector = "sole"
+max_resolve = 1
+getfeature_count = 500
+jurisdiction = "GB-ENG"
+state = "GB-ENG"
+publisher = "South Kesteven District Council"
+technology = "fixed-camera-cctv"
+license_spdx = "OGL-UK-3.0"
+dataset_license_id = "uk-ogl"
+sensitivity_class = "C1"
+title = "SKDC CCTV"
+
+# ------------------------------------------------- Clackmannanshire (I5-C321)
+# data.gov.uk dataset 7a96133b-… (via SpatialData.gov.scot; N16 non-US
+# DB-right line — LicenseRef-OperatorAccepted-DBRight under the GL-GATE-07
+# precedent, the operator's IND-NONUS `a` answer). The committed record
+# carries the literal Cadcorp GetFeature URL
+# `…/WFS/wfs.exe?&SERVICE=WFS&VERSION=2.0.0&REQUEST=GetFeature&
+#  typenames=ns:cctv_cameras` — endpoint + typename fully evidenced.
+
+[[targets]]
+id = "p37_69b_wfs_clack_capabilities"
+connector = "ogc_wfs"
+source_id = "camreg_gb_sct_clackmannanshire_cctv"
+kind = "wfs_capabilities"
+service_url = "https://clacks.cloud.cadcorp.com/WFS/wfs.exe"
+service_id = "clacks-cadcorp-wfs"
+wfs_version = "2.0.0"
+expected_typenames = ["ns:cctv_cameras"]
+jurisdiction = "GB-SCT"
+state = "GB-SCT"
+publisher = "Clackmannanshire Council (via SpatialData.gov.scot)"
+technology = "fixed-camera-cctv"
+license_spdx = "LicenseRef-OperatorAccepted-DBRight"
+dataset_license_id = ""
+sensitivity_class = "C1"
+title = "Clackmannanshire - CCTV Cameras"
+
+[[targets]]
+id = "p37_69b_wfs_clack_getfeature"
+connector = "ogc_wfs"
+source_id = "camreg_gb_sct_clackmannanshire_cctv"
+kind = "wfs_get_feature"
+service_url = "https://clacks.cloud.cadcorp.com/WFS/wfs.exe"
+typename = "ns:cctv_cameras"
+wfs_version = "2.0.0"
+count = 500
+expected_srs = ["urn:ogc:def:crs:EPSG::4326", "http://www.opengis.net/def/crs/EPSG/0/4326", "EPSG:4326"]
+expected_markers = ["cctv_cameras"]
+jurisdiction = "GB-SCT"
+state = "GB-SCT"
+publisher = "Clackmannanshire Council (via SpatialData.gov.scot)"
+technology = "fixed-camera-cctv"
+license_spdx = "LicenseRef-OperatorAccepted-DBRight"
+dataset_license_id = ""
+sensitivity_class = "C1"
+title = "Clackmannanshire - CCTV Cameras"
+
+# ------------------------------------------------------------- enumerated rows
+# Seats whose family seat is registered but whose concrete WFS endpoint is
+# NOT evidenced by the committed record — registry records, never targets.
+
+[[enumerated]]
+id = "p37_69b_enum_ipswich"
+source_id = "camreg_gb_eng_ipswich_cctv_camera"
+candidate_url = "https://maps.ipswich.gov.uk/WMS_INSPIRE/service.svc/get?request=GetCapabilities&service=WMS"
+status = "endpoint_preflight_deferred"
+notes = "ACQ-23b I5-C322. The committed record names 'INSPIRE WMS' and the resource URL is a WMS GetCapabilities — image-only WMS is the later lane (I8 §6.2); no WFS endpoint or feature-type name is evidenced. The seat stays registered and gated with its `promote` disposition standing; a reviewed WFS endpoint lands under D-P37.69b-1's preflight, never a guessed service=WFS rewrite."

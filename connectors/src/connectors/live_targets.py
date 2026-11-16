@@ -183,6 +183,17 @@ def live_targets(source_id: str) -> list[dict[str, str]]:
         from .open_data_files import expanded_targets
 
         return expanded_targets(source_id=source_id)
+    if kind == "ogc_wfs_targets":
+        # P37.69b / R11-ACQ-23b: the OGC WFS seats' live targets ARE the
+        # committed inventory in data/ogc_wfs_targets.toml — the bounded
+        # GetCapabilities documents + declared GetFeature pages (SKDC's
+        # GetFeature resolves from the captured capabilities inside the run,
+        # never a guessed typename); every row stays
+        # ingestion_permitted=false pending the operator's OP-26 Wave-D
+        # flips under ING-GO-D (HG-03 N1–N21 `a` / RB-06 `a`).
+        from .ogc_wfs import expanded_targets as ogc_wfs_expanded
+
+        return ogc_wfs_expanded(source_id=source_id)
     if kind == "procurement_portal_tenants":
         # A procurement-portal source's live targets ARE its tenant rows in
         # data/procurement_portal_tenants.toml (P26.10): each expands to the
