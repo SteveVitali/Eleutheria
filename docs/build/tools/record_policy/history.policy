@@ -1456,3 +1456,12 @@ seed-commit e3a9d285
 # (sha256 in the commit message). Scope: the append-only findings attributed
 # to 59f76cd6's rewritten LEDGER lines only.
 seed-commit 59f76cd6
+# 178ecf57 — P37.61 (row 489) ci-cell fill: the committed row's `ci: pending
+# head-bound read` cell is rewritten in place to `ci: pass #514@fa029ef` —
+# the in-place placeholder fill every landing row is designed to carry (the
+# f45cf7ec/b7e827d3/458f4af8 class; a second row would break one-row-per-
+# ticket). Pre-edit bytes archived
+# `reports/memory-repair/BUILD_INDEX_L681_pre-P37.61-ci-pass.txt`
+# (sha256 recorded in the commit message). Scope: the append-only finding
+# attributed to 178ecf57's rewritten BUILD_INDEX line only.
+seed-commit 178ecf57
