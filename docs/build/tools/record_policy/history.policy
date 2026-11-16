@@ -1484,3 +1484,10 @@ seed-commit f4c5766c
 # archived `reports/memory-repair/BUILD_INDEX_L682_pre-P37.61a-pr-
 # supersede.txt` (sha256 d556e718…, in the commit message).
 seed-commit 169f03fd
+
+# 51bb02fb — recorded-ci (G3b) repairs: ci: fields filled on the
+# done/post-closeout/repair entries (verified historical reads), the
+# BUILD_INDEX 489a ci-cell run-id corrected to the real 0ebab8f7 run
+# (43804403390). In-place line repairs under the sanctioned path;
+# pre-edit bytes archived alongside the earlier repairs.
+seed-commit 51bb02fb
