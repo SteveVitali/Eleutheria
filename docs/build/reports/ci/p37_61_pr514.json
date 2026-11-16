@@ -3,10 +3,10 @@
   "tool": "docs/build/tools/ci_boundary.py",
   "requested_pr": 514,
   "pr": 514,
-  "head_sha": "fa029ef907c8ccd2af00f59491f142ed71bd69dd",
+  "head_sha": "aac74a432575becdec5c21842dacc35f3c92c930",
   "head_ref": "r11/P37.61-t1-table-and-filter-enhancements",
   "base": "r11/P37.60-visual-regression-gallery",
-  "read_at": "2026-11-16T00:17:31Z",
+  "read_at": "2026-11-16T01:25:21Z",
   "prefix": "r11/",
   "scope": "the current r11/ PR and its open r11/ ancestors; never #141–#190",
   "required": [
@@ -18,29 +18,19 @@
   ],
   "stack": [],
   "stack_stop": "base `main` is outside the `r11/` scope — the Round-10 stack (#141–#190) is never read (B-15)",
-  "stack_digest": "af775fb73c7a5dc57d166a66dbdeab7e7fc9005ec8bcc44602b0d2a716777715",
-  "local_head": "fa029ef907c8ccd2af00f59491f142ed71bd69dd",
+  "stack_digest": "aee128f2fc12c29c7b56ed62c16c27c10008ff877436ad16fcfdbcea146b9556",
+  "local_head": "aac74a432575becdec5c21842dacc35f3c92c930",
   "external": {
-    "read_at": "2026-11-16T00:17:41Z",
-    "since": "2026-11-15",
+    "read_at": "2026-11-16T01:25:30Z",
+    "since": "2026-11-16",
     "fetch": "ok",
-    "main_sha": "c6b8c3e7dde719092d5c66e45b70f1e8c254c2b2",
+    "main_sha": "857e1f35cef062628e7036819d6d3e61d586fb22",
     "chain_descends": false,
-    "descends_note": "origin/main c6b8c3e is not an ancestor of the tip — main carries commits the chain does not contain (the chain trails main, merged late by the operator)",
+    "descends_note": "origin/main 857e1f3 is not an ancestor of the tip — main carries commits the chain does not contain (the chain trails main, merged late by the operator)",
     "ancestry": [
       {
         "child": 514,
         "parent": 512,
-        "ancestor": true
-      },
-      {
-        "child": 512,
-        "parent": 511,
-        "ancestor": true
-      },
-      {
-        "child": 511,
-        "parent": 510,
         "ancestor": false
       }
     ]
@@ -61,6 +51,6 @@
   "waited_s": 0,
   "state": "fail",
   "kind": "stack",
-  "line": "blockedOn: CI stack on #514@fa029ef (external): #511 does not contain its base #510's head d15374d — rebased or retargeted outside the documented procedure",
+  "line": "blockedOn: CI stack on #514@aac74a4 (external): #514 does not contain its base #512's head 8182380 — rebased or retargeted outside the documented procedure",
   "exit": 3
 }
