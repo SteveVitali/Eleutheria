@@ -1466,12 +1466,12 @@ seed-commit 59f76cd6
 # attributed to 178ecf57's rewritten BUILD_INDEX line only.
 seed-commit 178ecf57
 
-# 1e02af25 — P37.61a PHASE LOG kind retags: the worker's closeout wrote
+# f4c5766c — P37.61a PHASE LOG kind retags: the worker's closeout wrote
 # kinds 'APPLY' and 'closeout record' (plus '**' markup in the head) —
 # outside record_policy/phase_log_kinds.txt, failing docs-check's
 # ledger_contract leg. In-place retag to 'done' + 'post-closeout record'
 # with payloads carried verbatim and pre-edit bytes archived at
 # reports/memory-repair/LEDGER_phaselog_L1811-1812_pre-P37.61a-kind-repair.txt
 # (sha256 5e0db454…, recorded in the commit message). Scope: the two
-# append-only findings attributed to 1e02af25's rewritten lines only.
-seed-commit 1e02af25
+# append-only findings attributed to f4c5766c's rewritten lines only.
+seed-commit f4c5766c
