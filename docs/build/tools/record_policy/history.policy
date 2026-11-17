@@ -1551,3 +1551,22 @@ seed-commit 2f64b345
 # line borrows them.
 placeholder _opened post-commit — see closeout addendum_
 placeholder _(filled at Phase 6)_
+
+# ── P37.61d (row 489d) records-repair — ci: sha respell ────────────────────
+# 9a9261dc respells the five `#519@f98337` fragments the P37.61c post-merge
+# records commits `1e7c8f51`/`e7798f0a` left in claim files — a 6-char sha
+# under the verifier's 7-char floor (the post-closeout entry read as
+# no-ci-field; both LEDGER fragments unparseable) — to the recorded head
+# sha `f983374e` in place (LEDGER L1821–1822 · BUILD_INDEX 489c ci cell ·
+# `runs/P37.61c.md` L14+L163). Same-meaning lengthening — the old bytes
+# survive verbatim inside the new — the 45687972/51bb02fb in-place repair
+# class, never a history rewrite; pre-edit bytes archived
+# `reports/memory-repair/*_pre-P37.61d-ci-sha7-respell.txt` (sha256 in
+# 9a9261dc's message); the dated `correction` PHASE LOG entry declares the
+# repair. Surfaced head-bound on #520's docs job (run 44005523660) when the
+# auto-retarget to `main` put those commits in the judged range. Declared
+# as announced in the repair's own records; the lengthened sha's
+# contained-row shape produced no findings. Scope: any append-only
+# findings attributed to 9a9261dc's rewritten lines only; no other commit
+# borrows the exemption.
+seed-commit 9a9261dc
