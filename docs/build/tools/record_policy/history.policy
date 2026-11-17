@@ -1570,3 +1570,15 @@ placeholder _(filled at Phase 6)_
 # findings attributed to 9a9261dc's rewritten lines only; no other commit
 # borrows the exemption.
 seed-commit 9a9261dc
+
+# d182fb5d — the same repair's orient-budget trim: the correction PHASE LOG
+# entry 9a9261dc appended pushed the BM-ORIENT-01 recipe 411 B over the
+# 48 KiB contract bound, so the entry was respelled in place to its 864 B
+# form (same record, tighter phrasing — the 59f76cd6 class: a line
+# appended minutes earlier on the same un-landed branch). Pre-edit bytes
+# archived `reports/memory-repair/LEDGER_phaselog_L1824_pre-P37.61d-
+# correction-trim.txt` (sha256 in d182fb5d's message). Declared as
+# announced in the repair commits; the trim produced no findings of its
+# own. Scope: any append-only findings attributed to d182fb5d's rewritten
+# line only; no other commit borrows the exemption.
+seed-commit d182fb5d
