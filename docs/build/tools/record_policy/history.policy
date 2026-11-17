@@ -1608,3 +1608,18 @@ seed-commit 7821860a
 # Scope: the append-only finding attributed to 73fb2132's rewritten
 # BUILD_INDEX line only; no other commit borrows the exemption.
 seed-commit 73fb2132
+
+# e297b5d8 — P37.61e orchestrator repair: the `a810cb45` PHASE LOG line's kind
+# `post-closeout record 2` is rewritten in place to `post-closeout record #2`
+# — the V4 grammar's ordinal form (the bare kind must be in phase_log_kinds.txt;
+# `record 2` would red the ledger-contract docs leg on every later head,
+# independent of the LIVE-FETCH-ECONNRESET-1 outage). The b2fa5735/d182fb5d
+# in-place repair class: pre-edit bytes archived verbatim at
+# `reports/memory-repair/ledger-1830-pre-kind-fix.txt` and the dated
+# `P37.61e orchestrator repair` PHASE LOG entry declares the repair; same
+# commit also set CURRENT STATE `blockedOn` to the CI-fail read the two
+# post-closeout entries named in prose but left unset. Declared in the
+# immediately following commit (the declaration cannot precede the commit it
+# names). Scope: the append-only finding attributed to e297b5d8's rewritten
+# PHASE LOG line only; no other commit borrows the exemption.
+seed-commit e297b5d8
