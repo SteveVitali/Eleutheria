@@ -1623,3 +1623,14 @@ seed-commit 73fb2132
 # names). Scope: the append-only finding attributed to e297b5d8's rewritten
 # PHASE LOG line only; no other commit borrows the exemption.
 seed-commit e297b5d8
+
+# 4c2a27f3 — P37.61e orchestrator repair, second in-place: the `orchestrator
+# repair` PHASE LOG entry added by e297b5d8 carried no parseable `ci:` field —
+# flagged by the G3b recorded-CI verifier on the 635cbfbf docs leg
+# (verify-recorded-ci FAIL, run 44059328849). The entry now cites the standing
+# head-bound read at record time, `ci: fail #521@6e0ac6d (run 44051851045)` —
+# the e297b5d8/51bb02fb in-place class: pre-edit bytes archived verbatim at
+# `reports/memory-repair/ledger-1831-pre-ci-field.txt`. Declared as announced
+# in 4c2a27f3's own message. Scope: the append-only finding attributed to 4c2a27f3's
+# rewritten PHASE LOG line only; no other commit borrows the exemption.
+seed-commit 4c2a27f3
