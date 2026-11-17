@@ -1533,3 +1533,21 @@ seed-commit e3efcac5
 # lands as a later commit in the same PR). Scope: findings attributed to
 # 2f64b345 only; no other commit borrows the exemption.
 seed-commit 2f64b345
+
+# ── P37.61d (row 489d) run-ledger template close-time markers ─────────────
+# The run-ledger template's own closeout markers — `- **PR:** _opened
+# post-commit — see closeout addendum_` (the head's PR line) and
+# `_(filled at Phase 6)_` (the `## Evidence report` stub) — were never
+# declared placeholder tokens, so the sanctioned closeout fill reads as an
+# append-only rewrite. Surfaced head-bound on #520's docs job (run
+# 44005523660) over `1e7c8f51` — the P37.61c records-only closeout that sits
+# past the #519 merge on the chain tip and entered the judged range when the
+# PR auto-retargeted to `main` (the `b206e14d` precedent: a merged PR's
+# branch fires no pull_request events, so its records commits are covered by
+# the next PR's head-bound CI). `runs/P37.61b.md` still carries the unfilled
+# `**PR:**` marker at L11 — the template puts the same markers in every run
+# ledger, so declaring the literals keeps the designed fill sanctioned for
+# this and later closeouts. Scope: the two marker strings only; no other
+# line borrows them.
+placeholder _opened post-commit — see closeout addendum_
+placeholder _(filled at Phase 6)_
