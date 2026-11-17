@@ -1597,3 +1597,14 @@ seed-commit d182fb5d
 # attributed to 7821860a's rewritten BUILD_INDEX line only; no other commit
 # borrows the exemption.
 seed-commit 7821860a
+
+# 73fb2132 — P37.61e (row 489e) ci-cell fill: the committed row's `ci: pending
+# head-bound read` cell is rewritten in place to `ci: recorded in PHASE LOG`
+# — the designed in-place fill every landing row carries, written in the
+# red-verdict convention (the verdict text lives verbatim in the post-closeout
+# PHASE LOG entry; `ci: fail` is a stray token, never a parseable field). The
+# f45cf7ec/b7e827d3/458f4af8/178ecf57/7821860a class — a second row would
+# break one-row-per-ticket. Declared as announced in 73fb2132's own message.
+# Scope: the append-only finding attributed to 73fb2132's rewritten
+# BUILD_INDEX line only; no other commit borrows the exemption.
+seed-commit 73fb2132
