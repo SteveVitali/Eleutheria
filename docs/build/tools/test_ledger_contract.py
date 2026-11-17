@@ -192,6 +192,10 @@ def _rules(rep: lc.Report) -> set[str]:
     return {f.rule for f in rep.findings if f.severity == "error"}
 
 
+def _warn_rules(rep: lc.Report) -> set[str]:
+    return {f.rule for f in rep.findings if f.severity == "warning"}
+
+
 # ── the seeded fixture passes — and nothing is silently skipped ───────────────
 
 
@@ -226,15 +230,18 @@ def test_json_report_carries_counts(tmp_path: pathlib.Path) -> None:
 # ── the pre-seed shape fails V1 / V2 / V3 ─────────────────────────────────────
 
 
-def test_oversized_orient_fails_v1(tmp_path: pathlib.Path) -> None:
+def test_oversized_orient_warns_v1(tmp_path: pathlib.Path) -> None:
+    """RULING E-4 / ADR-252: the 12 KiB orient-region bound is a byte budget —
+    over it warns, it does not fail."""
     root = _tree(
         tmp_path,
         **{"docs/build/LEDGER.md": "# pad\n" + "x" * (lc.ORIENT_MAX + 16)
            + "\n" + LEDGER_OK},
     )
     code, rep = _run(root)
-    assert code == lc.EXIT_VIOLATIONS
-    assert "orient-budget" in _rules(rep)
+    assert code == lc.EXIT_OK
+    assert "orient-budget" in _warn_rules(rep)
+    assert "orient-budget" not in _rules(rep)
 
 
 def test_off_enum_project_status_fails_v2(tmp_path: pathlib.Path) -> None:
@@ -287,7 +294,8 @@ def test_missing_named_path_fails_v3(tmp_path: pathlib.Path) -> None:
 
 
 def test_preseed_shape_fails_across_v1_v2_v3(tmp_path: pathlib.Path) -> None:
-    """A ledger carrying all three pre-seed failure classes fails all three."""
+    """A ledger carrying the pre-seed failure classes fails V2/V3 — the V1
+    byte budget warns instead (RULING E-4 / ADR-252)."""
     bad = (
         "x" * (lc.ORIENT_MAX + 8)
         + "\n"
@@ -300,7 +308,163 @@ def test_preseed_shape_fails_across_v1_v2_v3(tmp_path: pathlib.Path) -> None:
     root = _tree(tmp_path, **{"docs/build/LEDGER.md": bad})
     code, rep = _run(root)
     assert code == lc.EXIT_VIOLATIONS
-    assert {"orient-budget", "key-vocabulary", "path-missing"} <= _rules(rep)
+    assert {"key-vocabulary", "path-missing"} <= _rules(rep)
+    # the orient overage is a byte budget — a warning, never the failure
+    assert "orient-budget" in _warn_rules(rep)
+    assert "orient-budget" not in _rules(rep)
+
+
+# ── RULING E-4 / ADR-252: byte budgets warn, shape checks stay hard ────────────
+#
+# Every bound below that measured *bytes* is now advisory; every rule that
+# protects interpretation (key order/vocabulary, `| PRIOR`, returnPass
+# grammar, ≤ 256 B CURRENT STATE lines, the append target, key-shadow)
+# still fails, and the new combined CURRENT STATE + ledger-head ceiling
+# (≤ 18 KiB) is the one hard byte bound.
+
+
+def test_cs_section_over_budget_warns(tmp_path: pathlib.Path) -> None:
+    """The 3 KiB CURRENT STATE section bound is a byte budget — warns."""
+    pad = "# " + "q" * (lc.CS_MAX + 128) + "\n"
+    root = _tree(
+        tmp_path,
+        **{"docs/build/LEDGER.md": LEDGER_OK.replace(
+            "updatedAt: 2026-10-01T00:00:00Z\n```",
+            "updatedAt: 2026-10-01T00:00:00Z\n" + pad + "```",
+        )},
+    )
+    code, rep = _run(root)
+    assert code == lc.EXIT_OK, [
+        f"{f.check}/{f.rule}: {f.message}" for f in rep.findings
+    ]
+    assert "cs-budget" in _warn_rules(rep)
+
+
+def test_cs_line_over_256_still_fails(tmp_path: pathlib.Path) -> None:
+    """The ≤ 256 B per-line rule is a shape check RULING E-4 names hard —
+    it was split out of the shared cap BEFORE the byte half demoted."""
+    root = _tree(
+        tmp_path,
+        **{"docs/build/LEDGER.md": LEDGER_OK.replace(
+            "blockedOn: (nothing)", "blockedOn: (nothing)  # " + "q" * 300
+        )},
+    )
+    code, rep = _run(root)
+    assert code == lc.EXIT_VIOLATIONS
+    assert "line-budget" in _rules(rep)
+
+
+def test_returnpass_line_over_1024_warns(tmp_path: pathlib.Path) -> None:
+    """The returnPass ≤ 1024 B line cap is a byte budget — warns (the list
+    stays grammar-valid so `returnPass-grammar` does not fire)."""
+    root = _tree(
+        tmp_path,
+        **{"docs/build/LEDGER.md": LEDGER_OK.replace(
+            "returnPass: (none)", "returnPass: (none)  # " + "r" * 1100
+        )},
+    )
+    code, rep = _run(root)
+    assert code == lc.EXIT_OK, [
+        f"{f.check}/{f.rule}: {f.message}" for f in rep.findings
+    ]
+    assert "returnPass-line-budget" in _warn_rules(rep)
+    assert "returnPass-line-budget" not in _rules(rep)
+
+
+def test_head_ceiling_fails(tmp_path: pathlib.Path) -> None:
+    """The new combined bound — CURRENT STATE block + ledger head > 18 KiB —
+    is the one hard byte ceiling (RULING E-4 / ADR-252)."""
+    pad = "# " + "y" * (lc.CEILING_MAX + 128) + "\n"
+    root = _tree(
+        tmp_path,
+        **{"docs/build/LEDGER.md": LEDGER_OK.replace(
+            "updatedAt: 2026-10-01T00:00:00Z\n```",
+            "updatedAt: 2026-10-01T00:00:00Z\n" + pad + "```",
+        )},
+    )
+    code, rep = _run(root)
+    assert code == lc.EXIT_VIOLATIONS
+    assert "head-ceiling" in _rules(rep)
+    # the component byte budgets warn alongside — never the failure
+    assert "cs-budget" in _warn_rules(rep)
+
+
+def test_phase_log_entry_over_2kib_warns(tmp_path: pathlib.Path) -> None:
+    """The per-entry 2 KiB bound is a byte budget — warns in the current
+    region too (was a guarded failure there)."""
+    big = "- 2026-10-02 — OPERATOR pause — " + "z" * 2100 + "\n"
+    root = _tree(
+        tmp_path,
+        **{"docs/build/LEDGER.md": LEDGER_OK + "\n" + big},
+    )
+    code, rep = _run(root)
+    assert code == lc.EXIT_OK, [
+        f"{f.check}/{f.rule}: {f.message}" for f in rep.findings
+    ]
+    assert "entry-budget" in _warn_rules(rep)
+    assert "entry-budget" not in _rules(rep)
+
+
+def test_orient_probe_over_48kib_warns(tmp_path: pathlib.Path) -> None:
+    """The 48 KiB orient-recipe bound is a byte budget — warns (SIG-LOCAL L5
+    retires in the vendored checker the same way)."""
+    rp_rows = "| — | — | — | — | — |\n" * 2100
+    root = _tree(
+        tmp_path,
+        **{"docs/build/LEDGER.md": LEDGER_OK.replace(
+            "| ticket | obligations | gates / blocking domain | what the "
+            "operator must do | re-run line |\n|---|---|---|---|---|",
+            "| ticket | obligations | g | w | r |\n|---|---|---|---|---|\n"
+            + rp_rows,
+        )},
+    )
+    code, rep = _run(root)
+    assert code == lc.EXIT_OK, [
+        f"{f.check}/{f.rule}: {f.message}" for f in rep.findings
+    ]
+    assert "probe-budget" in _warn_rules(rep)
+    assert "probe-budget" not in _rules(rep)
+
+
+def test_key_outside_current_state_still_fails(tmp_path: pathlib.Path) -> None:
+    """A key-named line outside CURRENT STATE is shape — still hard."""
+    root = _tree(
+        tmp_path,
+        **{"docs/build/LEDGER.md": LEDGER_OK.replace(
+            "(none)\n\n## GATE DECISIONS",
+            "manifest: docs/other.md\n\n## GATE DECISIONS",
+        )},
+    )
+    code, rep = _run(root)
+    assert code == lc.EXIT_VIOLATIONS
+    assert "key-shadow" in _rules(rep)
+
+
+def test_returnpass_bad_grammar_still_fails(tmp_path: pathlib.Path) -> None:
+    """returnPass shape (the comma-id-list grammar) stays hard — only its
+    line cap demoted."""
+    root = _tree(
+        tmp_path,
+        **{"docs/build/LEDGER.md": LEDGER_OK.replace(
+            "returnPass: (none)", "returnPass: NOT AN ID LIST"
+        )},
+    )
+    code, rep = _run(root)
+    assert code == lc.EXIT_VIOLATIONS
+    assert "returnPass-grammar" in _rules(rep)
+
+
+def test_missing_orient_boundary_still_fails(tmp_path: pathlib.Path) -> None:
+    """The `## OPEN FINDINGS` boundary is shape — missing it still fails."""
+    root = _tree(
+        tmp_path,
+        **{"docs/build/LEDGER.md": LEDGER_OK.replace(
+            "## OPEN FINDINGS", "## ORIENT REGION"
+        )},
+    )
+    code, rep = _run(root)
+    assert code == lc.EXIT_VIOLATIONS
+    assert "orient-shape" in _rules(rep)
 
 
 # ── V4 PHASE LOG ──────────────────────────────────────────────────────────────
@@ -751,3 +915,134 @@ def test_vendored_checker_vacuous_on_empty_parse(tmp_path: pathlib.Path) -> None
         timeout=300,
     )
     assert out.returncode == 3, (out.stdout, out.stderr)
+
+
+# ── vendored checker — RULING E-4 warn-vs-fail under the guards marker ────────
+
+
+def _vendored_tree(tmp_path: pathlib.Path, ledger: str) -> pathlib.Path:
+    """A minimal build-memory repo the vendored checker judges green under
+    the guards marker — so each test's mutation is the only finding."""
+    for rel, text in (
+        ("docs/build/README.md",
+         "<!-- build-memory: v2 -->\n<!-- build-memory-guards: 1 -->\n"),
+        ("docs/build/LEDGER.md", ledger),
+        ("docs/build/BUILD_INDEX.md", BUILD_INDEX_OK),
+        ("docs/build/runs/P00.1.md",
+         "# P00.1 run\n\n- **Harness:** devin-desktop/swe-2-high/subagent\n"
+         "\n**Closed:** done\n"),
+        ("docs/build/logs/.gitignore", "*\n!.gitignore\n"),
+        ("docs/build/tools/record_policy/living_records.toml",
+         'schema = "living-record-policy/1"\n'),
+        ("docs/build/tools/living_record_lint.py",
+         "#!/usr/bin/env python3\nimport sys\nsys.exit(0)\n"),
+        ("docs/tickets/00_MANIFEST.md", MANIFEST),
+        ("docs/tickets/201_P00.1__first.md", "# P00.1\n"),
+        ("docs/tickets/202_P00.2__next.md", "# P00.2\n\n## contract\n"),
+        ("docs/tickets/_TEMPLATE.md", "# template\n"),
+        ("docs/2_canonical_design_spec.md", "# spec\n"),
+        ("tests/unit/test_no_living_record_pins.py",
+         "def test_stub():\n    pass\n"),
+    ):
+        p = tmp_path / rel
+        p.parent.mkdir(parents=True, exist_ok=True)
+        p.write_text(text)
+    (tmp_path / "docs/adr").mkdir(parents=True, exist_ok=True)
+    return tmp_path
+
+
+def _vendored_run(root: pathlib.Path, tag: str) -> tuple[int, dict]:
+    out = subprocess.run(
+        ["bash", str(REPO_ROOT / "scripts/docs/check-build-memory.sh"),
+         str(root), "--json", f"/tmp/p37-61e-{tag}.json"],
+        capture_output=True,
+        text=True,
+        timeout=300,
+    )
+    doc = json.loads(pathlib.Path(f"/tmp/p37-61e-{tag}.json").read_text())
+    return out.returncode, doc
+
+
+def test_vendored_fixture_is_green(tmp_path: pathlib.Path) -> None:
+    """The vendored-fixture baseline passes — each mutation below is the
+    only finding, so severity assertions mean something."""
+    root = _vendored_tree(tmp_path, LEDGER_OK)
+    code, doc = _vendored_run(root, "green")
+    assert code == 0, doc.get("violations")
+
+
+def test_vendored_byte_budgets_warn_not_fail(tmp_path: pathlib.Path) -> None:
+    """Every demoted byte-budget line warns under the guards marker (RULING
+    E-4): the > 12 KiB orient region and the > 2 KiB current-region PHASE
+    LOG entry both warn under `ledger-budget` and never exit 1."""
+    ledger = (
+        "x" * 13000 + "\n"
+        + LEDGER_OK
+        + "\n- 2026-10-02 — OPERATOR pause — " + "z" * 2100 + "\n"
+    )
+    root = _vendored_tree(tmp_path, ledger)
+    code, doc = _vendored_run(root, "budgets")
+    assert code == 0, doc.get("violations")
+    warned = {w["check"] for w in doc.get("warnings", [])}
+    assert "ledger-budget" in warned
+    assert not [v for v in doc.get("violations", [])
+                if v["check"] in ("ledger-budget", "ledger-shape",
+                                  "ledger-ceiling")]
+
+
+def test_vendored_shape_rules_fail_under_split_id(tmp_path: pathlib.Path) -> None:
+    """The bundled `guarded ledger-budget` shape rules moved to the
+    still-guarded `ledger-shape` id BEFORE the byte half demoted: `| PRIOR`
+    and a > 256 B non-returnPass CURRENT STATE line both fail."""
+    ledger = LEDGER_OK.replace(
+        "nextTicket: P00.2", "nextTicket: P00.2 | PRIOR P00.1"
+    ).replace(
+        "blockedOn: (nothing)", "blockedOn: (nothing)  # " + "q" * 300
+    )
+    root = _vendored_tree(tmp_path, ledger)
+    code, doc = _vendored_run(root, "shape")
+    assert code == 1
+    shape_v = [v for v in doc["violations"] if v["check"] == "ledger-shape"]
+    assert len(shape_v) >= 2, doc["violations"]
+    # and nothing byte-budget-shaped can masquerade as a shape failure
+    assert not [v for v in doc["violations"] if v["check"] == "ledger-budget"]
+
+
+def test_vendored_head_ceiling_fails(tmp_path: pathlib.Path) -> None:
+    """`guarded ledger-ceiling` is the one hard byte bound: CURRENT STATE
+    block + ledger head > 18 KiB fails under the guards marker."""
+    ledger = LEDGER_OK.replace(
+        "updatedAt: 2026-10-01T00:00:00Z",
+        "updatedAt: 2026-10-01T00:00:00Z\n# " + "y" * 19000,
+    )
+    root = _vendored_tree(tmp_path, ledger)
+    code, doc = _vendored_run(root, "ceiling")
+    assert code == 1
+    assert any(v["check"] == "ledger-ceiling" for v in doc["violations"]), (
+        doc["violations"]
+    )
+
+
+def test_vendored_returnpass_cap_warns_grammar_fails(
+    tmp_path: pathlib.Path,
+) -> None:
+    """The L8 shared-cap split in the vendored checker: a > 1024 B
+    returnPass line warns (`ledger-budget`), a malformed id list fails
+    (`ledger-shape`)."""
+    ledger = LEDGER_OK.replace(
+        "returnPass: (none)", "returnPass: (none)  # " + "r" * 1100
+    )
+    root = _vendored_tree(tmp_path, ledger)
+    code, doc = _vendored_run(root, "rpcap")
+    assert code == 0, doc.get("violations")
+    assert any(
+        w["check"] == "ledger-budget" and "returnPass" in w["message"]
+        for w in doc["warnings"]
+    )
+    ledger = LEDGER_OK.replace(
+        "returnPass: (none)", "returnPass: NOT AN ID LIST"
+    )
+    root = _vendored_tree(tmp_path, ledger)
+    code, doc = _vendored_run(root, "rpgram")
+    assert code == 1
+    assert any(v["check"] == "ledger-shape" for v in doc["violations"])
