@@ -149,6 +149,12 @@ test.describe("O4 — act on a gap", () => {
     await expect(page.getByTestId("task-closing")).toBeVisible();
     // how to act / where to send it — the operator-named channel block
     await expect(page.getByTestId("task-how-to-act")).toBeVisible();
+    // P37.62 (RQ-05, D-K11-4 [B-8]=a): the interim channel is the dispute
+    // e-mail address; the report form link appears only once the receiver operates.
+    const report = page.getByTestId("task-report");
+    await expect(report).toBeVisible();
+    await expect(report).toContainText("e-mail");
+    await expect(report.getByTestId("task-report-link")).toHaveAttribute("href", "/dispute/");
   });
 });
 

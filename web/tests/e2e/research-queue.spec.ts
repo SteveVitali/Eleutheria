@@ -205,6 +205,27 @@ test.describe("P36.62 (RQ-03b) — task pages, campaigns, gap links, redirects",
     expect(body.handle).toBe("T-usa-ok-oklahoma-city-retention-pd-q1c4");
     expect(body.predicate_ids).toContain("configured_retention_days");
     expect(body.closing_condition).toBeTruthy();
+    // P37.62 (RQ-05): the twin carries the same report channel the page renders.
+    expect(body.report.channel).toBe("email");
+    expect(body.report.href).toBe("/dispute/");
+    expect(body.how_to_act.length).toBeGreaterThan(0);
+  });
+
+  test("P37.62 (RQ-05, D-K11-4 [B-8]=a) — the report channel is named, never invented", async ({
+    page,
+  }) => {
+    await page.goto(TASK);
+    const report = page.getByTestId("task-report");
+    // The interim channel: e-mail to the dispute address — the same one
+    // /dispute/ names (the operator's address until contact@ exists).
+    await expect(report).toHaveAttribute("data-channel", "email");
+    await expect(report).toHaveAttribute("data-intake-email", /^(set|unset)$/);
+    await expect(report).toContainText("e-mail");
+    await expect(report).toContainText("T-usa-ok-oklahoma-city-retention-pd-q1c4");
+    const link = report.getByTestId("task-report-link");
+    await expect(link).toHaveAttribute("href", "/dispute/");
+    // The intake receiver does not operate — no form link may render.
+    await expect(page.locator('a[href*="/intake/"]')).toHaveCount(0);
   });
 
   test("the campaign page shows the field, count, why and the honest contribution note", async ({
