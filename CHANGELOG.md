@@ -11,6 +11,20 @@ All notable changes to this project are documented here. The format is based on
 
 ### Added
 
+- **P37.62 / R11-K13-RQ-05 (K11 RQ-05; D-K11-4 [B-8]=a; SIG-RQ-002,
+  SIG-UI-033 cited)** — contribution path wiring on `/task/<handle>/`:
+  the "How to act" block's "Report what you found" affordance now names a
+  real channel, never an invented one — the intake form prefilled by a
+  plain GET (`/intake/new?task=<handle>`, joining at the deploy root as a
+  live service outside the snapshot base, SIG-REL-008) **only while the
+  receiver operates**, and the interim channel otherwise: e-mail to the
+  dispute address — the same `SIG_DISPUTE_EMAIL`-injected value
+  `/dispute/` names (the operator's address until the project contact
+  address exists; OP-10, never committed), stamped
+  `data-intake-email="set|unset"`. The `sig.task-page/1` JSON twin gains
+  additive `how_to_act` and `report` fields (HTML = JSON twin parity).
+  `live_verification=false`.
+
 - **P37.61 / R11-K13-ENH-01 (SIG-UI-091; SIG-DSRC-006 cited; ADR-249)** — T1
   table and filter enhancements rollout: `<sig-table>` now upgrades
   server-rendered lists (`ol`/`ul`) as well as tables — text filtering,
