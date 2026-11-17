@@ -259,7 +259,7 @@ implement-spec spec=docs/tickets/224_P34.21b__attribution-re-export-and-republis
 >   measured figures only, estimates labelled). The zero-cost framing above
 >   is the retired design record, not the running shape.
 > - **Superseded — "restore drill proven locally over Docker" as the restore
->   story.** The drill of record for the hosted posture is
+>   story.** The drill of record for the `hosted` posture is
 >   `ops/gcp/restore-drill.sh` (PITR clone + full-backup variants, RTO/RPO
 >   recorded); `backup-drill`/`tests/db/test_restore_drill.py` remains the
 >   engineered fixture leg.

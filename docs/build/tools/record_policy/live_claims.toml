@@ -28,15 +28,35 @@
 schema = "sig.live-claim-policy/1"
 
 [surfaces]
+# RULING E-3 (ADR-251): the lint judges PUBLIC + READINESS surfaces only —
+# the build-memory records under docs/build/** and docs/tickets/** leave the
+# corpus (their live-leg prose is already governed by the run-ledger and
+# live-leg rules). Both legs read this one list: the corpus leg globs it,
+# the range leg matches every diff path against it.
 corpus = [
-    "README.md",
+    # README* — the ruling's public surface. `pathlib` has no recursive match
+    # without `**` and no brace expansion, so the held package READMEs are
+    # named explicitly. docs/adr/README.md stays out (a generated index —
+    # its prose rebuilds from the ADR headers; generated surfaces are not
+    # judged, same class as the generated projections the lint never held).
+    "README*",
+    "db/README*",
+    "docs/README*",
+    "docs/evaluation/README*",
+    "docs/governance/README*",
+    "docs/research/README*",
+    "evidence/README*",
+    "ops/README*",
+    "ops/*/README*",
+    "web/README*",
+    # readiness surfaces — the ruling's `docs/ops/*readiness*` names no file
+    # today (kept verbatim for the day one lands); the real readiness doc
+    # lives inside the excluded docs/build/**, so it is carved out by name.
+    "docs/ops/*readiness*",
     "docs/build/OPERATIONAL_READINESS.md",
-    "docs/build/LEDGER.md",
-    "docs/build/reports/**/*.md",
-    "docs/build/runs/**/*.md",
-    # P35.4: the maintained ops runbook is a corpus surface — its prose
-    # production-state statements are judged by the same assert/negate +
-    # probe-citation rule as build memory.
+    # ops surfaces (P35.4): the maintained runbook + ops docs stay covered —
+    # their prose production-state statements are judged by the same
+    # assert/negate + probe-citation rule as the other operational surfaces.
     "docs/ops/**/*.md",
 ]
 

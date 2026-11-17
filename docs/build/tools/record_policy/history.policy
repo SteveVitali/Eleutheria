@@ -1533,3 +1533,52 @@ seed-commit e3efcac5
 # lands as a later commit in the same PR). Scope: findings attributed to
 # 2f64b345 only; no other commit borrows the exemption.
 seed-commit 2f64b345
+
+# ── P37.61d (row 489d) run-ledger template close-time markers ─────────────
+# The run-ledger template's own closeout markers — `- **PR:** _opened
+# post-commit — see closeout addendum_` (the head's PR line) and
+# `_(filled at Phase 6)_` (the `## Evidence report` stub) — were never
+# declared placeholder tokens, so the sanctioned closeout fill reads as an
+# append-only rewrite. Surfaced head-bound on #520's docs job (run
+# 44005523660) over `1e7c8f51` — the P37.61c records-only closeout that sits
+# past the #519 merge on the chain tip and entered the judged range when the
+# PR auto-retargeted to `main` (the `b206e14d` precedent: a merged PR's
+# branch fires no pull_request events, so its records commits are covered by
+# the next PR's head-bound CI). `runs/P37.61b.md` still carries the unfilled
+# `**PR:**` marker at L11 — the template puts the same markers in every run
+# ledger, so declaring the literals keeps the designed fill sanctioned for
+# this and later closeouts. Scope: the two marker strings only; no other
+# line borrows them.
+placeholder _opened post-commit — see closeout addendum_
+placeholder _(filled at Phase 6)_
+
+# ── P37.61d (row 489d) records-repair — ci: sha respell ────────────────────
+# 9a9261dc respells the five `#519@f98337` fragments the P37.61c post-merge
+# records commits `1e7c8f51`/`e7798f0a` left in claim files — a 6-char sha
+# under the verifier's 7-char floor (the post-closeout entry read as
+# no-ci-field; both LEDGER fragments unparseable) — to the recorded head
+# sha `f983374e` in place (LEDGER L1821–1822 · BUILD_INDEX 489c ci cell ·
+# `runs/P37.61c.md` L14+L163). Same-meaning lengthening — the old bytes
+# survive verbatim inside the new — the 45687972/51bb02fb in-place repair
+# class, never a history rewrite; pre-edit bytes archived
+# `reports/memory-repair/*_pre-P37.61d-ci-sha7-respell.txt` (sha256 in
+# 9a9261dc's message); the dated `correction` PHASE LOG entry declares the
+# repair. Surfaced head-bound on #520's docs job (run 44005523660) when the
+# auto-retarget to `main` put those commits in the judged range. Declared
+# as announced in the repair's own records; the lengthened sha's
+# contained-row shape produced no findings. Scope: any append-only
+# findings attributed to 9a9261dc's rewritten lines only; no other commit
+# borrows the exemption.
+seed-commit 9a9261dc
+
+# d182fb5d — the same repair's orient-budget trim: the correction PHASE LOG
+# entry 9a9261dc appended pushed the BM-ORIENT-01 recipe 411 B over the
+# 48 KiB contract bound, so the entry was respelled in place to its 864 B
+# form (same record, tighter phrasing — the 59f76cd6 class: a line
+# appended minutes earlier on the same un-landed branch). Pre-edit bytes
+# archived `reports/memory-repair/LEDGER_phaselog_L1824_pre-P37.61d-
+# correction-trim.txt` (sha256 in d182fb5d's message). Declared as
+# announced in the repair commits; the trim produced no findings of its
+# own. Scope: any append-only findings attributed to d182fb5d's rewritten
+# line only; no other commit borrows the exemption.
+seed-commit d182fb5d

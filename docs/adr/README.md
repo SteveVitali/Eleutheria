@@ -254,6 +254,7 @@ One row per ADR, numeric order. Regenerate with `build-memory adr-index`
 | [ADR-248](ADR-248-sqitch-ddl-is-the-authoritative-physical-schema-and-the-generated-sql-is-documentation-only.md) | Sqitch DDL is the authoritative physical schema; the generated `sig.sql` is documentation only (P37.58) | P37.58 (R11-DEBT-02, BL-049 — manifest row 486 — on `r11/P37.58-schema-conformance`) | accepted |
 | [ADR-249](ADR-249-sig-table-list-mode-param-prefixes-and-toolbar-sort-for-the-t1-rollout.md) | `<sig-table>` list mode, `param-prefix` namespacing, and the toolbar "Sort by" menu for the T1 rollout (P37.61) | P37.61 (R11-K13-ENH-01, manifest row 489 — on `r11/P37.61-t1-table-filter`) | accepted |
 | [ADR-250](ADR-250-current-state-projection-leaves-the-commit-path.md) | The current-state projection leaves the commit path: generated on demand, verified from a temp dir (P37.61c) | P37.61c (Round 11 / P37, sub-round 11D, manifest row 489c — on `r11/P37.61c-projection-out-of-commit-path`) | accepted (engineering; records/CI posture only — no control-state writes) |
+| [ADR-251](ADR-251-live-claim-lint-scoped-to-public-and-readiness-surfaces.md) | The live-claim lint is scoped to public and readiness surfaces (P37.61d) | P37.61d (Round 11 / P37, sub-round 11D, manifest row 489d — on | accepted (engineering; lint policy only — no control-state writes) |
 
 ## Notes
 
