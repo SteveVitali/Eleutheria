@@ -120,7 +120,7 @@ uv run sig-db graph-audit --dsn "postgresql://…/sig"
   `valid_period`s overlap **and** whose `sys_period`s overlap — i.e. some
   belief instant held two mutually exclusive resolved states. This
   independently re-verifies `resolution_no_overlap` (which guards only the
-  live view, `WHERE upper_inf(sys_period)`) and extends it across all of
+  `live` view, `WHERE upper_inf(sys_period)`) and extends it across all of
   belief time — the sanctioned close-then-supersede succession has disjoint
   `sys_period`s and is legal by construction.
 * **TI-7** — the audit walks every declared supersedes/succession pointer
@@ -133,7 +133,7 @@ uv run sig-db graph-audit --dsn "postgresql://…/sig"
   `evidence_capture.parent_capture_id`) and reports every cycle and every
   pointer that runs off the graph.
 * **Drift guard** — the surface registry is a declaration: the audit
-  re-derives the live schema's self-referencing foreign keys from
+  re-derives the `live` schema's self-referencing foreign keys from
   `pg_catalog` and reports any self-FK the registry does not name as an
   un-audited surface, so a schema change cannot silently widen the
   supersedes surface. `tests/db/test_whole_graph_audits.py` is the CI leg —

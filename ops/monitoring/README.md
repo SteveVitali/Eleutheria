@@ -51,7 +51,7 @@ Every file carries a `_sig` envelope the verify engine and apply path use:
   repo-owned, IAM-authenticated, digest-pinned record: its runtime identity
   (`sig-alerts-rt`) and invoker bindings are declared in
   `ops/iam_identities.toml` (P34.42a); `alerting.sh --verify` asserts the
-  deployed image is a `@sha256:` digest — a `:latest` or tag reference is
+  `deployed` image is a `@sha256:` digest — a `:latest` or tag reference is
   DRIFT (SIG-SEC-008, F-12). The e-mail channel + Monitoring policies are the
   delivery path; the service is the webhook receiver record.
 - **`alerting.sh` is the roll** — prestate → bundle → policies → uptime →

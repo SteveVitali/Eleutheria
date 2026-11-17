@@ -18,6 +18,7 @@ import importlib.util
 import json
 import os
 import pathlib
+import re
 import subprocess
 
 _HERE = pathlib.Path(__file__).resolve().parent
@@ -362,3 +363,136 @@ def test_committed_tree_passes() -> None:
     # binding or cites its record.
     root = pathlib.Path(__file__).resolve().parents[3]
     assert clc.run(root, "corpus", spec=None, json_out=None, verbose=False) == 0
+
+
+# ── P37.61d / RULING E-3 (ADR-251): the corpus is scoped to public + readiness
+# surfaces. The lint's guarantee is unchanged — no unevidenced production-state
+# assertion on a public or readiness surface — but the build-memory records
+# under `docs/build/**` and the ticket ledger under `docs/tickets/**` leave the
+# corpus: their live-leg prose is already governed by the run-ledger and
+# live-leg rules. The fixtures below are the 23 false positives recovered
+# verbatim from committed history
+# (`docs/build/fixtures/live_claims_false_positives.json`); each sits on the
+# path that recorded it. The fixture repos below load the SHIPPED policy so the
+# same assert/negate vocabulary + corpus globs are exercised.
+
+_REPO = _HERE.parents[2]
+_REAL_POLICY = (_REPO / POLICY_REL).read_text()
+_FP_FIXTURES = json.loads(
+    (_REPO / "docs/build/fixtures/live_claims_false_positives.json").read_text()
+)["fixtures"]
+
+
+def _bind_real(root: pathlib.Path) -> None:
+    """Land the shipped policy (real vocabulary + rescoped corpus) at T_BIND."""
+    _write(root, POLICY_REL, _REAL_POLICY)
+    _commit(root, T_BIND)
+
+
+def test_corpus_scope_is_public_and_readiness_only() -> None:
+    """AC4 — the shipped corpus globs cover public/readiness surfaces and no
+    build-memory or ticket-ledger path; the range leg reads the same list."""
+    policy, errs = clc.load_policy(_REPO)
+    assert not errs
+    corpus_re = clc._corpus_regex(policy["surfaces"]["corpus"])
+    covered = [
+        "README.md",
+        "db/README.md",
+        "docs/README.md",
+        "docs/build/OPERATIONAL_READINESS.md",  # the readiness carve-out
+        "docs/ops/RUNBOOK.md",
+    ]
+    for rel in covered:
+        assert corpus_re.match(rel), f"{rel} left the judged surfaces"
+        assert (_REPO / rel).is_file(), f"{rel} globbed but absent on disk"
+    uncovered = [
+        "docs/build/LEDGER.md",
+        "docs/build/runs/P37.61d.md",
+        "docs/build/reports/obligations/events.jsonl",
+        "docs/build/reports/memory-repair/x.md",
+        "docs/build/fixtures/live_claims_false_positives.json",
+        "docs/adr/README.md",  # generated index — regenerated prose, not authored
+        "docs/tickets/DEFERRALS.md",
+        "docs/tickets/489d_P37.61d__live-claims-rescope.md",
+    ]
+    for rel in uncovered:
+        assert not corpus_re.match(rel), f"{rel} still judged"
+    files = clc._glob_files(_REPO, policy["surfaces"]["corpus"])
+    assert files, "the shipped corpus must not be vacuous"
+
+
+def test_historical_false_positives_all_pass(tmp_path) -> None:
+    """All 23 recovered false positives exit clean: each sits on a path the
+    rescoped corpus never judges."""
+    assert len(_FP_FIXTURES) == 23
+    root = _repo(tmp_path)
+    _write(root, "README.md", "Nothing is deployed yet.\n")  # non-vacuous corpus
+    _bind_real(root)
+    for fx in _FP_FIXTURES:
+        _write(root, fx["path"], fx["line"] + "\n")
+    _commit(root, T_CLAIM)
+    assert _corpus(root) == 0
+
+
+def test_range_leg_ignores_build_memory(tmp_path) -> None:
+    """The range leg shares the corpus path semantics: added claims under
+    `docs/build/**` / `docs/tickets/**` are not judged."""
+    root = _repo(tmp_path)
+    _write(root, "README.md", "Clean.\n")
+    _bind_real(root)
+    base = _head(root)
+    for fx in _FP_FIXTURES:
+        _write(root, fx["path"], fx["line"] + "\n")
+    _commit(root, T_CLAIM)
+    assert clc.run(root, "range", spec=f"{base}...{_head(root)}", json_out=None, verbose=False) == 0
+
+
+def test_false_positive_lines_remain_claim_shaped() -> None:
+    """The fixtures' recorded claim-shape flags still match the shipped
+    vocabulary — the lines are genuine claim-shaped text, just off-corpus."""
+    policy, errs = clc.load_policy(_REPO)
+    assert not errs
+    assert_res = [re.compile(p, re.I) for p in policy["claims"]["assert"]]
+    negate_res = [re.compile(p, re.I) for p in policy["claims"]["negate"]]
+    for fx in _FP_FIXTURES:
+        claims = clc._classify(fx["line"].splitlines(), assert_res, negate_res)
+        assert bool(claims) == fx["still_claim_shaped"], fx["id"]
+
+
+def test_claim_shaped_false_positives_fire_on_public_surfaces(tmp_path) -> None:
+    """SIG-MEM-011 is intact: the same text that fired on build memory still
+    fails when it lands on a public surface — the guarantee moved, not the
+    vocabulary."""
+    root = _repo(tmp_path)
+    _write(root, "README.md", "Clean.\n")
+    _bind_real(root)
+    shaped = [fx for fx in _FP_FIXTURES if fx["still_claim_shaped"]]
+    assert shaped  # the fixture set would be vacuous otherwise
+    _write(root, "README.md", "".join(fx["line"] + "\n" for fx in shaped))
+    _commit(root, T_CLAIM)
+    assert _corpus(root) == 1
+
+
+def test_unevidenced_production_assertions_fail_on_held_surfaces(tmp_path) -> None:
+    """Positive fixtures: genuine unevidenced production-state assertions on
+    each held surface family still fail."""
+    root = _repo(tmp_path)
+    _write(root, "README.md", "Clean.\n")
+    _bind_real(root)
+    _write(root, "README.md", "The hosted deployment is live.\n")
+    _write(root, "docs/build/OPERATIONAL_READINESS.md", "It is publicly deployed.\n")
+    _write(root, "docs/ops/RUNBOOK.md", "The production serve is operational.\n")
+    _commit(root, T_CLAIM)
+    assert _corpus(root) == 1
+
+
+def test_range_leg_still_judges_public_surface_claims(tmp_path) -> None:
+    """The range leg keeps enforcing the held surfaces: an added claim on the
+    readiness carve-out fails."""
+    root = _repo(tmp_path)
+    _write(root, "README.md", "Clean.\n")
+    _bind_real(root)
+    base = _head(root)
+    _write(root, "docs/build/OPERATIONAL_READINESS.md", "It is live.\n")
+    _commit(root, T_CLAIM)
+    assert clc.run(root, "range", spec=f"{base}...{_head(root)}", json_out=None, verbose=False) == 1
