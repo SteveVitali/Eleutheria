@@ -13,14 +13,17 @@ allow-listed" audit and the pre-seed/seeded evidence pair.
 Checks (each reports candidates/evaluated and a declared parse floor):
 
   orient-budget      V1  orient region (line 1 → before ``## OPEN FINDINGS``)
-                         ≤ 12,288 B, warn > 8,192 B
+                         warn > 8,192 B (and > 12,288 B — a byte budget,
+                         warning-only under RULING E-4 / ADR-252); the missing
+                         ``## OPEN FINDINGS`` boundary stays hard
   current-state      V2  19 keys in order (+ optional ``harness`` in its slot),
-                         declared vocabularies, lines ≤ 256 B (the generated
-                         ``returnPass:`` id list ≤ 512 B — the B3 V2 hard bound;
-                         the id set grows with the queued-leg set), no ``| PRIOR``,
-                         updatedAt ≤ the clock/commit, nextTicket = the lowest
-                         not-landed chain row or DONE, returnPass is an id list,
-                         no key-named line outside the section
+                         declared vocabularies, lines ≤ 256 B (hard), the
+                         generated ``returnPass:`` id list ≤ 1,024 B (a byte
+                         budget — warning-only under RULING E-4 / ADR-252), the
+                         section ≤ 3,072 B (byte budget — warning-only), no
+                         ``| PRIOR``, updatedAt ≤ the clock/commit, nextTicket
+                         = the lowest not-landed chain row or DONE, returnPass
+                         is an id list, no key-named line outside the section
   named-paths        V3  every backticked repo path in the orient region (and the
                          manifest/canonicalSpec/memoryRoot values) exists
   stale-tokens       V3  no deny-listed token appears (defaults +
@@ -29,9 +32,10 @@ Checks (each reports candidates/evaluated and a declared parse floor):
                          manifest's chain-row count
   phase-log          V4  bullets parse to ``- <date> — <id> <kind> — <payload>``,
                          kinds in record_policy/phase_log_kinds.txt, entries
-                         ≤ 2,048 B, lead dates ≤ the bound and non-decreasing in
-                         the current region, the last ``## `` heading is the
-                         append target
+                         ≤ 2,048 B (a byte budget — warning-only under RULING
+                         E-4 / ADR-252), lead dates ≤ the bound and
+                         non-decreasing in the current region, the last ``## ``
+                         heading is the append target
   phase-log-done     V4  landing kinds (``done``/``ticket``) resolve to a
                          BUILD_INDEX row and an evidence file; pseudo-ids
                          SETUP/OPERATOR/ROUND*/CAPSTONE/DONE are allow-listed
@@ -50,7 +54,13 @@ Checks (each reports candidates/evaluated and a declared parse floor):
                          appended in order at the section end
   orient-probe       V11 head + current RETURN PASS + last three PHASE LOG
                          entries + the next row's manifest line and contract
-                         head ≤ 48 KiB; nextTicket resolves
+                         head ≤ 48 KiB (a byte budget — warning-only under
+                         RULING E-4 / ADR-252); nextTicket resolves
+  head-ceiling       RULING E-4 / ADR-252 — the one hard byte ceiling: the
+                         CURRENT STATE block plus the ledger head (orient
+                         region) together read ≤ 18,432 B, so the normal
+                         agent orientation read stays bounded even though
+                         every component byte budget is now advisory
   run-harness        V12 run ledgers committed at/after the guards marker carry
                          ``Harness: <harness>/<model-id>/<tier>``
   manifest-rounds    V13 every chain row sits under a ``### Round <n>`` banner
@@ -100,13 +110,20 @@ STALE_REL = f"{POLICY_REL}/stale_tokens.txt"
 
 ORIENT_WARN, ORIENT_MAX = 8192, 12288
 CS_MAX, LINE_MAX, ENTRY_MAX, PROBE_MAX = 3072, 256, 2048, 49152
+# RULING E-4 / ADR-252: every byte budget above is advisory (a warning), never
+# a failure — the shape checks (key order/vocabulary, `| PRIOR`, returnPass
+# grammar, ≤ 256 B CURRENT STATE lines, PHASE LOG shape) stay hard. The one
+# remaining hard byte bound is the combined ceiling: CURRENT STATE block +
+# ledger head (orient region) ≤ 18 KiB, so the agent orientation read stays
+# bounded while the component budgets stop forcing repair/compaction work.
+CEILING_MAX = 18432
 # B3 V2 states each CURRENT STATE line ≤ 256 B with failure above 512 B; the
 # generated `returnPass:` id list is monotone-growing with the queued-leg set
 # (one ticket id per RETURN PASS table key, comma-joined, no redundancy). The
 # bound guards `| PRIOR` abuse and bloat, not queue size — P36.73's leg row
-# took the committed list to 517 B, so the hard bound is raised to 1024 B in
-# step with the vendored check-build-memory.sh's SIG-LOCAL L8 patch (the same
-# acceptance-only widening, recorded in that file's provenance block).
+# took the committed list to 517 B, so the bound is raised to 1024 B in
+# step with the vendored check-build-memory.sh's SIG-LOCAL L8 patch, and
+# RULING E-4 / ADR-252 makes it warning-only there and here (a byte budget).
 RP_LINE_MAX = 1024
 
 EXPECTED_KEYS = audit_current_state.EXPECTED_KEYS
@@ -684,8 +701,9 @@ def check_orient_budget(rep: Report, src: Src, ctx: dict) -> None:
         rep.v(name, "orient-shape", LEDGER_REL, 0,
               "no `## OPEN FINDINGS` heading — the orient region has no boundary")
     if n > ORIENT_MAX:
-        rep.v(name, "orient-budget", LEDGER_REL, 0,
-              f"orient region is {n} B, over the 12 KiB budget (V1)")
+        rep.w(name, "orient-budget", LEDGER_REL, 0,
+              f"orient region is {n} B, over the 12 KiB budget — a byte "
+              "budget, advisory under RULING E-4 / ADR-252 (V1)")
     elif n > ORIENT_WARN:
         rep.w(name, "orient-budget", LEDGER_REL, 0,
               f"orient region is {n} B, above the 8 KiB warning level (V1)")
@@ -710,16 +728,26 @@ def check_current_state(rep: Report, src: Src, ctx: dict) -> None:
               "round and updatedAt) (V2)")
     _cs_lineno, cs = section_text(lines, re.compile(r"^##\s+CURRENT STATE"))
     if len(cs.encode()) > CS_MAX:
-        rep.v(name, "cs-budget", LEDGER_REL, 0,
+        rep.w(name, "cs-budget", LEDGER_REL, 0,
               f"CURRENT STATE section is {len(cs.encode())} B, over the 3 KiB "
-              "budget (values only, V2)")
+              "budget — a byte budget, advisory under RULING E-4 / ADR-252 "
+              "(values only, V2)")
     for lineno, ln in kl:
         key = ln.split(":", 1)[0].strip()
-        cap = RP_LINE_MAX if key == "returnPass" else LINE_MAX
-        if len(ln.encode()) > cap:
+        size = len(ln.encode())
+        if key == "returnPass":
+            # the generated id list's 1 KiB bound is a byte budget — split
+            # from the ≤256 B line rule, which stays hard (RULING E-4 /
+            # ADR-252: split bundled ids BEFORE demoting)
+            if size > RP_LINE_MAX:
+                rep.w(name, "returnPass-line-budget", LEDGER_REL, lineno,
+                      f"CURRENT STATE returnPass line is {size} B (> "
+                      f"{RP_LINE_MAX} B; values only, V2) — a byte budget, "
+                      "advisory under RULING E-4 / ADR-252")
+        elif size > LINE_MAX:
             rep.v(name, "line-budget", LEDGER_REL, lineno,
-                  f"CURRENT STATE line is {len(ln.encode())} B (> {cap} B; values "
-                  "only, V2)")
+                  f"CURRENT STATE line is {size} B (> {LINE_MAX} B; values "
+                  "only, V2) — a shape check, stays hard under RULING E-4")
         if re.search(r"\|\s*\**PRIOR", ln):
             rep.v(name, "prior-history", LEDGER_REL, lineno,
                   "CURRENT STATE line carries '| PRIOR' history — values only "
@@ -908,9 +936,14 @@ def check_phase_log(rep: Report, src: Src, ctx: dict, kinds: set[str]) -> None:
         strict = r["last"]
         emit = rep.v if strict else rep.w
         if r["size"] > ENTRY_MAX:
-            emit(name, "entry-budget", LEDGER_REL, r["line"],
-                 f"PHASE LOG entry is {r['size']} B (> 2 KiB, BM-LEDGER-06)"
-                 + ("" if strict else " (legacy region)"))
+            # the 2 KiB entry bound is a byte budget — advisory in every
+            # region under RULING E-4 / ADR-252 (the shape rules around it —
+            # markup-id, future-date, kind-vocabulary — keep `emit` and stay
+            # hard in the current region)
+            rep.w(name, "entry-budget", LEDGER_REL, r["line"],
+                  f"PHASE LOG entry is {r['size']} B (> 2 KiB, BM-LEDGER-06) "
+                  "— a byte budget, advisory under RULING E-4 / ADR-252"
+                  + ("" if strict else " (legacy region)"))
         if r["markup"]:
             emit(name, "markup-id", LEDGER_REL, r["line"],
                  "PHASE LOG entry parses only after stripping markup "
@@ -1239,11 +1272,37 @@ def check_orient_probe(rep: Report, src: Src, ctx: dict) -> None:
               "the orient probe cannot read the next row (V11)")
     total = head_b + rp_b + last3_b + nt_b
     if total > PROBE_MAX:
-        rep.v(name, "probe-budget", LEDGER_REL, 0,
+        # the 48 KiB recipe bound is a byte budget — advisory under RULING
+        # E-4 / ADR-252 (the head-ceiling check keeps the orientation read
+        # bounded; nextTicket resolution above stays hard)
+        rep.w(name, "probe-budget", LEDGER_REL, 0,
               f"orient recipe reads {total} B (> 48 KiB: head {head_b} · "
               f"RETURN PASS {rp_b} · last 3 entries {last3_b} · next row "
-              f"{nt_b}) (V11)")
+              f"{nt_b}) (V11) — a byte budget, advisory under RULING E-4 / "
+              "ADR-252")
     ctx["probe_bytes"] = total
+
+
+def check_head_ceiling(rep: Report, src: Src, ctx: dict) -> None:
+    name = "head-ceiling"
+    ledger = src.read_text(LEDGER_REL)
+    if ledger is None:
+        rep.count(name, 0, 0)
+        return
+    rep.count(name, 1, 1)
+    head_b = len(orient_text(ledger).encode())
+    _cs_lineno, cs = section_text(
+        ledger.splitlines(), re.compile(r"^##\s+CURRENT STATE")
+    )
+    cs_b = len(cs.encode())
+    total = head_b + cs_b
+    ctx["ceiling_bytes"] = total
+    if total > CEILING_MAX:
+        rep.v(name, "head-ceiling", LEDGER_REL, 0,
+              f"CURRENT STATE block + ledger head read {total} B combined "
+              f"(> 18 KiB: head {head_b} · CURRENT STATE {cs_b}) — the one "
+              "hard byte ceiling under RULING E-4 / ADR-252; the agent "
+              "orientation read stays bounded")
 
 
 def check_run_harness(rep: Report, src: Src, ctx: dict) -> None:
@@ -1329,6 +1388,7 @@ CHECKS: list[Check] = [
     Check("return-pass"),
     Check("gate-decisions"),
     Check("orient-probe"),
+    Check("head-ceiling"),
     Check("run-harness"),
     Check("manifest-rounds"),
 ]
@@ -1371,6 +1431,7 @@ def run_checks(src: Src, ctx: dict) -> Report:
     check_return_pass(rep, src, ctx)
     check_gate_decisions(rep, src, ctx)
     check_orient_probe(rep, src, ctx)
+    check_head_ceiling(rep, src, ctx)
     check_run_harness(rep, src, ctx)
     check_manifest_rounds(rep, src, ctx)
     return rep

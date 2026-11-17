@@ -44,6 +44,7 @@ placeholder (filled at closeout)
 placeholder ______
 placeholder re:DRAFT-[A-Z]+-[0-9]+
 placeholder pending at write
+placeholder pending head-bound read
 
 # ── Generated region (B3 §3.13; SEED-16, later P34.29's generator) ────────────────────────────────────────
 # The heading is "### RETURN PASS — current"; it is written here without the leading "###" because
@@ -1582,3 +1583,69 @@ seed-commit 9a9261dc
 # own. Scope: any append-only findings attributed to d182fb5d's rewritten
 # line only; no other commit borrows the exemption.
 seed-commit d182fb5d
+
+# 7821860a — P37.61d (row 489d) ci-cell fill: the committed row's `ci: pending
+# head-bound read` cell is rewritten in place to `ci: pass-after-rerun
+# #520@67c454be` — the in-place placeholder fill every landing row is designed
+# to carry (the f45cf7ec/b7e827d3/458f4af8/178ecf57 class; a second row would
+# break one-row-per-ticket). The fill commit sits past the #520 merge on the
+# chain tip, so it entered the judged range only when #521's base auto-
+# retargeted to `main` (the b206e14d precedent — surfaced head-bound on
+# #521's docs job, run 44043292658). The pre-fill literal is the declared
+# `placeholder pending head-bound read` (added by the same commit). Declared
+# as announced in 7821860a's own message. Scope: the append-only finding
+# attributed to 7821860a's rewritten BUILD_INDEX line only; no other commit
+# borrows the exemption.
+seed-commit 7821860a
+
+# 73fb2132 — P37.61e (row 489e) ci-cell fill: the committed row's `ci: pending
+# head-bound read` cell is rewritten in place to `ci: recorded in PHASE LOG`
+# — the designed in-place fill every landing row carries, written in the
+# red-verdict convention (the verdict text lives verbatim in the post-closeout
+# PHASE LOG entry; `ci: fail` is a stray token, never a parseable field). The
+# f45cf7ec/b7e827d3/458f4af8/178ecf57/7821860a class — a second row would
+# break one-row-per-ticket. Declared as announced in 73fb2132's own message.
+# Scope: the append-only finding attributed to 73fb2132's rewritten
+# BUILD_INDEX line only; no other commit borrows the exemption.
+seed-commit 73fb2132
+
+# e297b5d8 — P37.61e orchestrator repair: the `a810cb45` PHASE LOG line's kind
+# `post-closeout record 2` is rewritten in place to `post-closeout record #2`
+# — the V4 grammar's ordinal form (the bare kind must be in phase_log_kinds.txt;
+# `record 2` would red the ledger-contract docs leg on every later head,
+# independent of the LIVE-FETCH-ECONNRESET-1 outage). The b2fa5735/d182fb5d
+# in-place repair class: pre-edit bytes archived verbatim at
+# `reports/memory-repair/ledger-1830-pre-kind-fix.txt` and the dated
+# `P37.61e orchestrator repair` PHASE LOG entry declares the repair; same
+# commit also set CURRENT STATE `blockedOn` to the CI-fail read the two
+# post-closeout entries named in prose but left unset. Declared in the
+# immediately following commit (the declaration cannot precede the commit it
+# names). Scope: the append-only finding attributed to e297b5d8's rewritten
+# PHASE LOG line only; no other commit borrows the exemption.
+seed-commit e297b5d8
+
+# 4c2a27f3 — P37.61e orchestrator repair, second in-place: the `orchestrator
+# repair` PHASE LOG entry added by e297b5d8 carried no parseable `ci:` field —
+# flagged by the G3b recorded-CI verifier on the 635cbfbf docs leg
+# (verify-recorded-ci FAIL, run 44059328849). The entry now cites the standing
+# head-bound read at record time, `ci: fail #521@6e0ac6d (run 44051851045)` —
+# the e297b5d8/51bb02fb in-place class: pre-edit bytes archived verbatim at
+# `reports/memory-repair/ledger-1831-pre-ci-field.txt`. Declared as announced
+# in 4c2a27f3's own message. Scope: the append-only finding attributed to 4c2a27f3's
+# rewritten PHASE LOG line only; no other commit borrows the exemption.
+seed-commit 4c2a27f3
+
+# 61d0d148 — P37.61e orchestrator repair, third in-place on the same PHASE LOG
+# line: the `ci: fail #521@6e0ac6d` fragment 4c2a27f3 added is itself
+# unparseable — the G3b grammar's verdicts are pass/pass-after-rerun only
+# (run 44085682373's docs leg flagged both the missing-field and the
+# fragment). Rewritten to the boundary-read convention the post-closeout
+# entries carry: `blockedOn: CI fail on #521@6e0ac6d (web): failure —
+# Process completed with exit code 1. (run 44051851045)` — the `blockedOn`
+# marker makes the entry non-`done`, no `ci:` field owed. The
+# b2fa5735/51bb02fb class: pre-edit bytes archived verbatim at
+# `reports/memory-repair/ledger-1831-pre-ci-fragment-fix.txt`. Declared as
+# announced in 61d0d148's own message. Scope: the append-only finding attributed
+# to 61d0d148's rewritten PHASE LOG line only; no other commit borrows the
+# exemption.
+seed-commit 61d0d148

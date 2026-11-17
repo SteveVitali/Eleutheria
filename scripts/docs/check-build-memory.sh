@@ -19,8 +19,13 @@
 #   file named on the last stdout line, the input identity {repo, commit, dirty, input_digest}, uniform
 #   {check, severity, file, obligation, evidence, message} records and summary.exit.
 #
-# LOCAL PATCH — the body below the closing banner line is the upstream file byte-for-byte except eight
-# hunks, each tagged `SIG-LOCAL` in place (all upstream candidates):
+# LOCAL PATCH — the body below the closing banner line is the upstream file byte-for-byte except
+# eighteen hunks, each tagged `SIG-LOCAL` in place (all upstream candidates). Fifteen carry the L1–L16
+# numbering enumerated below — L5 is recorded RETIRED and no longer a hunk; L1–L4, L6–L16 are the
+# fifteen live ones. Three further hunks predate the L-numbering (P34.x) and are tagged `SIG-LOCAL`
+# in place with their ticket ids, not listed here: the readout `* _TEMPLATE.md` skip glob, the P34.28
+# readout guard-sentence grandfather retirement (warn → viol), and the §8b living-record lint
+# block (P34.31):
 #   L1  write_report: `dirty` also covers the canonical spec when it lies inside the repo (the input
 #       digest reads the spec, so an uncommitted spec edit marks the report dirty). From the P32.8 fork.
 #   L2  write_report: a report that cannot be written exits 2 (upstream prints the error and goes on).
@@ -32,8 +37,8 @@
 #       `vacuous` violation (exit 3) — upstream only did this inside the phase-log-done block; the
 #       P34.9 G11 rule applies it to every counted check, and the phase-log-done block keeps its
 #       declared 0.5 parse floor for the evaluated > 0 case (B3 §6 / B4 G11).
-#   L5  the > 48 KiB orient probe is `guarded` (fails under the guards marker), not warn-only —
-#       V11's budget is a contract bound (B4 G5 / BM-ORIENT-01).
+#   L5  RETIRED (P37.61e / RULING E-4 / ADR-252): the > 48 KiB orient probe is back to upstream's
+#       `warn` — it is a byte budget, advisory. (No hunk remains: the line is upstream's again.)
 #   L6  `OPERATOR` joins the done-entry pseudo-id allow-list — B3's allow-list is
 #       SETUP | OPERATOR | ROUND* (CAPSTONE/DONE stay from the upstream list).
 #   L7  ID_RE's dotted tail accepts digits after the suffix letter
@@ -46,7 +51,29 @@
 #       bound guards against `| PRIOR` abuse and bloat, not queue size; 1024 B
 #       is the same sanity bound at the queue's real scale. Acceptance only —
 #       the cap is widened, never the grammar (the comma-id-list check is
-#       untouched).
+#       untouched). P37.61e (RULING E-4): the shared `$cap` test is split —
+#       ≤ 256 B lines are the still-guarded `ledger-shape` shape rule;
+#       `returnPass` > 1024 B warns under `ledger-budget` (a byte budget).
+#   L9  P37.61e / RULING E-4 / ADR-252: the orient-region > 12 KiB and
+#       CURRENT STATE section > 3 KiB byte budgets are `warn ledger-budget`,
+#       not `guarded` — byte budgets advise; they do not fail.
+#   L10 P37.61e: `| PRIOR` moves from `ledger-budget` to `ledger-shape` — a
+#       shape rule, not bytes; it stays guarded (fail under the marker).
+#   L11 P37.61e: the returnPass comma-id-list grammar moves to `ledger-shape`
+#       — the shape rule stays guarded while its byte cap warns.
+#   L12 P37.61e: the no-key-named-line-outside-CURRENT STATE rule moves to
+#       `ledger-shape` — shape, stays guarded.
+#   L13 P37.61e: the last-heading-is-a-PHASE-LOG append-target rule moves to
+#       `ledger-shape` — shape, stays guarded.
+#   L14 P37.61e: PHASE LOG entries > 2 KiB warn in the current region too —
+#       a byte budget (was `guarded` there; older regions already warned).
+#   L15 P37.61e / RULING E-4 / ADR-252: new `guarded ledger-ceiling` — the
+#       CURRENT STATE block plus the ledger head together read ≤ 18 KiB.
+#       The one hard byte ceiling keeps the agent orientation read bounded
+#       now that every component byte budget is advisory.
+#   L16 P37.61e: the upstream doc bullet in the Checks header reports the
+#       new severities (byte budgets warn; shape rules stay guarded under
+#       `ledger-shape`; the `ledger-ceiling` bound is new).
 # Behaviours SIG takes from upstream 0.5.0 as they are: duplicate ticket ids keyed on the id (not the
 # NN prefix); tolerant DEFERRALS status parsing (first canonical token of the last cell); human output
 # `- check: message`; the contract/patch/3 report shape (now also `guards`, `counts`, `input.now`).
@@ -54,9 +81,11 @@
 # ` [obligation] file` decoration (the JSON keeps both fields); `input.repo` echoing the argument as
 # passed (upstream records the resolved absolute path); the not-a-build-memory report's top-level
 # `repo` key (upstream writes the full report, `input.repo`).
-# Verify the vendored body against the skill:
+# Verify the vendored body against the PINNED upstream (sha256 f48a365d… — the installed
+# ~/.claude/skills copy has since drifted to a newer upstream and shows that drift too):
 #   diff <(sed '2,/^# ---- end of SIG vendoring banner ----/d' scripts/docs/check-build-memory.sh) \
-#        ~/.claude/skills/build-memory/scripts/check-build-memory.sh      # → only the eight SIG-LOCAL hunks
+#        <(git -C ~/agent-skills show 8aeb6dcd55a26a049bfb2092dd32e0e286761f6f:\
+#          skills/build-memory/scripts/check-build-memory.sh)   # → only the eighteen SIG-LOCAL hunks
 # ---- end of SIG vendoring banner ----
 # check-build-memory.sh — validate a repo's build-memory layout. (BM-VALID-01.)
 #
@@ -107,13 +136,18 @@
 #   - CURRENT STATE values (guarded): projectStatus ∈ NOT_STARTED|IN_PROGRESS|BLOCKED|PAUSED|DONE;
 #     pauseRequested ∈ true|false; mergePolicy ∈ NONE|OPERATOR|AUTO-BOTTOM-UP; autonomy ∈
 #     auto|checkpoint|manual; round an integer; updatedAt ISO-8601 (`<…>`/`(…)` seed placeholders skip)
-#   - LEDGER.md budget + shape (BM-LEDGER-08; guarded — warn, or fail under the guards
-#     marker): orient region <= 12 KiB (warn > 8 KiB); CURRENT STATE <= 3 KiB, lines <= 256 B
-#     (the generated returnPass id list <= 1024 B — the B3 V2 hard bound raised
-#     by SIG-LOCAL L8; it grows with the queue), no
-#     `| PRIOR`; returnPass an id list; no other line begins with a CURRENT STATE key; the last `## `
-#     heading is a PHASE LOG heading; its entries <= 2 KiB (older regions: warn); every repo path
-#     named in the orient region exists and no stale token appears (`.agents/scratch`,
+#   - LEDGER.md budget + shape (BM-LEDGER-08; SIG-LOCAL L16 under RULING E-4 /
+#     ADR-252): the byte budgets warn, never fail (`warn ledger-budget`) —
+#     orient region > 12 KiB (warn > 8 KiB); CURRENT STATE section > 3 KiB;
+#     the generated returnPass id list > 1024 B (SIG-LOCAL L8; it grows with
+#     the queue); PHASE LOG entries > 2 KiB in any region; the orient recipe
+#     > 48 KiB. The shape rules stay hard under `guarded ledger-shape`:
+#     CURRENT STATE keys in order, lines <= 256 B, no `| PRIOR`; returnPass
+#     an id list; no other line begins with a CURRENT STATE key; the last
+#     `## ` heading is a PHASE LOG heading. The one hard byte bound is
+#     `guarded ledger-ceiling` (SIG-LOCAL L15): CURRENT STATE block + ledger
+#     head <= 18 KiB. Every repo path named in the orient region exists and
+#     no stale token appears (`.agents/scratch`,
 #     `gitignored`, `Do not resume until`, + docs/build/tools/record_policy/stale_tokens.txt)
 #   - GATE DECISIONS in the 7-column form (header has `kind`; guarded): each row's kind is
 #     decision | pre-authorization | confirmation | waiver | correction (BM-GATE-05), and a
@@ -873,13 +907,26 @@ if [ -f "$LEDGER" ]; then
   # Orient region: line 1 up to (not including) the first "## OPEN FINDINGS" heading.
   head_b="$(LC_ALL=C awk '/^##[[:space:]]+OPEN FINDINGS/ {exit} {print}' "$LEDGER" | wc -c | tr -d ' ')"
   case "$head_b" in ''|*[!0-9]*) head_b=0 ;; esac
+  # SIG-LOCAL L9 (P37.61e / RULING E-4 / ADR-252): the orient-region and
+  # CURRENT STATE byte budgets are advisory — `warn ledger-budget`, never
+  # `guarded`. The shape rules below moved to the still-guarded
+  # `ledger-shape` check id (L10–L13), and L15 adds the one hard byte
+  # ceiling (`guarded ledger-ceiling`).
   if [ "$head_b" -gt 12288 ]; then
-    guarded ledger-budget "LEDGER.md orient region (line 1 → ## OPEN FINDINGS) is $head_b B, over the 12 KiB budget (BM-LEDGER-08)" "docs/build/LEDGER.md"
+    warn ledger-budget "LEDGER.md orient region (line 1 → ## OPEN FINDINGS) is $head_b B, over the 12 KiB budget — a byte budget, advisory under RULING E-4 (BM-LEDGER-08)" "docs/build/LEDGER.md"
   elif [ "$head_b" -gt 8192 ]; then
     warn ledger-budget "LEDGER.md orient region is $head_b B, above the 8 KiB warning level (budget 12 KiB, BM-LEDGER-08)" "docs/build/LEDGER.md"
   fi
   cs_b="$(LC_ALL=C awk '/^##[[:space:]]+CURRENT STATE/ {f=1} f && /^##[[:space:]]/ && !/CURRENT STATE/ {exit} f' "$LEDGER" | wc -c | tr -d ' ')"
-  [ "${cs_b:-0}" -gt 3072 ] 2>/dev/null && guarded ledger-budget "LEDGER.md CURRENT STATE section is $cs_b B, over the 3 KiB budget (values only, BM-LEDGER-08)" "docs/build/LEDGER.md"
+  [ "${cs_b:-0}" -gt 3072 ] 2>/dev/null && warn ledger-budget "LEDGER.md CURRENT STATE section is $cs_b B, over the 3 KiB budget — a byte budget, advisory under RULING E-4 (values only, BM-LEDGER-08)" "docs/build/LEDGER.md"
+  # SIG-LOCAL L15 (P37.61e / RULING E-4 / ADR-252): the one hard byte bound —
+  # the CURRENT STATE block plus the ledger head together read <= 18 KiB,
+  # keeping the agent orientation read bounded now that every component
+  # byte budget only advises. Guarded like the shape rules: it fails under
+  # the guards marker, warns without it.
+  ceil_b=$((head_b + ${cs_b:-0}))
+  count head-ceiling-bytes "$ceil_b" "$ceil_b"
+  [ "$ceil_b" -gt 18432 ] && guarded ledger-ceiling "LEDGER.md CURRENT STATE block + ledger head read $ceil_b B combined (> 18 KiB: head $head_b · CURRENT STATE ${cs_b:-0}) — the one hard byte ceiling under RULING E-4" "docs/build/LEDGER.md"
   # CURRENT STATE: values only — each key line <= 256 B, no `| PRIOR` history.
   LC_ALL=C awk -v keys=" $EXPECTED_KEYS harness " '
     /^##[[:space:]]+CURRENT STATE/ {inblk=1; next}
@@ -889,18 +936,29 @@ if [ -f "$LEDGER" ]; then
       if (index(keys, " " k " ")) print k "\t" length($0) "\t" ($0 ~ /\|[[:space:]]*\**PRIOR/ ? 1 : 0)
     }' "$LEDGER" | while IFS="$(printf '\t')" read -r k len prior; do
     [ -n "$k" ] || continue
-    # returnPass rides the B3 V2 hard bound (fail > 1024 B; SIG-LOCAL L8 raised
-    # the bound from 512 — the generated id list grows with the queued-leg set
+    # SIG-LOCAL L8 (P36.73) extended by P37.61e (RULING E-4 / ADR-252): the
+    # shared `$cap` test is split BEFORE demoting — every key's line stays
+    # under the still-guarded `ledger-shape` ≤ 256 B shape rule, and the
+    # generated returnPass id list keeps its raised 1024 B bound as a
+    # `ledger-budget` byte-budget warning (it grows with the queued-leg set
     # and cannot be shortened in place).
-    cap=256; [ "$k" = "returnPass" ] && cap=1024
-    [ "$len" -gt "$cap" ] 2>/dev/null && guarded ledger-budget "LEDGER.md CURRENT STATE '$k' line is $len B (> $cap B; values only, BM-LEDGER-08)" "docs/build/LEDGER.md" "$k"
-    [ "$prior" = "1" ] && guarded ledger-budget "LEDGER.md CURRENT STATE '$k' carries '| PRIOR' history (values only; git + PHASE LOG carry history, BM-LEDGER-08)" "docs/build/LEDGER.md" "$k"
+    if [ "$k" = "returnPass" ]; then
+      [ "$len" -gt 1024 ] 2>/dev/null && warn ledger-budget "LEDGER.md CURRENT STATE 'returnPass' line is $len B (> 1024 B; values only, BM-LEDGER-08) — a byte budget, advisory under RULING E-4" "docs/build/LEDGER.md" "$k"
+    else
+      [ "$len" -gt 256 ] 2>/dev/null && guarded ledger-shape "LEDGER.md CURRENT STATE '$k' line is $len B (> 256 B; values only, BM-LEDGER-08)" "docs/build/LEDGER.md" "$k"
+    fi
+    # SIG-LOCAL L10 (P37.61e): `| PRIOR` history is shape, not bytes — it
+    # moves from `ledger-budget` to the still-guarded `ledger-shape` id.
+    [ "$prior" = "1" ] && guarded ledger-shape "LEDGER.md CURRENT STATE '$k' carries '| PRIOR' history (values only; git + PHASE LOG carry history, BM-LEDGER-08)" "docs/build/LEDGER.md" "$k"
   done
   # returnPass is a comma-separated id list (or "(none)").
+  # SIG-LOCAL L11 (P37.61e): the id-list grammar is shape, not bytes — it
+  # moves from `ledger-budget` to the still-guarded `ledger-shape` id while
+  # its line cap warns under L8.
   rp="$(lval returnPass)"
   case "$rp" in ''|'(none)'|none|'(nothing)') : ;; *)
     printf '%s' "$rp" | grep -qE "^${ID_RE}([[:space:]]*,[[:space:]]*${ID_RE})*$" \
-      || guarded ledger-budget "LEDGER.md returnPass is not a comma-separated ticket-id list (BM-LEDGER-08)" "docs/build/LEDGER.md" "returnPass" ;;
+      || guarded ledger-shape "LEDGER.md returnPass is not a comma-separated ticket-id list (BM-LEDGER-08)" "docs/build/LEDGER.md" "returnPass" ;;
   esac
   # No line outside CURRENT STATE begins with a CURRENT STATE key name (readers take the first match).
   dupk="$(LC_ALL=C awk -v keys=" $EXPECTED_KEYS harness " '
@@ -912,7 +970,9 @@ if [ -f "$LEDGER" ]; then
     }
     END { if (n) print n "\t" first }' "$LEDGER")"
   if [ -n "$dupk" ]; then
-    guarded ledger-budget "LEDGER.md: $(printf '%s' "$dupk" | cut -f1) line(s) outside CURRENT STATE begin with a CURRENT STATE key name (first: line $(printf '%s' "$dupk" | cut -f2)) (BM-LEDGER-08)" "docs/build/LEDGER.md"
+    # SIG-LOCAL L12 (P37.61e): the key-shadow rule is shape, not bytes — it
+    # moves from `ledger-budget` to the still-guarded `ledger-shape` id.
+    guarded ledger-shape "LEDGER.md: $(printf '%s' "$dupk" | cut -f1) line(s) outside CURRENT STATE begin with a CURRENT STATE key name (first: line $(printf '%s' "$dupk" | cut -f2)) (BM-LEDGER-08)" "docs/build/LEDGER.md"
   fi
   # Stale orient text (V3): every repo path named (in backticks) in the orient region, and the
   # manifest / canonicalSpec / memoryRoot values, exist; no stale token appears. Guarded.
@@ -947,10 +1007,14 @@ if [ -f "$LEDGER" ]; then
   if grep -qE '^##[[:space:]]+PHASE LOG' "$LEDGER"; then
     if ! printf '%s' "$last_h" | grep -qE '^##[[:space:]]+PHASE LOG([[:space:]]|$)' \
        || printf '%s' "$last_h" | grep -qE '^##[[:space:]]+PHASE LOG[[:space:]]+INDEX'; then
-      guarded ledger-budget "LEDGER.md: the last region is '$last_h', not a PHASE LOG heading — new entries go only at the end of the file (BM-LEDGER-06)" "docs/build/LEDGER.md"
+      # SIG-LOCAL L13 (P37.61e): the append-target rule is shape, not bytes —
+      # it moves from `ledger-budget` to the still-guarded `ledger-shape` id.
+      guarded ledger-shape "LEDGER.md: the last region is '$last_h', not a PHASE LOG heading — new entries go only at the end of the file (BM-LEDGER-06)" "docs/build/LEDGER.md"
     fi
   fi
-  # PHASE LOG entries <= 2 KiB: guarded in the last (current) PHASE LOG region; a warning in older regions.
+  # PHASE LOG entries <= 2 KiB: SIG-LOCAL L14 (P37.61e / RULING E-4 / ADR-252) —
+  # a byte budget, `warn` in every region (was `guarded` in the last region,
+  # `warn` in older ones).
   # Also counts the entries (seed check) and measures the last three (the orient probe).
   plog="$(LC_ALL=C awk '
     function flush() { if (cur) { if (sz > 2048) { ov++; ovl[ov] = cur; ovr[ov] = region }; k++; last[k % 3] = sz } cur = 0; sz = 0 }
@@ -967,7 +1031,7 @@ if [ -f "$LEDGER" ]; then
     }' "$LEDGER")"
   pl_entries="$(printf '%s' "$plog" | cut -f1)"
   pl_nl="$(printf '%s' "$plog" | cut -f2)"; pl_no="$(printf '%s' "$plog" | cut -f4)"; last3_b="$(printf '%s' "$plog" | cut -f6)"
-  [ "${pl_nl:-0}" -gt 0 ] && guarded ledger-budget "LEDGER.md: $pl_nl PHASE LOG entr(y/ies) in the current region exceed 2 KiB (BM-LEDGER-06; lines:$(printf '%s' "$plog" | cut -f3))" "docs/build/LEDGER.md"
+  [ "${pl_nl:-0}" -gt 0 ] && warn ledger-budget "LEDGER.md: $pl_nl PHASE LOG entr(y/ies) in the current region exceed 2 KiB — a byte budget, advisory under RULING E-4 (BM-LEDGER-06; lines:$(printf '%s' "$plog" | cut -f3))" "docs/build/LEDGER.md"
   [ "${pl_no:-0}" -gt 0 ] && warn ledger-budget "LEDGER.md: $pl_no PHASE LOG entr(y/ies) in older regions exceed 2 KiB (legacy; lines:$(printf '%s' "$plog" | cut -f5))" "docs/build/LEDGER.md"
   # Orient probe (BM-ORIENT-01, V11): head + current RETURN PASS + last three PHASE LOG entries + the
   # next row's manifest line + its contract header ≤ 48 KiB (warn).
@@ -986,9 +1050,7 @@ if [ -f "$LEDGER" ]; then
   fi
   orient_b=$((head_b + ${rp_b:-0} + ${last3_b:-0} + nt_b))
   count orient-bytes "$orient_b" "$orient_b"
-  # SIG-LOCAL L5 (P34.9): the 48 KiB orient-probe budget is a contract bound,
-  # not advice — fail under the guards marker, warn without it.
-  [ "$orient_b" -gt 49152 ] && guarded ledger-budget "orient recipe reads $orient_b B (> 48 KiB: head $head_b · RETURN PASS ${rp_b:-0} · last 3 entries ${last3_b:-0} · next row $nt_b) (BM-ORIENT-01, V11)" "docs/build/LEDGER.md"
+  [ "$orient_b" -gt 49152 ] && warn ledger-budget "orient recipe reads $orient_b B (> 48 KiB: head $head_b · RETURN PASS ${rp_b:-0} · last 3 entries ${last3_b:-0} · next row $nt_b) (BM-ORIENT-01, V11)" "docs/build/LEDGER.md"
 
   # GATE DECISIONS rows in the 7-column form (BM-GATE-05, -09; guarded). Header-aware: a table row
   # with a `consequence` cell is a header; the table is 7-column iff that header also has `kind`.
@@ -1103,6 +1165,8 @@ if [ -d "$BUILD/readouts" ]; then
   nro=0; nmiss=0; firstm=""
   for ro in "$BUILD"/readouts/*.md; do
     [ -f "$ro" ] || continue
+    # SIG-LOCAL (P34.28 — predates the L-numbering): the skip covers the
+    # suffixed * _TEMPLATE.md names, not only the bare `_TEMPLATE.md`.
     b="$(basename "$ro")"; case "$b" in *_TEMPLATE.md) continue ;; esac
     nro=$((nro + 1))
     tr '\n' ' ' < "$ro" | sed -E 's/[[:space:]>]+/ /g' | grep -qiF "$GUARD_SENT" && continue
@@ -1111,8 +1175,9 @@ if [ -d "$BUILD/readouts" ]; then
     else nmiss=$((nmiss + 1)); [ -n "$firstm" ] || firstm="$b"; fi
   done
   count readout-guard "$nro" "$nro"
-  # P34.28: the grandfather clause is retired — P34.27 appended the sentence to every
-  # grandfathered readout, so any readout missing it fails, not warns (BM-INDEX-03).
+  # SIG-LOCAL (P34.28 — predates the L-numbering): the grandfather clause is
+  # retired — P34.27 appended the sentence to every grandfathered readout,
+  # so any readout missing it fails, not warns (BM-INDEX-03).
   [ "$nmiss" -gt 0 ] && viol readout "$nmiss readout(s) lack the guard sentence (first: $firstm); every readout carries it permanently — P34.27 appended it to the grandfathered set (BM-INDEX-03)" "docs/build/readouts"
 fi
 if [ -d "$BUILD/runs" ]; then
@@ -1145,6 +1210,8 @@ if [ -n "$REQ_PATTERN" ] && [ -n "${SPEC:-}" ] && [ -f "${SPEC:-/nonexistent}" ]
 fi
 
 # ── 8b. Living-record test lint (BM-TEST-01, G6, SIG-ENG-040) ────────────────
+# SIG-LOCAL (P34.31 — predates the L-numbering): the whole §8b block is a
+# local addition upstream does not carry.
 # Supersedes the grep-based 'living-pin?' heuristic (P34.31): enforcement is the
 # AST lint docs/build/tools/living_record_lint.py over the declared policy
 # (docs/build/tools/record_policy/living_records.toml — living-record-policy/1),
