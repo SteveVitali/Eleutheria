@@ -1,0 +1,144 @@
+{
+  "schema": "ci-boundary/1",
+  "tool": "docs/build/tools/ci_boundary.py",
+  "requested_pr": 521,
+  "pr": 521,
+  "head_sha": "6e0ac6da9ee774adbfd0944e8496c3e025e2038a",
+  "head_ref": "r11/P37.61e-byte-budgets-to-warnings",
+  "base": "main",
+  "read_at": "2026-11-17T09:23:26Z",
+  "prefix": "r11/",
+  "scope": "the current r11/ PR and its open r11/ ancestors; never #141–#190",
+  "required": [
+    "python",
+    "docs",
+    "composed",
+    "security",
+    "web"
+  ],
+  "stack": [
+    {
+      "pr": 521,
+      "head_ref": "r11/P37.61e-byte-budgets-to-warnings",
+      "head_sha": "6e0ac6da9ee774adbfd0944e8496c3e025e2038a",
+      "base": "main",
+      "pr_state": "OPEN",
+      "is_draft": false,
+      "mergeable": "MERGEABLE",
+      "state": "fail",
+      "detail": "failure — Process completed with exit code 1. (run 44051851045)"
+    }
+  ],
+  "stack_stop": "base `main` is outside the `r11/` scope — the Round-10 stack (#141–#190) is never read (B-15)",
+  "stack_digest": "fcb8b73fee1aded15a6e173331b838aac6997bd017087f8b7a2b9769333a76fe",
+  "local_head": "6e0ac6da9ee774adbfd0944e8496c3e025e2038a",
+  "external": {
+    "read_at": "2026-11-17T09:23:27Z",
+    "since": "2026-11-17",
+    "fetch": "ok",
+    "main_sha": "d7e3580b6af72e9a75973d6dde33e148895c405c",
+    "chain_descends": false,
+    "descends_note": "origin/main d7e3580 is not an ancestor of the tip — main carries commits the chain does not contain (the chain trails main, merged late by the operator)",
+    "ancestry": [],
+    "merged_since": [
+      {
+        "number": 520,
+        "head_ref": "r11/P37.61d-live-claims-rescope",
+        "head_sha": "67c454bef5840ebeb94e03088cdbe561b011c32e",
+        "base": "main",
+        "merged_at": "2026-11-17T05:34:03Z",
+        "on_stack": true
+      }
+    ],
+    "open_off_chain": []
+  },
+  "flake_entries": [
+    "LH-PERF-1",
+    "PY-SUBSTR-1",
+    "DOCKERHUB-RATE-1",
+    "DOCKERHUB-RATE-2",
+    "DOCKERHUB-RATE-3",
+    "NPM-AUDIT-503-1",
+    "PY-STUB-1"
+  ],
+  "reruns": [],
+  "checks": [
+    {
+      "pr": 521,
+      "name": "python",
+      "required": true,
+      "check_run_id": 133942401064,
+      "run_id": "44051851045",
+      "status": "completed",
+      "conclusion": "success",
+      "bucket": "pass",
+      "started_at": "2026-11-17T09:02:10Z",
+      "completed_at": "2026-11-17T09:22:08Z",
+      "link": "https://github.com/SteveVitali/Eleutheria/actions/runs/44051851045/job/133942401064",
+      "waived": false
+    },
+    {
+      "pr": 521,
+      "name": "docs",
+      "required": true,
+      "check_run_id": 133942401758,
+      "run_id": "44051851045",
+      "status": "completed",
+      "conclusion": "success",
+      "bucket": "pass",
+      "started_at": "2026-11-17T09:02:10Z",
+      "completed_at": "2026-11-17T09:05:44Z",
+      "link": "https://github.com/SteveVitali/Eleutheria/actions/runs/44051851045/job/133942401758",
+      "waived": false
+    },
+    {
+      "pr": 521,
+      "name": "composed",
+      "required": true,
+      "check_run_id": 133942400956,
+      "run_id": "44051851045",
+      "status": "completed",
+      "conclusion": "success",
+      "bucket": "pass",
+      "started_at": "2026-11-17T09:02:10Z",
+      "completed_at": "2026-11-17T09:05:37Z",
+      "link": "https://github.com/SteveVitali/Eleutheria/actions/runs/44051851045/job/133942400956",
+      "waived": false
+    },
+    {
+      "pr": 521,
+      "name": "security",
+      "required": true,
+      "check_run_id": 133942449523,
+      "run_id": "44051851045",
+      "status": "completed",
+      "conclusion": "success",
+      "bucket": "pass",
+      "started_at": "2026-11-17T09:02:10Z",
+      "completed_at": "2026-11-17T09:02:51Z",
+      "link": "https://github.com/SteveVitali/Eleutheria/actions/runs/44051851045/job/133942449523",
+      "waived": false
+    },
+    {
+      "pr": 521,
+      "name": "web",
+      "required": true,
+      "check_run_id": 133942398358,
+      "run_id": "44051851045",
+      "status": "completed",
+      "conclusion": "failure",
+      "bucket": "fail",
+      "started_at": "2026-11-17T09:23:27Z",
+      "completed_at": "2026-11-17T09:45:30Z",
+      "link": "https://github.com/SteveVitali/Eleutheria/actions/runs/44051851045/job/133942398358",
+      "waived": false
+    }
+  ],
+  "waivers": 5,
+  "polls": 23,
+  "waited_s": 1339.6,
+  "state": "fail",
+  "kind": "fail",
+  "line": "blockedOn: CI fail on #521@6e0ac6d (web): failure — Process completed with exit code 1. (run 44051851045)",
+  "exit": 3
+}
