@@ -34,10 +34,12 @@ import {
   relatedTasks,
   statusLine,
   taskJsonHref,
+  taskReportChannel,
   triggerSentence,
   unknownNote,
   whyItMatters,
 } from "../../lib/task-page";
+import { INTAKE_EMAIL_MARKER } from "../../lib/intake";
 import {
   DRAFT_ANCHOR,
   NEVER_SENT_LINE,
@@ -104,6 +106,10 @@ const unknown = card ? unknownNote(card) : null;
 const draft = card ? draftForTask(card, getRecordsRequestDrafts()) : null;
 const draftRole = card !== null && isDraftRole(card.assignee_class);
 const provenance = card ? getResearchQueueProvenance() : undefined;
+// P37.62 (K11 RQ-05, D-K11-4 [B-8]=a): the report channel — the prefilled
+// intake GET only while the receiver operates; the dispute e-mail address
+// (the operator's address until contact@ exists) until then.
+const report = card ? taskReportChannel(card.handle!) : null;
 ---
 
 {p.kind === "alias" && card === null ? (
@@ -271,10 +277,25 @@ const provenance = card ? getResearchQueueProvenance() : undefined;
     <ol data-testid="task-how-to-act">
       {howToAct(card).map((step) => <li>{step}</li>)}
     </ol>
-    <p data-testid="task-report">
-      Report what you found through the channel SIG names for it — the contribution-path
-      wiring names it; this page never invents one.
-    </p>
+    {report!.kind === "intake_form" ? (
+      <p data-testid="task-report" data-channel="intake-form">
+        <strong>Report what you found</strong> through the{" "}
+        <a href={report!.href} data-testid="task-report-link">report form</a> — the
+        link opens it with this task's handle already filled in.
+      </p>
+    ) : (
+      <p
+        data-testid="task-report"
+        data-channel="email"
+        {...{ [INTAKE_EMAIL_MARKER]: report!.emailState }}
+      >
+        <strong>Report what you found</strong> by e-mail to {report!.address} — the
+        channel the{" "}
+        <a href={report!.href} data-testid="task-report-link">dispute or correction page</a>{" "}
+        names until the report form operates. Include the task handle{" "}
+        <code>{card.handle}</code> so the finding lands on the right task.
+      </p>
+    )}
 
     <h2>Possible outcomes</h2>
     <ul data-testid="task-dispositions">

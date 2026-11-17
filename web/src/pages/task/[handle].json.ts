@@ -14,7 +14,7 @@ import {
   getResearchQueue,
 } from "../../lib/data";
 import { claimStatusFor, type ResearchTaskCard } from "../../lib/research-queue";
-import { relatedTasks, taskPageTwin } from "../../lib/task-page";
+import { relatedTasks, taskPageTwin, taskReportChannel } from "../../lib/task-page";
 import { draftForTask } from "../../lib/records-drafts";
 
 export const getStaticPaths: GetStaticPaths = () => {
@@ -31,6 +31,9 @@ export const GET: APIRoute = ({ props }) => {
     claimedBy: claim.claimed_by,
     related,
     draft: draftForTask(card, getRecordsRequestDrafts()),
+    // P37.62 (RQ-05): the same report channel the HTML page renders —
+    // parity, never a second source of truth.
+    report: card.handle ? taskReportChannel(card.handle) : null,
   });
   return new Response(JSON.stringify(body, null, 2) + "\n", {
     headers: { "content-type": "application/json; charset=utf-8" },

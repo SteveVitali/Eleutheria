@@ -10,11 +10,13 @@ import { QUEUE_CAMPAIGNS, RESEARCH_QUEUE } from "../../src/lib/corrections-metho
 import { dispositionsFor } from "../../src/lib/research-queue";
 import type { ResearchTaskCard } from "../../src/lib/research-queue";
 import {
+  howToAct,
   resolveGapLink,
   statusLine,
   taskHandleRows,
   taskIdAliases,
   taskPageTwin,
+  taskReportChannel,
   triggerSentence,
   unknownNote,
   whyItMatters,
@@ -108,6 +110,45 @@ describe("the §5.3 block model — SIG-RQ-002", () => {
   });
 });
 
+describe("taskReportChannel — P37.62 (K11 RQ-05, D-K11-4 [B-8]=a)", () => {
+  it("names the dispute e-mail channel while the receiver does not operate", () => {
+    const ch = taskReportChannel("T-x", {
+      intake: { operational: false, note: "" },
+      email: null,
+    });
+    expect(ch.kind).toBe("email");
+    expect(ch.href).toBe("/dispute/");
+    expect(ch.address).toBe("the operator's address");
+    expect(ch.emailState).toBe("unset");
+  });
+
+  it("stamps 'set' when the injected address is present — never another address", () => {
+    const ch = taskReportChannel("T-x", {
+      intake: { operational: false, note: "" },
+      email: "ops@example.org",
+    });
+    expect(ch.address).toBe("ops@example.org");
+    expect(ch.emailState).toBe("set");
+  });
+
+  it("renders the prefilled GET /intake/new?task=<handle> only when the receiver operates", () => {
+    const ch = taskReportChannel("T-usa-ok-oklahoma-city-retention-pd-q1c4", {
+      intake: { operational: true, note: "" },
+    });
+    expect(ch.kind).toBe("intake_form");
+    expect(ch.href).toBe("/intake/new?task=T-usa-ok-oklahoma-city-retention-pd-q1c4");
+    expect(ch.address).toBeNull();
+    expect(ch.emailState).toBeNull();
+  });
+
+  it("a handle needing escaping stays a safe single query value", () => {
+    const ch = taskReportChannel("T odd handle&x=1", {
+      intake: { operational: true, note: "" },
+    });
+    expect(ch.href).toBe("/intake/new?task=T%20odd%20handle%26x%3D1");
+  });
+});
+
 describe("taskPageTwin — sig.task-page/1", () => {
   it("carries the card fields verbatim, incl. the related handles", () => {
     const twin = taskPageTwin(card, { claimedBy: null, related: [RESEARCH_QUEUE[0]!] });
@@ -117,6 +158,20 @@ describe("taskPageTwin — sig.task-page/1", () => {
     expect(twin.closing_condition).toBe(card.closing_condition);
     expect(twin.predicate_ids).toEqual(card.predicate_ids);
     expect(twin.related_handles).toEqual([RESEARCH_QUEUE[0]!.handle]);
+  });
+
+  it("carries the how-to-act steps and the report channel the page renders", () => {
+    const report = taskReportChannel(card.handle!, {
+      intake: { operational: false, note: "" },
+      email: null,
+    });
+    const twin = taskPageTwin(card, { claimedBy: null, related: [], report });
+    expect(twin.how_to_act).toEqual(howToAct(card));
+    expect(twin.report).toEqual({
+      channel: "email",
+      href: "/dispute/",
+      address: "the operator's address",
+    });
   });
 
   it("an unhandled card still twins with null handle/id (the honest absence)", () => {

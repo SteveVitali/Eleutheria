@@ -18,6 +18,14 @@ import type { ResearchTaskCard } from "./research-queue";
 import type { QueueCampaign } from "./queue-hub";
 import { typeLabel, roleLabel } from "./queue-hub";
 import { draftTxtHref, type RecordsRequestDraft } from "./records-drafts";
+import {
+  DISPUTE_PATH,
+  INTAKE_FORM_PATH,
+  intakeAvailability,
+  type IntakeAvailability,
+} from "./corrections";
+import { disputeIntakeEmail } from "./intake";
+import { rootPath, withBase } from "./paths";
 
 export const TASK_PAGE_SCHEMA = "sig.task-page/1";
 
@@ -161,6 +169,62 @@ export function howToAct(card: ResearchTaskCard): string[] {
   }
 }
 
+// --- The "Report what you found" channel (P37.62 / K11 RQ-05, D-K11-4 [B-8]=a) ---
+
+/**
+ * Where a task page sends findings — the second half of the K11 §5.3
+ * "How to act" block. Two states, both honest:
+ *
+ *   - **The receiver operates** (`intakeAvailability().operational`): the
+ *     affordance is the intake form prefilled by a plain GET,
+ *     `/intake/new?task=<handle>` (K11 §5.3). `/intake/` is a live service
+ *     outside the snapshot base (SIG-REL-008), so the href joins at the
+ *     deploy root via `rootPath`, never `withBase`.
+ *   - **The interim channel** (today — the receiver is built but not
+ *     operating): D-K11-4 [B-8] = a, the operator's recorded answer, names
+ *     the dispute address — "task pages name the same address" as
+ *     `/dispute/` carries (the operator's address until the project
+ *     contact address exists). The address is `SIG_DISPUTE_EMAIL`-injected
+ *     at publish (OP-10 — never committed); `emailState` is the
+ *     `data-intake-email` marker value so the page stamps `set`/`unset`
+ *     exactly as `/dispute/` does.
+ *
+ * The page NEVER invents a channel: an un-operating receiver renders no
+ * form link, and no address other than the injected one may appear.
+ */
+export interface TaskReportChannel {
+  /** `intake_form` only while the receiver operates; `email` is the D-K11-4 interim channel. */
+  kind: "intake_form" | "email";
+  /** The affordance href — the prefilled form GET, or the dispute page. */
+  href: string;
+  /** The interim channel's address; `null` when the form operates. */
+  address: string | null;
+  /** The `data-intake-email` stamp for the email state (`null` under the form). */
+  emailState: "set" | "unset" | null;
+}
+
+export function taskReportChannel(
+  handle: string,
+  opts: { intake?: IntakeAvailability; email?: string | null } = {},
+): TaskReportChannel {
+  const intake = opts.intake ?? intakeAvailability();
+  if (intake.operational) {
+    return {
+      kind: "intake_form",
+      href: `${rootPath(INTAKE_FORM_PATH)}?task=${encodeURIComponent(handle)}`,
+      address: null,
+      emailState: null,
+    };
+  }
+  const email = opts.email === undefined ? disputeIntakeEmail() : opts.email;
+  return {
+    kind: "email",
+    href: withBase(DISPUTE_PATH),
+    address: email ?? "the operator's address",
+    emailState: email ? "set" : "unset",
+  };
+}
+
 // --- Status line ------------------------------------------------------------- //
 
 /** "Open · unclaimed · anyone may work this task" — the K11 §5.3 status block. */
@@ -198,6 +262,7 @@ export function taskPageTwin(
     claimedBy: string | null;
     related: readonly ResearchTaskCard[];
     draft?: RecordsRequestDraft | null;
+    report?: TaskReportChannel | null;
   },
 ): Record<string, unknown> {
   return {
@@ -234,6 +299,18 @@ export function taskPageTwin(
     records_request_draft: opts.draft ?? null,
     draft_download:
       opts.draft && card.handle ? draftTxtHref(card.handle) : null,
+    // P37.62 (RQ-05, D-K11-4 [B-8]=a): the "How to act" steps and the report
+    // channel the HTML page renders — the same facts, machine-readable
+    // (channel `intake_form` only while the receiver operates; the dispute
+    // e-mail address is the injected value the publish stamps).
+    how_to_act: howToAct(card),
+    report: opts.report
+      ? {
+          channel: opts.report.kind,
+          href: opts.report.href,
+          address: opts.report.address,
+        }
+      : null,
     related_handles: opts.related.map((c) => c.handle).filter((h): h is string => Boolean(h)),
   };
 }
