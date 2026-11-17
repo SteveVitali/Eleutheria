@@ -1583,3 +1583,17 @@ seed-commit 9a9261dc
 # own. Scope: any append-only findings attributed to d182fb5d's rewritten
 # line only; no other commit borrows the exemption.
 seed-commit d182fb5d
+
+# 7821860a — P37.61d (row 489d) ci-cell fill: the committed row's `ci: pending
+# head-bound read` cell is rewritten in place to `ci: pass-after-rerun
+# #520@67c454be` — the in-place placeholder fill every landing row is designed
+# to carry (the f45cf7ec/b7e827d3/458f4af8/178ecf57 class; a second row would
+# break one-row-per-ticket). The fill commit sits past the #520 merge on the
+# chain tip, so it entered the judged range only when #521's base auto-
+# retargeted to `main` (the b206e14d precedent — surfaced head-bound on
+# #521's docs job, run 44043292658). The pre-fill literal is the declared
+# `placeholder pending head-bound read` (added by the same commit). Declared
+# as announced in 7821860a's own message. Scope: the append-only finding
+# attributed to 7821860a's rewritten BUILD_INDEX line only; no other commit
+# borrows the exemption.
+seed-commit 7821860a
