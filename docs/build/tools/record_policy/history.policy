@@ -1634,3 +1634,18 @@ seed-commit e297b5d8
 # in 4c2a27f3's own message. Scope: the append-only finding attributed to 4c2a27f3's
 # rewritten PHASE LOG line only; no other commit borrows the exemption.
 seed-commit 4c2a27f3
+
+# 61d0d148 — P37.61e orchestrator repair, third in-place on the same PHASE LOG
+# line: the `ci: fail #521@6e0ac6d` fragment 4c2a27f3 added is itself
+# unparseable — the G3b grammar's verdicts are pass/pass-after-rerun only
+# (run 44085682373's docs leg flagged both the missing-field and the
+# fragment). Rewritten to the boundary-read convention the post-closeout
+# entries carry: `blockedOn: CI fail on #521@6e0ac6d (web): failure —
+# Process completed with exit code 1. (run 44051851045)` — the `blockedOn`
+# marker makes the entry non-`done`, no `ci:` field owed. The
+# b2fa5735/51bb02fb class: pre-edit bytes archived verbatim at
+# `reports/memory-repair/ledger-1831-pre-ci-fragment-fix.txt`. Declared as
+# announced in 61d0d148's own message. Scope: the append-only finding attributed
+# to 61d0d148's rewritten PHASE LOG line only; no other commit borrows the
+# exemption.
+seed-commit 61d0d148
