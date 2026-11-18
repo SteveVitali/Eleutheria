@@ -1,0 +1,195 @@
+{
+  "schema": "ci-boundary/1",
+  "tool": "docs/build/tools/ci_boundary.py",
+  "requested_pr": 526,
+  "pr": 526,
+  "head_sha": "a2bc86d9e18f02655c49b74686e476387feb8d13",
+  "head_ref": "r11/P37.65b-final-readout-and-promotion",
+  "base": "main",
+  "read_at": "2026-11-18T07:53:35Z",
+  "prefix": "r11/",
+  "scope": "the current r11/ PR and its open r11/ ancestors; never #141\u2013#190",
+  "required": [
+    "python",
+    "docs",
+    "composed",
+    "security",
+    "web"
+  ],
+  "stack": [
+    {
+      "pr": 526,
+      "head_ref": "r11/P37.65b-final-readout-and-promotion",
+      "head_sha": "a2bc86d9e18f02655c49b74686e476387feb8d13",
+      "base": "main",
+      "pr_state": "MERGED",
+      "is_draft": false,
+      "mergeable": "UNKNOWN",
+      "state": "fail",
+      "detail": "#526 is merged"
+    }
+  ],
+  "stack_stop": "base `main` is outside the `r11/` scope \u2014 the Round-10 stack (#141\u2013#190) is never read (B-15)",
+  "stack_digest": "103ced5884718a73a907dca944e9751c7ba915c0dbfde7392e84dbe6bb7cb4c4",
+  "local_head": "a2bc86d9e18f02655c49b74686e476387feb8d13",
+  "external": {
+    "read_at": "2026-11-18T07:53:36Z",
+    "since": "2026-11-18",
+    "fetch": "ok",
+    "main_sha": "f8ba20be73a16cdc8ca4c94e461fbc569e33db9e",
+    "chain_descends": false,
+    "descends_note": "origin/main f8ba20b is not an ancestor of the tip \u2014 main carries commits the chain does not contain (the chain trails main, merged late by the operator)",
+    "ancestry": [],
+    "merged_since": [
+      {
+        "number": 525,
+        "head_ref": "r11/P37.65a-final-release-cut-crawl-scrub-audit",
+        "head_sha": "b5a7f0237fa7f33d5d63285e50f7aa5e11d28fe1",
+        "base": "main",
+        "merged_at": "2026-11-18T07:28:21Z",
+        "on_stack": true
+      },
+      {
+        "number": 524,
+        "head_ref": "r11/P37.64-entity-graph-dossier-figure-acceptance",
+        "head_sha": "15b5673dbfe449e0505173fa5876855713cfc264",
+        "base": "main",
+        "merged_at": "2026-11-18T05:22:01Z",
+        "on_stack": true
+      },
+      {
+        "number": 523,
+        "head_ref": "r11/P37.63-map-acceptance-and-republish",
+        "head_sha": "91c80e8a61b37a1f19168c46f4590cda9a870be2",
+        "base": "main",
+        "merged_at": "2026-11-18T02:12:07Z",
+        "on_stack": true
+      }
+    ],
+    "open_off_chain": []
+  },
+  "flake_entries": [
+    "LH-PERF-1",
+    "PY-SUBSTR-1",
+    "DOCKERHUB-RATE-1",
+    "DOCKERHUB-RATE-2",
+    "DOCKERHUB-RATE-3",
+    "NPM-AUDIT-503-1",
+    "PY-STUB-1"
+  ],
+  "reruns": [],
+  "checks": [
+    {
+      "pr": 526,
+      "name": "python",
+      "required": true,
+      "check_run_id": 134658575209,
+      "run_id": "44262340784",
+      "status": "completed",
+      "conclusion": "success",
+      "bucket": "pass",
+      "started_at": "2026-11-18T07:53:20Z",
+      "completed_at": "2026-11-18T08:12:59Z",
+      "link": "https://github.com/SteveVitali/Eleutheria/actions/runs/44262340784/job/134658575209",
+      "waived": false
+    },
+    {
+      "pr": 526,
+      "name": "docs",
+      "required": true,
+      "check_run_id": 134658575958,
+      "run_id": "44262340784",
+      "status": "completed",
+      "conclusion": "success",
+      "bucket": "pass",
+      "started_at": "2026-11-18T07:53:20Z",
+      "completed_at": "2026-11-18T07:55:51Z",
+      "link": "https://github.com/SteveVitali/Eleutheria/actions/runs/44262340784/job/134658575958",
+      "waived": false
+    },
+    {
+      "pr": 526,
+      "name": "composed",
+      "required": true,
+      "check_run_id": 134658575755,
+      "run_id": "44262340784",
+      "status": "completed",
+      "conclusion": "success",
+      "bucket": "pass",
+      "started_at": "2026-11-18T07:53:19Z",
+      "completed_at": "2026-11-18T07:56:46Z",
+      "link": "https://github.com/SteveVitali/Eleutheria/actions/runs/44262340784/job/134658575755",
+      "waived": false
+    },
+    {
+      "pr": 526,
+      "name": "security",
+      "required": true,
+      "check_run_id": 134658575666,
+      "run_id": "44262340784",
+      "status": "completed",
+      "conclusion": "success",
+      "bucket": "pass",
+      "started_at": "2026-11-18T07:53:20Z",
+      "completed_at": "2026-11-18T07:54:02Z",
+      "link": "https://github.com/SteveVitali/Eleutheria/actions/runs/44262340784/job/134658575666",
+      "waived": false
+    },
+    {
+      "pr": 526,
+      "name": "web",
+      "required": true,
+      "check_run_id": 134658575667,
+      "run_id": "44262340784",
+      "status": "completed",
+      "conclusion": "success",
+      "bucket": "pass",
+      "started_at": "2026-11-18T07:53:19Z",
+      "completed_at": "2026-11-18T09:05:11Z",
+      "link": "https://github.com/SteveVitali/Eleutheria/actions/runs/44262340784/job/134658575667",
+      "waived": false
+    }
+  ],
+  "waivers": 5,
+  "polls": 37,
+  "waited_s": 4356.3,
+  "state": "pass",
+  "kind": null,
+  "line": "ci: pass #526@a2bc86d (python 44262340784; docs 44262340784; composed 44262340784; security 44262340784; web 44262340784) \u00b7 merged a024328d 09:05:58Z mid-boundary (b206e14d precedent)",
+  "exit": 0,
+  "ticket": "P37.65b",
+  "heads": [
+    {
+      "sha": "3815c881",
+      "run": 44260623140,
+      "verdict": "fail \u2014 docs: two findings inherited from the P37.65a records tip (row-493 'plan\\|check\\|run' escaped-pipe column split \u2014 projection evidence read; f0ecc4d6 closeout's sanctioned placeholder fills \u2014 range history guard); security+composed green, python/web in-flight; cancelled-superseded by a1cc1bf5"
+    },
+    {
+      "sha": "a1cc1bf5",
+      "run": 44261983767,
+      "verdict": "cancelled-superseded at 3m03s by the 6044be29/a2bc86d9 respell+declaration push"
+    },
+    {
+      "sha": "a2bc86d9",
+      "run": 44262340784,
+      "verdict": "pass \u2014 security 42s \u00b7 docs 2m31s \u00b7 composed 3m27s \u00b7 python 19m39s \u00b7 web 1h11m52s, 5/5 head-bound"
+    }
+  ],
+  "fix_arcs": [
+    "a1cc1bf5 BUILD_INDEX row-493 escaped-pipe split (P37.61e/b2c1709c class) + seed-commit f0ecc4d6 (P37.65a closeout placeholder-fill findings)",
+    "6044be29 runs/P37.65b.md closeout placeholders respelled to declared tokens",
+    "a2bc86d9 seed-commit 6044be29 declaration"
+  ],
+  "deferrals": {
+    "opened": [
+      "D-P37.65b-1"
+    ],
+    "closed": []
+  },
+  "merged": {
+    "sha": "a024328d75d35d0528c9b617056fd279631fad22",
+    "at": "2026-11-18T09:05:58Z",
+    "note": "operator merged mid-boundary; head frozen a2bc86d9; the web leg greened 09:05:11Z pre-merge; records commits past the merge covered by the next PR's head-bound CI (b206e14d precedent)"
+  },
+  "flake_log": "docs/build/reports/ci/flake_log.csv \u2014 no new rows; two P37.65a-boundary PY-STUB-1 rows (run 44248416990, head 6534e228, attempt-1 failure + attempt-2 rerun-requested) carried committed in the impl commit"
+}
