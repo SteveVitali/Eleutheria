@@ -1649,3 +1649,16 @@ seed-commit 4c2a27f3
 # to 61d0d148's rewritten PHASE LOG line only; no other commit borrows the
 # exemption.
 seed-commit 61d0d148
+
+# 72fc4aba — P37.64 orchestrator repair: the records commit 9ec69aa3
+# rewrote two append-only lines in place (the merge note inside the
+# appended BUILD_INDEX row 492 and the appended P37.64 done PHASE LOG
+# entry). This commit restores both to their c24e34cd bytes — append-only
+# corrections are new appended entries, never rewrites; the merge
+# (02455b7a, 05:22Z, mid-boundary) is recorded by the new appended
+# post-closeout PHASE LOG entry + the run ledger + the boundary JSON
+# `merged` cell instead. The restore itself is the flagged rewrite;
+# declared as announced in 72fc4aba's own message. Scope: the append-only
+# findings attributed to 72fc4aba's rewritten BUILD_INDEX:689 and
+# LEDGER:1842 lines only; no other commit borrows the exemption.
+seed-commit 72fc4aba
