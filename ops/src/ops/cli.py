@@ -6486,6 +6486,10 @@ def main(argv: list[str] | None = None) -> int:
         from . import map_acceptance
 
         return map_acceptance.main(raw[1:])
+    if raw and raw[0] == "explore-acceptance":
+        from . import explore_acceptance
+
+        return explore_acceptance.main(raw[1:])
     if raw and raw[0] == "at-rest":
         from . import at_rest_audit
 
