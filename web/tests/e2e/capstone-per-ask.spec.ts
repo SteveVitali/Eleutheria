@@ -31,8 +31,6 @@
 import { expect, test } from "@playwright/test";
 import { visibleTextMinusIdSpans } from "./acceptance";
 
-const jsOn = (): boolean => test.info().project.use.javaScriptEnabled !== false;
-
 /**
  * Resolve a place dossier through the A–Z directory — the named no-JS
  * place-lookup equivalent that exists on every published build. Mirrors the
@@ -559,7 +557,7 @@ test.describe("U-003.5 — which sources contributed what, when", () => {
     // first and last seen read directly — or the typed runs-none state.
     let withRuns: { source_page?: string; runs_page?: string } | undefined;
     let resolvable = 0;
-    for (const s of doc.sources ?? []) {
+    for (const s of doc!.sources ?? []) {
       if (!s.source_page) continue;
       if ((await request.get(s.source_page)).status() !== 200) continue;
       resolvable++;
