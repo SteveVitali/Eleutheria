@@ -1740,3 +1740,14 @@ seed-commit e8341fc0
 # finding attributed to 72490776's rewritten events.jsonl e0 line only;
 # no other commit borrows the exemption.
 seed-commit 72490776
+# 6c48c0a9 — P37.66 closeout placeholder fills (main-tip run 44372684884
+# docs red on range 359ed7df..6e4b0d6d): the committed pre-fill bytes
+# carried bare `TBD`/reword spellings that were never lawful placeholders
+# (`#TBD` is the declared token; `TBD` is not), so the closeout's
+# sanctioned verdict fills are flagged as append-only rewrites whenever
+# 6c48c0a9 enters a judged range (it became a main ancestor at the #529
+# merge 6e4b0d6d). The fills replaced unlawful bytes with the run-ledger
+# verdict cells — the f0ecc4d6/990f3467 forward-declaration precedent.
+# Scope: the append-only findings attributed to 6c48c0a9's placeholder
+# fills only; no other commit borrows the exemption.
+seed-commit 6c48c0a9
