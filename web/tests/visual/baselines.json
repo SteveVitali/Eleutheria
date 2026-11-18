@@ -1347,8 +1347,8 @@
       "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
     },
     "quality--dark-1440.png": {
-      "ticket": "P37.60",
-      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+      "ticket": "P37.67",
+      "note": "adopted from run 44298080787 (fa4f4dc9): the P37.67 ratchet flips changed the committed /quality/ registry cells — 2 diffs (light/dark 1440), expected content change"
     },
     "quality--dark-320.png": {
       "ticket": "P37.60",
@@ -1359,8 +1359,8 @@
       "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
     },
     "quality--light-1440.png": {
-      "ticket": "P37.60",
-      "note": "baseline minted on linux/arm64 in the pinned playwright:v1.62.1-noble container over the synthetic national build (local container run — the same artifact shape the CI visual leg produces)"
+      "ticket": "P37.67",
+      "note": "adopted from run 44298080787 (fa4f4dc9): the P37.67 ratchet flips changed the committed /quality/ registry cells — 2 diffs (light/dark 1440), expected content change"
     },
     "quality--light-320.png": {
       "ticket": "P37.60",
