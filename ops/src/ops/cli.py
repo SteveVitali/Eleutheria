@@ -3381,6 +3381,16 @@ def build_parser() -> argparse.ArgumentParser:
         "publish rides P37.65 Class S)",
     )
     sub.add_parser(
+        "transparency-acceptance",
+        help="P37.65a / J3 TX-16: the transparency-acceptance leg "
+        "declaration — plan renders the sig.transparency-acceptance/1 leg "
+        "set, check verifies the committed machinery, run executes a "
+        "deterministic leg (scrub-audit, journeys, budgets) while the "
+        "release-cut and live-crawl legs queue exit 42 "
+        "(prepared_not_executed; the HG-11 readout + promote are "
+        "P37.65b's pause)",
+    )
+    sub.add_parser(
         "at-rest",
         help="P34.49 / ADR-185 (F-406): the Part VIII at-rest audit — "
         "scan|seal-plan|seal-apply over the OCFL capture root "
@@ -6490,6 +6500,10 @@ def main(argv: list[str] | None = None) -> int:
         from . import explore_acceptance
 
         return explore_acceptance.main(raw[1:])
+    if raw and raw[0] == "transparency-acceptance":
+        from . import transparency_acceptance
+
+        return transparency_acceptance.main(raw[1:])
     if raw and raw[0] == "at-rest":
         from . import at_rest_audit
 
