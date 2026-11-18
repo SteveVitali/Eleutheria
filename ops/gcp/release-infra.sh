@@ -216,9 +216,11 @@ do_apply() {
     --member "serviceAccount:$(_sa_email "${SIG_SA_STATUS}")" --role roles/storage.objectUser \
     --condition "expression=resource.name.startsWith(\"projects/_/buckets/${SIG_BUCKET_RELEASE}/objects/status/\"),title=status-writer-only,description=sig-status-rt's objectUser is confined to status/** — it cannot touch staged bytes or the registry"
   run gcloud storage buckets add-iam-policy-binding "gs://${SIG_BUCKET_RELEASE}" \
-    --member "serviceAccount:$(_sa_email "${SIG_SA_WEB}")" --role roles/storage.objectViewer
+    --member "serviceAccount:$(_sa_email "${SIG_SA_WEB}")" --role roles/storage.objectViewer \
+    --condition=None
   run gcloud storage buckets add-iam-policy-binding "gs://${SIG_BUCKET_RELEASE}" \
-    --member "serviceAccount:$(_sa_email "${SIG_SA_API}")" --role roles/storage.objectViewer
+    --member "serviceAccount:$(_sa_email "${SIG_SA_API}")" --role roles/storage.objectViewer \
+    --condition=None
   # sig-release-rt's read leg into the restricted bucket (build fetches the
   # cut export): conditioned to exports/ — least privilege, not the bucket.
   run gcloud storage buckets add-iam-policy-binding "gs://${SIG_BUCKET_RESTRICTED}" \
@@ -229,7 +231,7 @@ do_apply() {
   for pair in "${SIG_WEB_STAGING}:${SIG_SA_WEB}:${webimg}" \
               "${SIG_API_STAGING}:${SIG_SA_API}:${apiimg}"; do
     local name sa img; name="${pair%%:*}"; pair="${pair#*:}"
-    sa="${pair%%:*}"; img="${pair##*:}"
+    sa="${pair%%:*}"; img="${pair#*:}"
     if _svc_exists "${name}"; then
       echo "${name} exists — staging create skipped (image drift is verify's job)"
     else
@@ -266,13 +268,13 @@ do_verify() {
   _bucket_exists || die "gs://${SIG_BUCKET_RELEASE} missing — apply first"
   local bubla bver bpap bnoncur
   bubla="$(gcloud storage buckets describe "gs://${SIG_BUCKET_RELEASE}" \
-    --format='value(iamConfiguration.uniformBucketLevelAccess.enabled)')"
+    --format='value(uniform_bucket_level_access)' | tr '[:upper:]' '[:lower:]')"
   bver="$(gcloud storage buckets describe "gs://${SIG_BUCKET_RELEASE}" \
-    --format='value(versioning.enabled)')"
+    --format='value(versioning_enabled)' | tr '[:upper:]' '[:lower:]')"
   bpap="$(gcloud storage buckets describe "gs://${SIG_BUCKET_RELEASE}" \
-    --format='value(iamConfiguration.publicAccessPrevention)')"
+    --format='value(public_access_prevention)')"
   bnoncur="$(gcloud storage buckets describe "gs://${SIG_BUCKET_RELEASE}" \
-    --format='value(lifecycle.rule[0].condition.daysSinceNoncurrentTime)')"
+    --format='value(lifecycle_config.rule[0].condition.daysSinceNoncurrentTime)')"
   _assert bucket-uniform-access true "$bubla"
   _assert bucket-versioning true "$bver"
   _assert bucket-public-access-prevention enforced "$bpap"
@@ -299,11 +301,11 @@ do_verify() {
     _assert "${name}-image" "${prodimg}" "${image}"
     env="$(gcloud run services describe "${name}" --project "${SIG_GCP_PROJECT}" \
       --region "${SIG_GCP_REGION}" \
-      --format='value(spec.template.spec.containers[0].env[?name=="SIG_STAGING"].value)')"
+      --format=json | python3 -c 'import json,sys; e=json.load(sys.stdin)["spec"]["template"]["spec"]["containers"][0].get("env") or []; print(next((x["value"] for x in e if x.get("name")=="SIG_STAGING"), ""))')"
     _assert "${name}-SIG_STAGING" 1 "${env:-unset}"
     mininst="$(gcloud run services describe "${name}" --project "${SIG_GCP_PROJECT}" \
       --region "${SIG_GCP_REGION}" --format='value(spec.template.metadata.annotations."autoscaling.knative.dev/minScale")')"
-    _assert "${name}-minScale" 0 "${mininst}"
+    _assert "${name}-minScale" 0 "${mininst:-0}"
     staging="$(gcloud run services get-iam-policy "${name}" \
       --project "${SIG_GCP_PROJECT}" --region "${SIG_GCP_REGION}" --format=json)"
     echo "$staging" | grep -q 'allUsers\|allAuthenticatedUsers' &&
@@ -341,7 +343,11 @@ do_probe() {
 do_stale_check() {
   local work fixpub dir
   dir="${STATE_DIR}/stale-check"; mkdir -p "${dir}"
-  fixpub="p-$(printf 'sig-release-infra-check' | sha256sum | cut -d' ' -f1)"
+  if command -v sha256sum >/dev/null 2>&1; then
+    fixpub="p-$(printf 'sig-release-infra-check' | sha256sum | cut -d' ' -f1)"
+  else
+    fixpub="p-$(printf 'sig-release-infra-check' | shasum -a 256 | cut -d' ' -f1)"
+  fi
   work="${dir}/work"; rm -rf "${work}"; mkdir -p "${work}/r/${fixpub}"
   printf 'release-infra check byte v1\n' > "${work}/r/${fixpub}/index.html"
   local rel='uv run --quiet sig-ops release'
