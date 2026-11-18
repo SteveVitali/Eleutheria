@@ -1,0 +1,79 @@
+{
+  "schema": "sig.hg11-readout/1",
+  "ticket": "P37.65b",
+  "manifest_row": 494,
+  "family": "R11-K13-TX-16",
+  "branch": "r11/P37.65b-final-readout-and-promotion",
+  "pr_base": "main",
+  "produced": "2026-11-18",
+  "live_verification": false,
+  "status": "prepared_not_executed",
+  "layer_reached": ["engineered", "fixture-verified"],
+  "authority": {
+    "gate_status_verbatim": "IN-TICKET PAUSE: HG-11 final Class S readout (covers MAP-07, ACC-EXPLORE, TX-12 exposure, Wave C/D sources, CONF-12)",
+    "om20_status": "never pre-authorised — the promote leg runs only on the operator's verbatim go at the readout",
+    "live_window_verbatim": "final release cut never inside AR-3 windows (12-06 -> 12-13T12:00Z)",
+    "live_leg_verbatim": "1: promote after HG-11 (0.5 leg run)",
+    "mutation": "the promote leg — metadata-only (registry/conf/<gen+1> + the api->web digest rolls; zero release bytes copied); restore point: the prior release stays published and sig-ops release rollback re-points latest"
+  },
+  "readout_coverage": {
+    "map-07": {
+      "path": "docs/build/reports/p37.63-map-acceptance/PACKET.md",
+      "summary": "J1-J10 10/10 fixtures + 10/10 real-size national; tile verify PASS; budgets 523/523; LHCI /map/ green",
+      "queued": "live-journeys, live-lhci, live-tiles, cost-7d ride D-P37.63-1"
+    },
+    "acc-explore": {
+      "path": "docs/build/reports/p37.64-explore-acceptance/PACKET.md",
+      "summary": "15/15 dist sweep over 515 emitted routes (D20 + DV01..DV12 + print) + 15/15 journey battery with axe in interaction states",
+      "queued": "live-verify rides D-P37.64-1"
+    },
+    "tx-12-exposure": {
+      "path": "docs/build/reports/p37.36-raw-archive/PACKET.md",
+      "summary": "raw-ok lane after the Part VIII byte screen (D-J3-1 [B-19] = yes verbatim); archive-write legs prepared_not_executed; exposure rides HG-11 — nothing links raw bytes publicly before the readout",
+      "queued": "the archive write itself (verbatim go + hosted env absent)"
+    },
+    "wave-c-d-sources": {
+      "wave_c": "docs/build/reports/p37.2-wave-c/WAVE_C_PACKET.md — L1..L5 queued inside 2026-11-16->20 under recorded ING-GO-C (GATE-G5)",
+      "wave_d": "docs/build/reports/WAVE_D_RUNBOOK.md + WAVE_D_FLIP_LIST.md — 146 flag rows all ingestion_permitted=false; legs gated 2026-11-23->12-04 / 2026-12-14->12-18 under verbatim ING-GO-D + OP-26 flips",
+      "summary": "both waves' hosted legs queued prepared_not_executed — the readout records the wave posture; it neither flips a source nor claims a wave ran"
+    },
+    "conf-12": {
+      "path": "web/quality.json + web/src/pages/quality/index.astro",
+      "summary": "every registered check rendered with its state; 'no human check performed' verbatim; basis independent-review row 'none'; SIG-CONF-011 MET-ENGINEERED(D-R10-PUBLISH-1)",
+      "queued": "the served-layer half rides the publish path"
+    },
+    "tx-16": {
+      "path": "docs/build/reports/p37.65a-transparency-acceptance/PACKET.md + scrub-audit.json",
+      "summary": "scrub audit over 273 published-transparency files, 0 secret-shaped hits; J1/J4 deterministic 4/4; budgets 523/523",
+      "queued": "release-cut + live-crawl ride D-P37.65a-1 — blocked on D-P35.53-1 (release-infra apply, owner: the operator OP-24); the hosted registry 404s"
+    }
+  },
+  "walkthrough_record": {
+    "path": "docs/build/reports/p37.65b-hg11-readout/WALKTHROUGHS.md",
+    "personas": {
+      "journalist": ["J1", "J2", "J-2", "VJ-3", "VJ-5", "J5"],
+      "researcher": ["J4-deterministic", "J-5"],
+      "skeptic": ["J3", "/quality/", "methodology", "corrections-log", "dispute-path", "open-questions"]
+    },
+    "verification": "agent-verified — never user research (K13 P4)",
+    "fresh_run": "599/599 passed 2026-11-18 over the SIG_BUILD_INTERNAL=1 fixture build (528 pages / 530 classified routes), chromium",
+    "j4_durable_pin": "a property of the staged candidate — rides D-P37.65a-1's live-crawl leg; recorded, never claimed"
+  },
+  "signable_readout": "the sig.release-readout/1 pair is drafted at the sitting by sig-ops release classify --apply under registry/readouts/<pub>.{json,md} — agent-drafted, signature slot empty by construction; this packet packages the evidence, it is not the document signed",
+  "queued_leg": {
+    "id": "promote-after-hg11",
+    "obligation": "D-P37.65b-1",
+    "preconditions": [
+      "the operator's verbatim go at this readout — a sig.promotion-approval/1 kind=signed_readout record under registry/approvals/ naming the candidate publication_id, class class_s, signature + basis present (written at the sitting, never by an agent)",
+      "a staged candidate exists — D-P37.65a-1's release-cut + live-crawl legs landed (blocked on D-P35.53-1, owner: the operator OP-24)",
+      "SIG_RELEASE_REGISTRY + ADC/SIG_GCP_PROJECT + digest-pinned sig-api/sig-web images + --project/--region",
+      "never inside the AR-3 windows the plan cell names (12-06 -> 12-13T12:00Z)"
+    ],
+    "verbs": [
+      "sig-ops release promote --registry $SIG_RELEASE_REGISTRY --publication <p-sha256> --approval <readout-name> --class class_s --api-image <repo>/sig-api@sha256:<64> --web-image <repo>/sig-web@sha256:<64> --project <gcp-project> --region <gcp-region> --min-instances 1 --apply --execute-rolls",
+      "sig-ops release verify --registry $SIG_RELEASE_REGISTRY --work-dir <tree> --publication <p-sha256> --mode P --origin <each public origin> --api-origin <api origin> --apply"
+    ],
+    "unlocks": ["D-P37.63-1", "D-P37.64-1", "P37.66 coverage-outcome closeout"]
+  },
+  "rerun_prompt": "implement-spec spec=docs/tickets/494_P37.65b__final-readout-and-promotion.md live_verification=true"
+}
