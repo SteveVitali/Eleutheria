@@ -25,9 +25,8 @@
 // The interactive half — the J-1…J-6 and VJ-1…VJ-6 labelled agent
 // walkthroughs, axe in interaction states, and the activated-map box —
 // lives in acceptance-explore-journeys.spec.ts. What the fixture corpus
-// cannot settle is recorded in the acceptance packet
-// (docs/build/reports/p37.64-explore-acceptance/PACKET.md), never silently
-// skipped.
+// cannot settle is recorded in the committed acceptance packet, never
+// silently skipped.
 
 import { expect, test } from "@playwright/test";
 import { readFileSync } from "node:fs";

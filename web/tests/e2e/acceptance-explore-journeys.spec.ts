@@ -7,8 +7,7 @@
 // acceptance, never user research" — each test walks the reader's path and
 // asserts the pass criteria. The fixture corpus adapts the named places
 // where the fixture carries no equivalent; every adaptation is recorded
-// here and in the acceptance packet
-// (docs/build/reports/p37.64-explore-acceptance/PACKET.md):
+// here and in the committed acceptance packet:
 //
 //   * J-1/VJ-3 (Texas): the fixture draws its access network figure on
 //     /dossier/usa/ok/, not /dossier/usa/tx/ — the figure half walks
