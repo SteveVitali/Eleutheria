@@ -1683,3 +1683,35 @@ seed-commit 72fc4aba
 # runs/P37.64.md lines 9, 96, 100 only; no other commit borrows the
 # exemption.
 seed-commit c24e34cd
+
+# f0ecc4d6 — P37.65a closeout records (made on the chain tip after #525's
+# merge at f8ba20be, so this is the first head-bound range to cover it):
+# the commit filled the run ledger's committed closeout placeholders —
+# `ci: pending head-bound read` (runs/P37.65a.md:9) and `pending
+# head-bound read.` (:83) — with the recorded PR verdict + CI arc. The
+# fills are the sanctioned placeholder-fill kind in substance (B2 §7
+# gate-status/closeout fills), but the closeout's spelling broke the
+# byte-boundary the token-match needs: :9 wrapped the `ci:` verdict in
+# backticks (the byte before the token differs from the committed
+# `— ci: `), and :83's fill landed across wrapped lines with the
+# committed trailing `.` dropped, so no single added line is the old
+# line with only declared tokens replaced. The current bytes are the
+# correct final content — restoring the placeholder spellings would
+# un-record the closeout — so the declaration retires the findings.
+# Scope: the append-only findings attributed to f0ecc4d6's rewritten
+# runs/P37.65a.md lines 9 and 83 only; no other commit borrows the
+# exemption.
+seed-commit f0ecc4d6
+
+# 6044be29 — P37.65b closeout-placeholder respell: the commit rewrote the
+# run ledger's committed non-token placeholders — `#___` / `` `ci:` ``
+# `recorded at closeout` (runs/P37.65b.md:9) and `Recorded at closeout —
+# see the PR + LEDGER PHASE LOG entry.` (:118) — into the policy-declared
+# spellings `ci: pending head-bound read` and `(filled at closeout)`, so
+# the P37.65b closeout's fills land token-clean per the declared-tokens
+# contract (the f0ecc4d6 declaration above records why the boundary
+# matters). The current bytes carry no record content beyond the
+# placeholders themselves. Scope: the append-only findings attributed to
+# 6044be29's rewritten runs/P37.65b.md lines 9 and 118 only; no other
+# commit borrows the exemption.
+seed-commit 6044be29
