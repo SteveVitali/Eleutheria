@@ -687,6 +687,14 @@ jobs:
           path: docs/build/logs/visual-gallery/
           if-no-files-found: warn
 
+      # --- P37.63 (K1 MAP-07): the named J1–J10 map-acceptance journey
+      # battery over the real-sized national build (tests/e2e/
+      # map-journeys.spec.ts via playwright.journeys.config.ts) — the ticket's
+      # "the map journeys run against the real-sized fixture" leg.
+      - name: National map acceptance journeys J1–J10 (P37.63)
+        working-directory: ${{ github.workspace }}
+        run: bash scripts/ci/national_budget_leg.sh journeys
+
       # --- P35.52 (sig.map-tiles/2, ADR-156, F-104/F-414; K1 §15 NEW-5): ----
       # the tile verifier leg. The retention contract can't be proven by the
       # mocked-argv tests alone — the PINNED tippecanoe (the same pin

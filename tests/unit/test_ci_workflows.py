@@ -1093,17 +1093,19 @@ def _national_subcommands() -> list[str]:
 
 
 def test_the_web_job_runs_the_national_leg_in_order() -> None:
-    """fixture → build → budgets → lighthouse → visual → gallery, every step
-    dispatched to the leg — the real-scale measurement cannot silently drop
-    a stage (P37.60/SIG-UI-152 added the visual grid + operator gallery)."""
+    """fixture → build → budgets → lighthouse → visual → gallery → journeys,
+    every step dispatched to the leg — the real-scale measurement cannot
+    silently drop a stage (P37.60/SIG-UI-152 added the visual grid +
+    operator gallery; P37.63/R11-K13-MAP-07 added the J1–J10 journey
+    battery)."""
     subs = _national_subcommands()
     assert "__unrecognised__" not in subs, (
         "a web-job step invokes national_budget_leg.sh with no recognisable "
         "subcommand — the leg's contract drifted"
     )
-    assert subs == ["fixture", "build", "budgets", "lighthouse", "visual", "gallery"], (
+    assert subs == ["fixture", "build", "budgets", "lighthouse", "visual", "gallery", "journeys"], (
         "the national leg must run fixture → build → budgets → lighthouse → "
-        f"visual → gallery, got {subs}"
+        f"visual → gallery → journeys, got {subs}"
     )
 
 
@@ -1139,7 +1141,7 @@ def test_national_leg_is_reachable_locally_by_the_same_commands() -> None:
         "`make ci-local` must reach the national budget leg"
     )
     target = text.split("check-national-budgets:", 1)[1].split("\n\n", 1)[0]
-    for sub in ("fixture", "build", "budgets", "lighthouse", "visual", "gallery"):
+    for sub in ("fixture", "build", "budgets", "lighthouse", "visual", "gallery", "journeys"):
         assert f"national_budget_leg.sh {sub}" in target, (
             f"check-national-budgets must dispatch the leg's {sub} subcommand"
         )

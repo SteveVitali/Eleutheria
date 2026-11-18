@@ -3373,6 +3373,14 @@ def build_parser() -> argparse.ArgumentParser:
         "never set; prepared_not_executed)",
     )
     sub.add_parser(
+        "map-acceptance",
+        help="P37.63 / K1 MAP-07: the map-acceptance leg declaration — "
+        "plan renders the sig.map-acceptance/1 leg set, check verifies the "
+        "committed leg machinery, run executes a deterministic leg while "
+        "every candidate/live leg queues exit 42 (prepared_not_executed; "
+        "publish rides P37.65 Class S)",
+    )
+    sub.add_parser(
         "at-rest",
         help="P34.49 / ADR-185 (F-406): the Part VIII at-rest audit — "
         "scan|seal-plan|seal-apply over the OCFL capture root "
@@ -6474,6 +6482,10 @@ def main(argv: list[str] | None = None) -> int:
         from . import intake_operation
 
         return intake_operation.main(raw[1:])
+    if raw and raw[0] == "map-acceptance":
+        from . import map_acceptance
+
+        return map_acceptance.main(raw[1:])
     if raw and raw[0] == "at-rest":
         from . import at_rest_audit
 

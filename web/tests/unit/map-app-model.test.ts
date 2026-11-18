@@ -311,9 +311,9 @@ describe("tile-path in-view rows", () => {
   });
   it("groups cells into places with single-source share", () => {
     const cells = [
-      { props: { h3: "a", n: 4, s1: 1, jp: "us.census.geoid.place:4064000" }, compartment: "c1" },
-      { props: { h3: "a", n: 4, s1: 1, jp: "us.census.geoid.place:4064000" }, compartment: "c1" }, // dup
-      { props: { h3: "b", n: 2, s1: 0, jp: "unplaced" }, compartment: "c1" },
+      { props: { h3: "a", n: 4, s1: 1, jp: "us.census.geoid.place:4064000" }, compartment: "c1", lon: -97.5, lat: 35.5 },
+      { props: { h3: "a", n: 4, s1: 1, jp: "us.census.geoid.place:4064000" }, compartment: "c1", lon: -97.5, lat: 35.5 }, // dup
+      { props: { h3: "b", n: 2, s1: 0, jp: "unplaced" }, compartment: "c1", lon: -90, lat: 40 },
     ];
     const { rows, matching } = tilePlaceRowsInView(cells, { kind: "n" }, FD, {});
     expect(matching).toBe(6);
@@ -321,6 +321,12 @@ describe("tile-path in-view rows", () => {
     expect(okc?.label).toContain("Oklahoma City");
     expect(okc?.meta).toContain("1 source: 25%");
     expect(okc?.bbox).toEqual([-98.0, 35.3, -97.2, 35.8]);
+    // P37.63: a group whose jurisdiction is NOT in the dict (dict.json absent,
+    // e.g. national mode) still drills — the frame is the mean of the group's
+    // own drawn cell centroids, never a fabricated extent.
+    const unplaced = rows.find((r) => r.id === "unplaced");
+    expect(unplaced?.bbox).toBeUndefined();
+    expect(unplaced?.frame).toEqual({ lat: 40, lon: -90, zoom: NATIONAL_ZOOM_MAX + 1 });
     const sliced = tilePlaceRowsInView(cells, { kind: "props", keys: ["s1"], label: "status" }, FD, {});
     expect(sliced.matching).toBe(1);
   });

@@ -150,6 +150,9 @@ check-national-budgets:
 	@# the operator gallery into docs/build/logs/ (gitignored, never published).
 	bash scripts/ci/national_budget_leg.sh visual
 	bash scripts/ci/national_budget_leg.sh gallery
+	@# P37.63 (R11-K13-MAP-07): the J1–J10 map-acceptance journey battery over
+	@# THIS national build — the same leg ci.yml's web job runs last.
+	bash scripts/ci/national_budget_leg.sh journeys
 
 ## P35.52 (sig.map-tiles/2, ADR-156, F-104/F-414; K1 §15 NEW-5): the tile
 ## verifier leg, locally — the same commands ci.yml's web job runs. The pinned
