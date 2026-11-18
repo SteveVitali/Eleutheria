@@ -1,0 +1,35 @@
+{
+  "schema": "sig.capstone-journalist/1",
+  "ticket": "P37.68b",
+  "catalog": "R11-K13-CAP-01",
+  "split": "b — journalist journeys J1–J5 (a: A1–A4 landed P37.68a, c: O1–O4, d: per-ask checks/budgets/axe/cost/packet)",
+  "posture": "prepared_not_executed",
+  "production_mutations": "none",
+  "gate": "publish rides P37.65 Class S — promotion is the operator's act",
+  "gate_status_plan_cell": "OP-22 operator walkthrough + D-K14-9 gallery [B-29] = yes (requested, never simulated; recorded 'operator walkthrough (maintainer, not independent)')",
+  "live_window_plan_cell": "on the promoted P37.65 release; 390 px + 1440 px",
+  "live_stage": "publish",
+  "journeys": ["J1", "J2", "J3", "J4", "J5"],
+  "cells": ["1440-js", "390-js", "1440-nojs", "390-nojs"],
+  "labels": ["agent-verified", "never user-tested"],
+  "journey_gates": {
+    "J4": "the durable /s/<pub>/ pinned-URL leg rides ACT-24 (HG-11) — K13 §7.4",
+    "J5": "the real >= 2-release diff rides the promoted release's activated predecessor (CF-13)"
+  },
+  "requirement_ids": {
+    "owner": [],
+    "also": ["SIG-UI-081"],
+    "draft_family": ["UXR-31"]
+  },
+  "rerun_prompt": "implement-spec spec=docs/tickets/498_P37.68b__ux-capstone-journalist-journeys.md live_verification=true",
+  "legs": "sig-ops capstone-journalist plan — ops/src/ops/capstone_journalist.py",
+  "deferrals": ["D-P37.68b-1", "D-P37.68b-2"],
+  "evidence": {
+    "spec": "web/tests/e2e/capstone-journalist.spec.ts",
+    "config": "web/playwright.capstone-journalist.config.ts",
+    "ops": "ops/src/ops/capstone_journalist.py",
+    "tests": "tests/ops/test_capstone_journalist.py",
+    "walkthrough": "docs/build/reports/p37.68b-capstone/WALKTHROUGH.md",
+    "spend_ledger": "docs/build/reports/spend/spend_ledger.csv"
+  }
+}
