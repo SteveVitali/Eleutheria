@@ -1,0 +1,37 @@
+{
+  "schema": "sig.capstone-organizer/1",
+  "ticket": "P37.68c",
+  "catalog": "R11-K13-CAP-01",
+  "split": "c — organizer journeys O1–O4 (a: A1–A4 landed P37.68a, b: J1–J5 landed P37.68b, d: per-ask checks/budgets/axe/cost/packet)",
+  "posture": "prepared_not_executed",
+  "production_mutations": "none",
+  "gate": "publish rides P37.65 Class S — promotion is the operator's act",
+  "gate_status_plan_cell": "OP-22 operator walkthrough + D-K14-9 gallery [B-29] = yes (requested, never simulated; recorded 'operator walkthrough (maintainer, not independent)')",
+  "live_window_plan_cell": "on the promoted P37.65 release; 390 px + 1440 px",
+  "live_stage": "publish",
+  "journeys": ["O1", "O2", "O3", "O4"],
+  "cells": ["1440-js", "390-js", "1440-nojs", "390-nojs"],
+  "labels": ["agent-verified", "never user-tested"],
+  "journey_gates": {
+    "O1": "the named-agencies reading follows the release's own placement/publication state (I8 placement, D-K2-1 organisation publication — K13 §4.2); the typed absence is a legitimate pass state",
+    "O2": "approving body and next date ride the WX-02/03 agenda producers; the feed validates and exists even at 0 items",
+    "O3": "the per-compartment licence/attribution reading rides ACT-07 — the attribution re-export (K13 §7.4 orders it before any download link)",
+    "O4": "the where-to-send-results channel is the operator-named one — D-K11-4 (settled); the page never invents one"
+  },
+  "requirement_ids": {
+    "owner": [],
+    "also": ["SIG-UI-081"],
+    "draft_family": ["UXR-31"]
+  },
+  "rerun_prompt": "implement-spec spec=docs/tickets/499_P37.68c__ux-capstone-organizer-journeys.md live_verification=true",
+  "legs": "sig-ops capstone-organizer plan — ops/src/ops/capstone_organizer.py",
+  "deferrals": ["D-P37.68c-1", "D-P37.68c-2"],
+  "evidence": {
+    "spec": "web/tests/e2e/capstone-organizer.spec.ts",
+    "config": "web/playwright.capstone-organizer.config.ts",
+    "ops": "ops/src/ops/capstone_organizer.py",
+    "tests": "tests/ops/test_capstone_organizer.py",
+    "walkthrough": "docs/build/reports/p37.68c-capstone/WALKTHROUGH.md",
+    "spend_ledger": "docs/build/reports/spend/spend_ledger.csv"
+  }
+}

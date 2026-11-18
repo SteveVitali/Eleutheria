@@ -1,0 +1,85 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// P37.68c (R11-K13-CAP-01, split c): the dedicated runner for the K13 §8
+// capstone organizer journeys O1–O4 — walked cold once per
+// {390, 1440 px} x {JS on, JS off} project cell.
+//
+// Two targets run the same spec file (tests/e2e/capstone-organizer.spec.ts):
+//   - fixtures (the fixture-verified layer): no env — `astro preview` serves
+//     the built dist/ on :4335;
+//   - the promoted release (the deferred live leg, D-P37.68c-1):
+//     SIG_CAPSTONE_BASE_URL=<origin> skips the webServer and points the whole
+//     battery at the promoted origin. A fixture/preview pass is recorded
+//     fixture-verified and is NEVER reported as a live/public pass — the
+//     record's label travels with the run.
+//
+// The same spec also runs inside the ordinary `test:e2e` pass (chromium,
+// default viewport, JS on) so a regression fails in CI, never silently.
+
+import { defineConfig, devices } from "@playwright/test";
+
+const PORT = 4335;
+const LIVE_BASE = process.env.SIG_CAPSTONE_BASE_URL;
+
+export default defineConfig({
+  testDir: "tests/e2e",
+  testMatch: /capstone-organizer\.spec\.ts$/,
+  fullyParallel: true,
+  forbidOnly: !!process.env.CI,
+  retries: 0,
+  reporter: [
+    ["list"],
+    ["json", { outputFile: "test-results/capstone-organizer.json" }],
+  ],
+  use: {
+    baseURL: LIVE_BASE ?? `http://localhost:${PORT}`,
+    trace: "on-first-retry",
+  },
+  projects: [
+    {
+      name: "capstone-1440-js",
+      use: {
+        ...devices["Desktop Chrome"],
+        viewport: { width: 1440, height: 900 },
+      },
+    },
+    {
+      name: "capstone-390-js",
+      use: {
+        ...devices["Desktop Chrome"],
+        viewport: { width: 390, height: 844 },
+      },
+    },
+    {
+      name: "capstone-1440-nojs",
+      use: {
+        ...devices["Desktop Chrome"],
+        viewport: { width: 1440, height: 900 },
+        javaScriptEnabled: false,
+      },
+    },
+    {
+      name: "capstone-390-nojs",
+      use: {
+        ...devices["Desktop Chrome"],
+        viewport: { width: 390, height: 844 },
+        javaScriptEnabled: false,
+      },
+    },
+  ],
+  ...(LIVE_BASE
+    ? {}
+    : {
+        webServer: {
+          // Preview-only — the fixtures leg serves whatever dist/ is present;
+          // `sig-ops capstone-organizer run --leg journeys-fixture` builds it
+          // first so a stale dist is never mistaken for the current build.
+          command: `npm run preview -- --port ${PORT}`,
+          port: PORT,
+          reuseExistingServer: !process.env.CI,
+          timeout: 120_000,
+        },
+      }),
+});
