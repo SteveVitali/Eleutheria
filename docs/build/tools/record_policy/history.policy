@@ -1702,3 +1702,16 @@ seed-commit c24e34cd
 # runs/P37.65a.md lines 9 and 83 only; no other commit borrows the
 # exemption.
 seed-commit f0ecc4d6
+
+# 6044be29 — P37.65b closeout-placeholder respell: the commit rewrote the
+# run ledger's committed non-token placeholders — `#___` / `` `ci:` ``
+# `recorded at closeout` (runs/P37.65b.md:9) and `Recorded at closeout —
+# see the PR + LEDGER PHASE LOG entry.` (:118) — into the policy-declared
+# spellings `ci: pending head-bound read` and `(filled at closeout)`, so
+# the P37.65b closeout's fills land token-clean per the declared-tokens
+# contract (the f0ecc4d6 declaration above records why the boundary
+# matters). The current bytes carry no record content beyond the
+# placeholders themselves. Scope: the append-only findings attributed to
+# 6044be29's rewritten runs/P37.65b.md lines 9 and 118 only; no other
+# commit borrows the exemption.
+seed-commit 6044be29
