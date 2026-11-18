@@ -201,11 +201,7 @@ def plan() -> dict[str, object]:
 
 def check() -> int:
     """Verify the committed machinery exists; never runs a leg."""
-    missing = [
-        (path, why)
-        for path, why in DETERMINISTIC_PATHS
-        if not (REPO_ROOT / path).exists()
-    ]
+    missing = [(path, why) for path, why in DETERMINISTIC_PATHS if not (REPO_ROOT / path).exists()]
     for path, why in missing:
         print(f"map-acceptance check: MISSING {path} — {why}", file=sys.stderr)
     if missing:
@@ -263,9 +259,7 @@ def main(argv: list[str] | None = None) -> int:
     )
     sub = parser.add_subparsers(dest="map_acceptance_command", required=True)
     sub.add_parser("plan", help="print the leg declaration (offline)")
-    sub.add_parser(
-        "check", help="verify the committed leg machinery exists (never runs a leg)"
-    )
+    sub.add_parser("check", help="verify the committed leg machinery exists (never runs a leg)")
     runp = sub.add_parser(
         "run",
         help="execute a deterministic leg; gated legs queue exit 42",
