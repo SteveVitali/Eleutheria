@@ -1,0 +1,5438 @@
+{
+  "findings": [
+    {
+      "check": "generator",
+      "detail": "13 generator error(s): AP-T1-001: dataset https://datacatalog.cookcountyil.gov/resource/qh8j-6k63.json is already registered as a target under 'camreg_us_municipal_contract_expenditure' (NEW-1 dedupe) \u2014 no second row",
+      "layer": "engineered",
+      "status": "fail",
+      "subject": ""
+    },
+    {
+      "check": "registry-row",
+      "detail": "no [sources.<id>] row \u2014 the wave cannot claim a source the registry does not hold",
+      "layer": "engineered",
+      "status": "fail",
+      "subject": "agenda_haskell_ar_resolution_no_19"
+    },
+    {
+      "check": "registry-row",
+      "detail": "no [sources.<id>] row \u2014 the wave cannot claim a source the registry does not hold",
+      "layer": "engineered",
+      "status": "fail",
+      "subject": "agenda_pasadena_ca_policy_620_cellular"
+    },
+    {
+      "check": "registry-row",
+      "detail": "no [sources.<id>] row \u2014 the wave cannot claim a source the registry does not hold",
+      "layer": "engineered",
+      "status": "fail",
+      "subject": "camreg_ct_approximate_speed_safety"
+    },
+    {
+      "check": "registry-row",
+      "detail": "no [sources.<id>] row \u2014 the wave cannot claim a source the registry does not hold",
+      "layer": "engineered",
+      "status": "fail",
+      "subject": "camreg_dc_private_security_camera"
+    },
+    {
+      "check": "registry-row",
+      "detail": "no [sources.<id>] row \u2014 the wave cannot claim a source the registry does not hold",
+      "layer": "engineered",
+      "status": "fail",
+      "subject": "camreg_de_traffic_devices_red"
+    },
+    {
+      "check": "registry-row",
+      "detail": "no [sources.<id>] row \u2014 the wave cannot claim a source the registry does not hold",
+      "layer": "engineered",
+      "status": "fail",
+      "subject": "camreg_fl_d3_flock_camera"
+    },
+    {
+      "check": "registry-row",
+      "detail": "no [sources.<id>] row \u2014 the wave cannot claim a source the registry does not hold",
+      "layer": "engineered",
+      "status": "fail",
+      "subject": "camreg_fl_flock_removal_status"
+    },
+    {
+      "check": "registry-row",
+      "detail": "no [sources.<id>] row \u2014 the wave cannot claim a source the registry does not hold",
+      "layer": "engineered",
+      "status": "fail",
+      "subject": "camreg_howard_county_md_schzonehighligh"
+    },
+    {
+      "check": "registry-row",
+      "detail": "no [sources.<id>] row \u2014 the wave cannot claim a source the registry does not hold",
+      "layer": "engineered",
+      "status": "fail",
+      "subject": "camreg_md_montgomery_county_automated"
+    },
+    {
+      "check": "registry-row",
+      "detail": "no [sources.<id>] row \u2014 the wave cannot claim a source the registry does not hold",
+      "layer": "engineered",
+      "status": "fail",
+      "subject": "camreg_md_montgomery_county_speedcameras"
+    },
+    {
+      "check": "registry-row",
+      "detail": "no [sources.<id>] row \u2014 the wave cannot claim a source the registry does not hold",
+      "layer": "engineered",
+      "status": "fail",
+      "subject": "camreg_medford_or_red_light_speed"
+    },
+    {
+      "check": "registry-row",
+      "detail": "no [sources.<id>] row \u2014 the wave cannot claim a source the registry does not hold",
+      "layer": "engineered",
+      "status": "fail",
+      "subject": "camreg_ny_new_york_city_mta_bus"
+    },
+    {
+      "check": "registry-row",
+      "detail": "no [sources.<id>] row \u2014 the wave cannot claim a source the registry does not hold",
+      "layer": "engineered",
+      "status": "fail",
+      "subject": "camreg_suffolk_county_ny_tpva_red_light"
+    },
+    {
+      "check": "registry-row",
+      "detail": "no [sources.<id>] row \u2014 the wave cannot claim a source the registry does not hold",
+      "layer": "engineered",
+      "status": "fail",
+      "subject": "camreg_wa_tacoma_automated_enforcement"
+    },
+    {
+      "check": "registry-row",
+      "detail": "no [sources.<id>] row \u2014 the wave cannot claim a source the registry does not hold",
+      "layer": "engineered",
+      "status": "fail",
+      "subject": "ccops_ia_des_moines_city_of_council"
+    },
+    {
+      "check": "registry-row",
+      "detail": "no [sources.<id>] row \u2014 the wave cannot claim a source the registry does not hold",
+      "layer": "engineered",
+      "status": "fail",
+      "subject": "ccops_nc_forsyth_county_us_winston_salem"
+    },
+    {
+      "check": "registry-row",
+      "detail": "no [sources.<id>] row \u2014 the wave cannot claim a source the registry does not hold",
+      "layer": "engineered",
+      "status": "fail",
+      "subject": "ccops_sc_jasper_county_council_special"
+    },
+    {
+      "check": "registry-row",
+      "detail": "no [sources.<id>] row \u2014 the wave cannot claim a source the registry does not hold",
+      "layer": "engineered",
+      "status": "fail",
+      "subject": "grant_al_alabama_adeca_newsroom"
+    },
+    {
+      "check": "registry-row",
+      "detail": "no [sources.<id>] row \u2014 the wave cannot claim a source the registry does not hold",
+      "layer": "engineered",
+      "status": "fail",
+      "subject": "grant_ca_california_bscc_organized"
+    },
+    {
+      "check": "registry-row",
+      "detail": "no [sources.<id>] row \u2014 the wave cannot claim a source the registry does not hold",
+      "layer": "engineered",
+      "status": "fail",
+      "subject": "grant_fl_florida_legislature_local"
+    },
+    {
+      "check": "registry-row",
+      "detail": "no [sources.<id>] row \u2014 the wave cannot claim a source the registry does not hold",
+      "layer": "engineered",
+      "status": "fail",
+      "subject": "grant_nj_new_jersey_oag"
+    },
+    {
+      "check": "registry-row",
+      "detail": "no [sources.<id>] row \u2014 the wave cannot claim a source the registry does not hold",
+      "layer": "engineered",
+      "status": "fail",
+      "subject": "grant_ok_oklahoma_jag_lle"
+    },
+    {
+      "check": "registry-row",
+      "detail": "no [sources.<id>] row \u2014 the wave cannot claim a source the registry does not hold",
+      "layer": "engineered",
+      "status": "fail",
+      "subject": "grant_tx_texas_dmv_motor"
+    },
+    {
+      "check": "registry-row",
+      "detail": "no [sources.<id>] row \u2014 the wave cannot claim a source the registry does not hold",
+      "layer": "engineered",
+      "status": "fail",
+      "subject": "legis_ca_california_code_53166"
+    },
+    {
+      "check": "registry-row",
+      "detail": "no [sources.<id>] row \u2014 the wave cannot claim a source the registry does not hold",
+      "layer": "engineered",
+      "status": "fail",
+      "subject": "legis_us_dhs_system_records"
+    },
+    {
+      "check": "registry-row",
+      "detail": "no [sources.<id>] row \u2014 the wave cannot claim a source the registry does not hold",
+      "layer": "engineered",
+      "status": "fail",
+      "subject": "policy_bangor_me_general_order_59"
+    },
+    {
+      "check": "registry-row",
+      "detail": "no [sources.<id>] row \u2014 the wave cannot claim a source the registry does not hold",
+      "layer": "engineered",
+      "status": "fail",
+      "subject": "policy_ca_orange_county_policy_610"
+    },
+    {
+      "check": "registry-row",
+      "detail": "no [sources.<id>] row \u2014 the wave cannot claim a source the registry does not hold",
+      "layer": "engineered",
+      "status": "fail",
+      "subject": "policy_houston_tx_general_orders"
+    },
+    {
+      "check": "registry-row",
+      "detail": "no [sources.<id>] row \u2014 the wave cannot claim a source the registry does not hold",
+      "layer": "engineered",
+      "status": "fail",
+      "subject": "policy_little_rock_ar_general_order_332"
+    },
+    {
+      "check": "registry-row",
+      "detail": "no [sources.<id>] row \u2014 the wave cannot claim a source the registry does not hold",
+      "layer": "engineered",
+      "status": "fail",
+      "subject": "policy_nm_albuquerque_apd_standard"
+    },
+    {
+      "check": "registry-row",
+      "detail": "no [sources.<id>] row \u2014 the wave cannot claim a source the registry does not hold",
+      "layer": "engineered",
+      "status": "fail",
+      "subject": "policy_st_cloud_mn_area_school_district"
+    },
+    {
+      "check": "registry-row",
+      "detail": "no [sources.<id>] row \u2014 the wave cannot claim a source the registry does not hold",
+      "layer": "engineered",
+      "status": "fail",
+      "subject": "procportal_davie_fl_notice_intent_award"
+    },
+    {
+      "check": "registry-row",
+      "detail": "no [sources.<id>] row \u2014 the wave cannot claim a source the registry does not hold",
+      "layer": "engineered",
+      "status": "fail",
+      "subject": "procportal_il_cook_county_procurement"
+    },
+    {
+      "check": "registry-row",
+      "detail": "no [sources.<id>] row \u2014 the wave cannot claim a source the registry does not hold",
+      "layer": "engineered",
+      "status": "fail",
+      "subject": "procportal_wa_washington_des_statewide"
+    },
+    {
+      "check": "registry-row",
+      "detail": "no [sources.<id>] row \u2014 the wave cannot claim a source the registry does not hold",
+      "layer": "engineered",
+      "status": "fail",
+      "subject": "statrep_co_arvada_facial_recognition"
+    },
+    {
+      "check": "registry-row",
+      "detail": "no [sources.<id>] row \u2014 the wave cannot claim a source the registry does not hold",
+      "layer": "engineered",
+      "status": "fail",
+      "subject": "statrep_co_colorado_agency_facial"
+    },
+    {
+      "check": "registry-row",
+      "detail": "no [sources.<id>] row \u2014 the wave cannot claim a source the registry does not hold",
+      "layer": "engineered",
+      "status": "fail",
+      "subject": "statrep_de_delaware_information_analysis"
+    },
+    {
+      "check": "registry-row",
+      "detail": "no [sources.<id>] row \u2014 the wave cannot claim a source the registry does not hold",
+      "layer": "engineered",
+      "status": "fail",
+      "subject": "statrep_fl_florida_highway_safety"
+    },
+    {
+      "check": "registry-row",
+      "detail": "no [sources.<id>] row \u2014 the wave cannot claim a source the registry does not hold",
+      "layer": "engineered",
+      "status": "fail",
+      "subject": "statrep_hi_hawai_judiciary_under"
+    },
+    {
+      "check": "registry-row",
+      "detail": "no [sources.<id>] row \u2014 the wave cannot claim a source the registry does not hold",
+      "layer": "engineered",
+      "status": "fail",
+      "subject": "statrep_il_illinois_automated_license"
+    },
+    {
+      "check": "registry-row",
+      "detail": "no [sources.<id>] row \u2014 the wave cannot claim a source the registry does not hold",
+      "layer": "engineered",
+      "status": "fail",
+      "subject": "statrep_il_illinois_freedom_from"
+    },
+    {
+      "check": "registry-row",
+      "detail": "no [sources.<id>] row \u2014 the wave cannot claim a source the registry does not hold",
+      "layer": "engineered",
+      "status": "fail",
+      "subject": "statrep_md_maryland_legislative_library"
+    },
+    {
+      "check": "registry-row",
+      "detail": "no [sources.<id>] row \u2014 the wave cannot claim a source the registry does not hold",
+      "layer": "engineered",
+      "status": "fail",
+      "subject": "statrep_md_maryland_required_chapters"
+    },
+    {
+      "check": "registry-row",
+      "detail": "no [sources.<id>] row \u2014 the wave cannot claim a source the registry does not hold",
+      "layer": "engineered",
+      "status": "fail",
+      "subject": "statrep_me_safety_maine_law"
+    },
+    {
+      "check": "registry-row",
+      "detail": "no [sources.<id>] row \u2014 the wave cannot claim a source the registry does not hold",
+      "layer": "engineered",
+      "status": "fail",
+      "subject": "statrep_mi_detroit_police_department"
+    },
+    {
+      "check": "registry-row",
+      "detail": "no [sources.<id>] row \u2014 the wave cannot claim a source the registry does not hold",
+      "layer": "engineered",
+      "status": "fail",
+      "subject": "statrep_mn_agencies_that_use"
+    },
+    {
+      "check": "registry-row",
+      "detail": "no [sources.<id>] row \u2014 the wave cannot claim a source the registry does not hold",
+      "layer": "engineered",
+      "status": "fail",
+      "subject": "statrep_mn_minnesota_court_administrator"
+    },
+    {
+      "check": "registry-row",
+      "detail": "no [sources.<id>] row \u2014 the wave cannot claim a source the registry does not hold",
+      "layer": "engineered",
+      "status": "fail",
+      "subject": "statrep_mn_unmanned_aerial_vehicle"
+    },
+    {
+      "check": "registry-row",
+      "detail": "no [sources.<id>] row \u2014 the wave cannot claim a source the registry does not hold",
+      "layer": "engineered",
+      "status": "fail",
+      "subject": "statrep_nc_onslow_county_schools_gaggle"
+    },
+    {
+      "check": "registry-row",
+      "detail": "no [sources.<id>] row \u2014 the wave cannot claim a source the registry does not hold",
+      "layer": "engineered",
+      "status": "fail",
+      "subject": "statrep_ne_nebraska_crime_commission"
+    },
+    {
+      "check": "registry-row",
+      "detail": "no [sources.<id>] row \u2014 the wave cannot claim a source the registry does not hold",
+      "layer": "engineered",
+      "status": "fail",
+      "subject": "statrep_ny_whitesboro_central_school"
+    },
+    {
+      "check": "registry-row",
+      "detail": "no [sources.<id>] row \u2014 the wave cannot claim a source the registry does not hold",
+      "layer": "engineered",
+      "status": "fail",
+      "subject": "statrep_pa_pennsylvania_work_zone"
+    },
+    {
+      "check": "registry-row",
+      "detail": "no [sources.<id>] row \u2014 the wave cannot claim a source the registry does not hold",
+      "layer": "engineered",
+      "status": "fail",
+      "subject": "statrep_seattle_wa_2024_2025_automated"
+    },
+    {
+      "check": "registry-row",
+      "detail": "no [sources.<id>] row \u2014 the wave cannot claim a source the registry does not hold",
+      "layer": "engineered",
+      "status": "fail",
+      "subject": "statrep_us_dhs_cbp_border"
+    },
+    {
+      "check": "registry-row",
+      "detail": "no [sources.<id>] row \u2014 the wave cannot claim a source the registry does not hold",
+      "layer": "engineered",
+      "status": "fail",
+      "subject": "statrep_us_dhs_cbp_pia"
+    },
+    {
+      "check": "registry-row",
+      "detail": "no [sources.<id>] row \u2014 the wave cannot claim a source the registry does not hold",
+      "layer": "engineered",
+      "status": "fail",
+      "subject": "statrep_us_dhs_component_privacy"
+    },
+    {
+      "check": "registry-row",
+      "detail": "no [sources.<id>] row \u2014 the wave cannot claim a source the registry does not hold",
+      "layer": "engineered",
+      "status": "fail",
+      "subject": "statrep_us_dhs_obim_pia"
+    },
+    {
+      "check": "registry-row",
+      "detail": "no [sources.<id>] row \u2014 the wave cannot claim a source the registry does not hold",
+      "layer": "engineered",
+      "status": "fail",
+      "subject": "statrep_us_dhs_privacy_impact"
+    },
+    {
+      "check": "registry-row",
+      "detail": "no [sources.<id>] row \u2014 the wave cannot claim a source the registry does not hold",
+      "layer": "engineered",
+      "status": "fail",
+      "subject": "statrep_va_virginia_alpr_reporting"
+    },
+    {
+      "check": "registry-row",
+      "detail": "no [sources.<id>] row \u2014 the wave cannot claim a source the registry does not hold",
+      "layer": "engineered",
+      "status": "fail",
+      "subject": "statrep_va_virginia_crime_commission"
+    },
+    {
+      "check": "registry-row",
+      "detail": "no [sources.<id>] row \u2014 the wave cannot claim a source the registry does not hold",
+      "layer": "engineered",
+      "status": "fail",
+      "subject": "statrep_va_virginia_general_assembly"
+    },
+    {
+      "check": "registry-row",
+      "detail": "no [sources.<id>] row \u2014 the wave cannot claim a source the registry does not hold",
+      "layer": "engineered",
+      "status": "fail",
+      "subject": "statrep_vt_vermont_safety_automated"
+    },
+    {
+      "check": "registry-row",
+      "detail": "no [sources.<id>] row \u2014 the wave cannot claim a source the registry does not hold",
+      "layer": "engineered",
+      "status": "fail",
+      "subject": "statrep_wa_2026_automated_safety"
+    },
+    {
+      "check": "registry-row",
+      "detail": "no [sources.<id>] row \u2014 the wave cannot claim a source the registry does not hold",
+      "layer": "engineered",
+      "status": "fail",
+      "subject": "statrep_wa_automated_traffic_safety"
+    },
+    {
+      "check": "registry-row",
+      "detail": "no [sources.<id>] row \u2014 the wave cannot claim a source the registry does not hold",
+      "layer": "engineered",
+      "status": "fail",
+      "subject": "statrep_wa_facial_recognition_watech"
+    },
+    {
+      "check": "registry-row",
+      "detail": "no [sources.<id>] row \u2014 the wave cannot claim a source the registry does not hold",
+      "layer": "engineered",
+      "status": "fail",
+      "subject": "statrep_wa_seattle_oig_annual"
+    },
+    {
+      "check": "registry-row",
+      "detail": "no [sources.<id>] row \u2014 the wave cannot claim a source the registry does not hold",
+      "layer": "engineered",
+      "status": "fail",
+      "subject": "statrep_wa_washington_attorney_general"
+    },
+    {
+      "check": "dedupe-anchor",
+      "detail": "deduped proposal 'camreg_md_montgomery_county_automated' names 'camreg_md_montgomery_county_automated', which is not a registered source",
+      "layer": "engineered",
+      "status": "fail",
+      "subject": "AP-T1-010"
+    },
+    {
+      "check": "dedupe-anchor",
+      "detail": "deduped proposal 'camreg_md_montgomery_county_automated' names 'camreg_md_montgomery_county_automated', which is not a registered source",
+      "layer": "engineered",
+      "status": "fail",
+      "subject": "AP-T2-049"
+    },
+    {
+      "check": "target-row",
+      "detail": "expected registry target for source 'camreg_ny_new_york_city_mta_bus' is not registered",
+      "layer": "engineered",
+      "status": "fail",
+      "subject": "mta_bus_automated_camera_enforced_routes_beginning_october_2019"
+    },
+    {
+      "check": "target-row",
+      "detail": "expected registry target for source 'camreg_md_montgomery_county_speedcameras' is not registered",
+      "layer": "engineered",
+      "status": "fail",
+      "subject": "speedcameras_2024_mcpd_speed_camera_locations_as_of_august_2024"
+    },
+    {
+      "check": "target-row",
+      "detail": "expected registry target for source 'camreg_howard_county_md_schzonehighligh' is not registered",
+      "layer": "engineered",
+      "status": "fail",
+      "subject": "schzonehighligh_school_zones_where_automated_enforcement_is_applied"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "agenda_az_maricopa_county_board_of"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "agenda_bexar_county_tx_agenda_center"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "agenda_durham_nc_agenda_center"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "agenda_frisco_tx_onbase_agenda_online"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "agenda_hialeah_fl_agenda_center"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "agenda_jersey_city_nj_digital_agenda"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "agenda_nd_fargo_city_commission_agendas"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "agenda_savannah_ga_2023_05_25"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "agenda_tampa_fl_onbase_agenda_online"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "agenda_tx_dallas_county_commissioners"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "agenda_us_agency_fusus_real"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "camreg_alabaster_al_lpr_cameras"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "camreg_au_ckan_package_search"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "camreg_au_nsw_sydney_street_safety"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "camreg_au_qld_towns_cctv_camera_register"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "camreg_au_tas_emergency_closed_circuit"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "camreg_au_tas_hobar_security_camera"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "camreg_au_vic_ballarat_cctv_cameras"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "camreg_au_vic_geelong_closed_circuit"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "camreg_au_wa_perth_security_cameras"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "camreg_az_mesa_city_of_expenditures"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "camreg_bloomington_il_drone_flights"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "camreg_ca_monterey_park_flock_camera"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "camreg_de_delaware_checkbook_expenditure"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "camreg_detroit_mi_project_green_light"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "camreg_elgin_il_lpr_cameras"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "camreg_es_md_madrid_c_maras_de"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "camreg_eu_eea_data_europa_search_api"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "camreg_fl_broward_county_us_palm_beach"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "camreg_fr_92_grand_paris_seine_ouest_vid"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "camreg_ga_brookhaven_flock_camera"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "camreg_ga_flock_cameras_asof"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "camreg_ga_peachtree_corners_flock_camera"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "camreg_ga_savannah_flock_camera"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "camreg_gastonia_nc_flock_condor_cameras"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "camreg_gb_eng_barnet_cctv_camera"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "camreg_gb_eng_barnet_cctv_traffic"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "camreg_gb_eng_brist_cctv_cameras"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "camreg_gb_eng_ipswich_cctv_camera"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "camreg_gb_eng_leice_cctv_cameras"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "camreg_gb_eng_mansf_cctv_cameras"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "camreg_gb_eng_north_cctv_cameras"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "camreg_gb_eng_runny_cctv_cameras"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "camreg_gb_eng_south_skdc_cctv"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "camreg_gb_eng_traff_trafford_cctv"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "camreg_gb_sct_clackmannanshire_cctv"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "camreg_gb_sct_edinburgh_public_cctv"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "camreg_hyattsville_md_cctv_camera_2024"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "camreg_ie_d_dublin_traffic_poles_with"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "camreg_il_chicago_violence_reduction"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "camreg_it_me_messina_videosorveglianza"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "camreg_jeffersonville_in_flock"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "camreg_la_east_baton_rouge_parish_flock"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "camreg_la_new_orleans_eye_on"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "camreg_leon_county_fl_overwatch_viewer"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "camreg_ma_massachusetts_capital"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "camreg_marble_falls_tx_flock_locations"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "camreg_medford_or_drone_deployments_fs"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "camreg_mi_detroit_dpd_shotspotter"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "camreg_milford_ct_flocklprcam"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "camreg_ne_lincoln_traffic_cameras"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "camreg_nj_new_jersey_yourmoney"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "camreg_nv_las_vegas_us_clark_county"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "camreg_oakland_ca_shotspotter_2013_2015"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "camreg_omaha_ne_parks_cameras"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "camreg_peoria_il_drone_usage"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "camreg_pt_11_lisboa_sistema_de"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "camreg_pueblo_co_flock"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "camreg_rocky_mount_nc_lpr_cameras"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "camreg_santa_fe_nm_park_cameras"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "camreg_shelbyville_tn_flock_cameras"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "camreg_si_048_ko_evje_videonadzor_na"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "camreg_south_fulton_ga_lpr_cameras"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "camreg_temecula_ca_flock_wfl1"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "camreg_thomasville_ga_flock_location"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "camreg_ua_18_korosten"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "camreg_us_agency_drone_flight"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "camreg_us_agency_published_flock"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "camreg_us_ate_camera_location_and_per"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "camreg_us_body_worn_camera"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "camreg_us_municipal_contract_expenditure"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "camreg_us_nces_school_survey_on_crime"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "camreg_us_socrata_hosted_vendor"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "camreg_va_pittsylvania_county_stationary"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "camreg_va_prince_william_county"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "camreg_wa_washington_state_open"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "ccops_anchorage_ak"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "ccops_austin_tx"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "ccops_ca_calistoga_police_department"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "ccops_ca_pinole_police_department"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "ccops_ca_san_diego_sunshine_act_goods"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "ccops_columbia_mo"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "ccops_dayton_oh"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "ccops_gb_eng_barnet_traffic_cctv"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "ccops_hi_honolulu_police_department"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "ccops_il_chicago_oig_shotspotter"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "ccops_iso_au_privacy_commissioner"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "ccops_it_tn_trento_provvedimento_dell_11"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "ccops_mi_wayne_county_commission"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "ccops_mn_dayton_police_department"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "ccops_mo_st_louis_fy21_spi_shotspotter"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "ccops_nc_charlotte_mecklenburg_police"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "ccops_nc_elizabeth_city_police"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "ccops_ny_new_york_nyc_comptroller"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "ccops_oh_cincinnati_police_department"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "ccops_ok_oklahoma_city_okc_flock_council"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "ccops_ok_tulsa_flock_policies"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "ccops_ri_narragansett_police_camera"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "ccops_san_diego_ca"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "ccops_san_francisco_bay_ca"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "ccops_san_jose_ca"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "ccops_santa_clara_county_ca"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "ccops_si_085_novo_mesto_evidenca_o"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "ccops_st_louis_mo"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "dot_511_de"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "dot_511_gb"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "dot_511_id"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "dot_511_mi"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "dot_511_nc"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "dot_511_nm"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "dot_511_nv"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "dot_511_vt"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "dot_511_wv"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "grant_il_illinois_gata_csfa"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "grant_ma_massachusetts_law_enforcement"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "grant_oh_ohio_criminal_justice"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "grant_ok_safe_oklahoma_grant"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "grant_us_doj_cops_technology"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "legis_ie_rs_general_scheme"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "legis_pr_pc0489_ley_del"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "legis_pr_pc0560_plan_de"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "legis_pr_rc0740_investigaci_sobre"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "legis_pr_rc0787_resoluci_de"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "legis_pr_rcs0198_resoluci_conjunta"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "legis_pr_rs0604_resoluci_del"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "legis_pr_sistema_nico_de"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "legis_us_federal_register_api"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "legis_vi_legislature_virgin_islands"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "policy_anaheim_ca_pd_policy_manual"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "policy_chicago_il_oemc_link_your"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "policy_lafayette_in_camera_registration"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "policy_maricopa_county_az_mcso_policies"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "policy_norman_ok_alpr_policy_amendment"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "policy_ok_oklahoma_dac_uved"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "policy_us_private_camera_registry"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "policy_zionsville_in_camera_registry"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "procportal_fl_florida_buy_cooperative"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "procportal_ny_northeastern_regional"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "procportal_ok_oklahoma_omes_statewide"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "procportal_pr_consulta_del_registro"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "procportal_tx_texas_dir_cooperative"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "procportal_us_naspo_valuepoint_portfolio"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "procportal_wa_wsipc_rfp_24"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "statrep_ca_california_auditor_alpr"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "statrep_ca_special_parliament_use"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "statrep_fr_cnil_utilisation_de"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "statrep_gb_enforcement_action"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "statrep_gb_eng_seven_cctv_june_2026"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "statrep_gb_sct_joint_assurance_review"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "statrep_gb_uk_algorithmic_transparency"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "statrep_new_york_ny_nyc_doi_oig"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "statrep_tx_ca_nm_ri_fl_il_eff_red_flag"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "statrep_tx_south_padre_island_faa"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "statrep_us_2024_federal_agency"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "statrep_us_dhs_ai_use"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "statrep_us_ice_287_monthly"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "statrep_us_ice_287_participating"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "statrep_us_upturn_mass_extraction_2020"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "statrep_us_wiretap_summary_tables"
+    },
+    {
+      "check": "gate-posture",
+      "detail": "ingestion_permitted=False (gated)",
+      "layer": "engineered",
+      "status": "pass",
+      "subject": "statrep_vt_vermont_law_enforcement"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "no unscheduled live source",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": ""
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "agenda_az_maricopa_county_board_of"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "agenda_bexar_county_tx_agenda_center"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "agenda_durham_nc_agenda_center"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "agenda_frisco_tx_onbase_agenda_online"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "agenda_hialeah_fl_agenda_center"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "agenda_jersey_city_nj_digital_agenda"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "agenda_nd_fargo_city_commission_agendas"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "agenda_savannah_ga_2023_05_25"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "agenda_tampa_fl_onbase_agenda_online"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "agenda_tx_dallas_county_commissioners"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "agenda_us_agency_fusus_real"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "camreg_alabaster_al_lpr_cameras"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "camreg_au_ckan_package_search"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "camreg_au_nsw_sydney_street_safety"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "camreg_au_qld_towns_cctv_camera_register"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "camreg_au_tas_emergency_closed_circuit"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "camreg_au_tas_hobar_security_camera"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "camreg_au_vic_ballarat_cctv_cameras"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "camreg_au_vic_geelong_closed_circuit"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "camreg_au_wa_perth_security_cameras"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "camreg_az_mesa_city_of_expenditures"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "camreg_bloomington_il_drone_flights"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "camreg_ca_monterey_park_flock_camera"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "camreg_de_delaware_checkbook_expenditure"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "camreg_detroit_mi_project_green_light"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "camreg_elgin_il_lpr_cameras"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "camreg_es_md_madrid_c_maras_de"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "camreg_eu_eea_data_europa_search_api"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "camreg_fl_broward_county_us_palm_beach"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "camreg_fr_92_grand_paris_seine_ouest_vid"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "camreg_ga_brookhaven_flock_camera"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "camreg_ga_flock_cameras_asof"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "camreg_ga_peachtree_corners_flock_camera"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "camreg_ga_savannah_flock_camera"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "camreg_gastonia_nc_flock_condor_cameras"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "camreg_gb_eng_barnet_cctv_camera"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "camreg_gb_eng_barnet_cctv_traffic"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "camreg_gb_eng_brist_cctv_cameras"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "camreg_gb_eng_ipswich_cctv_camera"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "camreg_gb_eng_leice_cctv_cameras"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "camreg_gb_eng_mansf_cctv_cameras"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "camreg_gb_eng_north_cctv_cameras"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "camreg_gb_eng_runny_cctv_cameras"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "camreg_gb_eng_south_skdc_cctv"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "camreg_gb_eng_traff_trafford_cctv"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "camreg_gb_sct_clackmannanshire_cctv"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "camreg_gb_sct_edinburgh_public_cctv"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "camreg_hyattsville_md_cctv_camera_2024"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "camreg_ie_d_dublin_traffic_poles_with"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "camreg_il_chicago_violence_reduction"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "camreg_it_me_messina_videosorveglianza"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "camreg_jeffersonville_in_flock"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "camreg_la_east_baton_rouge_parish_flock"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "camreg_la_new_orleans_eye_on"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "camreg_leon_county_fl_overwatch_viewer"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "camreg_ma_massachusetts_capital"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "camreg_marble_falls_tx_flock_locations"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "camreg_medford_or_drone_deployments_fs"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "camreg_mi_detroit_dpd_shotspotter"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "camreg_milford_ct_flocklprcam"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "camreg_ne_lincoln_traffic_cameras"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "camreg_nj_new_jersey_yourmoney"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "camreg_nv_las_vegas_us_clark_county"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "camreg_oakland_ca_shotspotter_2013_2015"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "camreg_omaha_ne_parks_cameras"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "camreg_peoria_il_drone_usage"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "camreg_pt_11_lisboa_sistema_de"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "camreg_pueblo_co_flock"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "camreg_rocky_mount_nc_lpr_cameras"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "camreg_santa_fe_nm_park_cameras"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "camreg_shelbyville_tn_flock_cameras"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "camreg_si_048_ko_evje_videonadzor_na"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "camreg_south_fulton_ga_lpr_cameras"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "camreg_temecula_ca_flock_wfl1"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "camreg_thomasville_ga_flock_location"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "camreg_ua_18_korosten"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "camreg_us_agency_drone_flight"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "camreg_us_agency_published_flock"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "camreg_us_ate_camera_location_and_per"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "camreg_us_body_worn_camera"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "camreg_us_municipal_contract_expenditure"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "camreg_us_nces_school_survey_on_crime"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "camreg_us_socrata_hosted_vendor"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "camreg_va_pittsylvania_county_stationary"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "camreg_va_prince_william_county"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "camreg_wa_washington_state_open"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "ccops_anchorage_ak"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "ccops_austin_tx"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "ccops_ca_calistoga_police_department"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "ccops_ca_pinole_police_department"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "ccops_ca_san_diego_sunshine_act_goods"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "ccops_columbia_mo"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "ccops_dayton_oh"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "ccops_gb_eng_barnet_traffic_cctv"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "ccops_hi_honolulu_police_department"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "ccops_il_chicago_oig_shotspotter"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "ccops_iso_au_privacy_commissioner"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "ccops_it_tn_trento_provvedimento_dell_11"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "ccops_mi_wayne_county_commission"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "ccops_mn_dayton_police_department"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "ccops_mo_st_louis_fy21_spi_shotspotter"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "ccops_nc_charlotte_mecklenburg_police"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "ccops_nc_elizabeth_city_police"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "ccops_ny_new_york_nyc_comptroller"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "ccops_oh_cincinnati_police_department"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "ccops_ok_oklahoma_city_okc_flock_council"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "ccops_ok_tulsa_flock_policies"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "ccops_ri_narragansett_police_camera"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "ccops_san_diego_ca"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "ccops_san_francisco_bay_ca"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "ccops_san_jose_ca"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "ccops_santa_clara_county_ca"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "ccops_si_085_novo_mesto_evidenca_o"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "ccops_st_louis_mo"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "dot_511_de"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "dot_511_gb"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "dot_511_id"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "dot_511_mi"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "dot_511_nc"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "dot_511_nm"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "dot_511_nv"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "dot_511_vt"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "dot_511_wv"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "grant_il_illinois_gata_csfa"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "grant_ma_massachusetts_law_enforcement"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "grant_oh_ohio_criminal_justice"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "grant_ok_safe_oklahoma_grant"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "grant_us_doj_cops_technology"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "legis_ie_rs_general_scheme"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "legis_pr_pc0489_ley_del"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "legis_pr_pc0560_plan_de"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "legis_pr_rc0740_investigaci_sobre"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "legis_pr_rc0787_resoluci_de"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "legis_pr_rcs0198_resoluci_conjunta"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "legis_pr_rs0604_resoluci_del"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "legis_pr_sistema_nico_de"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "legis_us_federal_register_api"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "legis_vi_legislature_virgin_islands"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "policy_anaheim_ca_pd_policy_manual"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "policy_chicago_il_oemc_link_your"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "policy_lafayette_in_camera_registration"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "policy_maricopa_county_az_mcso_policies"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "policy_norman_ok_alpr_policy_amendment"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "policy_ok_oklahoma_dac_uved"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "policy_us_private_camera_registry"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "policy_zionsville_in_camera_registry"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "procportal_fl_florida_buy_cooperative"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "procportal_ny_northeastern_regional"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "procportal_ok_oklahoma_omes_statewide"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "procportal_pr_consulta_del_registro"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "procportal_tx_texas_dir_cooperative"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "procportal_us_naspo_valuepoint_portfolio"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "procportal_wa_wsipc_rfp_24"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "statrep_ca_california_auditor_alpr"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "statrep_ca_special_parliament_use"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "statrep_fr_cnil_utilisation_de"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "statrep_gb_enforcement_action"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "statrep_gb_eng_seven_cctv_june_2026"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "statrep_gb_sct_joint_assurance_review"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "statrep_gb_uk_algorithmic_transparency"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "statrep_new_york_ny_nyc_doi_oig"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "statrep_tx_ca_nm_ri_fl_il_eff_red_flag"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "statrep_tx_south_padre_island_faa"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "statrep_us_2024_federal_agency"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "statrep_us_dhs_ai_use"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "statrep_us_ice_287_monthly"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "statrep_us_ice_287_participating"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "statrep_us_upturn_mass_extraction_2020"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "statrep_us_wiretap_summary_tables"
+    },
+    {
+      "check": "cadence-coverage",
+      "detail": "cadence coverage recorded ahead of the flip",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": "statrep_vt_vermont_law_enforcement"
+    },
+    {
+      "check": "cron-lint",
+      "detail": "cron + pin lint clean",
+      "layer": "schedule",
+      "status": "pass",
+      "subject": ""
+    },
+    {
+      "check": "shadow-diff",
+      "detail": "no --shadow input (family tickets attach theirs)",
+      "layer": "fixture",
+      "status": "pending",
+      "subject": ""
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "agenda_az_maricopa_county_board_of"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "agenda_bexar_county_tx_agenda_center"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "agenda_durham_nc_agenda_center"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "agenda_frisco_tx_onbase_agenda_online"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "agenda_haskell_ar_resolution_no_19"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "agenda_hialeah_fl_agenda_center"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "agenda_jersey_city_nj_digital_agenda"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "agenda_nd_fargo_city_commission_agendas"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "agenda_pasadena_ca_policy_620_cellular"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "agenda_savannah_ga_2023_05_25"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "agenda_tampa_fl_onbase_agenda_online"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "agenda_tx_dallas_county_commissioners"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "agenda_us_agency_fusus_real"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "camreg_alabaster_al_lpr_cameras"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "camreg_au_ckan_package_search"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "camreg_au_nsw_sydney_street_safety"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "camreg_au_qld_towns_cctv_camera_register"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "camreg_au_tas_emergency_closed_circuit"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "camreg_au_tas_hobar_security_camera"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "camreg_au_vic_ballarat_cctv_cameras"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "camreg_au_vic_geelong_closed_circuit"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "camreg_au_wa_perth_security_cameras"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "camreg_az_mesa_city_of_expenditures"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "camreg_bloomington_il_drone_flights"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "camreg_ca_monterey_park_flock_camera"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "camreg_ct_approximate_speed_safety"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "camreg_dc_private_security_camera"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "camreg_de_delaware_checkbook_expenditure"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "camreg_de_traffic_devices_red"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "camreg_detroit_mi_project_green_light"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "camreg_elgin_il_lpr_cameras"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "camreg_es_md_madrid_c_maras_de"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "camreg_eu_eea_data_europa_search_api"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "camreg_fl_broward_county_us_palm_beach"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "camreg_fl_d3_flock_camera"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "camreg_fl_flock_removal_status"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "camreg_fr_92_grand_paris_seine_ouest_vid"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "camreg_ga_brookhaven_flock_camera"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "camreg_ga_flock_cameras_asof"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "camreg_ga_peachtree_corners_flock_camera"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "camreg_ga_savannah_flock_camera"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "camreg_gastonia_nc_flock_condor_cameras"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "camreg_gb_eng_barnet_cctv_camera"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "camreg_gb_eng_barnet_cctv_traffic"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "camreg_gb_eng_brist_cctv_cameras"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "camreg_gb_eng_ipswich_cctv_camera"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "camreg_gb_eng_leice_cctv_cameras"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "camreg_gb_eng_mansf_cctv_cameras"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "camreg_gb_eng_north_cctv_cameras"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "camreg_gb_eng_runny_cctv_cameras"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "camreg_gb_eng_south_skdc_cctv"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "camreg_gb_eng_traff_trafford_cctv"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "camreg_gb_sct_clackmannanshire_cctv"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "camreg_gb_sct_edinburgh_public_cctv"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "camreg_howard_county_md_schzonehighligh"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "camreg_hyattsville_md_cctv_camera_2024"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "camreg_ie_d_dublin_traffic_poles_with"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "camreg_il_chicago_violence_reduction"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "camreg_it_me_messina_videosorveglianza"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "camreg_jeffersonville_in_flock"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "camreg_la_east_baton_rouge_parish_flock"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "camreg_la_new_orleans_eye_on"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "camreg_leon_county_fl_overwatch_viewer"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "camreg_ma_massachusetts_capital"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "camreg_marble_falls_tx_flock_locations"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "camreg_md_montgomery_county_automated"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "camreg_md_montgomery_county_speedcameras"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "camreg_medford_or_drone_deployments_fs"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "camreg_medford_or_red_light_speed"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "camreg_mi_detroit_dpd_shotspotter"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "camreg_milford_ct_flocklprcam"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "camreg_ne_lincoln_traffic_cameras"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "camreg_nj_new_jersey_yourmoney"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "camreg_nv_las_vegas_us_clark_county"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "camreg_ny_new_york_city_mta_bus"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "camreg_oakland_ca_shotspotter_2013_2015"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "camreg_omaha_ne_parks_cameras"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "camreg_peoria_il_drone_usage"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "camreg_pt_11_lisboa_sistema_de"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "camreg_pueblo_co_flock"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "camreg_rocky_mount_nc_lpr_cameras"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "camreg_santa_fe_nm_park_cameras"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "camreg_shelbyville_tn_flock_cameras"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "camreg_si_048_ko_evje_videonadzor_na"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "camreg_south_fulton_ga_lpr_cameras"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "camreg_suffolk_county_ny_tpva_red_light"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "camreg_temecula_ca_flock_wfl1"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "camreg_thomasville_ga_flock_location"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "camreg_ua_18_korosten"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "camreg_us_agency_drone_flight"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "camreg_us_agency_published_flock"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "camreg_us_ate_camera_location_and_per"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "camreg_us_body_worn_camera"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "camreg_us_municipal_contract_expenditure"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "camreg_us_nces_school_survey_on_crime"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "camreg_us_socrata_hosted_vendor"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "camreg_va_pittsylvania_county_stationary"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "camreg_va_prince_william_county"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "camreg_wa_tacoma_automated_enforcement"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "camreg_wa_washington_state_open"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "ccops_anchorage_ak"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "ccops_austin_tx"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "ccops_ca_calistoga_police_department"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "ccops_ca_pinole_police_department"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "ccops_ca_san_diego_sunshine_act_goods"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "ccops_columbia_mo"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "ccops_dayton_oh"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "ccops_gb_eng_barnet_traffic_cctv"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "ccops_hi_honolulu_police_department"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "ccops_ia_des_moines_city_of_council"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "ccops_il_chicago_oig_shotspotter"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "ccops_iso_au_privacy_commissioner"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "ccops_it_tn_trento_provvedimento_dell_11"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "ccops_mi_wayne_county_commission"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "ccops_mn_dayton_police_department"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "ccops_mo_st_louis_fy21_spi_shotspotter"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "ccops_nc_charlotte_mecklenburg_police"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "ccops_nc_elizabeth_city_police"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "ccops_nc_forsyth_county_us_winston_salem"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "ccops_ny_new_york_nyc_comptroller"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "ccops_oh_cincinnati_police_department"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "ccops_ok_oklahoma_city_okc_flock_council"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "ccops_ok_tulsa_flock_policies"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "ccops_ri_narragansett_police_camera"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "ccops_san_diego_ca"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "ccops_san_francisco_bay_ca"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "ccops_san_jose_ca"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "ccops_santa_clara_county_ca"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "ccops_sc_jasper_county_council_special"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "ccops_si_085_novo_mesto_evidenca_o"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "ccops_st_louis_mo"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "dot_511_de"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "dot_511_gb"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "dot_511_id"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "dot_511_mi"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "dot_511_nc"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "dot_511_nm"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "dot_511_nv"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "dot_511_vt"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "dot_511_wv"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "grant_al_alabama_adeca_newsroom"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "grant_ca_california_bscc_organized"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "grant_fl_florida_legislature_local"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "grant_il_illinois_gata_csfa"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "grant_ma_massachusetts_law_enforcement"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "grant_nj_new_jersey_oag"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "grant_oh_ohio_criminal_justice"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "grant_ok_oklahoma_jag_lle"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "grant_ok_safe_oklahoma_grant"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "grant_tx_texas_dmv_motor"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "grant_us_doj_cops_technology"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "legis_ca_california_code_53166"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "legis_ie_rs_general_scheme"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "legis_pr_pc0489_ley_del"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "legis_pr_pc0560_plan_de"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "legis_pr_rc0740_investigaci_sobre"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "legis_pr_rc0787_resoluci_de"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "legis_pr_rcs0198_resoluci_conjunta"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "legis_pr_rs0604_resoluci_del"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "legis_pr_sistema_nico_de"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "legis_us_dhs_system_records"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "legis_us_federal_register_api"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "legis_vi_legislature_virgin_islands"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "policy_anaheim_ca_pd_policy_manual"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "policy_bangor_me_general_order_59"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "policy_ca_orange_county_policy_610"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "policy_chicago_il_oemc_link_your"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "policy_houston_tx_general_orders"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "policy_lafayette_in_camera_registration"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "policy_little_rock_ar_general_order_332"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "policy_maricopa_county_az_mcso_policies"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "policy_nm_albuquerque_apd_standard"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "policy_norman_ok_alpr_policy_amendment"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "policy_ok_oklahoma_dac_uved"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "policy_st_cloud_mn_area_school_district"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "policy_us_private_camera_registry"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "policy_zionsville_in_camera_registry"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "procportal_davie_fl_notice_intent_award"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "procportal_fl_florida_buy_cooperative"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "procportal_il_cook_county_procurement"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "procportal_ny_northeastern_regional"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "procportal_ok_oklahoma_omes_statewide"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "procportal_pr_consulta_del_registro"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "procportal_tx_texas_dir_cooperative"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "procportal_us_naspo_valuepoint_portfolio"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "procportal_wa_washington_des_statewide"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "procportal_wa_wsipc_rfp_24"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "statrep_ca_california_auditor_alpr"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "statrep_ca_special_parliament_use"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "statrep_co_arvada_facial_recognition"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "statrep_co_colorado_agency_facial"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "statrep_de_delaware_information_analysis"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "statrep_fl_florida_highway_safety"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "statrep_fr_cnil_utilisation_de"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "statrep_gb_enforcement_action"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "statrep_gb_eng_seven_cctv_june_2026"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "statrep_gb_sct_joint_assurance_review"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "statrep_gb_uk_algorithmic_transparency"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "statrep_hi_hawai_judiciary_under"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "statrep_il_illinois_automated_license"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "statrep_il_illinois_freedom_from"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "statrep_md_maryland_legislative_library"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "statrep_md_maryland_required_chapters"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "statrep_me_safety_maine_law"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "statrep_mi_detroit_police_department"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "statrep_mn_agencies_that_use"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "statrep_mn_minnesota_court_administrator"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "statrep_mn_unmanned_aerial_vehicle"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "statrep_nc_onslow_county_schools_gaggle"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "statrep_ne_nebraska_crime_commission"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "statrep_new_york_ny_nyc_doi_oig"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "statrep_ny_whitesboro_central_school"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "statrep_pa_pennsylvania_work_zone"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "statrep_seattle_wa_2024_2025_automated"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "statrep_tx_ca_nm_ri_fl_il_eff_red_flag"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "statrep_tx_south_padre_island_faa"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "statrep_us_2024_federal_agency"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "statrep_us_dhs_ai_use"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "statrep_us_dhs_cbp_border"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "statrep_us_dhs_cbp_pia"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "statrep_us_dhs_component_privacy"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "statrep_us_dhs_obim_pia"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "statrep_us_dhs_privacy_impact"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "statrep_us_ice_287_monthly"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "statrep_us_ice_287_participating"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "statrep_us_upturn_mass_extraction_2020"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "statrep_us_wiretap_summary_tables"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "statrep_va_virginia_alpr_reporting"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "statrep_va_virginia_crime_commission"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "statrep_va_virginia_general_assembly"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "statrep_vt_vermont_law_enforcement"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "statrep_vt_vermont_safety_automated"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "statrep_wa_2026_automated_safety"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "statrep_wa_automated_traffic_safety"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "statrep_wa_facial_recognition_watech"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "statrep_wa_seattle_oig_annual"
+    },
+    {
+      "check": "manual-first-run",
+      "detail": "no run evidence supplied (no live stage yet)",
+      "layer": "live-executed",
+      "status": "pending",
+      "subject": "statrep_wa_washington_attorney_general"
+    },
+    {
+      "check": "technology",
+      "detail": "technology=alpr-fixed",
+      "layer": "typing",
+      "status": "pass",
+      "subject": "flock_city_of_pueblo_co"
+    },
+    {
+      "check": "jurisdiction-key",
+      "detail": "iso.3166_2:US-CO (Pueblo)",
+      "layer": "jurisdiction",
+      "status": "pass",
+      "subject": "flock_city_of_pueblo_co"
+    },
+    {
+      "check": "technology",
+      "detail": "technology=alpr-fixed",
+      "layer": "typing",
+      "status": "pass",
+      "subject": "lpr_cameras_city_of_rocky_mount_nc"
+    },
+    {
+      "check": "jurisdiction-key",
+      "detail": "iso.3166_2:US-NC (Rocky Mount)",
+      "layer": "jurisdiction",
+      "status": "pass",
+      "subject": "lpr_cameras_city_of_rocky_mount_nc"
+    },
+    {
+      "check": "technology",
+      "detail": "technology=alpr-fixed",
+      "layer": "typing",
+      "status": "pass",
+      "subject": "flock_cameras_public_city_of_shelbyville_tn"
+    },
+    {
+      "check": "jurisdiction-key",
+      "detail": "iso.3166_2:US-TN (Shelbyville)",
+      "layer": "jurisdiction",
+      "status": "pass",
+      "subject": "flock_cameras_public_city_of_shelbyville_tn"
+    },
+    {
+      "check": "technology",
+      "detail": "technology=alpr-fixed",
+      "layer": "typing",
+      "status": "pass",
+      "subject": "flock_wfl1_city_of_temecula_ca"
+    },
+    {
+      "check": "jurisdiction-key",
+      "detail": "iso.3166_2:US-CA (Temecula)",
+      "layer": "jurisdiction",
+      "status": "pass",
+      "subject": "flock_wfl1_city_of_temecula_ca"
+    },
+    {
+      "check": "technology",
+      "detail": "technology=alpr-fixed",
+      "layer": "typing",
+      "status": "pass",
+      "subject": "flock_locations_city_of_marble_falls_tx"
+    },
+    {
+      "check": "jurisdiction-key",
+      "detail": "iso.3166_2:US-TX (Marble Falls)",
+      "layer": "jurisdiction",
+      "status": "pass",
+      "subject": "flock_locations_city_of_marble_falls_tx"
+    },
+    {
+      "check": "technology",
+      "detail": "technology=alpr-fixed",
+      "layer": "typing",
+      "status": "pass",
+      "subject": "community_safety_cameras_prince_william_county_va"
+    },
+    {
+      "check": "jurisdiction-key",
+      "detail": "iso.3166_2:US-VA (Prince William County)",
+      "layer": "jurisdiction",
+      "status": "pass",
+      "subject": "community_safety_cameras_prince_william_county_va"
+    },
+    {
+      "check": "technology",
+      "detail": "technology=alpr-fixed",
+      "layer": "typing",
+      "status": "pass",
+      "subject": "flocklprcam_milford_ct"
+    },
+    {
+      "check": "jurisdiction-key",
+      "detail": "iso.3166_2:US-CT (Milford)",
+      "layer": "jurisdiction",
+      "status": "pass",
+      "subject": "flocklprcam_milford_ct"
+    },
+    {
+      "check": "technology",
+      "detail": "technology=alpr-fixed",
+      "layer": "typing",
+      "status": "pass",
+      "subject": "lpr_cameras_city_of_elgin_il"
+    },
+    {
+      "check": "jurisdiction-key",
+      "detail": "iso.3166_2:US-IL (Elgin)",
+      "layer": "jurisdiction",
+      "status": "pass",
+      "subject": "lpr_cameras_city_of_elgin_il"
+    },
+    {
+      "check": "technology",
+      "detail": "technology=alpr-fixed",
+      "layer": "typing",
+      "status": "pass",
+      "subject": "lpr_cameras_city_of_south_fulton_ga"
+    },
+    {
+      "check": "jurisdiction-key",
+      "detail": "iso.3166_2:US-GA (South Fulton)",
+      "layer": "jurisdiction",
+      "status": "pass",
+      "subject": "lpr_cameras_city_of_south_fulton_ga"
+    },
+    {
+      "check": "technology",
+      "detail": "technology=alpr-fixed",
+      "layer": "typing",
+      "status": "pass",
+      "subject": "stationary_lpr_pittsylvania_county_va"
+    },
+    {
+      "check": "jurisdiction-key",
+      "detail": "iso.3166_2:US-VA (Pittsylvania County)",
+      "layer": "jurisdiction",
+      "status": "pass",
+      "subject": "stationary_lpr_pittsylvania_county_va"
+    },
+    {
+      "check": "technology",
+      "detail": "technology=alpr-fixed",
+      "layer": "typing",
+      "status": "pass",
+      "subject": "lpr_cameras_city_of_alabaster_al_staff_account"
+    },
+    {
+      "check": "jurisdiction-key",
+      "detail": "iso.3166_2:US-AL (Alabaster)",
+      "layer": "jurisdiction",
+      "status": "pass",
+      "subject": "lpr_cameras_city_of_alabaster_al_staff_account"
+    },
+    {
+      "check": "technology",
+      "detail": "technology=alpr-fixed",
+      "layer": "typing",
+      "status": "pass",
+      "subject": "flock_location_city_of_thomasville_ga"
+    },
+    {
+      "check": "jurisdiction-key",
+      "detail": "iso.3166_2:US-GA (Thomasville)",
+      "layer": "jurisdiction",
+      "status": "pass",
+      "subject": "flock_location_city_of_thomasville_ga"
+    },
+    {
+      "check": "technology",
+      "detail": "technology=alpr-fixed",
+      "layer": "typing",
+      "status": "pass",
+      "subject": "leon_county_sheriff_s_office_overwatch_viewer_vigilant_fixed_lprs_public_access_cameras"
+    },
+    {
+      "check": "jurisdiction-key",
+      "detail": "iso.3166_2:US-FL (Leon County)",
+      "layer": "jurisdiction",
+      "status": "pass",
+      "subject": "leon_county_sheriff_s_office_overwatch_viewer_vigilant_fixed_lprs_public_access_cameras"
+    },
+    {
+      "check": "technology",
+      "detail": "technology=alpr-fixed",
+      "layer": "typing",
+      "status": "pass",
+      "subject": "flock_camera_location_city_of_peachtree_corners_ga"
+    },
+    {
+      "check": "jurisdiction-key",
+      "detail": "iso.3166_2:US-GA (Peachtree Corners)",
+      "layer": "jurisdiction",
+      "status": "pass",
+      "subject": "flock_camera_location_city_of_peachtree_corners_ga"
+    },
+    {
+      "check": "technology",
+      "detail": "technology=fixed-camera-ptz",
+      "layer": "typing",
+      "status": "pass",
+      "subject": "traffic_cameras_traffic_operations_public_monitoring_cameras_city_of_lincoln"
+    },
+    {
+      "check": "jurisdiction-key",
+      "detail": "iso.3166_2:US-NE (Lincoln)",
+      "layer": "jurisdiction",
+      "status": "pass",
+      "subject": "traffic_cameras_traffic_operations_public_monitoring_cameras_city_of_lincoln"
+    },
+    {
+      "check": "technology",
+      "detail": "technology=fixed-camera-cctv",
+      "layer": "typing",
+      "status": "pass",
+      "subject": "parks_cameras_city_of_omaha_maintained_cameras_college_world_series"
+    },
+    {
+      "check": "jurisdiction-key",
+      "detail": "iso.3166_2:US-NE (Omaha)",
+      "layer": "jurisdiction",
+      "status": "pass",
+      "subject": "parks_cameras_city_of_omaha_maintained_cameras_college_world_series"
+    },
+    {
+      "check": "technology",
+      "detail": "technology=fixed-camera-cctv",
+      "layer": "typing",
+      "status": "pass",
+      "subject": "hyattsville_cctv_camera_program_2024"
+    },
+    {
+      "check": "jurisdiction-key",
+      "detail": "iso.3166_2:US-MD (Hyattsville)",
+      "layer": "jurisdiction",
+      "status": "pass",
+      "subject": "hyattsville_cctv_camera_program_2024"
+    },
+    {
+      "check": "technology",
+      "detail": "technology=alpr-fixed",
+      "layer": "typing",
+      "status": "pass",
+      "subject": "flock_city_of_jeffersonville_in"
+    },
+    {
+      "check": "jurisdiction-key",
+      "detail": "iso.3166_2:US-IN (Jeffersonville)",
+      "layer": "jurisdiction",
+      "status": "pass",
+      "subject": "flock_city_of_jeffersonville_in"
+    },
+    {
+      "check": "technology",
+      "detail": "technology=alpr-fixed",
+      "layer": "typing",
+      "status": "pass",
+      "subject": "flock_camera_locations_flock_camera_map_monterey_park_ca_staff_accounts"
+    },
+    {
+      "check": "jurisdiction-key",
+      "detail": "iso.3166_2:US-CA (Monterey Park)",
+      "layer": "jurisdiction",
+      "status": "pass",
+      "subject": "flock_camera_locations_flock_camera_map_monterey_park_ca_staff_accounts"
+    },
+    {
+      "check": "technology",
+      "detail": "technology=fixed-camera-cctv",
+      "layer": "typing",
+      "status": "pass",
+      "subject": "park_cameras_city_of_santa_fe_park_camera_locations"
+    },
+    {
+      "check": "jurisdiction-key",
+      "detail": "iso.3166_2:US-NM (Santa Fe)",
+      "layer": "jurisdiction",
+      "status": "pass",
+      "subject": "park_cameras_city_of_santa_fe_park_camera_locations"
+    },
+    {
+      "check": "technology",
+      "detail": "technology=alpr-fixed",
+      "layer": "typing",
+      "status": "pass",
+      "subject": "d4_camera_survey_fdot_district_4_row_camera_inventory_form"
+    },
+    {
+      "check": "jurisdiction-key",
+      "detail": "iso.3166_2:US-FL (Broward County;US-FL:Palm Beach County;US-FL:Martin County;US-FL:St. Lucie County;US-FL:Indian River County)",
+      "layer": "jurisdiction",
+      "status": "pass",
+      "subject": "d4_camera_survey_fdot_district_4_row_camera_inventory_form"
+    },
+    {
+      "check": "technology",
+      "detail": "technology=fixed-camera-cctv",
+      "layer": "typing",
+      "status": "pass",
+      "subject": "shotspotter_and_metrocams_wfl1_layers_metrocams_shotspotter"
+    },
+    {
+      "check": "jurisdiction-key",
+      "detail": "iso.3166_2:US-NV (Las Vegas;US-NV:Clark County)",
+      "layer": "jurisdiction",
+      "status": "pass",
+      "subject": "shotspotter_and_metrocams_wfl1_layers_metrocams_shotspotter"
+    },
+    {
+      "check": "technology",
+      "detail": "technology=fixed-camera-unspecified",
+      "layer": "typing",
+      "status": "pass",
+      "subject": "ate_camera_location_and_per_camera_aggregate_datasets_on_us_open_data_portals_socrata_discovery"
+    },
+    {
+      "check": "jurisdiction-key",
+      "detail": "iso.3166_2:US",
+      "layer": "jurisdiction",
+      "status": "pass",
+      "subject": "ate_camera_location_and_per_camera_aggregate_datasets_on_us_open_data_portals_socrata_discovery"
+    },
+    {
+      "check": "technology",
+      "detail": "technology=investigative-platform-unspecified",
+      "layer": "typing",
+      "status": "pass",
+      "subject": "vt_vendor_payments_yearly"
+    },
+    {
+      "check": "jurisdiction-key",
+      "detail": "iso.3166_2:US-VT",
+      "layer": "jurisdiction",
+      "status": "pass",
+      "subject": "vt_vendor_payments_yearly"
+    },
+    {
+      "check": "technology",
+      "detail": "technology=investigative-platform-unspecified",
+      "layer": "typing",
+      "status": "pass",
+      "subject": "ct_open_expenditures_yearly"
+    },
+    {
+      "check": "jurisdiction-key",
+      "detail": "iso.3166_2:US-CT",
+      "layer": "jurisdiction",
+      "status": "pass",
+      "subject": "ct_open_expenditures_yearly"
+    },
+    {
+      "check": "technology",
+      "detail": "technology=investigative-platform-unspecified",
+      "layer": "typing",
+      "status": "pass",
+      "subject": "or_sos_financial_accounting_biennium"
+    },
+    {
+      "check": "jurisdiction-key",
+      "detail": "iso.3166_2:US-OR",
+      "layer": "jurisdiction",
+      "status": "pass",
+      "subject": "or_sos_financial_accounting_biennium"
+    },
+    {
+      "check": "technology",
+      "detail": "technology=investigative-platform-unspecified",
+      "layer": "typing",
+      "status": "pass",
+      "subject": "dallas_vendor_payments_yearly"
+    },
+    {
+      "check": "jurisdiction-key",
+      "detail": "iso.3166_2:US-TX",
+      "layer": "jurisdiction",
+      "status": "pass",
+      "subject": "dallas_vendor_payments_yearly"
+    },
+    {
+      "check": "technology",
+      "detail": "technology=investigative-platform-unspecified",
+      "layer": "typing",
+      "status": "pass",
+      "subject": "cincinnati_vendor_payments_yearly"
+    },
+    {
+      "check": "jurisdiction-key",
+      "detail": "iso.3166_2:US-OH",
+      "layer": "jurisdiction",
+      "status": "pass",
+      "subject": "cincinnati_vendor_payments_yearly"
+    },
+    {
+      "check": "technology",
+      "detail": "technology=investigative-platform-unspecified",
+      "layer": "typing",
+      "status": "pass",
+      "subject": "la_checkbook_yearly"
+    },
+    {
+      "check": "jurisdiction-key",
+      "detail": "iso.3166_2:US-CA",
+      "layer": "jurisdiction",
+      "status": "pass",
+      "subject": "la_checkbook_yearly"
+    },
+    {
+      "check": "technology",
+      "detail": "technology=investigative-platform-unspecified",
+      "layer": "typing",
+      "status": "pass",
+      "subject": "cook_county_check_register_yearly"
+    },
+    {
+      "check": "jurisdiction-key",
+      "detail": "iso.3166_2:US-IL",
+      "layer": "jurisdiction",
+      "status": "pass",
+      "subject": "cook_county_check_register_yearly"
+    },
+    {
+      "check": "technology",
+      "detail": "technology=investigative-platform-unspecified",
+      "layer": "typing",
+      "status": "pass",
+      "subject": "baton_rouge_checkbook_yearly"
+    },
+    {
+      "check": "jurisdiction-key",
+      "detail": "iso.3166_2:US-LA",
+      "layer": "jurisdiction",
+      "status": "pass",
+      "subject": "baton_rouge_checkbook_yearly"
+    },
+    {
+      "check": "technology",
+      "detail": "technology=investigative-platform-unspecified",
+      "layer": "typing",
+      "status": "pass",
+      "subject": "atlanta_checkbook_ledger_yearly"
+    },
+    {
+      "check": "jurisdiction-key",
+      "detail": "iso.3166_2:US-GA",
+      "layer": "jurisdiction",
+      "status": "pass",
+      "subject": "atlanta_checkbook_ledger_yearly"
+    },
+    {
+      "check": "technology",
+      "detail": "technology=investigative-platform-unspecified",
+      "layer": "typing",
+      "status": "pass",
+      "subject": "college_station_checkbook_yearly"
+    },
+    {
+      "check": "jurisdiction-key",
+      "detail": "iso.3166_2:US-TX",
+      "layer": "jurisdiction",
+      "status": "pass",
+      "subject": "college_station_checkbook_yearly"
+    },
+    {
+      "check": "technology",
+      "detail": "technology=investigative-platform-unspecified",
+      "layer": "typing",
+      "status": "pass",
+      "subject": "providence_expenditures_yearly"
+    },
+    {
+      "check": "jurisdiction-key",
+      "detail": "iso.3166_2:US-RI",
+      "layer": "jurisdiction",
+      "status": "pass",
+      "subject": "providence_expenditures_yearly"
+    },
+    {
+      "check": "technology",
+      "detail": "technology=investigative-platform-unspecified",
+      "layer": "typing",
+      "status": "pass",
+      "subject": "cook_county_awarded_contracts_yearly"
+    },
+    {
+      "check": "jurisdiction-key",
+      "detail": "iso.3166_2:US-IL",
+      "layer": "jurisdiction",
+      "status": "pass",
+      "subject": "cook_county_awarded_contracts_yearly"
+    },
+    {
+      "check": "technology",
+      "detail": "technology=investigative-platform-unspecified",
+      "layer": "typing",
+      "status": "pass",
+      "subject": "tx_dir_vsr_fy26_vendor_fy"
+    },
+    {
+      "check": "jurisdiction-key",
+      "detail": "iso.3166_2:US-TX",
+      "layer": "jurisdiction",
+      "status": "pass",
+      "subject": "tx_dir_vsr_fy26_vendor_fy"
+    },
+    {
+      "check": "technology",
+      "detail": "technology=investigative-platform-unspecified",
+      "layer": "typing",
+      "status": "pass",
+      "subject": "tx_dir_vsr_archive_vendor_fy"
+    },
+    {
+      "check": "jurisdiction-key",
+      "detail": "iso.3166_2:US-TX",
+      "layer": "jurisdiction",
+      "status": "pass",
+      "subject": "tx_dir_vsr_archive_vendor_fy"
+    },
+    {
+      "check": "technology",
+      "detail": "technology=investigative-platform-unspecified",
+      "layer": "typing",
+      "status": "pass",
+      "subject": "mesa_expenditures_vendor_fy"
+    },
+    {
+      "check": "jurisdiction-key",
+      "detail": "iso.3166_2:US-AZ",
+      "layer": "jurisdiction",
+      "status": "pass",
+      "subject": "mesa_expenditures_vendor_fy"
+    },
+    {
+      "check": "technology",
+      "detail": "technology=investigative-platform-unspecified",
+      "layer": "typing",
+      "status": "pass",
+      "subject": "delaware_checkbook_vendor_fy"
+    },
+    {
+      "check": "jurisdiction-key",
+      "detail": "iso.3166_2:US-DE",
+      "layer": "jurisdiction",
+      "status": "pass",
+      "subject": "delaware_checkbook_vendor_fy"
+    },
+    {
+      "check": "technology",
+      "detail": "technology=investigative-platform-unspecified",
+      "layer": "typing",
+      "status": "pass",
+      "subject": "nj_yourmoney_vendor_fy"
+    },
+    {
+      "check": "jurisdiction-key",
+      "detail": "iso.3166_2:US-NJ",
+      "layer": "jurisdiction",
+      "status": "pass",
+      "subject": "nj_yourmoney_vendor_fy"
+    },
+    {
+      "check": "technology",
+      "detail": "technology=gunshot-detection-fixed",
+      "layer": "typing",
+      "status": "pass",
+      "subject": "oakland_shotspotter_2013_2014"
+    },
+    {
+      "check": "jurisdiction-key",
+      "detail": "iso.3166_2:US-CA",
+      "layer": "jurisdiction",
+      "status": "pass",
+      "subject": "oakland_shotspotter_2013_2014"
+    },
+    {
+      "check": "technology",
+      "detail": "technology=gunshot-detection-fixed",
+      "layer": "typing",
+      "status": "pass",
+      "subject": "oakland_shotspotter_2015_09_10"
+    },
+    {
+      "check": "jurisdiction-key",
+      "detail": "iso.3166_2:US-CA",
+      "layer": "jurisdiction",
+      "status": "pass",
+      "subject": "oakland_shotspotter_2015_09_10"
+    },
+    {
+      "check": "technology",
+      "detail": "technology=gunshot-detection-fixed",
+      "layer": "typing",
+      "status": "pass",
+      "subject": "oakland_shotspotter_2015_07_08a"
+    },
+    {
+      "check": "jurisdiction-key",
+      "detail": "iso.3166_2:US-CA",
+      "layer": "jurisdiction",
+      "status": "pass",
+      "subject": "oakland_shotspotter_2015_07_08a"
+    },
+    {
+      "check": "technology",
+      "detail": "technology=gunshot-detection-fixed",
+      "layer": "typing",
+      "status": "pass",
+      "subject": "oakland_shotspotter_2015_08_09b"
+    },
+    {
+      "check": "jurisdiction-key",
+      "detail": "iso.3166_2:US-CA",
+      "layer": "jurisdiction",
+      "status": "pass",
+      "subject": "oakland_shotspotter_2015_08_09b"
+    },
+    {
+      "check": "technology",
+      "detail": "technology=gunshot-detection-fixed",
+      "layer": "typing",
+      "status": "pass",
+      "subject": "oakland_shotspotter_2015_08_08a"
+    },
+    {
+      "check": "jurisdiction-key",
+      "detail": "iso.3166_2:US-CA",
+      "layer": "jurisdiction",
+      "status": "pass",
+      "subject": "oakland_shotspotter_2015_08_08a"
+    },
+    {
+      "check": "technology",
+      "detail": "technology=gunshot-detection-fixed",
+      "layer": "typing",
+      "status": "pass",
+      "subject": "chicago_shotspotter_district_month"
+    },
+    {
+      "check": "jurisdiction-key",
+      "detail": "iso.3166_2:US-IL",
+      "layer": "jurisdiction",
+      "status": "pass",
+      "subject": "chicago_shotspotter_district_month"
+    },
+    {
+      "check": "technology",
+      "detail": "technology=gunshot-detection-fixed",
+      "layer": "typing",
+      "status": "pass",
+      "subject": "detroit_shotspotter_district_2023"
+    },
+    {
+      "check": "jurisdiction-key",
+      "detail": "iso.3166_2:US-MI",
+      "layer": "jurisdiction",
+      "status": "pass",
+      "subject": "detroit_shotspotter_district_2023"
+    },
+    {
+      "check": "technology",
+      "detail": "technology=gunshot-detection-fixed",
+      "layer": "typing",
+      "status": "pass",
+      "subject": "detroit_shotspotter_district_2024"
+    },
+    {
+      "check": "jurisdiction-key",
+      "detail": "iso.3166_2:US-MI",
+      "layer": "jurisdiction",
+      "status": "pass",
+      "subject": "detroit_shotspotter_district_2024"
+    },
+    {
+      "check": "technology",
+      "detail": "technology=gunshot-detection-fixed",
+      "layer": "typing",
+      "status": "pass",
+      "subject": "detroit_shotspotter_district_2025"
+    },
+    {
+      "check": "jurisdiction-key",
+      "detail": "iso.3166_2:US-MI",
+      "layer": "jurisdiction",
+      "status": "pass",
+      "subject": "detroit_shotspotter_district_2025"
+    },
+    {
+      "check": "technology",
+      "detail": "technology=gunshot-detection-fixed",
+      "layer": "typing",
+      "status": "pass",
+      "subject": "detroit_shotspotter_district_2026"
+    },
+    {
+      "check": "jurisdiction-key",
+      "detail": "iso.3166_2:US-MI",
+      "layer": "jurisdiction",
+      "status": "pass",
+      "subject": "detroit_shotspotter_district_2026"
+    },
+    {
+      "check": "technology",
+      "detail": "technology=fixed-camera-ptz",
+      "layer": "typing",
+      "status": "pass",
+      "subject": "traffic_devices_camera_de_boundary_and_point_layer_26"
+    },
+    {
+      "check": "jurisdiction-key",
+      "detail": "iso.3166_2:US-DE",
+      "layer": "jurisdiction",
+      "status": "pass",
+      "subject": "traffic_devices_camera_de_boundary_and_point_layer_26"
+    },
+    {
+      "check": "technology",
+      "detail": "technology=ate-red-light",
+      "layer": "typing",
+      "status": "pass",
+      "subject": "deldot_red_light"
+    },
+    {
+      "check": "jurisdiction-key",
+      "detail": "iso.3166_2:US-DE",
+      "layer": "jurisdiction",
+      "status": "pass",
+      "subject": "deldot_red_light"
+    },
+    {
+      "check": "technology",
+      "detail": "technology=fixed-camera-ptz",
+      "layer": "typing",
+      "status": "pass",
+      "subject": "its_devicelist_devicelocdetail"
+    },
+    {
+      "check": "jurisdiction-key",
+      "detail": "iso.3166_2:US-VT",
+      "layer": "jurisdiction",
+      "status": "pass",
+      "subject": "its_devicelist_devicelocdetail"
+    },
+    {
+      "check": "technology",
+      "detail": "technology=fixed-camera-ptz",
+      "layer": "typing",
+      "status": "pass",
+      "subject": "cctv_wvdoh_wvdot_assets_mapserver_layer_22"
+    },
+    {
+      "check": "jurisdiction-key",
+      "detail": "iso.3166_2:US-WV",
+      "layer": "jurisdiction",
+      "status": "pass",
+      "subject": "cctv_wvdoh_wvdot_assets_mapserver_layer_22"
+    },
+    {
+      "check": "technology",
+      "detail": "technology=fixed-camera-ptz",
+      "layer": "typing",
+      "status": "pass",
+      "subject": "midrive_cameras"
+    },
+    {
+      "check": "jurisdiction-key",
+      "detail": "iso.3166_2:US-MI",
+      "layer": "jurisdiction",
+      "status": "pass",
+      "subject": "midrive_cameras"
+    },
+    {
+      "check": "technology",
+      "detail": "technology=fixed-camera-ptz",
+      "layer": "typing",
+      "status": "pass",
+      "subject": "ncdot_cameras"
+    },
+    {
+      "check": "jurisdiction-key",
+      "detail": "iso.3166_2:US-NC",
+      "layer": "jurisdiction",
+      "status": "pass",
+      "subject": "ncdot_cameras"
+    },
+    {
+      "check": "technology",
+      "detail": "technology=fixed-camera-ptz",
+      "layer": "typing",
+      "status": "pass",
+      "subject": "cctv_wvpa_wvdot_assets_mapserver_layer_23"
+    },
+    {
+      "check": "jurisdiction-key",
+      "detail": "iso.3166_2:US-WV",
+      "layer": "jurisdiction",
+      "status": "pass",
+      "subject": "cctv_wvpa_wvdot_assets_mapserver_layer_23"
+    },
+    {
+      "check": "technology",
+      "detail": "technology=fixed-camera-ptz",
+      "layer": "typing",
+      "status": "pass",
+      "subject": "statewide_cctv_view"
+    },
+    {
+      "check": "jurisdiction-key",
+      "detail": "iso.3166_2:US-NM",
+      "layer": "jurisdiction",
+      "status": "pass",
+      "subject": "statewide_cctv_view"
+    },
+    {
+      "check": "technology",
+      "detail": "technology=fixed-camera-ptz",
+      "layer": "typing",
+      "status": "pass",
+      "subject": "its_atm_existing_devices_ndot_statewide_its_atm_masterplan_layer_3"
+    },
+    {
+      "check": "jurisdiction-key",
+      "detail": "iso.3166_2:US-NV",
+      "layer": "jurisdiction",
+      "status": "pass",
+      "subject": "its_atm_existing_devices_ndot_statewide_its_atm_masterplan_layer_3"
+    },
+    {
+      "check": "technology",
+      "detail": "technology=fixed-camera-ptz",
+      "layer": "typing",
+      "status": "pass",
+      "subject": "closed_circuit_television_cctv_itd_intelligenttransportationsystems_layer_0"
+    },
+    {
+      "check": "jurisdiction-key",
+      "detail": "iso.3166_2:US-ID",
+      "layer": "jurisdiction",
+      "status": "pass",
+      "subject": "closed_circuit_television_cctv_itd_intelligenttransportationsystems_layer_0"
+    },
+    {
+      "check": "expected-merges",
+      "detail": "no input (camera_site_run/match counts)",
+      "layer": "er",
+      "status": "pending",
+      "subject": ""
+    },
+    {
+      "check": "coverage-delta",
+      "detail": "no input (per-dimension delta (ACQ-01 coverage-delta))",
+      "layer": "coverage",
+      "status": "pending",
+      "subject": ""
+    },
+    {
+      "check": "release-appearance",
+      "detail": "no input (G3 V1\u2013V14 on the Class S candidate)",
+      "layer": "public",
+      "status": "pending",
+      "subject": ""
+    }
+  ],
+  "ok": false,
+  "schema": "sig.wave-verify/1"
+}
