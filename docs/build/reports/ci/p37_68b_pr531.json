@@ -1,0 +1,200 @@
+{
+  "schema": "ci-boundary/1",
+  "tool": "docs/build/tools/ci_boundary.py",
+  "requested_pr": 531,
+  "pr": 531,
+  "head_sha": "4d7ca45525636ece03ca52e3d51549681f965317",
+  "head_ref": "r11/P37.68b-ux-capstone-journalist-journeys",
+  "base": "main",
+  "read_at": "2026-11-18T21:23:43Z",
+  "prefix": "r11/",
+  "scope": "the current r11/ PR and its open r11/ ancestors; never #141–#190",
+  "required": [
+    "python",
+    "docs",
+    "composed",
+    "security",
+    "web"
+  ],
+  "stack": [
+    {
+      "pr": 531,
+      "head_ref": "r11/P37.68b-ux-capstone-journalist-journeys",
+      "head_sha": "4d7ca45525636ece03ca52e3d51549681f965317",
+      "base": "main",
+      "pr_state": "OPEN",
+      "is_draft": false,
+      "mergeable": "MERGEABLE",
+      "state": "pass",
+      "detail": null
+    }
+  ],
+  "stack_stop": "base `main` is outside the `r11/` scope — the Round-10 stack (#141–#190) is never read (B-15)",
+  "stack_digest": "6854f9b9619779e8678f477e2963657b28b2c054777201a0adc062eba8c47bd5",
+  "local_head": "4d7ca45525636ece03ca52e3d51549681f965317",
+  "external": {
+    "read_at": "2026-11-18T21:23:44Z",
+    "since": "2026-11-18",
+    "fetch": "ok",
+    "main_sha": "07c4a4ced34108ae58d9372b2b659560f6d1d591",
+    "chain_descends": false,
+    "descends_note": "origin/main 07c4a4c is not an ancestor of the tip — main carries commits the chain does not contain (the chain trails main, merged late by the operator)",
+    "ancestry": [],
+    "merged_since": [
+      {
+        "number": 530,
+        "head_ref": "r11/P37.68a-ux-capstone-advocate-journeys",
+        "head_sha": "c9cde456a5aed2af1e53e9b5d7dbd38ec7cfc3f7",
+        "base": "main",
+        "merged_at": "2026-11-18T20:26:53Z",
+        "on_stack": true
+      },
+      {
+        "number": 529,
+        "head_ref": "r11/P37.67-stream-l-re-measure",
+        "head_sha": "8ebb0f1e730b167b31b51e55bbb0401a48d9fffa",
+        "base": "main",
+        "merged_at": "2026-11-18T18:42:48Z",
+        "on_stack": true
+      },
+      {
+        "number": 528,
+        "head_ref": "r11/ops-release-infra-apply-fixes",
+        "head_sha": "11302e275fe059b600e8036ba90fff9ed846ce0a",
+        "base": "main",
+        "merged_at": "2026-11-18T16:27:48Z",
+        "on_stack": true
+      },
+      {
+        "number": 527,
+        "head_ref": "r11/P37.66-coverage-outcome-and-acquisition-closeout",
+        "head_sha": "3d776b6090c37dfaa397ee5ee48ccf3f19e4a468",
+        "base": "main",
+        "merged_at": "2026-11-18T10:51:32Z",
+        "on_stack": true
+      },
+      {
+        "number": 526,
+        "head_ref": "r11/P37.65b-final-readout-and-promotion",
+        "head_sha": "a2bc86d9e18f02655c49b74686e476387feb8d13",
+        "base": "main",
+        "merged_at": "2026-11-18T09:05:58Z",
+        "on_stack": true
+      },
+      {
+        "number": 525,
+        "head_ref": "r11/P37.65a-final-release-cut-crawl-scrub-audit",
+        "head_sha": "b5a7f0237fa7f33d5d63285e50f7aa5e11d28fe1",
+        "base": "main",
+        "merged_at": "2026-11-18T07:28:21Z",
+        "on_stack": true
+      },
+      {
+        "number": 524,
+        "head_ref": "r11/P37.64-entity-graph-dossier-figure-acceptance",
+        "head_sha": "15b5673dbfe449e0505173fa5876855713cfc264",
+        "base": "main",
+        "merged_at": "2026-11-18T05:22:01Z",
+        "on_stack": true
+      },
+      {
+        "number": 523,
+        "head_ref": "r11/P37.63-map-acceptance-and-republish",
+        "head_sha": "91c80e8a61b37a1f19168c46f4590cda9a870be2",
+        "base": "main",
+        "merged_at": "2026-11-18T02:12:07Z",
+        "on_stack": true
+      }
+    ],
+    "open_off_chain": []
+  },
+  "flake_entries": [
+    "LH-PERF-1",
+    "PY-SUBSTR-1",
+    "DOCKERHUB-RATE-1",
+    "DOCKERHUB-RATE-2",
+    "DOCKERHUB-RATE-3",
+    "NPM-AUDIT-503-1",
+    "PY-STUB-1"
+  ],
+  "reruns": [],
+  "checks": [
+    {
+      "pr": 531,
+      "name": "python",
+      "required": true,
+      "check_run_id": 135103609252,
+      "run_id": "44389681108",
+      "status": "completed",
+      "conclusion": "success",
+      "bucket": "pass",
+      "started_at": "2026-11-18T20:18:46Z",
+      "completed_at": "2026-11-18T20:38:49Z",
+      "link": "https://github.com/SteveVitali/Eleutheria/actions/runs/44389681108/job/135103609252",
+      "waived": false
+    },
+    {
+      "pr": 531,
+      "name": "docs",
+      "required": true,
+      "check_run_id": 135103608698,
+      "run_id": "44389681108",
+      "status": "completed",
+      "conclusion": "success",
+      "bucket": "pass",
+      "started_at": "2026-11-18T20:18:46Z",
+      "completed_at": "2026-11-18T20:21:19Z",
+      "link": "https://github.com/SteveVitali/Eleutheria/actions/runs/44389681108/job/135103608698",
+      "waived": false
+    },
+    {
+      "pr": 531,
+      "name": "composed",
+      "required": true,
+      "check_run_id": 135103609253,
+      "run_id": "44389681108",
+      "status": "completed",
+      "conclusion": "success",
+      "bucket": "pass",
+      "started_at": "2026-11-18T20:18:46Z",
+      "completed_at": "2026-11-18T20:22:47Z",
+      "link": "https://github.com/SteveVitali/Eleutheria/actions/runs/44389681108/job/135103609253",
+      "waived": false
+    },
+    {
+      "pr": 531,
+      "name": "security",
+      "required": true,
+      "check_run_id": 135103609143,
+      "run_id": "44389681108",
+      "status": "completed",
+      "conclusion": "success",
+      "bucket": "pass",
+      "started_at": "2026-11-18T20:18:46Z",
+      "completed_at": "2026-11-18T20:19:22Z",
+      "link": "https://github.com/SteveVitali/Eleutheria/actions/runs/44389681108/job/135103609143",
+      "waived": false
+    },
+    {
+      "pr": 531,
+      "name": "web",
+      "required": true,
+      "check_run_id": 135103609359,
+      "run_id": "44389681108",
+      "status": "completed",
+      "conclusion": "success",
+      "bucket": "pass",
+      "started_at": "2026-11-18T20:18:46Z",
+      "completed_at": "2026-11-18T21:22:03Z",
+      "link": "https://github.com/SteveVitali/Eleutheria/actions/runs/44389681108/job/135103609359",
+      "waived": false
+    }
+  ],
+  "waivers": 5,
+  "polls": 1,
+  "waited_s": 0.0,
+  "state": "pass",
+  "kind": null,
+  "line": "ci: pass #531@4d7ca45 (python 44389681108; docs 44389681108; composed 44389681108; security 44389681108; web 44389681108) · main: 07c4a4c descends:no merges:8 open-other:0",
+  "exit": 0
+}
