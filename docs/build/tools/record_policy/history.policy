@@ -1728,3 +1728,15 @@ seed-commit 6044be29
 # LEDGER.md PHASE LOG line only; no other commit borrows the exemption.
 seed-commit 990f3467
 seed-commit e8341fc0
+
+# 72490776 — P37.68a D-P37.68a-1:e0 landing repair (run 44338725988 docs
+# red): the committed migration anchor's landing named `P37.65`, which is
+# never a manifest chain row (V9 — `P37.65a`/`P37.65b` are the rows), so
+# the commit rewrote the landing to the sibling convention `P37.65b
+# promotes the candidate; …`. The committed bytes were unlawful as
+# written (the token can never resolve), the BM-HIST-01 forward-repair
+# path under the f0ecc4d6/990f3467 precedent; the DEFERRALS row, event_id,
+# chain position and anchor hash are unchanged. Scope: the append-only
+# finding attributed to 72490776's rewritten events.jsonl e0 line only;
+# no other commit borrows the exemption.
+seed-commit 72490776
