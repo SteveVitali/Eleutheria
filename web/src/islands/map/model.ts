@@ -1019,7 +1019,7 @@ export function tileSiteRowsInView(
  * plurality jurisdiction `jp` with its count + single-source share.
  */
 export function tilePlaceRowsInView(
-  cells: { props: TileCellProps; compartment: string }[],
+  cells: { props: TileCellProps; compartment: string; lon: number; lat: number }[],
   slice: CellSlice,
   dict: FacetDict,
   hrefs: { jurisdictionHref?: (jkey: string) => string | null } = {},
@@ -1027,7 +1027,14 @@ export function tilePlaceRowsInView(
   const seen = new Set<string>();
   const groups = new Map<
     string,
-    { count: number; single: number; total: number; lat: number; lon: number }
+    {
+      count: number;
+      single: number;
+      total: number;
+      latSum: number;
+      lonSum: number;
+      cells: number;
+    }
   >();
   for (const c of cells) {
     const h3 = String(c.props.h3 ?? "");
@@ -1036,10 +1043,14 @@ export function tilePlaceRowsInView(
     if (seen.has(key)) continue;
     seen.add(key);
     const jp = String(c.props.jp ?? "unplaced");
-    const g = groups.get(jp) ?? { count: 0, single: 0, total: 0, lat: 0, lon: 0 };
+    const g =
+      groups.get(jp) ?? { count: 0, single: 0, total: 0, latSum: 0, lonSum: 0, cells: 0 };
     g.count += cellSliceValue(c.props, slice);
     g.single += typeof c.props.s1 === "number" ? c.props.s1 : 0;
     g.total += typeof c.props.n === "number" ? c.props.n : 0;
+    g.latSum += c.lat;
+    g.lonSum += c.lon;
+    g.cells += 1;
     groups.set(jp, g);
   }
   let matching = 0;
@@ -1053,6 +1064,16 @@ export function tilePlaceRowsInView(
       Array.isArray(jdoc?.bbox) && jdoc.bbox.length === 4
         ? (jdoc.bbox as [number, number, number, number])
         : null;
+    // Without a dict jurisdiction bbox (dict.json absent — e.g. the national
+    // build's declared-artifact gap) the row still must drill: frame the mean
+    // of the group's OWN drawn cell centroids — evidence already on the wire,
+    // never a fabricated extent — at the zoom where site rows take over.
+    const frame =
+      bbox != null
+        ? { lat: (bbox[1] + bbox[3]) / 2, lon: (bbox[0] + bbox[2]) / 2, zoom: NATIONAL_ZOOM_MAX + 1 }
+        : g.cells > 0
+          ? { lat: g.latSum / g.cells, lon: g.lonSum / g.cells, zoom: NATIONAL_ZOOM_MAX + 1 }
+          : undefined;
     rows.push({
       id: jp,
       label: `${name} — ${g.count} record${g.count === 1 ? "" : "s"}`,
@@ -1060,9 +1081,7 @@ export function tilePlaceRowsInView(
         `${g.count} record${g.count === 1 ? "" : "s"} in view` +
         (singleShare !== null ? ` · 1 source: ${singleShare}%` : ""),
       selectId: null,
-      frame: bbox
-        ? { lat: (bbox[1] + bbox[3]) / 2, lon: (bbox[0] + bbox[2]) / 2, zoom: NATIONAL_ZOOM_MAX + 1 }
-        : undefined,
+      frame,
       bbox: bbox ?? undefined,
       dossierHref: hrefs.jurisdictionHref?.(jp) ?? null,
       listHref: null,

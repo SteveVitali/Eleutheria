@@ -783,17 +783,27 @@ export default function MapApp(props: MapAppProps): JSX.Element {
     [facets, zoom, tileMode],
   );
 
-  const filteredRecords = useMemo(
-    () => props.records.filter((r) => recordPasses(r, appliedFacets)),
-    [props.records, appliedFacets],
-  );
-
   const activeCompartments = useMemo(
     () =>
       state.collectionSpecified
         ? new Set(state.collection)
         : new Set(props.compartments.map((c) => c.id)),
     [state.collection, state.collectionSpecified, props.compartments],
+  );
+
+  const filteredRecords = useMemo(
+    // P37.63 (K1 §9 compartment toggling): the non-tile path must honour the
+    // same compartment set the tile layers honour — before this fix the
+    // toggle was cosmetic under the point model (records stayed drawn and
+    // listed with the compartment unchecked). A record with no compartment
+    // is not governed by any toggle (its licence is the per-row line).
+    () =>
+      props.records.filter(
+        (r) =>
+          recordPasses(r, appliedFacets) &&
+          (r.compartment == null || activeCompartments.has(r.compartment)),
+      ),
+    [props.records, appliedFacets, activeCompartments],
   );
 
   // P37.18: the release dictionary (`sig.map-dict/1`) — tile path only; a
@@ -1021,6 +1031,23 @@ export default function MapApp(props: MapAppProps): JSX.Element {
         });
 
         map.on("moveend", () => refreshList());
+        // P37.63: a tile archive finishes loading AFTER the first moveend —
+        // without this the In-view list and the summed cells keep whatever
+        // querySourceFeatures saw on arrival (0 records under a cold at=
+        // deep link — a stale-count defect the acceptance battery caught).
+        // Re-list only on the compartment tile sources' own data events:
+        // refreshList's setData targets other source ids, so it can never
+        // retrigger itself.
+        map.on("sourcedata", (e) => {
+          if (!e.isSourceLoaded) return;
+          const sid = (e as { sourceId?: string }).sourceId ?? "";
+          for (const c of tileCompartments.current) {
+            if (sid === compartmentSourceId(c)) {
+              refreshList();
+              return;
+            }
+          }
+        });
         map.on("zoom", () => setZoom(map!.getZoom()));
       } catch {
         if (!cancelled) setFailed(true);
@@ -1211,6 +1238,55 @@ export default function MapApp(props: MapAppProps): JSX.Element {
     update,
   ]);
 
+  // ---------------------------------------------- tile-prop selection //
+  // Declared before the selection effects: the focus effect resolves a
+  // focus= rk through this same path under tileMode (P37.63).
+  const selectTileProps = useCallback(
+    (p: Record<string, unknown>, lngLat: { lng: number; lat: number }) => {
+      const rk = String(p.rk ?? "");
+      const rel = state.release ?? props.release;
+      const routes = rel && rk ? recordRoutes(rel, rk) : null;
+      const model = selectionFromTileProps(
+        p as Parameters<typeof selectionFromTileProps>[0],
+        {
+          recordPageHref: routes?.pageHref ?? null,
+          disputeHref: rk ? withBase(`dispute/?subject=${encodeURIComponent(rk)}`) : null,
+        },
+      );
+      setSelection(model);
+      setTab("selected");
+      // P37.63 (K1 §3.4/§9.3 J1): the selection must round-trip through the
+      // share URL — focus= is the workspace-state selection param, so a
+      // tile-path select writes it exactly like the fixtures path does.
+      if (rk && state.focus !== rk) update({ focus: rk });
+      // Small anchored popup: title + "Details →" (K1 §4.5). DOM-only, text.
+      const ml = mlRef.current;
+      const map = mapRef.current;
+      if (ml && map) {
+        const el = document.createElement("div");
+        el.className = "sig-map-popup";
+        const h = document.createElement("h3");
+        h.textContent = model.label;
+        el.appendChild(h);
+        const a = document.createElement("a");
+        a.href = "#";
+        a.textContent = "Details →";
+        a.addEventListener("click", (ev) => {
+          ev.preventDefault();
+          setTab("selected");
+        });
+        el.appendChild(a);
+        popupRef.current?.remove();
+        const popup = new ml.Popup({ closeButton: true })
+          .setLngLat([lngLat.lng, lngLat.lat])
+          .setDOMContent(el)
+          .addTo(map);
+        popupRef.current = popup;
+      }
+    },
+    [state.release, state.focus, props.release, update],
+  );
+
   // ------------------------------------------------- selection effects //
   useEffect(() => {
     const focus = state.focus;
@@ -1220,6 +1296,19 @@ export default function MapApp(props: MapAppProps): JSX.Element {
       setStatements([]);
       popupRef.current?.remove();
       popupRef.current = null;
+      return;
+    }
+    // P37.63: under tiles the rk resolves against the DRAWN sites — the same
+    // model the canvas/list click builds; recordById is fixtures-path only.
+    // An off-view focus= falls through to the record fetch / named absence
+    // below, and the late-resolver (after selectTileProps) re-tries once the
+    // linked view's tiles draw.
+    const tileHit = tileMode ? tileByRk.current.get(focus) : undefined;
+    if (tileHit) {
+      selectTileProps(
+        tileHit.props as Record<string, unknown>,
+        tileHit.lngLat,
+      );
       return;
     }
     const rec = recordById.get(focus);
@@ -1345,7 +1434,7 @@ export default function MapApp(props: MapAppProps): JSX.Element {
       disputeHref: null,
       located: false,
     });
-  }, [state.focus, state.release, props.release, recordById]);
+  }, [state.focus, state.release, props.release, recordById, tileMode, selectTileProps]);
 
   // P37.18 (K1 §4.6): selecting a record scrolls its In-view row into view.
   useEffect(() => {
@@ -1354,49 +1443,6 @@ export default function MapApp(props: MapAppProps): JSX.Element {
       ?.querySelector<HTMLElement>(`[data-record-id="${CSS.escape(state.focus)}"]`)
       ?.scrollIntoView({ block: "nearest" });
   }, [state.focus, viewRows]);
-
-  // ---------------------------------------------- tile-prop selection //
-  const selectTileProps = useCallback(
-    (p: Record<string, unknown>, lngLat: { lng: number; lat: number }) => {
-      const rk = String(p.rk ?? "");
-      const rel = state.release ?? props.release;
-      const routes = rel && rk ? recordRoutes(rel, rk) : null;
-      const model = selectionFromTileProps(
-        p as Parameters<typeof selectionFromTileProps>[0],
-        {
-          recordPageHref: routes?.pageHref ?? null,
-          disputeHref: rk ? withBase(`dispute/?subject=${encodeURIComponent(rk)}`) : null,
-        },
-      );
-      setSelection(model);
-      setTab("selected");
-      // Small anchored popup: title + "Details →" (K1 §4.5). DOM-only, text.
-      const ml = mlRef.current;
-      const map = mapRef.current;
-      if (ml && map) {
-        const el = document.createElement("div");
-        el.className = "sig-map-popup";
-        const h = document.createElement("h3");
-        h.textContent = model.label;
-        el.appendChild(h);
-        const a = document.createElement("a");
-        a.href = "#";
-        a.textContent = "Details →";
-        a.addEventListener("click", (ev) => {
-          ev.preventDefault();
-          setTab("selected");
-        });
-        el.appendChild(a);
-        popupRef.current?.remove();
-        const popup = new ml.Popup({ closeButton: true })
-          .setLngLat([lngLat.lng, lngLat.lat])
-          .setDOMContent(el)
-          .addTo(map);
-        popupRef.current = popup;
-      }
-    },
-    [state.release, props.release],
-  );
 
   // Wire tile-layer clicks after the map loads (kept out of the effect's
   // dependency churn by a registration helper the loader also re-runs after
@@ -1422,6 +1468,21 @@ export default function MapApp(props: MapAppProps): JSX.Element {
       for (const id of layerIds) map.off("click", id, open);
     };
   }, [ready, props.tiles.length, selectTileProps]);
+
+  // P37.63 (K1 §3.4, J1 share-reproduces): a focus= deep-link under tiles
+  // resolves LATE — tileByRk only fills once the linked view's sites tiles
+  // draw (refreshList runs on moveend/sourcedata). When the focused rk
+  // appears, rebuild the tile selection in place of the focus effect's
+  // "not in view" / record-fetch fallback. The located flag is the guard:
+  // a resolved tile selection is never re-derived, a fallback always is.
+  useEffect(() => {
+    const focus = state.focus;
+    if (!tileMode || focus === null) return;
+    if (selection?.id === focus && selection.located) return;
+    const hit = tileByRk.current.get(focus);
+    if (!hit) return;
+    selectTileProps(hit.props as Record<string, unknown>, hit.lngLat);
+  }, [viewRows, state.focus, tileMode, selection, selectTileProps]);
 
   // ------------------------------------------- compartment + facet fx //
   useEffect(() => {

@@ -35,6 +35,12 @@
 #   gallery    P37.60: the operator gallery generator — a self-contained
 #              baseline/actual/diff review page under docs/build/logs/
 #              (gitignored, never published; sign-off is the operator's).
+#   journeys   P37.63 (K1 MAP-07): the named J1–J10 map-acceptance journey
+#              battery (tests/e2e/map-journeys.spec.ts) over THIS national
+#              build — playwright.journeys.config.ts serves the built dist
+#              and the spec's IS_NATIONAL branches exercise the tile/cell
+#              path at real scale. Requires the national dist (the `build`
+#              leg above); refuses a fixtures/export dist.
 #   all        every subcommand in CI order.
 #
 # Working dir for the fixture is the repo's web/national/ (gitignored); the
@@ -88,6 +94,18 @@ gallery() {
     node scripts/visual-gallery.mjs
 }
 
+journeys() {
+    cd "$ROOT/web"
+    # Same dist guard as the visual leg — the battery's IS_NATIONAL branches
+    # must never run against a stale fixtures/export dist.
+    if [ ! -f dist/page-types.json ] || ! grep -q '"dataSource"[[:space:]]*:[[:space:]]*"national"' dist/page-types.json; then
+        build
+    fi
+    SIG_DATA_SOURCE=national \
+    SIG_NATIONAL_DIR="$NATIONAL_DIR" \
+        npx playwright test --config=playwright.journeys.config.ts
+}
+
 case "$sub" in
     fixture) fixture ;;
     build) build ;;
@@ -95,6 +113,7 @@ case "$sub" in
     lighthouse) lighthouse ;;
     visual) visual ;;
     gallery) gallery ;;
+    journeys) journeys ;;
     all)
         fixture
         build
@@ -102,9 +121,10 @@ case "$sub" in
         lighthouse
         visual
         gallery
+        journeys
         ;;
     *)
-        echo "usage: $0 {fixture|build|budgets|lighthouse|visual|gallery|all}" >&2
+        echo "usage: $0 {fixture|build|budgets|lighthouse|visual|gallery|journeys|all}" >&2
         exit 2
         ;;
 esac
