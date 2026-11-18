@@ -1,0 +1,192 @@
+{
+  "schema": "ci-boundary/1",
+  "tool": "docs/build/tools/ci_boundary.py",
+  "requested_pr": 530,
+  "pr": 530,
+  "head_sha": "2e5c973d5d13a93cf278cc8a1b930b58ffbb9803",
+  "head_ref": "r11/P37.68a-ux-capstone-advocate-journeys",
+  "base": "main",
+  "read_at": "2026-11-18T18:45:09Z",
+  "prefix": "r11/",
+  "scope": "the current r11/ PR and its open r11/ ancestors; never #141–#190",
+  "required": [
+    "python",
+    "docs",
+    "composed",
+    "security",
+    "web"
+  ],
+  "stack": [
+    {
+      "pr": 530,
+      "head_ref": "r11/P37.68a-ux-capstone-advocate-journeys",
+      "head_sha": "2e5c973d5d13a93cf278cc8a1b930b58ffbb9803",
+      "base": "main",
+      "pr_state": "OPEN",
+      "is_draft": false,
+      "mergeable": "MERGEABLE",
+      "state": "pass",
+      "detail": null
+    }
+  ],
+  "stack_stop": "base `main` is outside the `r11/` scope — the Round-10 stack (#141–#190) is never read (B-15)",
+  "stack_digest": "d109e30d2de9e600b9a64c97063cc09d1fbeb0bf98c4d449f7c0cd8cc8bee771",
+  "local_head": "2e5c973d5d13a93cf278cc8a1b930b58ffbb9803",
+  "external": {
+    "read_at": "2026-11-18T18:45:10Z",
+    "since": "2026-11-18",
+    "fetch": "ok",
+    "main_sha": "6e4b0d6de6eb4beecb5ee2d63a84f49e6d4bb3eb",
+    "chain_descends": false,
+    "descends_note": "origin/main 6e4b0d6 is not an ancestor of the tip — main carries commits the chain does not contain (the chain trails main, merged late by the operator)",
+    "ancestry": [],
+    "merged_since": [
+      {
+        "number": 529,
+        "head_ref": "r11/P37.67-stream-l-re-measure",
+        "head_sha": "8ebb0f1e730b167b31b51e55bbb0401a48d9fffa",
+        "base": "main",
+        "merged_at": "2026-11-18T18:42:48Z",
+        "on_stack": true
+      },
+      {
+        "number": 528,
+        "head_ref": "r11/ops-release-infra-apply-fixes",
+        "head_sha": "11302e275fe059b600e8036ba90fff9ed846ce0a",
+        "base": "main",
+        "merged_at": "2026-11-18T16:27:48Z",
+        "on_stack": true
+      },
+      {
+        "number": 527,
+        "head_ref": "r11/P37.66-coverage-outcome-and-acquisition-closeout",
+        "head_sha": "3d776b6090c37dfaa397ee5ee48ccf3f19e4a468",
+        "base": "main",
+        "merged_at": "2026-11-18T10:51:32Z",
+        "on_stack": true
+      },
+      {
+        "number": 526,
+        "head_ref": "r11/P37.65b-final-readout-and-promotion",
+        "head_sha": "a2bc86d9e18f02655c49b74686e476387feb8d13",
+        "base": "main",
+        "merged_at": "2026-11-18T09:05:58Z",
+        "on_stack": true
+      },
+      {
+        "number": 525,
+        "head_ref": "r11/P37.65a-final-release-cut-crawl-scrub-audit",
+        "head_sha": "b5a7f0237fa7f33d5d63285e50f7aa5e11d28fe1",
+        "base": "main",
+        "merged_at": "2026-11-18T07:28:21Z",
+        "on_stack": true
+      },
+      {
+        "number": 524,
+        "head_ref": "r11/P37.64-entity-graph-dossier-figure-acceptance",
+        "head_sha": "15b5673dbfe449e0505173fa5876855713cfc264",
+        "base": "main",
+        "merged_at": "2026-11-18T05:22:01Z",
+        "on_stack": true
+      },
+      {
+        "number": 523,
+        "head_ref": "r11/P37.63-map-acceptance-and-republish",
+        "head_sha": "91c80e8a61b37a1f19168c46f4590cda9a870be2",
+        "base": "main",
+        "merged_at": "2026-11-18T02:12:07Z",
+        "on_stack": true
+      }
+    ],
+    "open_off_chain": []
+  },
+  "flake_entries": [
+    "LH-PERF-1",
+    "PY-SUBSTR-1",
+    "DOCKERHUB-RATE-1",
+    "DOCKERHUB-RATE-2",
+    "DOCKERHUB-RATE-3",
+    "NPM-AUDIT-503-1",
+    "PY-STUB-1"
+  ],
+  "reruns": [],
+  "checks": [
+    {
+      "pr": 530,
+      "name": "python",
+      "required": true,
+      "check_run_id": 134999753798,
+      "run_id": "44354020206",
+      "status": "completed",
+      "conclusion": "success",
+      "bucket": "pass",
+      "started_at": "2026-11-18T17:01:58Z",
+      "completed_at": "2026-11-18T17:32:07Z",
+      "link": "https://github.com/SteveVitali/Eleutheria/actions/runs/44354020206/job/134999753798",
+      "waived": false
+    },
+    {
+      "pr": 530,
+      "name": "docs",
+      "required": true,
+      "check_run_id": 134999791163,
+      "run_id": "44354020206",
+      "status": "completed",
+      "conclusion": "success",
+      "bucket": "pass",
+      "started_at": "2026-11-18T17:01:59Z",
+      "completed_at": "2026-11-18T17:04:36Z",
+      "link": "https://github.com/SteveVitali/Eleutheria/actions/runs/44354020206/job/134999791163",
+      "waived": false
+    },
+    {
+      "pr": 530,
+      "name": "composed",
+      "required": true,
+      "check_run_id": 134999690263,
+      "run_id": "44354020206",
+      "status": "completed",
+      "conclusion": "success",
+      "bucket": "pass",
+      "started_at": "2026-11-18T17:01:58Z",
+      "completed_at": "2026-11-18T17:06:20Z",
+      "link": "https://github.com/SteveVitali/Eleutheria/actions/runs/44354020206/job/134999690263",
+      "waived": false
+    },
+    {
+      "pr": 530,
+      "name": "security",
+      "required": true,
+      "check_run_id": 134999746089,
+      "run_id": "44354020206",
+      "status": "completed",
+      "conclusion": "success",
+      "bucket": "pass",
+      "started_at": "2026-11-18T17:01:58Z",
+      "completed_at": "2026-11-18T17:02:40Z",
+      "link": "https://github.com/SteveVitali/Eleutheria/actions/runs/44354020206/job/134999746089",
+      "waived": false
+    },
+    {
+      "pr": 530,
+      "name": "web",
+      "required": true,
+      "check_run_id": 134999686271,
+      "run_id": "44354020206",
+      "status": "completed",
+      "conclusion": "success",
+      "bucket": "pass",
+      "started_at": "2026-11-18T17:35:29Z",
+      "completed_at": "2026-11-18T18:37:07Z",
+      "link": "https://github.com/SteveVitali/Eleutheria/actions/runs/44354020206/job/134999686271",
+      "waived": false
+    }
+  ],
+  "waivers": 5,
+  "polls": 1,
+  "waited_s": 0.0,
+  "state": "pass",
+  "kind": null,
+  "line": "ci: pass #530@2e5c973 (python 44354020206; docs 44354020206; composed 44354020206; security 44354020206; web 44354020206) · main: 6e4b0d6 descends:no merges:7 open-other:0",
+  "exit": 0
+}
