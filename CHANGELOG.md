@@ -11,6 +11,24 @@ All notable changes to this project are documented here. The format is based on
 
 ### Added
 
+- **P37.64 / R11-K13-ACC-EXPLORE (K2 GX-10 + K6 VIZ-05; SIG-UI-D20,
+  SIG-UI-DV01…DV12 cited)** — entity, graph and dossier-figure acceptance
+  plus two sweep-found fixes: every dossier print route whose Figure 1 map
+  actually draws now emits its figure page (brief → map figure → sections →
+  terms) — previously only record-declared `print_figures` printed, so
+  jurisdiction dossiers' drawn maps printed nowhere; and the internal
+  curate contradictions page renders `claim.evidence_ref` inside a
+  `sig-mut` code span (a technical-identifier context), never bare text.
+  No other public surface changes: the work is the acceptance battery —
+  `acceptance-explore.spec.ts` (SIG-UI-D20 crawl over every emitted route
+  + graph-overview label legibility; the DV01…DV12 dossier-figure
+  contract incl. the records-side parity chain and print composition) and
+  `acceptance-explore-journeys.spec.ts` (K2 J-1…J-6, K6 VJ-1…VJ-6, the
+  K13 §8 capstone legs, axe WCAG 2.2 AA in interaction states) — plus the
+  `sig.explore-acceptance/1` ops leg declaration whose `live-verify` leg
+  is `prepared_not_executed` riding P37.65b (`D-P37.64-1`).
+  `live_verification=false`.
+
 - **P37.62 / R11-K13-RQ-05 (K11 RQ-05; D-K11-4 [B-8]=a; SIG-RQ-002,
   SIG-UI-033 cited)** — contribution path wiring on `/task/<handle>/`:
   the "How to act" block's "Report what you found" affordance now names a
