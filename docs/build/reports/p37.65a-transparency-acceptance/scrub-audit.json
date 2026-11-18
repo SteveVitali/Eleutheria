@@ -1,0 +1,100 @@
+{
+  "schema": "sig.scrub-audit/1",
+  "ticket": "P37.65a",
+  "tree": "/Users/stevenvitali/Eleutheria/web/dist",
+  "at": "2026-11-18T05:45:55+00:00",
+  "families": [
+    {
+      "family": "transparency-artifacts",
+      "prefixes": [
+        "transparency/",
+        "artifact/transparency/"
+      ],
+      "files": 14,
+      "hits": 0,
+      "state": "scanned"
+    },
+    {
+      "family": "status-lane",
+      "prefixes": [
+        "status/"
+      ],
+      "files": 3,
+      "hits": 0,
+      "state": "scanned"
+    },
+    {
+      "family": "source-explorer",
+      "prefixes": [
+        "sources/"
+      ],
+      "files": 166,
+      "hits": 0,
+      "state": "scanned"
+    },
+    {
+      "family": "downloads",
+      "prefixes": [
+        "data/"
+      ],
+      "files": 3,
+      "hits": 0,
+      "state": "scanned"
+    },
+    {
+      "family": "raw-archive",
+      "prefixes": [
+        "raw/",
+        "artifact/raw/"
+      ],
+      "files": 0,
+      "hits": 0,
+      "state": "absent"
+    },
+    {
+      "family": "evidence",
+      "prefixes": [
+        "evidence/",
+        "artifact/evidence/"
+      ],
+      "files": 58,
+      "hits": 0,
+      "state": "scanned"
+    },
+    {
+      "family": "changes",
+      "prefixes": [
+        "changes/"
+      ],
+      "files": 29,
+      "hits": 0,
+      "state": "scanned"
+    },
+    {
+      "family": "release-namespaces",
+      "prefixes": [
+        "r/",
+        "v/",
+        "s/",
+        "releases/"
+      ],
+      "files": 0,
+      "hits": 0,
+      "state": "absent"
+    },
+    {
+      "family": "statements",
+      "prefixes": [
+        "statements/"
+      ],
+      "files": 0,
+      "hits": 0,
+      "state": "absent"
+    }
+  ],
+  "files_scanned": 273,
+  "hits": [],
+  "verdict": "pass",
+  "detail": "273 published-transparency files scanned under /Users/stevenvitali/Eleutheria/web/dist \u2014 0 secret-shaped hit(s)",
+  "evidence_rule": "file/line/pattern-class only \u2014 matched values are never recorded (J4 S-1)"
+}
