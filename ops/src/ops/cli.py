@@ -3412,6 +3412,19 @@ def build_parser() -> argparse.ArgumentParser:
         "D-K11-4)",
     )
     sub.add_parser(
+        "capstone-consolidated",
+        help="P37.68d / K13 CAP-01 split d (the consolidated row): the "
+        "U-003.1…11 per-ask checks (SIG-UI-077), the consolidated "
+        "13-journey sweep (SIG-UI-078), the ROUTES.csv re-check, budgets "
+        "+ axe on the real release, cost read and the consolidated "
+        "walkthrough packet — plan renders the sig.capstone-consolidated/1 "
+        "leg set, check verifies the committed leg machinery, run executes "
+        "a deterministic leg (per-ask-fixture, routes-csv-dist, "
+        "budgets-axe-fixture, cost-ledger) while every live/operator leg "
+        "queues exit 42 (prepared_not_executed; publish rides P37.65 "
+        "Class S)",
+    )
+    sub.add_parser(
         "transparency-acceptance",
         help="P37.65a / J3 TX-16: the transparency-acceptance leg "
         "declaration — plan renders the sig.transparency-acceptance/1 leg "
@@ -6547,6 +6560,10 @@ def main(argv: list[str] | None = None) -> int:
         from . import capstone_organizer
 
         return capstone_organizer.main(raw[1:])
+    if raw and raw[0] == "capstone-consolidated":
+        from . import capstone_consolidated
+
+        return capstone_consolidated.main(raw[1:])
     if raw and raw[0] == "at-rest":
         from . import at_rest_audit
 
