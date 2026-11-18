@@ -252,13 +252,29 @@ export type PrintPage = {
  */
 export function planPrintPages(
   dossier: Dossier,
-  opts: { releaseBound?: boolean; sectionsPerPage?: number } = {},
+  opts: {
+    releaseBound?: boolean;
+    sectionsPerPage?: number;
+    /**
+     * P37.64 (SIG-UI-DV08, K6 §8): figure declarations the build derives
+     * when the dossier record does not declare the kind itself — the drawn
+     * map figure prints its static rendition even when `print_figures` is
+     * absent, never a placeholder over a drawable figure and never a silent
+     * omission. A kind the record DOES declare is never shadowed (the
+     * record's own title/state wins).
+     */
+    derivedFigures?: readonly PrintFigureDecl[];
+  } = {},
 ): PrintPage[] {
-  const declared = dossier.print_figures ?? [];
+  const declared = [...(dossier.print_figures ?? [])] as PrintFigureDecl[];
   assertPrintFigures(declared, dossier.slug);
+  const derived = (opts.derivedFigures ?? []).filter(
+    (f) => !declared.some((d) => d.kind === f.kind),
+  );
+  assertPrintFigures(derived, dossier.slug);
   // SIG-UI-130 (K6 §8): the map LEADS page 2 — a declared map figure is the
   // first figure page whatever order the record lists them in (stable sort).
-  const figures = [...(declared as PrintFigureDecl[])].sort(
+  const figures = [...declared, ...derived].sort(
     (a, b) => (a.kind === "map" ? 0 : 1) - (b.kind === "map" ? 0 : 1),
   );
   const per = opts.sectionsPerPage ?? 3;

@@ -27,7 +27,7 @@ import { CONTRADICTIONS, curationAction } from "../../lib/curation";
             <h3>Claim {claim.claim_id}</h3>
             <dl class="sig-kv">
               <div><dt>Value</dt><dd data-testid="claim-value">{claim.value}</dd></div>
-              <div><dt>Evidence</dt><dd data-testid="claim-evidence">{claim.evidence_ref}</dd></div>
+              <div><dt>Evidence</dt><dd data-testid="claim-evidence"><code class="sig-mut">{claim.evidence_ref}</code></dd></div>
               <div><dt>As of</dt><dd data-testid="claim-date">{claim.as_of}</dd></div>
               <div><dt>Source</dt><dd>{claim.source}</dd></div>
             </dl>

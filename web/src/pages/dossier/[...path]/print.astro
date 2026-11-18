@@ -98,8 +98,10 @@ const stamp = getReleaseStamp();
 // P36.26: the page plan — brief + one page per declared figure + the section
 // chunks + the terms strip. `releaseBound` decides whether `release` and
 // `pinned-citation` join the terms list and whether the release/licence lines
-// render — never asserted on an unbound development build.
-const pages = planPrintPages(dossier, { releaseBound: stamp !== null });
+// render — never asserted on an unbound development build. P37.64
+// (SIG-UI-DV08): the plan is computed AFTER the visuals doc is read so a
+// drawn map the record does not itself declare still leads page 2 — the
+// figure list is `print_figures` ∪ the derived drawn-map declaration.
 const glance = recordedGlance(dossier);
 const decision = councilDecision(dossier);
 const documents = documentsToBring(dossier);
@@ -142,6 +144,22 @@ const printCite = citationBlock({
 const visualsDoc = getDossierVisuals(dossier.slug);
 const printLocator = visualsDoc ? locatorGlyph(visualsDoc, getLocatorSymbols()) : null;
 const mapSvg = visualsDoc && isDrawnMap(visualsDoc.map) ? visualsDoc.map.svg : null;
+// P37.64 (SIG-UI-DV08): a drawn map the record does not declare still leads
+// the figure pages — the declaration mirrors Figure 1's own sentence, never
+// a fabricated title. `planPrintPages` drops the entry when the record
+// already declares a `map` kind, so oklahoma-city's declared figure is
+// unchanged.
+const derivedFigures =
+  visualsDoc && isDrawnMap(visualsDoc.map)
+    ? ([{
+        kind: "map",
+        title: `Where SIG's published records are in ${visualsDoc.jurisdiction.name}`,
+      }] as const)
+    : [];
+const pages = planPrintPages(dossier, {
+  releaseBound: stamp !== null,
+  derivedFigures,
+});
 const FIGURES = defineFigures(
   `dossier/${dossier.slug}/print`,
   dossierFigureSpecs(dossier, "print", {
