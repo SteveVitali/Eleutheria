@@ -41,15 +41,15 @@ id = "GQ-01"
 statement = "Every emitted predicate, genre and enum is in the generated registry; unregistered values are quarantined"
 population = "claims emitted in the target run / current claims"
 placement = ["I", "P"]
-mode = "ratchet"
+mode = "enforce"
 direction = "lower_is_better"
 threshold = "<= 0"
 baseline = 6
 unit = "count"
 basis_class = "B1"
-fixing = ["P35.14a", "P35.14b"]
+fixing = ["P35.14a", "P35.14b", "P37.67"]
 from = "INV-01"
-note = "L1 NEW-2: 6 predicates unregistered"
+note = "L1 NEW-2: 6 predicates unregistered; flipped to enforce in P37.67 (CONF-14 tail sweep — cause removed by P35.14a/P35.14b; first live re-measurement owed D-P37.67-1)"
 
 [[check]]
 id = "GQ-02"
@@ -71,30 +71,30 @@ id = "GQ-03"
 statement = "Exact current repeats of (subject, predicate, value, source) are at most 1 % of current claims"
 population = "current claims"
 placement = ["M"]
-mode = "ratchet"
+mode = "enforce"
 direction = "lower_is_better"
 threshold = "<= 0.01"
 baseline = 0.175
 unit = "share"
 basis_class = "B2"
-fixing = ["P35.22"]
+fixing = ["P35.22", "P37.67"]
 from = "INV-03, C4"
-note = "L2 M08: 17.5 %; large-table check — TABLESAMPLE … REPEATABLE, disclosed as a block-sampled estimate (L2 §5)"
+note = "L2 M08: 17.5 %; large-table check — TABLESAMPLE … REPEATABLE, disclosed as a block-sampled estimate (L2 §5); flipped to enforce in P37.67 (CONF-14 tail sweep — cause removed by P35.22; first live re-measurement owed D-P37.67-1)"
 
 [[check]]
 id = "GQ-04"
 statement = "Within one capture, one subject key maps to exactly one upstream row; the key field is pinned per target"
 population = "upstream rows per capture"
 placement = ["I"]
-mode = "ratchet"
+mode = "enforce"
 direction = "lower_is_better"
 threshold = "<= 0"
 baseline = 5278
 unit = "count"
 basis_class = "B1"
-fixing = ["P35.24"]
+fixing = ["P35.24", "P37.67"]
 from = "INV-04, C1"
-note = "L2 M07: 5,278 colliding subjects"
+note = "L2 M07: 5,278 colliding subjects; flipped to enforce in P37.67 (CONF-14 tail sweep — cause removed by P35.24; first live re-measurement owed D-P37.67-1)"
 
 [[check]]
 id = "GQ-05"
@@ -130,15 +130,15 @@ id = "GQ-07"
 statement = "camera_operator is an agency entity or the explicit literal 'unknown'; publisher strings are blocklisted"
 population = "current camera_operator claims"
 placement = ["I", "M"]
-mode = "ratchet"
+mode = "enforce"
 direction = "lower_is_better"
 threshold = "<= 0"
 baseline = 172588
 unit = "count"
 basis_class = "B1"
-fixing = ["P35.26"]
+fixing = ["P35.26", "P37.67"]
 from = "C7 (SIG-ONTO-028)"
-note = "L2 M23: 172,588 (74.2 %) publisher-as-operator"
+note = "L2 M23: 172,588 (74.2 %) publisher-as-operator; flipped to enforce in P37.67 (CONF-14 tail sweep — cause removed by P35.26; first live re-measurement owed D-P37.67-1)"
 
 [[check]]
 id = "GQ-08"
@@ -175,30 +175,30 @@ id = "GQ-10"
 statement = "Duplicate accounting: published site rows equal records after derivation-collapse; every point with two or more lineages within 25 m is collapsed or listed as a possible duplicate; the count interval is published; same-layer co-located distinct records are classed multi-view, not duplicates"
 population = "published site rows vs lineage roots"
 placement = ["R"]
-mode = "ratchet"
+mode = "enforce"
 direction = "lower_is_better"
 threshold = "<= 1.02"
 baseline = 2.25
 unit = "ratio"
 basis_class = "B1"
-fixing = ["P35.47"]
+fixing = ["P35.47", "P37.67"]
 from = "INV-09, C3a, DR-C3-10"
-note = "L2 M06/M13: dossier inflation up to 2.25x, n_sources = 1 on 100 %; consumed by V15 (P35.58)"
+note = "L2 M06/M13: dossier inflation up to 2.25x, n_sources = 1 on 100 %; consumed by V15 (P35.58); flipped to enforce in P37.67 (CONF-14 tail sweep — cause removed by P35.47; first live re-measurement owed D-P37.67-1)"
 
 [[check]]
 id = "GQ-11"
 statement = "Undeclared copying: any layer pair with more than 50 % of the smaller layer within 1 m and no declared lineage"
 population = "source-layer pairs"
 placement = ["M", "I"]
-mode = "ratchet"
+mode = "enforce"
 direction = "lower_is_better"
 threshold = "<= 0"
 baseline = 11
 unit = "count"
 basis_class = "B2"
-fixing = ["P35.25"]
+fixing = ["P35.25", "P37.67"]
 from = "C3b (SIG-EPIS-029)"
-note = "L2 section 2.1: at least 11 inferred lineages, 0 declared; a new source with an undeclared overlap is held from publication"
+note = "L2 section 2.1: at least 11 inferred lineages, 0 declared; a new source with an undeclared overlap is held from publication; flipped to enforce in P37.67 (CONF-14 tail sweep — cause removed by P35.25; first live re-measurement owed D-P37.67-1)"
 
 [[check]]
 id = "GQ-12"
@@ -220,45 +220,45 @@ id = "GQ-13"
 statement = "Contradiction recall: every current resolution with two or more considered values beyond the predicate's tolerance is contested or carries dissent"
 population = "current resolutions with two or more distinct considered values"
 placement = ["M"]
-mode = "ratchet"
+mode = "enforce"
 direction = "lower_is_better"
 threshold = "<= 0"
 baseline = 19121
 unit = "count"
 basis_class = "B1"
-fixing = ["P35.27"]
+fixing = ["P35.27", "P37.67"]
 from = "C5"
-note = "L2 M14: 0 of 19,121 contested"
+note = "L2 M14: 0 of 19,121 contested; flipped to enforce in P37.67 (CONF-14 tail sweep — cause removed by P35.27; first live re-measurement owed D-P37.67-1)"
 
 [[check]]
 id = "GQ-14"
 statement = "No map, network or search node is labelled by its UUID when a label exists; unlabeled sites are at most 5 % or carry a derived label"
 population = "published map/network/search nodes and site rows"
 placement = ["R"]
-mode = "ratchet"
+mode = "enforce"
 direction = "lower_is_better"
 threshold = "<= 0"
 baseline = "pending"
 unit = "count"
 basis_class = "B1"
-fixing = ["P35.29", "P35.30"]
+fixing = ["P35.29", "P35.30", "P37.67"]
 from = "INV-11"
-note = "L2 M28: 131/131 network nodes UUID-labelled, 82.8 % of sites unlabeled — two populations, baseline pending"
+note = "L2 M28: 131/131 network nodes UUID-labelled, 82.8 % of sites unlabeled — two populations, baseline pending; flipped to enforce in P37.67 (CONF-14 tail sweep — cause removed by P35.29/P35.30; first live re-measurement owed D-P37.67-1)"
 
 [[check]]
 id = "GQ-15"
 statement = "Every published edge has observed or valid time (or an explicit 'undated'), currency and source; 0 edges starting 1970-01-01; 0 live duplicate edges per (from, to, kind); freshness says 'not evaluable', not 'ok'"
 population = "published and live edges"
 placement = ["I", "M", "R"]
-mode = "ratchet"
+mode = "enforce"
 direction = "lower_is_better"
 threshold = "<= 0"
 baseline = "pending"
 unit = "count"
 basis_class = "B1"
-fixing = ["P35.26", "P35.30", "P35.20a", "P35.20b"]
+fixing = ["P35.26", "P35.30", "P35.20a", "P35.20b", "P37.67"]
 from = "INV-12, C9, DR-C3-07"
-note = "L2 M30/M37: 98.8 % of edges undated; 178/178 freshness 'ok' — baseline pending"
+note = "L2 M30/M37: 98.8 % of edges undated; 178/178 freshness 'ok' — baseline pending; flipped to enforce in P37.67 (CONF-14 tail sweep — cause removed by P35.26/P35.30/P35.20a/P35.20b; first live re-measurement owed D-P37.67-1)"
 
 [[check]]
 id = "GQ-16"

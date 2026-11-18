@@ -334,12 +334,23 @@ def test_m_run_over_seeded_spine(conn) -> None:
     assert rows["GQ-24"]["detail"]["latest_run_key"] == "rk"
     assert rows["GQ-24"]["detail"]["historical_inferential_auto_writes"] == 1
 
-    # Enforce fails the run; ratchet improvements are recorded, not gated
+    # Enforce fails the run: P37.67's CONF-14 tail sweep flipped the
+    # landed-cause ratchets, so every seeded violation on an enforce check is
+    # a named gate failure — never a recorded-and-watched ratchet improvement.
     assert rows["GQ-24"]["outcome"] == "fail"
-    assert report["summary"]["enforce_failures"] == ["GQ-24"]
+    assert report["summary"]["enforce_failures"] == [
+        "GQ-03",
+        "GQ-07",
+        "GQ-11",
+        "GQ-13",
+        "GQ-15",
+        "GQ-24",
+    ]
     assert report["summary"]["overall"] == "fail"
     assert probe["overall"] == "fail"
-    assert rows["GQ-07"]["improvement"] and rows["GQ-07"]["outcome"] == "pass"
+    assert rows["GQ-07"]["outcome"] == "fail"
+    # Still-ratcheted checks (GQ-18) record improvements, never gate.
+    assert rows["GQ-18"]["improvement"] and rows["GQ-18"]["outcome"] == "pass"
 
     # Seam-deferred checks are honest not_evaluable, never silent skips
     for cid in ("GQ-02", "GQ-12", "GQ-23", "GQ-25", "GQ-26"):

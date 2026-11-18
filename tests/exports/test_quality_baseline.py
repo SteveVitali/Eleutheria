@@ -42,11 +42,14 @@ def _report(checks: dict[str, dict], placement: str = "M") -> dict:
 
 def _registry_with_baseline(*, pending: bool = False, value: float = 10.0) -> CheckRegistry:
     """A one-check registry over the real validator: keep only GQ-14's block
-    with its baseline line rewritten to the fixture value."""
+    with its baseline line rewritten to the fixture value — and its mode
+    pinned to ratchet so the proposal tests stay independent of the committed
+    mode (P37.67's CONF-14 sweep flipped GQ-14 to enforce)."""
     text = REGISTRY_PATH.read_text(encoding="utf-8")
     blocks = re.split(r"(?=^\[\[check\]\])", text, flags=re.M)
     head = blocks[0]
     fixture = next(b for b in blocks if 'id = "GQ-14"' in b)
+    fixture = re.sub(r"^mode\s*=.*$", 'mode = "ratchet"', fixture, flags=re.M)
     if pending:
         fixture = re.sub(r"^baseline\s*=.*$", 'baseline = "pending"', fixture, flags=re.M)
     else:
@@ -206,6 +209,11 @@ def _registry_text_for_gq14(baseline: str) -> str:
     blocks = re.split(r"(?=^\[\[check\]\])", text, flags=re.M)
     head = blocks[0]
     gq14 = next(b for b in blocks if 'id = "GQ-14"' in b)
+    # These tests exercise the proposal/apply path itself, so the synthetic
+    # registry pins the committed check's mode to ratchet — P37.67's CONF-14
+    # sweep flipped the committed GQ-14 to enforce, and proposals only cover
+    # ratchet rows.
+    gq14 = re.sub(r"^mode\s*=.*$", 'mode = "ratchet"', gq14, flags=re.M)
     gq14 = re.sub(r"^baseline\s*=.*$", baseline, gq14, flags=re.M)
     return head + gq14
 
