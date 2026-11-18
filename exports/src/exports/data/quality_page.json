@@ -11,12 +11,13 @@
         "direction": "lower_is_better",
         "fixing": [
           "P35.14a",
-          "P35.14b"
+          "P35.14b",
+          "P37.67"
         ],
         "from": "INV-01",
         "id": "GQ-01",
-        "mode": "ratchet",
-        "note": "L1 NEW-2: 6 predicates unregistered",
+        "mode": "enforce",
+        "note": "L1 NEW-2: 6 predicates unregistered; flipped to enforce in P37.67 (CONF-14 tail sweep \u2014 cause removed by P35.14a/P35.14b; first live re-measurement owed D-P37.67-1)",
         "placement": [
           "I",
           "P"
@@ -57,12 +58,13 @@
         "basis_class": "B2",
         "direction": "lower_is_better",
         "fixing": [
-          "P35.22"
+          "P35.22",
+          "P37.67"
         ],
         "from": "INV-03, C4",
         "id": "GQ-03",
-        "mode": "ratchet",
-        "note": "L2 M08: 17.5 %; large-table check \u2014 TABLESAMPLE \u2026 REPEATABLE, disclosed as a block-sampled estimate (L2 \u00a75)",
+        "mode": "enforce",
+        "note": "L2 M08: 17.5 %; large-table check \u2014 TABLESAMPLE \u2026 REPEATABLE, disclosed as a block-sampled estimate (L2 \u00a75); flipped to enforce in P37.67 (CONF-14 tail sweep \u2014 cause removed by P35.22; first live re-measurement owed D-P37.67-1)",
         "placement": [
           "M"
         ],
@@ -79,12 +81,13 @@
         "basis_class": "B1",
         "direction": "lower_is_better",
         "fixing": [
-          "P35.24"
+          "P35.24",
+          "P37.67"
         ],
         "from": "INV-04, C1",
         "id": "GQ-04",
-        "mode": "ratchet",
-        "note": "L2 M07: 5,278 colliding subjects",
+        "mode": "enforce",
+        "note": "L2 M07: 5,278 colliding subjects; flipped to enforce in P37.67 (CONF-14 tail sweep \u2014 cause removed by P35.24; first live re-measurement owed D-P37.67-1)",
         "placement": [
           "I"
         ],
@@ -149,12 +152,13 @@
         "basis_class": "B1",
         "direction": "lower_is_better",
         "fixing": [
-          "P35.26"
+          "P35.26",
+          "P37.67"
         ],
         "from": "C7 (SIG-ONTO-028)",
         "id": "GQ-07",
-        "mode": "ratchet",
-        "note": "L2 M23: 172,588 (74.2 %) publisher-as-operator",
+        "mode": "enforce",
+        "note": "L2 M23: 172,588 (74.2 %) publisher-as-operator; flipped to enforce in P37.67 (CONF-14 tail sweep \u2014 cause removed by P35.26; first live re-measurement owed D-P37.67-1)",
         "placement": [
           "I",
           "M"
@@ -219,12 +223,13 @@
         "basis_class": "B1",
         "direction": "lower_is_better",
         "fixing": [
-          "P35.47"
+          "P35.47",
+          "P37.67"
         ],
         "from": "INV-09, C3a, DR-C3-10",
         "id": "GQ-10",
-        "mode": "ratchet",
-        "note": "L2 M06/M13: dossier inflation up to 2.25x, n_sources = 1 on 100 %; consumed by V15 (P35.58)",
+        "mode": "enforce",
+        "note": "L2 M06/M13: dossier inflation up to 2.25x, n_sources = 1 on 100 %; consumed by V15 (P35.58); flipped to enforce in P37.67 (CONF-14 tail sweep \u2014 cause removed by P35.47; first live re-measurement owed D-P37.67-1)",
         "placement": [
           "R"
         ],
@@ -241,12 +246,13 @@
         "basis_class": "B2",
         "direction": "lower_is_better",
         "fixing": [
-          "P35.25"
+          "P35.25",
+          "P37.67"
         ],
         "from": "C3b (SIG-EPIS-029)",
         "id": "GQ-11",
-        "mode": "ratchet",
-        "note": "L2 section 2.1: at least 11 inferred lineages, 0 declared; a new source with an undeclared overlap is held from publication",
+        "mode": "enforce",
+        "note": "L2 section 2.1: at least 11 inferred lineages, 0 declared; a new source with an undeclared overlap is held from publication; flipped to enforce in P37.67 (CONF-14 tail sweep \u2014 cause removed by P35.25; first live re-measurement owed D-P37.67-1)",
         "placement": [
           "I",
           "M"
@@ -286,12 +292,13 @@
         "basis_class": "B1",
         "direction": "lower_is_better",
         "fixing": [
-          "P35.27"
+          "P35.27",
+          "P37.67"
         ],
         "from": "C5",
         "id": "GQ-13",
-        "mode": "ratchet",
-        "note": "L2 M14: 0 of 19,121 contested",
+        "mode": "enforce",
+        "note": "L2 M14: 0 of 19,121 contested; flipped to enforce in P37.67 (CONF-14 tail sweep \u2014 cause removed by P35.27; first live re-measurement owed D-P37.67-1)",
         "placement": [
           "M"
         ],
@@ -309,12 +316,13 @@
         "direction": "lower_is_better",
         "fixing": [
           "P35.29",
-          "P35.30"
+          "P35.30",
+          "P37.67"
         ],
         "from": "INV-11",
         "id": "GQ-14",
-        "mode": "ratchet",
-        "note": "L2 M28: 131/131 network nodes UUID-labelled, 82.8 % of sites unlabeled \u2014 two populations, baseline pending",
+        "mode": "enforce",
+        "note": "L2 M28: 131/131 network nodes UUID-labelled, 82.8 % of sites unlabeled \u2014 two populations, baseline pending; flipped to enforce in P37.67 (CONF-14 tail sweep \u2014 cause removed by P35.29/P35.30; first live re-measurement owed D-P37.67-1)",
         "placement": [
           "R"
         ],
@@ -334,12 +342,13 @@
           "P35.26",
           "P35.30",
           "P35.20a",
-          "P35.20b"
+          "P35.20b",
+          "P37.67"
         ],
         "from": "INV-12, C9, DR-C3-07",
         "id": "GQ-15",
-        "mode": "ratchet",
-        "note": "L2 M30/M37: 98.8 % of edges undated; 178/178 freshness 'ok' \u2014 baseline pending",
+        "mode": "enforce",
+        "note": "L2 M30/M37: 98.8 % of edges undated; 178/178 freshness 'ok' \u2014 baseline pending; flipped to enforce in P37.67 (CONF-14 tail sweep \u2014 cause removed by P35.26/P35.30/P35.20a/P35.20b; first live re-measurement owed D-P37.67-1)",
         "placement": [
           "I",
           "M",
@@ -618,7 +627,7 @@
         "unit": "count"
       }
     ],
-    "digest": "ac0284f9b0f361c6:6c0e760cb3a91309",
+    "digest": "0ecf3f5a8dd5f48d:6c0e760cb3a91309",
     "schema": "sig.quality-checks/1",
     "version": "1"
   },
@@ -698,12 +707,12 @@
         "direction": "lower_is_better",
         "evaluated": 1,
         "id": "GQ-10",
-        "improvement": true,
+        "improvement": false,
         "measured": 1.0,
-        "mode": "ratchet",
+        "mode": "enforce",
         "offered": 1,
         "outcome": "pass",
-        "reason": "1 improves on baseline 2.25",
+        "reason": "",
         "regression": false,
         "threshold": "<= 1.02"
       },
@@ -721,10 +730,10 @@
         "id": "GQ-14",
         "improvement": false,
         "measured": 0,
-        "mode": "ratchet",
+        "mode": "enforce",
         "offered": 2,
-        "outcome": "unbaselined",
-        "reason": "baseline pending \u2014 recorded, does not gate (set by P34.44b)",
+        "outcome": "pass",
+        "reason": "",
         "regression": false,
         "threshold": "<= 0"
       },
@@ -739,7 +748,7 @@
         "id": "GQ-15",
         "improvement": false,
         "measured": null,
-        "mode": "ratchet",
+        "mode": "enforce",
         "offered": 0,
         "outcome": "not_evaluable",
         "reason": "no spine connection",
@@ -870,7 +879,7 @@
     "registry": {
       "checks_declared": 27,
       "checks_evaluated": 12,
-      "digest": "ac0284f9b0f361c6:6c0e760cb3a91309",
+      "digest": "0ecf3f5a8dd5f48d:6c0e760cb3a91309",
       "schema": "sig.quality-checks/1",
       "version": "1"
     },
@@ -892,9 +901,7 @@
       ],
       "overall": "fail",
       "ratchet_regressions": [],
-      "unbaselined": [
-        "GQ-14"
-      ]
+      "unbaselined": []
     },
     "target": "fixture quality-page corpus",
     "totals": {

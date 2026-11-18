@@ -1,0 +1,176 @@
+{
+  "schema": "ci-boundary/1",
+  "tool": "docs/build/tools/ci_boundary.py",
+  "requested_pr": 529,
+  "pr": 529,
+  "head_sha": "a0c67f43db4426dbd7b0dd5fd59f808a5031398a",
+  "head_ref": "r11/P37.67-stream-l-re-measure",
+  "base": "r11/P37.66-coverage-outcome-and-acquisition-closeout",
+  "read_at": "2026-11-18T14:05:50Z",
+  "prefix": "r11/",
+  "scope": "the current r11/ PR and its open r11/ ancestors; never #141–#190",
+  "required": [
+    "python",
+    "docs",
+    "composed",
+    "security",
+    "web"
+  ],
+  "stack": [
+    {
+      "pr": 529,
+      "head_ref": "r11/P37.67-stream-l-re-measure",
+      "head_sha": "a0c67f43db4426dbd7b0dd5fd59f808a5031398a",
+      "base": "r11/P37.66-coverage-outcome-and-acquisition-closeout",
+      "pr_state": "OPEN",
+      "is_draft": false,
+      "mergeable": "MERGEABLE",
+      "state": "pass",
+      "detail": null
+    }
+  ],
+  "stack_stop": "base `r11/P37.66-coverage-outcome-and-acquisition-closeout` is #527, already merged",
+  "stack_digest": "8f7ae3155eb60dfffb5a5df345aba11a648a4d42bcda49763b87cd2b719616c8",
+  "local_head": "a0c67f43db4426dbd7b0dd5fd59f808a5031398a",
+  "external": {
+    "read_at": "2026-11-18T14:05:51Z",
+    "since": "2026-11-18",
+    "fetch": "ok",
+    "main_sha": "341905dd12392698c4b2449540f2c02127483cdd",
+    "chain_descends": false,
+    "descends_note": "origin/main 341905d is not an ancestor of the tip — main carries commits the chain does not contain (the chain trails main, merged late by the operator)",
+    "ancestry": [],
+    "merged_since": [
+      {
+        "number": 527,
+        "head_ref": "r11/P37.66-coverage-outcome-and-acquisition-closeout",
+        "head_sha": "3d776b6090c37dfaa397ee5ee48ccf3f19e4a468",
+        "base": "main",
+        "merged_at": "2026-11-18T10:51:32Z",
+        "on_stack": true
+      },
+      {
+        "number": 526,
+        "head_ref": "r11/P37.65b-final-readout-and-promotion",
+        "head_sha": "a2bc86d9e18f02655c49b74686e476387feb8d13",
+        "base": "main",
+        "merged_at": "2026-11-18T09:05:58Z",
+        "on_stack": true
+      },
+      {
+        "number": 525,
+        "head_ref": "r11/P37.65a-final-release-cut-crawl-scrub-audit",
+        "head_sha": "b5a7f0237fa7f33d5d63285e50f7aa5e11d28fe1",
+        "base": "main",
+        "merged_at": "2026-11-18T07:28:21Z",
+        "on_stack": true
+      },
+      {
+        "number": 524,
+        "head_ref": "r11/P37.64-entity-graph-dossier-figure-acceptance",
+        "head_sha": "15b5673dbfe449e0505173fa5876855713cfc264",
+        "base": "main",
+        "merged_at": "2026-11-18T05:22:01Z",
+        "on_stack": true
+      },
+      {
+        "number": 523,
+        "head_ref": "r11/P37.63-map-acceptance-and-republish",
+        "head_sha": "91c80e8a61b37a1f19168c46f4590cda9a870be2",
+        "base": "main",
+        "merged_at": "2026-11-18T02:12:07Z",
+        "on_stack": true
+      }
+    ],
+    "open_off_chain": []
+  },
+  "flake_entries": [
+    "LH-PERF-1",
+    "PY-SUBSTR-1",
+    "DOCKERHUB-RATE-1",
+    "DOCKERHUB-RATE-2",
+    "DOCKERHUB-RATE-3",
+    "NPM-AUDIT-503-1",
+    "PY-STUB-1"
+  ],
+  "reruns": [],
+  "checks": [
+    {
+      "pr": 529,
+      "name": "python",
+      "required": true,
+      "check_run_id": 134815116542,
+      "run_id": "44308184999",
+      "status": "completed",
+      "conclusion": "success",
+      "bucket": "pass",
+      "started_at": "2026-11-18T12:53:10Z",
+      "completed_at": "2026-11-18T13:15:36Z",
+      "link": "https://github.com/SteveVitali/Eleutheria/actions/runs/44308184999/job/134815116542",
+      "waived": false
+    },
+    {
+      "pr": 529,
+      "name": "docs",
+      "required": true,
+      "check_run_id": 134815116479,
+      "run_id": "44308184999",
+      "status": "completed",
+      "conclusion": "success",
+      "bucket": "pass",
+      "started_at": "2026-11-18T12:53:10Z",
+      "completed_at": "2026-11-18T12:55:39Z",
+      "link": "https://github.com/SteveVitali/Eleutheria/actions/runs/44308184999/job/134815116479",
+      "waived": false
+    },
+    {
+      "pr": 529,
+      "name": "composed",
+      "required": true,
+      "check_run_id": 134815116857,
+      "run_id": "44308184999",
+      "status": "completed",
+      "conclusion": "success",
+      "bucket": "pass",
+      "started_at": "2026-11-18T12:53:10Z",
+      "completed_at": "2026-11-18T12:57:48Z",
+      "link": "https://github.com/SteveVitali/Eleutheria/actions/runs/44308184999/job/134815116857",
+      "waived": false
+    },
+    {
+      "pr": 529,
+      "name": "security",
+      "required": true,
+      "check_run_id": 134815116630,
+      "run_id": "44308184999",
+      "status": "completed",
+      "conclusion": "success",
+      "bucket": "pass",
+      "started_at": "2026-11-18T12:53:11Z",
+      "completed_at": "2026-11-18T12:53:53Z",
+      "link": "https://github.com/SteveVitali/Eleutheria/actions/runs/44308184999/job/134815116630",
+      "waived": false
+    },
+    {
+      "pr": 529,
+      "name": "web",
+      "required": true,
+      "check_run_id": 134815116310,
+      "run_id": "44308184999",
+      "status": "completed",
+      "conclusion": "success",
+      "bucket": "pass",
+      "started_at": "2026-11-18T12:53:10Z",
+      "completed_at": "2026-11-18T14:02:21Z",
+      "link": "https://github.com/SteveVitali/Eleutheria/actions/runs/44308184999/job/134815116310",
+      "waived": false
+    }
+  ],
+  "waivers": 5,
+  "polls": 1,
+  "waited_s": 0.0,
+  "state": "pass",
+  "kind": null,
+  "line": "ci: pass #529@a0c67f4 (python 44308184999; docs 44308184999; composed 44308184999; security 44308184999; web 44308184999) · main: 341905d descends:no merges:5 open-other:0",
+  "exit": 0
+}

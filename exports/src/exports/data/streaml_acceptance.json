@@ -1,0 +1,1030 @@
+{
+  "checks": [
+    {
+      "baseline": 6.0,
+      "basis_class": "B1",
+      "direction": "lower_is_better",
+      "fixing": [
+        "P35.14a",
+        "P35.14b",
+        "P37.67"
+      ],
+      "fixing_landed": true,
+      "flip": "flipped",
+      "from": "INV-01",
+      "id": "GQ-01",
+      "l2": [],
+      "measured": [],
+      "mode": "enforce",
+      "note": "L1 NEW-2: 6 predicates unregistered; flipped to enforce in P37.67 (CONF-14 tail sweep \u2014 cause removed by P35.14a/P35.14b; first live re-measurement owed D-P37.67-1)",
+      "placement": [
+        "I",
+        "P"
+      ],
+      "threshold": "<= 0",
+      "unit": "count"
+    },
+    {
+      "baseline": "pending",
+      "basis_class": "B1",
+      "direction": "lower_is_better",
+      "fixing": [
+        "P35.22"
+      ],
+      "fixing_landed": true,
+      "flip": "kept_ratchet",
+      "from": "INV-02",
+      "id": "GQ-02",
+      "kept_reason": "capture-replay seam owed \u2014 the replay telemetry job is P34.44b's QUEUED nightly leg; no measured population exists to enforce over",
+      "l2": [],
+      "measured": [],
+      "mode": "ratchet",
+      "note": "fails (L1 probe 1); replay needs the capture-replay seam (P34.44b job)",
+      "placement": [
+        "M",
+        "P"
+      ],
+      "threshold": "<= 0",
+      "unit": "count"
+    },
+    {
+      "baseline": 0.175,
+      "basis_class": "B2",
+      "direction": "lower_is_better",
+      "fixing": [
+        "P35.22",
+        "P37.67"
+      ],
+      "fixing_landed": true,
+      "flip": "flipped",
+      "from": "INV-03, C4",
+      "id": "GQ-03",
+      "l2": [],
+      "measured": [],
+      "mode": "enforce",
+      "note": "L2 M08: 17.5 %; large-table check \u2014 TABLESAMPLE \u2026 REPEATABLE, disclosed as a block-sampled estimate (L2 \u00a75); flipped to enforce in P37.67 (CONF-14 tail sweep \u2014 cause removed by P35.22; first live re-measurement owed D-P37.67-1)",
+      "placement": [
+        "M"
+      ],
+      "threshold": "<= 0.01",
+      "unit": "share"
+    },
+    {
+      "baseline": 5278.0,
+      "basis_class": "B1",
+      "direction": "lower_is_better",
+      "fixing": [
+        "P35.24",
+        "P37.67"
+      ],
+      "fixing_landed": true,
+      "flip": "flipped",
+      "from": "INV-04, C1",
+      "id": "GQ-04",
+      "l2": [],
+      "measured": [],
+      "mode": "enforce",
+      "note": "L2 M07: 5,278 colliding subjects; flipped to enforce in P37.67 (CONF-14 tail sweep \u2014 cause removed by P35.24; first live re-measurement owed D-P37.67-1)",
+      "placement": [
+        "I"
+      ],
+      "threshold": "<= 0",
+      "unit": "count"
+    },
+    {
+      "baseline": null,
+      "basis_class": "B1",
+      "direction": "lower_is_better",
+      "fixing": [
+        "P35.24"
+      ],
+      "fixing_landed": true,
+      "flip": "report",
+      "from": "INV-05",
+      "id": "GQ-05",
+      "l2": [],
+      "measured": [],
+      "mode": "report",
+      "note": "unmeasured (L1 NEW-11); warn band > 0.1 %; needs two runs per source",
+      "placement": [
+        "M"
+      ],
+      "threshold": "<= 0.005",
+      "unit": "share"
+    },
+    {
+      "baseline": 180036.0,
+      "basis_class": "B1",
+      "direction": "lower_is_better",
+      "fixing": [
+        "P35.14a",
+        "P35.14b",
+        "P35.15a",
+        "P35.15b"
+      ],
+      "fixing_landed": true,
+      "flip": "kept_ratchet",
+      "from": "INV-06, C6",
+      "id": "GQ-06",
+      "kept_reason": "typing-census evaluator seam owed \u2014 the PKG-07/PKG-11 typing work lands the fix but no evaluator measures the census; a flip would gate on not_evaluable",
+      "l2": [],
+      "measured": [
+        {
+          "evaluated": 0,
+          "measured": null,
+          "outcome": "not_evaluable",
+          "placement": "R",
+          "reason": "the subject/entity typing census lands with PKG-11/PKG-07 (P35.14/P35.15)",
+          "target": "R scan over fixture quality-page corpus"
+        }
+      ],
+      "mode": "ratchet",
+      "note": "L2 M21/M22: 10,238 entities + 180,036 subjects mistyped (subject count is the placeholder baseline); type fix is PKG-11, technology PKG-07",
+      "placement": [
+        "I",
+        "R"
+      ],
+      "threshold": "<= 0",
+      "unit": "count"
+    },
+    {
+      "baseline": 172588.0,
+      "basis_class": "B1",
+      "direction": "lower_is_better",
+      "fixing": [
+        "P35.26",
+        "P37.67"
+      ],
+      "fixing_landed": true,
+      "flip": "flipped",
+      "from": "C7 (SIG-ONTO-028)",
+      "id": "GQ-07",
+      "l2": [],
+      "measured": [],
+      "mode": "enforce",
+      "note": "L2 M23: 172,588 (74.2 %) publisher-as-operator; flipped to enforce in P37.67 (CONF-14 tail sweep \u2014 cause removed by P35.26; first live re-measurement owed D-P37.67-1)",
+      "placement": [
+        "I",
+        "M"
+      ],
+      "threshold": "<= 0",
+      "unit": "count"
+    },
+    {
+      "baseline": 2807.0,
+      "basis_class": "B1",
+      "direction": "lower_is_better",
+      "fixing": [
+        "P35.16",
+        "P35.19"
+      ],
+      "fixing_landed": true,
+      "flip": "kept_ratchet",
+      "from": "INV-07, C2, DR-C3-05",
+      "id": "GQ-08",
+      "kept_reason": "consumes V9 (REL-04b \u2192 P35.58) at release-verify \u2014 the withheld-point verdict is not folded into the quality report; the seam is owed before enforcement",
+      "l2": [],
+      "measured": [
+        {
+          "evaluated": 0,
+          "measured": null,
+          "outcome": "not_evaluable",
+          "placement": "R",
+          "reason": "the R placement consumes the release-verify V9 point checks (REL-04b / P35.58, after PKG-06b)",
+          "target": "R scan over fixture quality-page corpus"
+        }
+      ],
+      "mode": "ratchet",
+      "note": "L2 M16\u2013M18: 2,807 outside; 562 swaps; 14 null; 5 flips. The null/swap/flip half turns enforce once V9 lands (REL-04b \u2192 P35.58, after PKG-06b adds withholding); the R placement consumes V9 rather than re-implementing it",
+      "placement": [
+        "R",
+        "S"
+      ],
+      "threshold": "<= 0",
+      "unit": "count"
+    },
+    {
+      "baseline": "pending",
+      "basis_class": "B1",
+      "direction": "lower_is_better",
+      "fixing": [
+        "P35.17",
+        "P35.18"
+      ],
+      "fixing_landed": true,
+      "flip": "kept_ratchet",
+      "from": "INV-08, DR-C3-11",
+      "id": "GQ-09",
+      "kept_reason": "R evaluator seam owed \u2014 the dossier-key scheme split landed (P35.17/P35.18) but no evaluator reads it yet",
+      "l2": [],
+      "measured": [
+        {
+          "evaluated": 0,
+          "measured": null,
+          "outcome": "not_evaluable",
+          "placement": "R",
+          "reason": "the dossier-key scheme split lands with PKG-06a (P35.17/P35.18)",
+          "target": "R scan over fixture quality-page corpus"
+        }
+      ],
+      "mode": "ratchet",
+      "note": "fails (I1 NEW-1; L2 M19: 153,050 assignable points); K4 JUR-02 also cited",
+      "placement": [
+        "R"
+      ],
+      "threshold": "<= 0",
+      "unit": "count"
+    },
+    {
+      "baseline": 2.25,
+      "basis_class": "B1",
+      "direction": "lower_is_better",
+      "fixing": [
+        "P35.47",
+        "P37.67"
+      ],
+      "fixing_landed": true,
+      "flip": "flipped",
+      "from": "INV-09, C3a, DR-C3-10",
+      "id": "GQ-10",
+      "l2": [],
+      "measured": [
+        {
+          "evaluated": 1,
+          "measured": 1.0,
+          "outcome": "pass",
+          "placement": "R",
+          "reason": "",
+          "target": "R scan over fixture quality-page corpus"
+        }
+      ],
+      "mode": "enforce",
+      "note": "L2 M06/M13: dossier inflation up to 2.25x, n_sources = 1 on 100 %; consumed by V15 (P35.58); flipped to enforce in P37.67 (CONF-14 tail sweep \u2014 cause removed by P35.47; first live re-measurement owed D-P37.67-1)",
+      "placement": [
+        "R"
+      ],
+      "threshold": "<= 1.02",
+      "unit": "ratio"
+    },
+    {
+      "baseline": 11.0,
+      "basis_class": "B2",
+      "direction": "lower_is_better",
+      "fixing": [
+        "P35.25",
+        "P37.67"
+      ],
+      "fixing_landed": true,
+      "flip": "flipped",
+      "from": "C3b (SIG-EPIS-029)",
+      "id": "GQ-11",
+      "l2": [],
+      "measured": [],
+      "mode": "enforce",
+      "note": "L2 section 2.1: at least 11 inferred lineages, 0 declared; a new source with an undeclared overlap is held from publication; flipped to enforce in P37.67 (CONF-14 tail sweep \u2014 cause removed by P35.25; first live re-measurement owed D-P37.67-1)",
+      "placement": [
+        "I",
+        "M"
+      ],
+      "threshold": "<= 0",
+      "unit": "count"
+    },
+    {
+      "baseline": "pending",
+      "basis_class": "B1",
+      "direction": "lower_is_better",
+      "fixing": [
+        "P35.25"
+      ],
+      "fixing_landed": true,
+      "flip": "kept_ratchet",
+      "from": "INV-10 (SIG-RECON-018)",
+      "id": "GQ-12",
+      "kept_reason": "lineage/independence-class seam owed (CONF-04); the resolution independence census has no evaluator",
+      "l2": [],
+      "measured": [],
+      "mode": "ratchet",
+      "note": "fails (L1 NEW-4); needs the lineage/independence-class seam (CONF-04)",
+      "placement": [
+        "M"
+      ],
+      "threshold": "<= 0",
+      "unit": "count"
+    },
+    {
+      "baseline": 19121.0,
+      "basis_class": "B1",
+      "direction": "lower_is_better",
+      "fixing": [
+        "P35.27",
+        "P37.67"
+      ],
+      "fixing_landed": true,
+      "flip": "flipped",
+      "from": "C5",
+      "id": "GQ-13",
+      "l2": [],
+      "measured": [],
+      "mode": "enforce",
+      "note": "L2 M14: 0 of 19,121 contested; flipped to enforce in P37.67 (CONF-14 tail sweep \u2014 cause removed by P35.27; first live re-measurement owed D-P37.67-1)",
+      "placement": [
+        "M"
+      ],
+      "threshold": "<= 0",
+      "unit": "count"
+    },
+    {
+      "baseline": "pending",
+      "basis_class": "B1",
+      "direction": "lower_is_better",
+      "fixing": [
+        "P35.29",
+        "P35.30",
+        "P37.67"
+      ],
+      "fixing_landed": true,
+      "flip": "flipped",
+      "from": "INV-11",
+      "id": "GQ-14",
+      "l2": [],
+      "measured": [
+        {
+          "evaluated": 2,
+          "measured": 0,
+          "outcome": "pass",
+          "placement": "R",
+          "reason": "",
+          "target": "R scan over fixture quality-page corpus"
+        }
+      ],
+      "mode": "enforce",
+      "note": "L2 M28: 131/131 network nodes UUID-labelled, 82.8 % of sites unlabeled \u2014 two populations, baseline pending; flipped to enforce in P37.67 (CONF-14 tail sweep \u2014 cause removed by P35.29/P35.30; first live re-measurement owed D-P37.67-1)",
+      "placement": [
+        "R"
+      ],
+      "threshold": "<= 0",
+      "unit": "count"
+    },
+    {
+      "baseline": "pending",
+      "basis_class": "B1",
+      "direction": "lower_is_better",
+      "fixing": [
+        "P35.26",
+        "P35.30",
+        "P35.20a",
+        "P35.20b",
+        "P37.67"
+      ],
+      "fixing_landed": true,
+      "flip": "flipped",
+      "from": "INV-12, C9, DR-C3-07",
+      "id": "GQ-15",
+      "l2": [],
+      "measured": [
+        {
+          "evaluated": 0,
+          "measured": null,
+          "outcome": "not_evaluable",
+          "placement": "R",
+          "reason": "no spine connection",
+          "target": "R scan over fixture quality-page corpus"
+        }
+      ],
+      "mode": "enforce",
+      "note": "L2 M30/M37: 98.8 % of edges undated; 178/178 freshness 'ok' \u2014 baseline pending; flipped to enforce in P37.67 (CONF-14 tail sweep \u2014 cause removed by P35.26/P35.30/P35.20a/P35.20b; first live re-measurement owed D-P37.67-1)",
+      "placement": [
+        "I",
+        "M",
+        "R"
+      ],
+      "threshold": "<= 0",
+      "unit": "count"
+    },
+    {
+      "baseline": "pending",
+      "basis_class": "B1",
+      "direction": "lower_is_better",
+      "fixing": [
+        "P35.20a",
+        "P35.20b"
+      ],
+      "fixing_landed": true,
+      "flip": "kept_ratchet",
+      "from": "INV-13, DR-C3-04",
+      "id": "GQ-16",
+      "kept_reason": "consumes the V6 one-resolved verdict at release-verify \u2014 not folded into the quality report",
+      "l2": [],
+      "measured": [
+        {
+          "evaluated": 0,
+          "measured": null,
+          "outcome": "not_evaluable",
+          "placement": "R",
+          "reason": "the one-resolved join consumes the V6 coverage check (P35.20a/b)",
+          "target": "R scan over fixture quality-page corpus"
+        }
+      ],
+      "mode": "ratchet",
+      "note": "fails (C3 NEW-5); the R placement consumes V6",
+      "placement": [
+        "R"
+      ],
+      "threshold": "<= 0",
+      "unit": "count"
+    },
+    {
+      "baseline": 66768.0,
+      "basis_class": "B1",
+      "direction": "lower_is_better",
+      "fixing": [
+        "P34.21a",
+        "P34.21b"
+      ],
+      "fixing_landed": true,
+      "flip": "kept_ratchet",
+      "from": "INV-14, C10, DR-C3-09",
+      "id": "GQ-17",
+      "kept_reason": "consumes the V8 attribution verdict at release-verify \u2014 not folded into the quality report",
+      "l2": [],
+      "measured": [
+        {
+          "evaluated": 0,
+          "measured": null,
+          "outcome": "not_evaluable",
+          "placement": "R",
+          "reason": "the R placement consumes the V8 attribution check (P34.21a/b)",
+          "target": "R scan over fixture quality-page corpus"
+        }
+      ],
+      "mode": "ratchet",
+      "note": "L2 M35: 66,138 empty + 630 SIG-credited (summed for the placeholder baseline); R consumes V8; S runs the same mechanical scan on the served release",
+      "placement": [
+        "R",
+        "S"
+      ],
+      "threshold": "<= 0",
+      "unit": "count"
+    },
+    {
+      "baseline": 0.0,
+      "basis_class": "B1",
+      "direction": "higher_is_better",
+      "fixing": [
+        "P35.61"
+      ],
+      "fixing_landed": true,
+      "flip": "kept_ratchet",
+      "from": "INV-16, C8",
+      "id": "GQ-18",
+      "kept_reason": "flips to the full requirement at the G2 byte-binding activation (its registry note names the trigger); enforcement rides the activation gate, not this sweep",
+      "l2": [],
+      "measured": [
+        {
+          "evaluated": 0,
+          "measured": null,
+          "outcome": "not_evaluable",
+          "placement": "R",
+          "reason": "no spine connection",
+          "target": "R scan over fixture quality-page corpus"
+        }
+      ],
+      "mode": "ratchet",
+      "note": "L2 M33: 0 of 2,782,187 bound; flips to the full requirement at the G2 activation (also J3 TX-08)",
+      "placement": [
+        "M",
+        "R"
+      ],
+      "threshold": ">= 1",
+      "unit": "share"
+    },
+    {
+      "baseline": null,
+      "basis_class": "B1",
+      "direction": "lower_is_better",
+      "fixing": [
+        "P35.32",
+        "P35.34"
+      ],
+      "fixing_landed": true,
+      "flip": "report",
+      "from": "C11 (SIG-CONF-009)",
+      "id": "GQ-19",
+      "l2": [],
+      "measured": [],
+      "mode": "report",
+      "note": "Surrey -13 %, ACT -4.2 % (L2 M40); the P35.34 telemetry writer records the sig.upstream-reconciliation/1 pairs and eval_gq19 measures the unexplained share \u2014 stays report mode (enforcement promotion is CONF-01's); zero recorded pairs is not_evaluable, never a pass",
+      "placement": [
+        "I"
+      ],
+      "threshold": "<= 0.01",
+      "unit": "share"
+    },
+    {
+      "baseline": null,
+      "basis_class": "B1",
+      "direction": "higher_is_better",
+      "fixing": [],
+      "fixing_landed": true,
+      "flip": "enforce",
+      "from": "C12",
+      "id": "GQ-20",
+      "l2": [],
+      "measured": [
+        {
+          "evaluated": 0,
+          "measured": null,
+          "outcome": "not_evaluable",
+          "placement": "R",
+          "reason": "the release diff consumes the V14 diff (P35.58)",
+          "target": "R scan over fixture quality-page corpus"
+        }
+      ],
+      "mode": "enforce",
+      "note": "seeded enforce (L2 M11: retention 1.000); the R placement consumes V14 \u2014 nothing to fix",
+      "placement": [
+        "R"
+      ],
+      "threshold": ">= 0.999",
+      "unit": "share"
+    },
+    {
+      "baseline": null,
+      "basis_class": "B1",
+      "direction": "higher_is_better",
+      "fixing": [],
+      "fixing_landed": true,
+      "flip": "report",
+      "from": "INV-17",
+      "id": "GQ-21",
+      "l2": [],
+      "measured": [],
+      "mode": "report",
+      "note": "about 0 (L1 NEW-12); report-only \u2014 no floor yet",
+      "placement": [
+        "M"
+      ],
+      "threshold": "none",
+      "unit": "share"
+    },
+    {
+      "baseline": null,
+      "basis_class": "B3",
+      "direction": "higher_is_better",
+      "fixing": [],
+      "fixing_landed": true,
+      "flip": "report",
+      "from": "C13",
+      "id": "GQ-22",
+      "l2": [],
+      "measured": [],
+      "mode": "report",
+      "note": "B3 (agent-labelled) evidence NEVER gates \u2014 report forever (SIG-CONF-003); warn band only; 0 of 9 (L2 M44)",
+      "placement": [
+        "S"
+      ],
+      "threshold": ">= 0.9",
+      "unit": "share"
+    },
+    {
+      "baseline": "pending",
+      "basis_class": "B1",
+      "direction": "lower_is_better",
+      "fixing": [
+        "P35.46"
+      ],
+      "fixing_landed": true,
+      "flip": "kept_ratchet",
+      "from": "new (replaces INV-15 for copy tiers)",
+      "id": "GQ-23",
+      "kept_reason": "first derivation-collapse run not yet executed \u2014 P37.46b landed the materializer but no collapse run exists to census; evaluated=0 must fail, so a flip would gate on an empty population",
+      "l2": [],
+      "measured": [],
+      "mode": "ratchet",
+      "note": "n/a \u2014 collapse tiers do not exist yet; any failure demotes that lineage's collapse tier on the next run and alerts; flips to enforce in CONF-07a (P35.46)",
+      "placement": [
+        "M"
+      ],
+      "threshold": "<= 0",
+      "unit": "count"
+    },
+    {
+      "baseline": null,
+      "basis_class": "B1",
+      "direction": "lower_is_better",
+      "fixing": [
+        "P34.45"
+      ],
+      "fixing_landed": true,
+      "flip": "enforce",
+      "from": "new (INV-15 successor)",
+      "id": "GQ-24",
+      "l2": [],
+      "measured": [
+        {
+          "evaluated": 0,
+          "measured": null,
+          "outcome": "not_evaluable",
+          "placement": "R",
+          "reason": "no spine connection",
+          "target": "R scan over fixture quality-page corpus"
+        }
+      ],
+      "mode": "enforce",
+      "note": "P34.45 (v3-interim): evaluated population = the LATEST completed run's inferential-tier decisions (append-only spine \u2014 superseded runs' inferential auto_writes are detected and disclosed, never re-judged); expected to pass after the v3-interim ER re-run",
+      "placement": [
+        "M",
+        "R"
+      ],
+      "threshold": "<= 0",
+      "unit": "count"
+    },
+    {
+      "baseline": "pending",
+      "basis_class": "B1",
+      "direction": "lower_is_better",
+      "fixing": [
+        "P35.46"
+      ],
+      "fixing_landed": true,
+      "flip": "kept_ratchet",
+      "from": "new",
+      "id": "GQ-25",
+      "kept_reason": "same first-collapse-run debt as GQ-23 \u2014 the namespace coverage check has no population until a collapse run exists",
+      "l2": [],
+      "measured": [],
+      "mode": "ratchet",
+      "note": "unmeasured; flips to enforce in CONF-07a (P35.46)",
+      "placement": [
+        "M"
+      ],
+      "threshold": "<= 0",
+      "unit": "count"
+    },
+    {
+      "baseline": "pending",
+      "basis_class": "B1",
+      "direction": "lower_is_better",
+      "fixing": [
+        "P35.23"
+      ],
+      "fixing_landed": true,
+      "flip": "kept_ratchet",
+      "from": "new",
+      "id": "GQ-26",
+      "kept_reason": "RDC corpus legs ride the rdc harness leg queue; no measured population exists to enforce over",
+      "l2": [],
+      "measured": [],
+      "mode": "ratchet",
+      "note": "unmeasured; P placement rides the real-data regression corpus (CONF-08/P35.23); flips to enforce there",
+      "placement": [
+        "M",
+        "P"
+      ],
+      "threshold": "<= 0",
+      "unit": "count"
+    },
+    {
+      "baseline": null,
+      "basis_class": "B1",
+      "direction": "lower_is_better",
+      "fixing": [
+        "P34.17",
+        "P34.45"
+      ],
+      "fixing_landed": true,
+      "flip": "enforce",
+      "from": "DR-C3-03; B4 G10 claim markers; SIG-EVAL-006",
+      "id": "GQ-27",
+      "l2": [],
+      "measured": [
+        {
+          "evaluated": 3,
+          "measured": 6,
+          "outcome": "fail",
+          "placement": "R",
+          "reason": "6 violates threshold <= 0",
+          "target": "R scan over fixture quality-page corpus"
+        }
+      ],
+      "mode": "enforce",
+      "note": "fails (F-06, F-108); the R placement consumes V13 and the P placement scans build output; flips coordinated with H-4 (P34.17)/CONF-02 (P34.45)",
+      "placement": [
+        "P",
+        "R"
+      ],
+      "threshold": "<= 0",
+      "unit": "count"
+    }
+  ],
+  "conf": "R11-CONF-14",
+  "counts": {
+    "checks": 27,
+    "criteria": 19,
+    "criteria_met": 4,
+    "criteria_miss": 2,
+    "criteria_not_measured": 13,
+    "flipped": 9,
+    "kept_ratchet": 11
+  },
+  "criteria": [
+    {
+      "basis": "",
+      "deferral": "D-P37.67-1",
+      "detail": "no evidence check was measured in a bound report",
+      "evidence": [
+        "GQ-04"
+      ],
+      "id": "SC-01",
+      "text": "subject-key collisions = 0",
+      "verdict": "not_measured"
+    },
+    {
+      "basis": "fixture",
+      "deferral": "D-P37.67-1",
+      "detail": "R scan over fixture quality-page corpus: enforce_failures=['GQ-27']; the release measurement is owed by the live leg",
+      "evidence": [
+        "run:enforce_failures"
+      ],
+      "id": "SC-02",
+      "text": "enforce-mode failures = 0",
+      "verdict": "miss"
+    },
+    {
+      "basis": "fixture",
+      "deferral": "D-P37.67-1",
+      "detail": "pass (R scan over fixture quality-page corpus, measured=0); the release measurement is owed by the live leg",
+      "evidence": [
+        "GQ-14"
+      ],
+      "id": "SC-03",
+      "text": "UUID labels = 0",
+      "verdict": "met"
+    },
+    {
+      "basis": "",
+      "deferral": "D-P37.67-1",
+      "detail": "no evidence check was measured in a bound report",
+      "evidence": [
+        "GQ-15"
+      ],
+      "id": "SC-04",
+      "text": "1970 edges = 0",
+      "verdict": "not_measured"
+    },
+    {
+      "basis": "",
+      "deferral": "D-P37.67-1",
+      "detail": "no evidence check was measured in a bound report",
+      "evidence": [
+        "GQ-07"
+      ],
+      "id": "SC-05",
+      "text": "publisher-as-operator = 0",
+      "verdict": "not_measured"
+    },
+    {
+      "basis": "",
+      "deferral": "D-P37.67-1",
+      "detail": "no evidence check was measured in a bound report",
+      "evidence": [
+        "GQ-06"
+      ],
+      "id": "SC-06",
+      "text": "entity-type mismatches = 0",
+      "verdict": "not_measured"
+    },
+    {
+      "basis": "",
+      "deferral": "D-P37.67-1",
+      "detail": "no evidence check was measured in a bound report",
+      "evidence": [
+        "GQ-03"
+      ],
+      "id": "SC-07",
+      "text": "exact claim repeats <= 1 %",
+      "verdict": "not_measured"
+    },
+    {
+      "basis": "fixture",
+      "deferral": "D-P37.67-1",
+      "detail": "pass (R scan over fixture quality-page corpus, measured=1.0); the release measurement is owed by the live leg",
+      "evidence": [
+        "GQ-10"
+      ],
+      "id": "SC-08",
+      "text": "dossier inflation <= 1.02x",
+      "verdict": "met"
+    },
+    {
+      "basis": "fixture",
+      "deferral": "D-P37.67-1",
+      "detail": "pass (R scan over fixture quality-page corpus, measured=1.0); the release measurement is owed by the live leg",
+      "evidence": [
+        "GQ-10",
+        "GQ-12"
+      ],
+      "id": "SC-09",
+      "text": "100 % of >=2-lineage coincident points accounted for",
+      "verdict": "met"
+    },
+    {
+      "basis": "",
+      "deferral": "D-P37.67-1",
+      "detail": "no evidence check was measured in a bound report",
+      "evidence": [
+        "GQ-23"
+      ],
+      "id": "SC-10",
+      "text": "derivation census 100 %",
+      "verdict": "not_measured"
+    },
+    {
+      "basis": "",
+      "deferral": "D-P37.67-1",
+      "detail": "the M-1b namespace-bound measurement runs in P37.44's mechanical-evaluation machinery; its upstream legs are deferred under live_verification=false and the live release's bound is owed by the live leg",
+      "evidence": [
+        "mech-eval:M-1b"
+      ],
+      "id": "SC-11",
+      "text": "M-1b lower bound >= 0.98 per declared namespace",
+      "verdict": "not_measured"
+    },
+    {
+      "basis": "",
+      "deferral": "D-P37.67-1",
+      "detail": "no evidence check was measured in a bound report",
+      "evidence": [
+        "GQ-08"
+      ],
+      "id": "SC-12",
+      "text": "0 unexplained out-of-polygon points",
+      "verdict": "not_measured"
+    },
+    {
+      "basis": "",
+      "deferral": "D-P37.67-1",
+      "detail": "no evidence check was measured in a bound report",
+      "evidence": [
+        "GQ-08"
+      ],
+      "id": "SC-13",
+      "text": "0 swaps, 0 null-island points",
+      "verdict": "not_measured"
+    },
+    {
+      "basis": "",
+      "deferral": "D-P37.67-1",
+      "detail": "no evidence check was measured in a bound report",
+      "evidence": [
+        "GQ-06"
+      ],
+      "id": "SC-14",
+      "text": "technology on 100 % of site rows",
+      "verdict": "not_measured"
+    },
+    {
+      "basis": "",
+      "deferral": "D-P37.67-1",
+      "detail": "no evidence check was measured in a bound report",
+      "evidence": [
+        "GQ-13"
+      ],
+      "id": "SC-15",
+      "text": "contradiction recall 1.0",
+      "verdict": "not_measured"
+    },
+    {
+      "basis": "",
+      "deferral": "D-P37.67-1",
+      "detail": "no evidence check was measured in a bound report",
+      "evidence": [
+        "GQ-18"
+      ],
+      "id": "SC-16",
+      "text": "byte binding 100 % for every re-run source",
+      "verdict": "not_measured"
+    },
+    {
+      "basis": "",
+      "deferral": "D-P37.67-1",
+      "detail": "no evidence check was measured in a bound report",
+      "evidence": [
+        "GQ-17"
+      ],
+      "id": "SC-17",
+      "text": "attribution empty-where-required = 0",
+      "verdict": "not_measured"
+    },
+    {
+      "basis": "engineered",
+      "deferral": "D-P37.65b-1",
+      "detail": "the committed sig.quality-page/1 artifact declares 27/27 checks; the live-publication half rides the promotion leg (D-P37.65b-1, QUEUED)",
+      "evidence": [
+        "artifact:quality-page"
+      ],
+      "id": "SC-18",
+      "text": "/quality/ live with every check",
+      "verdict": "met"
+    },
+    {
+      "basis": "fixture",
+      "deferral": "D-P37.67-1",
+      "detail": "fail (R scan over fixture quality-page corpus, measured=6); the release measurement is owed by the live leg",
+      "evidence": [
+        "GQ-27"
+      ],
+      "id": "SC-19",
+      "text": "0 'verified' strings without a B5 marker",
+      "verdict": "miss"
+    }
+  ],
+  "flips": {
+    "flipped": [
+      "GQ-01",
+      "GQ-03",
+      "GQ-04",
+      "GQ-07",
+      "GQ-10",
+      "GQ-11",
+      "GQ-13",
+      "GQ-14",
+      "GQ-15"
+    ],
+    "kept_ratchet": [
+      "GQ-02",
+      "GQ-06",
+      "GQ-08",
+      "GQ-09",
+      "GQ-12",
+      "GQ-16",
+      "GQ-17",
+      "GQ-18",
+      "GQ-23",
+      "GQ-25",
+      "GQ-26"
+    ],
+    "note": "flips land only where every named fixing row is landed and a measurement seam exists; kept ratchets name their block in kept_reason (the owed work rides D-P37.67-2)"
+  },
+  "generated_at": "2026-11-18T11:26:25Z",
+  "l2": {
+    "metrics": 45,
+    "note": "historical L2 census values \u2014 the before column. Re-measured only by the live leg; never re-asserted here.",
+    "release": "sig-2026-09-27-ce480ab1",
+    "source": "docs/build/planning/2026-09-30-next-phase/data/l2_metrics.csv",
+    "status_counts": {
+      "fail": 29,
+      "ok": 5,
+      "warn": 11
+    }
+  },
+  "landed_tickets": [
+    "P35.14a",
+    "P35.14b",
+    "P35.20a",
+    "P35.20b",
+    "P35.22",
+    "P35.24",
+    "P35.25",
+    "P35.26",
+    "P35.27",
+    "P35.29",
+    "P35.30",
+    "P35.47"
+  ],
+  "measurement": {
+    "bound_reports": [
+      {
+        "digest": null,
+        "placement": "R",
+        "summary": {
+          "class_s_trigger": false,
+          "enforce_failures": [
+            "GQ-27"
+          ],
+          "not_evaluable": [
+            "GQ-06",
+            "GQ-08",
+            "GQ-09",
+            "GQ-15",
+            "GQ-16",
+            "GQ-17",
+            "GQ-18",
+            "GQ-20",
+            "GQ-24"
+          ],
+          "overall": "fail",
+          "ratchet_regressions": [],
+          "unbaselined": []
+        },
+        "target": "R scan over fixture quality-page corpus"
+      }
+    ],
+    "deferral": "D-P37.67-1",
+    "live_leg": "prepared_not_executed",
+    "rerun_prompt": "implement-spec spec=docs/tickets/496_P37.67__stream-l-re-measure.md live_verification=true"
+  },
+  "row": "P37.67",
+  "target": "the Round-11 release (the P37.65a/b cut+promotion legs are still queued \u2014 D-P37.65a-1 / D-P37.65b-1)",
+  "version": "sig.streaml-acceptance/1"
+}

@@ -309,14 +309,22 @@ def test_baseline_emits_the_record_and_proposal(tmp_path: Path) -> None:
             "--emit",
         ]
     )
-    assert rc == 0
+    # The leg exits 0 only when a ratchet check measured — P37.67's CONF-14
+    # sweep flipped the landed-cause ratchets to enforce, so the file-scan
+    # fixture may measure none of the remaining ratchet rows (GQ-14's file
+    # evaluator is enforce-mode now): 0 or 3 per the recorded contract.
+    assert rc in (0, 3)
     record = json.loads((out / "quality-baseline.json").read_text())
     assert record["version"] == "sig.quality-baseline/1"
     assert record["run_id"] == "baseline-test"
-    assert record["counts"]["measured"] >= 1
+    assert rc == (0 if record["counts"]["measured"] > 0 else 3)
     assert (out / "quality-report-M.json").exists()
     assert (out / "quality-report-R.json").exists()
     # Every ratchet check carries a proposal row (measured or not_measured).
+    from exports.quality import load_registry
+
+    ratchet_ids = {c.check_id for c in load_registry().checks if c.mode == "ratchet"}
+    assert {r["check"] for r in record["proposal"]} == ratchet_ids
     assert all(
         r["state"] in {"baselined", "tightened", "kept", "regression_kept", "not_measured"}
         for r in record["proposal"]

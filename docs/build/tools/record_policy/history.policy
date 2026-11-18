@@ -1715,3 +1715,16 @@ seed-commit f0ecc4d6
 # 6044be29's rewritten runs/P37.65b.md lines 9 and 118 only; no other
 # commit borrows the exemption.
 seed-commit 6044be29
+
+# 990f3467 + e8341fc0 — P37.67 carried kind-vocabulary repair (run 44296540606):
+# the carried LEDGER PHASE LOG line (committed b2a9ec90) read "P37.66 records
+# correction" — an undeclared kind (kind-vocabulary, hard in the current
+# region) — so 990f3467 re-kinded it and e8341fc0 respelled the head to the
+# bare declared kind `correction — `. Both commits rewrote the committed line;
+# the current bytes are the only lawful spelling (restoring the undeclared
+# kind would re-break kind-vocabulary; the BM-HIST-01 correction semantics —
+# a new dated entry — are already carried by the line's own kind). Scope:
+# the append-only findings attributed to 990f3467's and e8341fc0's rewritten
+# LEDGER.md PHASE LOG line only; no other commit borrows the exemption.
+seed-commit 990f3467
+seed-commit e8341fc0
