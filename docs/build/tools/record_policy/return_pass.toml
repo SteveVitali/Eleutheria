@@ -1062,24 +1062,6 @@ rerun_cell = '''`implement-spec spec=docs/tickets/320_P35.41__freshness-semantic
   live_dependants = []
 
 [[row]]
-key = "P35.53"
-kind = "leg"
-obligations = ["D-P35.53-1"]
-obligations_cell = '''D-P35.53-1'''
-gates_cell = '''QUEUED (OM-19 2026-10-23T03:33Z); OM-20 — GATE-G4 §4 (P35.53); AR-3+AR-2 weekday 14:00–20:00Z, never 03:00–06:30Z, ≥ `SIG_RELEASE_EARLIEST` 2026-10-13T12:00Z'''
-operator_cell = '''none till re-run; creates private `…-sig-release` bucket + IAM-only origins + `sig-release` job under op ADC'''
-rerun_cell = '''`SIG_RELEASE_AUTHOR=$(git config user.name) bash ops/gcp/release-infra.sh --apply all` or `implement-spec spec=docs/tickets/331_P35.53__release-pipeline-and-staging-origins.md live_verification=true`'''
-
-  [[row.legs]]
-  id = "P35.53-release-infra"
-  obligations = ["D-P35.53-1"]
-  earliest = '''the next AR-3 + AR-2 window (preferred 14:00–20:00Z weekdays, at/after `SIG_RELEASE_EARLIEST`) with the AR-2 restore point first'''
-  excluded = ["03:00–06:30Z"]
-  go = '''pre-authorised: GATE-G4 §4 (P35.53)'''
-  rerun = '''implement-spec spec=docs/tickets/331_P35.53__release-pipeline-and-staging-origins.md live_verification=true'''
-  live_dependants = ["P35.54", "P35.55", "P35.59"]
-
-[[row]]
 key = "P35.59"
 kind = "leg"
 obligations = []
