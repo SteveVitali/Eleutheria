@@ -3,13 +3,48 @@
   "pr": 524,
   "base": "main",
   "heads": [
-    {"sha": "fa40ddd0", "run": 44224975206, "verdict": "fail — python lint (ruff I001 test_explore_acceptance.py); fixed a9f7215"},
-    {"sha": "a9f72154", "run": 44225121320, "verdict": "fail — docs changelog_gate (print.astro public-behaviour path); fixed e131283c CHANGELOG row"},
-    {"sha": "e131283c", "run": 44225876770, "verdict": "fail — python test-par perf_reuse cmd_lint unaudited docs/-path coupling in spec comments; fixed b57d7aee"},
-    {"sha": "b57d7aee", "run": 44228613277, "verdict": "fail — web visual grid `map — /map/` light+dark-1440 at byte-identical VISUAL-MAP-LIGHT-1 (96,676 px, 0.08) + VISUAL-MAP-DARK-1 (96,179 px, 0.08) signatures; B-15 same-head rerun requested then cancelled by the records push (superseded, not consumed); the other four legs green"},
-    {"sha": "15b5673d", "run": 44236274541, "verdict": "pass — security 32s · docs 2m26s · composed 3m41s · python 28m50s · web 1h3m13s, 5/5 head-bound; the map visual flake did not recur on the verdict head"}
+    {
+      "sha": "fa40ddd0",
+      "run": 44224975206,
+      "verdict": "fail \u2014 python lint (ruff I001 test_explore_acceptance.py); fixed a9f7215"
+    },
+    {
+      "sha": "a9f72154",
+      "run": 44225121320,
+      "verdict": "fail \u2014 docs changelog_gate (print.astro public-behaviour path); fixed e131283c CHANGELOG row"
+    },
+    {
+      "sha": "e131283c",
+      "run": 44225876770,
+      "verdict": "fail \u2014 python test-par perf_reuse cmd_lint unaudited docs/-path coupling in spec comments; fixed b57d7aee"
+    },
+    {
+      "sha": "b57d7aee",
+      "run": 44228613277,
+      "verdict": "fail \u2014 web visual grid `map \u2014 /map/` light+dark-1440 at byte-identical VISUAL-MAP-LIGHT-1 (96,676 px, 0.08) + VISUAL-MAP-DARK-1 (96,179 px, 0.08) signatures; B-15 same-head rerun requested then cancelled by the records push (superseded, not consumed); the other four legs green"
+    },
+    {
+      "sha": "15b5673d",
+      "run": 44236274541,
+      "verdict": "pass \u2014 security 32s \u00b7 docs 2m26s \u00b7 composed 3m41s \u00b7 python 28m50s \u00b7 web 1h3m13s, 5/5 head-bound; the map visual flake did not recur on the verdict head"
+    }
   ],
-  "flake_log": "docs/build/reports/ci/flake_log.csv rows 2026-11-18T04:12Z/04:15Z/04:30Z/05:35Z — VISUAL-MAP-LIGHT-1+VISUAL-MAP-DARK-1 unlisted; the rerun-cancelled attempt is recorded as superseded, not consumed",
-  "fix_arcs": ["a9f72154 ruff I001", "e131283c CHANGELOG row", "b57d7aee perf_reuse de-coupling", "15b5673d flake_log rows"],
-  "deferrals": {"opened": ["D-P37.64-1"], "closed": []}
+  "flake_log": "docs/build/reports/ci/flake_log.csv rows 2026-11-18T04:12Z/04:15Z/04:30Z/05:35Z \u2014 VISUAL-MAP-LIGHT-1+VISUAL-MAP-DARK-1 unlisted; the rerun-cancelled attempt is recorded as superseded, not consumed",
+  "fix_arcs": [
+    "a9f72154 ruff I001",
+    "e131283c CHANGELOG row",
+    "b57d7aee perf_reuse de-coupling",
+    "15b5673d flake_log rows"
+  ],
+  "deferrals": {
+    "opened": [
+      "D-P37.64-1"
+    ],
+    "closed": []
+  },
+  "merged": {
+    "sha": "02455b7a9bb4e6a422323cbbf783e4a122380bfb",
+    "at": "2026-11-18T05:22:01Z",
+    "note": "operator merged mid-boundary; head frozen 15b5673d; records commits past the merge covered by the next PR's head-bound CI (b206e14d precedent)"
+  }
 }
