@@ -30,6 +30,9 @@ from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 REPO = HERE.parents[2]
+sys.path.insert(0, str(HERE))
+import acquisition_closeout as tool  # noqa: E402
+
 TOOL = HERE / "acquisition_closeout.py"
 PYTHON = os.environ.get("SIG_TOOLS_PYTHON") or sys.executable
 PD = REPO / "docs/build/planning/2026-09-30-next-phase"
@@ -62,9 +65,14 @@ def test_section_and_rows_exist() -> None:
     txt = DEFERRALS.read_text()
     assert SECTION in txt
     rows = p3766_rows()
-    assert len(rows) == 15, f"expected 15 D-P37.66-* rows, found {sorted(rows)}"
+    # expected count is tool-derived (12 I8 §6.3 groups + 3 duty rows), not a
+    # pinned literal — the committed section must carry exactly the tool's rows.
+    expected = len(tool.GROUPS) + len(tool.DUTY_DEFERRALS)
+    assert len(rows) == expected, (
+        f"expected {expected} D-P37.66-* rows, found {sorted(rows)}"
+    )
     assert sorted(rows, key=lambda r: int(r.rsplit("-", 1)[1])) == [
-        f"D-P37.66-{i}" for i in range(1, 16)
+        f"D-P37.66-{i}" for i in range(1, expected + 1)
     ]
 
 
@@ -131,7 +139,12 @@ def test_every_row_has_e0_anchor() -> None:
         eid = f"{rid}:e0"
         assert eid in events, f"{rid} has no obligation-event/1 anchor"
         ev = events[eid]
-        assert ev["to_status"] == "OPEN"
+        # record-to-record: the e0 anchor's recorded status must match the
+        # committed row's status cell (no status-word literal — OM-15).
+        status_cell = ln.rstrip().removesuffix("|").rstrip().rsplit("|", 1)[-1].strip()
+        assert status_cell.startswith(ev["to_status"]), (
+            f"{rid}: e0 to_status {ev['to_status']!r} != row status cell {status_cell!r}"
+        )
         anchor = ev["anchor"]
         assert anchor["row_sha256"] == hashlib.sha256(ln.encode()).hexdigest(), (
             f"{rid}: anchor sha drifts from the committed row bytes"
