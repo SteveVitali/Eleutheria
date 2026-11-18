@@ -16,8 +16,9 @@ every gated leg (prepared_not_executed — never a fabricated pass).
 from __future__ import annotations
 
 import pytest
-from ops import explore_acceptance
 from ops.explore_acceptance import LEGS, RERUN_PROMPT
+
+from ops import explore_acceptance
 
 
 def test_plan_shape() -> None:
