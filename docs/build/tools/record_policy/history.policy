@@ -1662,3 +1662,24 @@ seed-commit 61d0d148
 # findings attributed to 72fc4aba's rewritten BUILD_INDEX:689 and
 # LEDGER:1842 lines only; no other commit borrows the exemption.
 seed-commit 72fc4aba
+
+# c24e34cd — P37.64 closeout records (made on the chain tip after #524's
+# mid-boundary merge at 02455b7a, so this is the first head-bound range to
+# cover it): the commit filled the run ledger's committed closeout
+# placeholders — `- **PR:** pending` (runs/P37.64.md:9), `Filled at
+# closeout — one row per clause.` (:96) and `Pending.` (:100) — with the
+# recorded PR # + CI arc + operating-clause table + Closed text. The fills
+# are the sanctioned placeholder-fill kind in substance (B2 §7
+# gate-status/closeout fills), but the committed spellings were never
+# declared tokens under this policy's `placeholder` grammar (`PR pending`,
+# `(filled at closeout)`, `pending head-bound read`, … are; `PR: pending`,
+# `Filled at closeout …` bare, `Pending.` are not), so the guard's
+# token-match flags the three rewrites. The current bytes are the correct
+# final content — restoring the placeholder spellings would un-record the
+# closeout — so the declaration retires the findings and the contract
+# going forward is declared tokens only (P37.65a's ledger uses
+# `pending head-bound read` / `(filled at closeout)`). Scope: the
+# append-only findings attributed to c24e34cd's rewritten
+# runs/P37.64.md lines 9, 96, 100 only; no other commit borrows the
+# exemption.
+seed-commit c24e34cd

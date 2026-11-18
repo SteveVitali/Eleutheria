@@ -28,6 +28,12 @@ from ops.transparency_acceptance import (
 
 from ops import transparency_acceptance
 
+#: A fake AWS-key-shaped literal, split so the repo secret gate
+#: (``scripts/ci/secret_scan.py``, ``AKIA[0-9A-Z]{16}``) never sees the
+#: literal in the file — ``find_secrets`` scans the fixture file the test
+#: writes at runtime, which is the point.
+FAKE_AWS_KEY = "AKIA" + "IOSFODNN7EXAMPLE"
+
 
 def test_plan_shape() -> None:
     doc = transparency_acceptance.plan()
@@ -97,7 +103,7 @@ def test_scrub_audit_clean_tree_passes(tmp_path) -> None:
     (tmp_path / "status").mkdir()
     (tmp_path / "status" / "state.json").write_text('{"ok": true}\n')
     # a file outside every family is never scanned.
-    (tmp_path / "index.html").write_text("<html>AKIAIOSFODNN7EXAMPLE</html>\n")
+    (tmp_path / "index.html").write_text(f"<html>{FAKE_AWS_KEY}</html>\n")
     record = transparency_acceptance.scrub_audit(tmp_path, at="2026-11-18T00:00:00+00:00")
     assert record["schema"] == "sig.scrub-audit/1"
     assert record["verdict"] == "pass"
@@ -111,7 +117,7 @@ def test_scrub_audit_clean_tree_passes(tmp_path) -> None:
 def test_scrub_audit_fails_on_a_hit_and_never_echoes_the_value(tmp_path) -> None:
     (tmp_path / "transparency").mkdir()
     (tmp_path / "transparency" / "captures.jsonl").write_text(
-        '{"target": "https://x/?key=AKIAIOSFODNN7EXAMPLE"}\n'
+        f'{{"target": "https://x/?key={FAKE_AWS_KEY}"}}\n'
     )
     record = transparency_acceptance.scrub_audit(tmp_path, at="2026-11-18T00:00:00+00:00")
     assert record["verdict"] == "fail"
@@ -122,7 +128,7 @@ def test_scrub_audit_fails_on_a_hit_and_never_echoes_the_value(tmp_path) -> None
     assert hit["line"] == 1
     assert hit["pattern_class"]
     # the matched value is never recorded anywhere in the row.
-    assert "AKIAIOSFODNN7EXAMPLE" not in str(record)
+    assert FAKE_AWS_KEY not in str(record)
 
 
 def test_scrub_audit_vacuous_fails(tmp_path) -> None:
