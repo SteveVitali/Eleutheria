@@ -1,0 +1,3 @@
+coverage-delta: source_coverage.csv -> source_coverage.csv (snapshot layer: registry)
+  dimension          kind      cell                                        explanation
+  -- 0 added, 0 removed, 0 changed; 0 unexplained

@@ -1,0 +1,795 @@
+{
+  "class_s_inputs": {
+    "vendor_state_top15": {
+      "Axon": {
+        "US": 1,
+        "US-DE": 1,
+        "US-NY": 1,
+        "US-WA": 1,
+        "US;INTL": 1
+      },
+      "Cellebrite": {
+        "US": 5,
+        "US-DE": 1,
+        "US-FL": 1,
+        "US-IL": 1,
+        "US-NJ": 1,
+        "US-NV": 1,
+        "US-SC": 1
+      },
+      "Cobwebs": {
+        "US": 4,
+        "US-NY": 1
+      },
+      "Dataminr": {
+        "US": 4,
+        "US-IL": 1,
+        "US-NY": 1
+      },
+      "Flock Safety": {
+        "US": 3,
+        "US-AR": 1,
+        "US-AZ": 1,
+        "US-CA": 3,
+        "US-CO": 1,
+        "US-CT": 1,
+        "US-DE": 1,
+        "US-FL": 3,
+        "US-GA": 5,
+        "US-IL": 1,
+        "US-IN": 1,
+        "US-LA": 1,
+        "US-MN": 1,
+        "US-NC": 3,
+        "US-NE": 1,
+        "US-OH": 2,
+        "US-TN": 1,
+        "US-TX": 5,
+        "US-VA": 2,
+        "US;INTL": 1
+      },
+      "Gaggle": {
+        "US": 1,
+        "US-FL": 1,
+        "US-NC": 1,
+        "US-NY": 1,
+        "US-TX": 1,
+        "US-WA": 1
+      },
+      "Grayshift": {
+        "US": 5,
+        "US-DE": 1,
+        "US-NJ": 1
+      },
+      "Magnet Forensics": {
+        "US": 5,
+        "US-DE": 1,
+        "US-IL": 1,
+        "US-NJ": 1
+      },
+      "Motorola Solutions": {
+        "US": 1,
+        "US-DE": 1,
+        "US-IL": 1,
+        "US-MI": 1,
+        "US-TN": 1,
+        "US-TX": 1,
+        "US-VA": 1,
+        "US-WA": 1,
+        "US;INTL": 1
+      },
+      "Motorola Solutions (Vigilant)": {
+        "US": 3,
+        "US-FL": 1,
+        "US-IA": 1,
+        "US-LA": 1,
+        "US-NE": 1,
+        "US-OH": 1
+      },
+      "Pen-Link": {
+        "US": 4,
+        "US-NJ": 1
+      },
+      "Skopenow": {
+        "US": 4,
+        "US-DE": 1
+      },
+      "SoundThinking": {
+        "US": 1,
+        "US-MI": 1,
+        "US-NC": 1,
+        "US-NJ": 1,
+        "US-NV": 1,
+        "US-OH": 1
+      },
+      "Verra Mobility": {
+        "US": 2,
+        "US-CA": 1,
+        "US-WA": 2
+      },
+      "unknown": {
+        "US-AL": 1,
+        "US-CO": 1,
+        "US-DC": 1,
+        "US-GA": 1,
+        "US-IL": 1,
+        "US-KY": 1,
+        "US-MD": 1,
+        "US-MI": 1,
+        "US-NM": 1,
+        "US-TN": 1,
+        "US-TX": 1,
+        "US-VA": 1,
+        "US-WA": 1
+      }
+    },
+    "wave_c": "P37.2 prepared_not_executed (ING-GO-C recorded; legs L1\u2013L5 queued)",
+    "wave_d": "P37.69a/b seats registered+gated; preflights queued under ING-GO-D"
+  },
+  "coverage": {
+    "baseline": "data/source_coverage.csv (I1, 2026-09-30)",
+    "baseline_cells": 141,
+    "baseline_covered": 100,
+    "expected_cells_by_dimension": {
+      "blind_spot": 65,
+      "country": 14,
+      "state_tier": 70,
+      "technology_class": 29
+    },
+    "expected_plan_rows_by_blind_spot": {
+      "I1#1": 52,
+      "I1#10": 13,
+      "I1#11": 40,
+      "I1#13": 7,
+      "I1#14": 3,
+      "I1#2": 19,
+      "I1#4": 51,
+      "I1#5": 19,
+      "I1#6": 22,
+      "I1#7": 33,
+      "I1#8": 32,
+      "I1#9": 25,
+      "NEW-5 national ALPR layer at origin": 2,
+      "NEW-6 Flock single-mirror dependence": 1,
+      "NEW-7 vendors not modelled": 1,
+      "NEW-8 ATE": 31,
+      "NEW-T28 T28 border/immigration": 6,
+      "city:Albuquerque": 2,
+      "city:Anaheim": 1,
+      "city:Anchorage": 1,
+      "city:Charlotte": 2,
+      "city:Cleveland": 1,
+      "city:Detroit": 4,
+      "city:Durham": 1,
+      "city:Frisco": 1,
+      "city:Hialeah": 1,
+      "city:Honolulu": 1,
+      "city:Houston": 1,
+      "city:Jersey City": 1,
+      "city:Las Vegas": 1,
+      "city:Lincoln": 1,
+      "city:Madison": 1,
+      "city:Nashville": 1,
+      "city:Newark": 1,
+      "city:Omaha": 1,
+      "city:Saint Paul": 1,
+      "city:Tampa": 1,
+      "city:Tulsa": 1,
+      "city:Winston-Salem": 2,
+      "class:BWC": 5,
+      "class:FUS": 1,
+      "county:Bexar County TX": 1,
+      "county:Clark County NV": 1,
+      "county:Dallas County TX": 1,
+      "county:Maricopa County AZ": 2,
+      "county:San Bernardino County CA": 1,
+      "county:Wayne County MI": 1,
+      "queue P0 dossier": 6,
+      "queue P1": 5,
+      "queue P2": 10,
+      "queue P3": 1,
+      "territory:GU": 1,
+      "territory:GU,PR,VI": 1,
+      "territory:PR": 8,
+      "territory:VI": 1
+    },
+    "realized_delta": {
+      "added": 0,
+      "changed": 0,
+      "removed": 0
+    }
+  },
+  "duty_leads": [
+    {
+      "citation": "Va. Code \u00a7 2.2-5517(I/J/K)",
+      "deferral": "D-P37.66-13",
+      "duty_id": "future_statutory_disclosure_va",
+      "first_due": "2026-04-01",
+      "posture": "commenced",
+      "state": "Virginia"
+    },
+    {
+      "citation": "SB 40 (2026) \u00a7A \u2014 Driver Privacy and Safety Act, Laws 2026, ch. 20",
+      "deferral": "D-P37.66-14",
+      "duty_id": "future_statutory_disclosure_nm",
+      "first_due": "2027-04-01",
+      "posture": "not_yet_due",
+      "state": "New Mexico"
+    },
+    {
+      "citation": "Ala. Admin. Code r. 265-X-6",
+      "deferral": "D-P37.66-13",
+      "duty_id": "future_statutory_disclosure_al",
+      "first_due": "2022-03-17",
+      "posture": "commenced",
+      "state": "Alabama"
+    },
+    {
+      "citation": "12 CAR 150-103(f)",
+      "deferral": "D-P37.66-13",
+      "duty_id": "future_statutory_disclosure_ar",
+      "first_due": "\u2014",
+      "posture": "commenced",
+      "state": "Arkansas"
+    },
+    {
+      "citation": "Utah Code 77-23e-106(3)(a) \u2014 SB 34 (2021)",
+      "deferral": "D-P37.66-13",
+      "duty_id": "future_statutory_disclosure_ut",
+      "first_due": "2021-08-01",
+      "posture": "commenced",
+      "state": "Utah"
+    },
+    {
+      "citation": "HF 3198 (2025-26) \u2014 Northwest Metro Regional RTCC funding + report",
+      "deferral": "D-P37.66-15",
+      "duty_id": "future_statutory_disclosure_mn",
+      "first_due": "\u2014",
+      "posture": "contingent",
+      "state": "Minnesota"
+    }
+  ],
+  "evidence_layers": {
+    "claims": "I1 baseline hosted_claims_evidence \u2014 realized delta not re-measurable this dispatch (0/0/0, honest)",
+    "plan": "routed acquisition_plan.csv rows \u00d7 candidates (expected cells)",
+    "registry": "committed sources.toml rows (registered + gated)"
+  },
+  "later_phase_groups": {
+    "coarsening": {
+      "count": 10,
+      "deferral": "D-P37.66-6",
+      "plan_ids": [
+        "AP-T2-051",
+        "AP-T2-085",
+        "AP-T2-086",
+        "AP-T2-120",
+        "AP-T2-122",
+        "AP-T2-135",
+        "AP-T2-163",
+        "AP-T2-199",
+        "AP-T2-241",
+        "AP-T2-251"
+      ],
+      "title": "S4 point layers \u2014 coarsening not wired"
+    },
+    "e4": {
+      "count": 7,
+      "deferral": "D-P37.66-7",
+      "plan_ids": [
+        "AP-T2-031",
+        "AP-T2-073",
+        "AP-T2-074",
+        "AP-T2-075",
+        "AP-T2-091",
+        "AP-T2-200",
+        "AP-T2-240"
+      ],
+      "title": "E4 questions still pending (R6a/S2 or R4a)"
+    },
+    "excerpt": {
+      "count": 16,
+      "deferral": "D-P37.66-3",
+      "plan_ids": [
+        "AP-T2-023",
+        "AP-T2-054",
+        "AP-T2-067",
+        "AP-T2-102",
+        "AP-T2-121",
+        "AP-T2-128",
+        "AP-T2-133",
+        "AP-T2-134",
+        "AP-T2-146",
+        "AP-T2-147",
+        "AP-T2-207",
+        "AP-T2-215",
+        "AP-T2-235",
+        "AP-T2-238",
+        "AP-T2-263",
+        "AP-T2-265"
+      ],
+      "title": "S6 free text \u2014 the SIG-PUB-014a excerpt screen"
+    },
+    "iu": {
+      "count": 5,
+      "deferral": "D-P37.66-8",
+      "plan_ids": [
+        "AP-T2-078",
+        "AP-T2-129",
+        "AP-T2-156",
+        "AP-T2-209",
+        "AP-T2-271"
+      ],
+      "title": "IU terms never captured"
+    },
+    "naming": {
+      "count": 10,
+      "deferral": "D-P37.66-5",
+      "plan_ids": [
+        "AP-T2-004",
+        "AP-T2-068",
+        "AP-T2-072",
+        "AP-T2-101",
+        "AP-T2-153",
+        "AP-T2-154",
+        "AP-T2-160",
+        "AP-T2-161",
+        "AP-T2-191",
+        "AP-T2-214"
+      ],
+      "title": "S5 officer/judge names \u2014 the \u00a743.4 naming gate"
+    },
+    "newfamily": {
+      "count": 21,
+      "deferral": "D-P37.66-2",
+      "plan_ids": [
+        "AP-T2-012",
+        "AP-T2-062",
+        "AP-T2-094",
+        "AP-T2-095",
+        "AP-T2-114",
+        "AP-T2-124",
+        "AP-T2-132",
+        "AP-T2-148",
+        "AP-T2-151",
+        "AP-T2-195",
+        "AP-T2-196",
+        "AP-T2-224",
+        "AP-T2-225",
+        "AP-T2-239",
+        "AP-T2-244",
+        "AP-T2-256",
+        "AP-T2-266",
+        "AP-T2-267",
+        "AP-T2-275",
+        "AP-T2-276",
+        "AP-T2-277"
+      ],
+      "title": "New connector family not worth a Round-11 adapter"
+    },
+    "noindex": {
+      "count": 6,
+      "deferral": "D-P37.66-10",
+      "plan_ids": [
+        "AP-T2-056",
+        "AP-T2-057",
+        "AP-T2-106",
+        "AP-T2-107",
+        "AP-T2-108",
+        "AP-T2-109"
+      ],
+      "title": "Channel/family with no index surface"
+    },
+    "origin": {
+      "count": 11,
+      "deferral": "D-P37.66-4",
+      "plan_ids": [
+        "AP-T2-157",
+        "AP-T2-159",
+        "AP-T2-213",
+        "AP-T2-247",
+        "AP-T2-249",
+        "AP-T2-258",
+        "AP-T2-259",
+        "AP-T2-268",
+        "AP-T2-273",
+        "AP-T2-278",
+        "AP-T2-280"
+      ],
+      "title": "Derived or mirror \u2014 acquire the origin"
+    },
+    "other": {
+      "count": 14,
+      "deferral": "D-P37.66-12",
+      "plan_ids": [
+        "AP-T2-007",
+        "AP-T2-010",
+        "AP-T2-024",
+        "AP-T2-065",
+        "AP-T2-104",
+        "AP-T2-118",
+        "AP-T2-145",
+        "AP-T2-149",
+        "AP-T2-187",
+        "AP-T2-205",
+        "AP-T2-208",
+        "AP-T2-242",
+        "AP-T2-243",
+        "AP-T2-272"
+      ],
+      "title": "Other \u2014 singleton later-phase reasons"
+    },
+    "q30": {
+      "count": 4,
+      "deferral": "D-P37.66-9",
+      "plan_ids": [
+        "AP-T2-017",
+        "AP-T2-032",
+        "AP-T2-077",
+        "AP-T2-189"
+      ],
+      "title": "SEC EDGAR \u2014 the Q-30 facts-only basis pending"
+    },
+    "redaction": {
+      "count": 23,
+      "deferral": "D-P37.66-1",
+      "plan_ids": [
+        "AP-T2-041",
+        "AP-T2-044",
+        "AP-T2-055",
+        "AP-T2-059",
+        "AP-T2-060",
+        "AP-T2-064",
+        "AP-T2-079",
+        "AP-T2-080",
+        "AP-T2-096",
+        "AP-T2-097",
+        "AP-T2-098",
+        "AP-T2-099",
+        "AP-T2-116",
+        "AP-T2-119",
+        "AP-T2-150",
+        "AP-T2-155",
+        "AP-T2-206",
+        "AP-T2-222",
+        "AP-T2-233",
+        "AP-T2-234",
+        "AP-T2-262",
+        "AP-T2-274",
+        "AP-T2-279"
+      ],
+      "title": "S7 names inside documents \u2014 extraction-time redaction"
+    },
+    "tribal": {
+      "count": 3,
+      "deferral": "D-P37.66-11",
+      "plan_ids": [
+        "AP-T2-093",
+        "AP-T2-201",
+        "AP-T2-210"
+      ],
+      "title": "Tribal data-governance rule (I7 NEW-6)"
+    }
+  },
+  "live_verification": false,
+  "plan_counts": {
+    "tier2_later_phase": 130,
+    "tiers": {
+      "1": 108,
+      "2": 281,
+      "3": 259,
+      "W": 46
+    },
+    "total": 694
+  },
+  "queue_outcomes": {
+    "candidates": 27,
+    "rows": [
+      {
+        "action": "new-row",
+        "candidate_id": "SRC-001",
+        "family": "OKC Flock council amendment policy packet",
+        "jurisdiction": "Oklahoma City OK",
+        "outcome": "routed \u2014 G2-step5(E4 D-R10-SOURCES-1 dossier captures); live legs are the wave tickets' queued obligations (HG-03-gated, never flipped here)",
+        "plan_id": "AP-T2-081",
+        "rank": "1",
+        "review_status": "opened_text_and_intermittent_403",
+        "tier": "2"
+      },
+      {
+        "action": "new-row",
+        "candidate_id": "SRC-002",
+        "family": "Tulsa Flock policies integration and executed contract search",
+        "jurisdiction": "Tulsa OK",
+        "outcome": "routed \u2014 G2-step5(E4 D-R10-SOURCES-1 dossier captures); live legs are the wave tickets' queued obligations (HG-03-gated, never flipped here)",
+        "plan_id": "AP-T2-045",
+        "rank": "2",
+        "review_status": "opened_text",
+        "tier": "2"
+      },
+      {
+        "action": "new-row",
+        "candidate_id": "SRC-003",
+        "family": "San Diego technology inventory and annual reports",
+        "jurisdiction": "San Diego CA",
+        "outcome": "routed \u2014 G2-step5(E4 D-R10-SOURCES-1 dossier captures); live legs are the wave tickets' queued obligations (HG-03-gated, never flipped here)",
+        "plan_id": "AP-T2-046",
+        "rank": "3",
+        "review_status": "opened_selected_text",
+        "tier": "2"
+      },
+      {
+        "action": "new-row",
+        "candidate_id": "SRC-004",
+        "family": "San Diego Sunshine Act goods/services contracts",
+        "jurisdiction": "San Diego CA",
+        "outcome": "routed \u2014 G2-step5(E4 D-R10-SOURCES-1 dossier captures); live legs are the wave tickets' queued obligations (HG-03-gated, never flipped here)",
+        "plan_id": "AP-T2-047",
+        "rank": "4",
+        "review_status": "opened_selected_text",
+        "tier": "2"
+      },
+      {
+        "action": "new-row",
+        "candidate_id": "SRC-005",
+        "family": "San Diego Privacy Advisory Board recommendations",
+        "jurisdiction": "San Diego CA",
+        "outcome": "routed \u2014 G2-step5(E4 D-R10-SOURCES-1 dossier captures); live legs are the wave tickets' queued obligations (HG-03-gated, never flipped here)",
+        "plan_id": "AP-T2-211",
+        "rank": "5",
+        "review_status": "index_opened_pdf_search_only_fetch_failed",
+        "tier": "2"
+      },
+      {
+        "action": "new-row",
+        "candidate_id": "SRC-006",
+        "family": "Oklahoma OMES statewide contracts and solicitations",
+        "jurisdiction": "Oklahoma US",
+        "outcome": "routed \u2014 G2-step5(E4 D-R10-SOURCES-1 dossier captures); live legs are the wave tickets' queued obligations (HG-03-gated, never flipped here)",
+        "plan_id": "AP-T2-082",
+        "rank": "6",
+        "review_status": "index_opened_other_search_only",
+        "tier": "2"
+      },
+      {
+        "action": "new-row",
+        "candidate_id": "SRC-007",
+        "family": "Oklahoma DAC UVED program and authority chain",
+        "jurisdiction": "Oklahoma US",
+        "outcome": "routed \u2014 G2-step5(E4 D-R10-SOURCES-1 dossier captures); live legs are the wave tickets' queued obligations (HG-03-gated, never flipped here)",
+        "plan_id": "AP-T2-066",
+        "rank": "7",
+        "review_status": "opened_text",
+        "tier": "2"
+      },
+      {
+        "action": "new-row",
+        "candidate_id": "SRC-008",
+        "family": "Safe Oklahoma Grant program awards and reports discovery",
+        "jurisdiction": "Oklahoma US",
+        "outcome": "routed \u2014 ACQ-19 -> live ACQ-27; live legs are the wave tickets' queued obligations (HG-03-gated, never flipped here)",
+        "plan_id": "AP-T2-245",
+        "rank": "8",
+        "review_status": "opened_text",
+        "tier": "2"
+      },
+      {
+        "action": "new-row",
+        "candidate_id": "SRC-009",
+        "family": "Oklahoma JAG-LLE local equipment funding",
+        "jurisdiction": "Oklahoma US",
+        "outcome": "routed \u2014 ACQ-15 -> live ACQ-16; live legs are the wave tickets' queued obligations (HG-03-gated, never flipped here)",
+        "plan_id": "AP-T1-099",
+        "rank": "9",
+        "review_status": "opened_text",
+        "tier": "1"
+      },
+      {
+        "action": "reviewed, no Round-11 plan row",
+        "candidate_id": "SRC-010",
+        "family": "Sourcewell public safety cooperative contracts",
+        "jurisdiction": "US Canada participating agencies",
+        "outcome": "queued \u2014 stays on the reviewed queue for a later round's routing",
+        "plan_id": "\u2014",
+        "rank": "10",
+        "review_status": "opened_selected_text",
+        "tier": "\u2014"
+      },
+      {
+        "action": "new-row",
+        "candidate_id": "SRC-011",
+        "family": "California State Auditor ALPR audit survey and follow-up",
+        "jurisdiction": "California US",
+        "outcome": "routed \u2014 G2-step5(E4 D-R10-SOURCES-1 dossier captures); live legs are the wave tickets' queued obligations (HG-03-gated, never flipped here)",
+        "plan_id": "AP-T2-083",
+        "rank": "11",
+        "review_status": "primary_search_excerpts",
+        "tier": "2"
+      },
+      {
+        "action": "new-row",
+        "candidate_id": "SRC-012",
+        "family": "Seattle OIG annual surveillance usage reviews",
+        "jurisdiction": "Seattle WA",
+        "outcome": "routed \u2014 ACQ-13 -> live ACQ-16; live legs are the wave tickets' queued obligations (HG-03-gated, never flipped here)",
+        "plan_id": "AP-T1-093",
+        "rank": "12",
+        "review_status": "primary_search_excerpts",
+        "tier": "1"
+      },
+      {
+        "action": "new-row",
+        "candidate_id": "SRC-013",
+        "family": "San Jose privacy decisions and algorithm register",
+        "jurisdiction": "San Jose CA",
+        "outcome": "routed \u2014 ACQ-19 -> live ACQ-27; live legs are the wave tickets' queued obligations (HG-03-gated, never flipped here)",
+        "plan_id": "AP-T2-260",
+        "rank": "13",
+        "review_status": "primary_search_excerpts",
+        "tier": "2"
+      },
+      {
+        "action": "new-row",
+        "candidate_id": "SRC-014",
+        "family": "Norman police ALPR policy and amendment discovery",
+        "jurisdiction": "Norman OK",
+        "outcome": "routed \u2014 ACQ-19 -> live ACQ-27; live legs are the wave tickets' queued obligations (HG-03-gated, never flipped here)",
+        "plan_id": "AP-T2-269",
+        "rank": "14",
+        "review_status": "primary_search_excerpts",
+        "tier": "2"
+      },
+      {
+        "action": "new-row",
+        "candidate_id": "SRC-015",
+        "family": "NYC DOI OIG-NYPD surveillance oversight",
+        "jurisdiction": "New York NY",
+        "outcome": "routed \u2014 ACQ-19 -> live ACQ-27; live legs are the wave tickets' queued obligations (HG-03-gated, never flipped here)",
+        "plan_id": "AP-T2-186",
+        "rank": "15",
+        "review_status": "primary_search_excerpts",
+        "tier": "2"
+      },
+      {
+        "action": "new-row",
+        "candidate_id": "SRC-016",
+        "family": "NYC Comptroller surveillance procurement and audits",
+        "jurisdiction": "New York NY",
+        "outcome": "routed \u2014 ACQ-19 -> live ACQ-27; live legs are the wave tickets' queued obligations (HG-03-gated, never flipped here)",
+        "plan_id": "AP-T2-212",
+        "rank": "16",
+        "review_status": "primary_search_excerpts",
+        "tier": "2"
+      },
+      {
+        "action": "new-row",
+        "candidate_id": "SRC-017",
+        "family": "Chicago OIG ShotSpotter evaluation and follow-up",
+        "jurisdiction": "Chicago IL",
+        "outcome": "routed \u2014 ACQ-19 -> live ACQ-27; live legs are the wave tickets' queued obligations (HG-03-gated, never flipped here)",
+        "plan_id": "AP-T2-252",
+        "rank": "17",
+        "review_status": "primary_search_excerpts",
+        "tier": "2"
+      },
+      {
+        "action": "new-row",
+        "candidate_id": "SRC-018",
+        "family": "BART surveillance reports policies and public decisions",
+        "jurisdiction": "San Francisco Bay Area CA",
+        "outcome": "routed \u2014 ACQ-19 -> live ACQ-27; live legs are the wave tickets' queued obligations (HG-03-gated, never flipped here)",
+        "plan_id": "AP-T2-253",
+        "rank": "18",
+        "review_status": "primary_search_excerpts",
+        "tier": "2"
+      },
+      {
+        "action": "new-row",
+        "candidate_id": "SRC-019",
+        "family": "Berkeley surveillance annual reports policies MOUs",
+        "jurisdiction": "Berkeley CA",
+        "outcome": "routed \u2014 ACQ-19 -> live ACQ-27 (flip existing row); live legs are the wave tickets' queued obligations (HG-03-gated, never flipped here)",
+        "plan_id": "AP-T2-281",
+        "rank": "19",
+        "review_status": "primary_search_excerpts",
+        "tier": "2"
+      },
+      {
+        "action": "new-row",
+        "candidate_id": "SRC-020",
+        "family": "Boston annual surveillance report and supplements",
+        "jurisdiction": "Boston MA",
+        "outcome": "routed \u2014 ACQ-19 -> live ACQ-27 (flip existing row); live legs are the wave tickets' queued obligations (HG-03-gated, never flipped here)",
+        "plan_id": "AP-T2-270",
+        "rank": "20",
+        "review_status": "primary_search_excerpts",
+        "tier": "2"
+      },
+      {
+        "action": "new-row",
+        "candidate_id": "SRC-021",
+        "family": "Santa Clara County surveillance impact and oversight",
+        "jurisdiction": "Santa Clara County CA",
+        "outcome": "routed \u2014 ACQ-19 -> live ACQ-27; live legs are the wave tickets' queued obligations (HG-03-gated, never flipped here)",
+        "plan_id": "AP-T2-261",
+        "rank": "21",
+        "review_status": "primary_search_excerpts",
+        "tier": "2"
+      },
+      {
+        "action": "new-row",
+        "candidate_id": "SRC-022",
+        "family": "DOJ COPS technology/equipment award documents",
+        "jurisdiction": "US with local recipient focus",
+        "outcome": "routed \u2014 ACQ-19 -> live ACQ-27; live legs are the wave tickets' queued obligations (HG-03-gated, never flipped here)",
+        "plan_id": "AP-T2-237",
+        "rank": "22",
+        "review_status": "primary_search_excerpts",
+        "tier": "2"
+      },
+      {
+        "action": "defer (Tier 3)",
+        "candidate_id": "SRC-023",
+        "family": "DHS privacy impact assessments commercial LPR",
+        "jurisdiction": "US federal and local sharing context",
+        "outcome": "Tier-3 defer (none (I7 Tier 3)) \u2014 the umbrella row `D-R11-LATER-09` carries the Tier-3 tail",
+        "plan_id": "AP-T3-212",
+        "rank": "23",
+        "review_status": "primary_search_excerpts",
+        "tier": "3"
+      },
+      {
+        "action": "defer (later-phase)",
+        "candidate_id": "SRC-024",
+        "family": "DLA LESO 1033 equipment holdings/transfers subset",
+        "jurisdiction": "US counties and agencies",
+        "outcome": "deferred \u2014 carried by D-P37.66-1 (later-phase(extraction-time name redaction for documents, J4 P8-3/P8-6))",
+        "plan_id": "AP-T2-262",
+        "rank": "24",
+        "review_status": "primary_search_excerpts",
+        "tier": "2"
+      },
+      {
+        "action": "reviewed, no Round-11 plan row",
+        "candidate_id": "SRC-025",
+        "family": "FAA Part 107 waiver issued records",
+        "jurisdiction": "US public safety subset",
+        "outcome": "queued \u2014 stays on the reviewed queue for a later round's routing",
+        "plan_id": "\u2014",
+        "rank": "25",
+        "review_status": "primary_search_excerpts",
+        "tier": "\u2014"
+      },
+      {
+        "action": "new-row",
+        "candidate_id": "SRC-026",
+        "family": "UK Algorithmic Transparency Recording Standard public-safety subset",
+        "jurisdiction": "United Kingdom",
+        "outcome": "routed \u2014 ACQ-23 -> live ACQ-27 (conditional: N-line / RB-06 a); live legs are the wave tickets' queued obligations (HG-03-gated, never flipped here)",
+        "plan_id": "AP-T2-254",
+        "rank": "26",
+        "review_status": "primary_search_excerpts",
+        "tier": "2"
+      },
+      {
+        "action": "defer (Tier 3)",
+        "candidate_id": "SRC-027",
+        "family": "San Diego ALPR network audit metadata and safe aggregate feasibility",
+        "jurisdiction": "San Diego CA",
+        "outcome": "Tier-3 defer (none (I7 Tier 3)) \u2014 the umbrella row `D-R11-LATER-09` carries the Tier-3 tail",
+        "plan_id": "AP-T3-259",
+        "rank": "27",
+        "review_status": "index_metadata_only_files_not_fetched",
+        "tier": "3"
+      }
+    ]
+  },
+  "recorded": "2026-11-18",
+  "registry_engineering": {
+    "absent": 35,
+    "registered": 112,
+    "registered_renamed": 111,
+    "routed_proposed_ids": 258
+  },
+  "schema": "sig.acquisition-closeout/1",
+  "ticket": "P37.66"
+}

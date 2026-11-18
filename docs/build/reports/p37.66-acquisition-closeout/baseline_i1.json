@@ -1,0 +1,994 @@
+{
+  "cells": [
+    {
+      "covered": true,
+      "dimension": "country",
+      "evidence": "registry:camreg_und_001 claims=GCS ops/runs: 2 run(s), claims_added \u03a31,072 (max 536), last 2026-09-19T07:11Z; public export sites: 67; public evidence.json artifacts: 1",
+      "key": "(pts",
+      "tier": ""
+    },
+    {
+      "covered": true,
+      "dimension": "country",
+      "evidence": "registry:camreg_camilo_schools claims=GCS ops/runs: 4 run(s), claims_added \u03a3996 (max 249), last 2026-09-19T09:20Z; public export sites: 31; public evidence.json artifacts: 1",
+      "key": "(pts non",
+      "tier": ""
+    },
+    {
+      "covered": false,
+      "dimension": "country",
+      "evidence": "registry:austria_vidreg claims=none found",
+      "key": "AT",
+      "tier": ""
+    },
+    {
+      "covered": true,
+      "dimension": "country",
+      "evidence": "registry:camreg_act_au claims=GCS ops/runs: 2 run(s), claims_added \u03a326,112 (max 13,743), last 2026-09-29T04:01Z; public export sites: 1,328; public evidence.json artifacts: 2",
+      "key": "AU",
+      "tier": ""
+    },
+    {
+      "covered": true,
+      "dimension": "country",
+      "evidence": "registry:declarationcamera_be claims=0 claims \u2014 register behind Belgian eID (live_runs/2026-09-16_declarationcamera_be.json)",
+      "key": "BE",
+      "tier": ""
+    },
+    {
+      "covered": false,
+      "dimension": "country",
+      "evidence": "registry:panopti_ca claims=none found",
+      "key": "CA",
+      "tier": ""
+    },
+    {
+      "covered": true,
+      "dimension": "country",
+      "evidence": "registry:camreg_puertogaitan_co claims=GCS ops/runs: 3 run(s), claims_added \u03a31,500 (max 500), last 2026-09-29T18:03Z; public export sites: 50; public evidence.json artifacts: 1",
+      "key": "CO",
+      "tier": ""
+    },
+    {
+      "covered": false,
+      "dimension": "country",
+      "evidence": "registry:denmark_politi_cctv claims=none found",
+      "key": "DK",
+      "tier": ""
+    },
+    {
+      "covered": true,
+      "dimension": "country",
+      "evidence": "registry:ted_eu claims=GCS ops/runs: 3 run(s), claims_added \u03a3208,638 (max 69,546), last 2026-09-18T18:24Z; public evidence.json artifacts: 2",
+      "key": "EU/EEA (~30 countries)",
+      "tier": ""
+    },
+    {
+      "covered": false,
+      "dimension": "country",
+      "evidence": "registry:panopticity claims=none found",
+      "key": "FR",
+      "tier": ""
+    },
+    {
+      "covered": false,
+      "dimension": "country",
+      "evidence": "registry:technopolice claims=none found",
+      "key": "FR; BE",
+      "tier": ""
+    },
+    {
+      "covered": true,
+      "dimension": "country",
+      "evidence": "registry:uk_surveillance_camera_commissioner claims=GCS ops/runs: 2 run(s), claims_added \u03a316 (max 8), last 2026-09-26T03:54Z; public evidence.json artifacts: 1",
+      "key": "GB",
+      "tier": ""
+    },
+    {
+      "covered": true,
+      "dimension": "country",
+      "evidence": "registry:camreg_donegal_ie claims=GCS ops/runs: 2 run(s), claims_added \u03a32,214 (max 1,107), last 2026-09-19T10:36Z; public export sites: 123; public evidence.json artifacts: 1",
+      "key": "IE",
+      "tier": ""
+    },
+    {
+      "covered": false,
+      "dimension": "country",
+      "evidence": "registry:osm_surveillance_tagging claims=none found",
+      "key": "INTL",
+      "tier": ""
+    },
+    {
+      "covered": true,
+      "dimension": "country",
+      "evidence": "registry:carnegie_ai_gsi claims=public evidence.json artifacts: 2; 660 claims live 2026-09-16 (live_runs/2026-09-16_carnegie_ai_gsi.json)",
+      "key": "INTL (75 countries)",
+      "tier": ""
+    },
+    {
+      "covered": true,
+      "dimension": "country",
+      "evidence": "registry:facial_recognition_world_map claims=public evidence.json artifacts: 2; 202 claims live 2026-09-16 (live_runs/2026-09-16_facial_recognition_world_map.json)",
+      "key": "INTL (~190 countries)",
+      "tier": ""
+    },
+    {
+      "covered": true,
+      "dimension": "country",
+      "evidence": "registry:camreg_nzta_nz claims=GCS ops/runs: 1 run(s), claims_added \u03a39,063 (max 9,063), last 2026-09-19T07:48Z; public export sites: 783; public evidence.json artifacts: 1",
+      "key": "ISO",
+      "tier": ""
+    },
+    {
+      "covered": false,
+      "dimension": "country",
+      "evidence": "registry:amsterdam_camerakaart claims=none found",
+      "key": "NL",
+      "tier": ""
+    },
+    {
+      "covered": true,
+      "dimension": "country",
+      "evidence": "registry:osm_overpass claims=GCS ops/runs: 2 run(s), claims_added \u03a310,352 (max 5,214), last 2026-09-28T04:12Z; public evidence.json artifacts: 1",
+      "key": "US",
+      "tier": ""
+    },
+    {
+      "covered": true,
+      "dimension": "country",
+      "evidence": "registry:eyes_on_flock claims=GCS ops/runs: 4 run(s), claims_added \u03a347,738 (max 11,976), last 2026-09-27T05:01Z; public evidence.json artifacts: 1",
+      "key": "US (1,528 agency portals in 45 states; none in AK, DC, HI, MT, NH, VT)",
+      "tier": ""
+    },
+    {
+      "covered": true,
+      "dimension": "country",
+      "evidence": "registry:state_alpr_statute_inventory claims=public evidence.json artifacts: 1; 108 claims in the hosted spine via one-time seed (SOURCE_LIVE_OPS_MATRIX \u00a7A, P25.7); ingestion_permitted=false by design (never re-fetches)",
+      "key": "US (16 states)",
+      "tier": ""
+    },
+    {
+      "covered": false,
+      "dimension": "country",
+      "evidence": "registry:axon_community_connect claims=none found",
+      "key": "US (321 communities)",
+      "tier": ""
+    },
+    {
+      "covered": true,
+      "dimension": "country",
+      "evidence": "registry:eff_atlas_of_surveillance claims=public evidence.json artifacts: 1; 15,187 claims committed to the hosted spine 2026-09-15 (docs/build/runs/P25.3.md:15,27); scheduler sig-sched-eff-atlas never attempted (gcloud scheduler list 2026-09-30T16:51Z)",
+      "key": "US (50 states + DC + PR/VI/GU)",
+      "tier": ""
+    },
+    {
+      "covered": false,
+      "dimension": "country",
+      "evidence": "registry:dhs_fusion_centers claims=none found",
+      "key": "US (80 centers)",
+      "tier": ""
+    },
+    {
+      "covered": false,
+      "dimension": "country",
+      "evidence": "registry:SRC-010 claims=none (acquisition_queue.toml candidate)",
+      "key": "US (MN cooperative, national reach)",
+      "tier": ""
+    },
+    {
+      "covered": true,
+      "dimension": "country",
+      "evidence": "registry:usaspending claims=GCS ops/runs: 2 run(s), claims_added \u03a377,674 (max 38,837), last 2026-09-18T13:26Z; public evidence.json artifacts: 2",
+      "key": "US (federal)",
+      "tier": ""
+    },
+    {
+      "covered": false,
+      "dimension": "country",
+      "evidence": "registry:future_statutory_disclosure_2027 claims=none found",
+      "key": "US (one state; first reports 2027",
+      "tier": ""
+    },
+    {
+      "covered": false,
+      "dimension": "country",
+      "evidence": "registry:private_eyes claims=none found",
+      "key": "US (southeast)",
+      "tier": ""
+    },
+    {
+      "covered": true,
+      "dimension": "country",
+      "evidence": "registry:openstates claims=GCS ops/runs: 8 run(s), claims_added \u03a313,690 (max 4,591), last 2026-09-29T05:03Z; public evidence.json artifacts: 1",
+      "key": "US (states)",
+      "tier": ""
+    },
+    {
+      "covered": true,
+      "dimension": "country",
+      "evidence": "registry:eff_data_driven claims=GCS ops/runs: 1 run(s), claims_added \u03a31,863 (max 1,863), last 2026-09-25T06:46Z; public evidence.json artifacts: 2",
+      "key": "US (~200 agencies, 2016",
+      "tier": ""
+    },
+    {
+      "covered": false,
+      "dimension": "country",
+      "evidence": "registry:ccops_ordinance_disclosures claims=none found",
+      "key": "US (~26 jurisdictions)",
+      "tier": ""
+    },
+    {
+      "covered": true,
+      "dimension": "country",
+      "evidence": "registry:legistar claims=GCS ops/runs: 4 run(s), claims_added \u03a3142,740 (max 36,257), last 2026-09-20T05:03Z; public evidence.json artifacts: 3",
+      "key": "US; CA (escribe)",
+      "tier": ""
+    },
+    {
+      "covered": true,
+      "dimension": "country",
+      "evidence": "registry:deflock claims=public evidence.json artifacts: 1",
+      "key": "US; INTL",
+      "tier": ""
+    },
+    {
+      "covered": true,
+      "dimension": "state_tier",
+      "evidence": "registry:camreg_und_001 claims=GCS ops/runs: 2 run(s), claims_added \u03a31,072 (max 536), last 2026-09-19T07:11Z; public export sites: 67; public evidence.json artifacts: 1",
+      "key": "(pts",
+      "tier": ""
+    },
+    {
+      "covered": true,
+      "dimension": "state_tier",
+      "evidence": "registry:camreg_camilo_schools claims=GCS ops/runs: 4 run(s), claims_added \u03a3996 (max 249), last 2026-09-19T09:20Z; public export sites: 31; public evidence.json artifacts: 1",
+      "key": "(pts non-US/unassigned",
+      "tier": ""
+    },
+    {
+      "covered": false,
+      "dimension": "state_tier",
+      "evidence": "registry:austria_vidreg claims=none found",
+      "key": "AT",
+      "tier": ""
+    },
+    {
+      "covered": true,
+      "dimension": "state_tier",
+      "evidence": "registry:camreg_act_au claims=GCS ops/runs: 2 run(s), claims_added \u03a326,112 (max 13,743), last 2026-09-29T04:01Z; public export sites: 1,328; public evidence.json artifacts: 2",
+      "key": "AU-ACT; (pts non-US/unassigned",
+      "tier": ""
+    },
+    {
+      "covered": false,
+      "dimension": "state_tier",
+      "evidence": "registry:camreg_qldc_au claims=none found",
+      "key": "AU-QLD",
+      "tier": ""
+    },
+    {
+      "covered": true,
+      "dimension": "state_tier",
+      "evidence": "registry:camreg_goldcoast_au claims=GCS ops/runs: 2 run(s), claims_added \u03a310,608 (max 5,616), last 2026-09-29T16:04Z; public export sites: 624; public evidence.json artifacts: 1",
+      "key": "AU-QLD; (pts non-US/unassigned",
+      "tier": ""
+    },
+    {
+      "covered": true,
+      "dimension": "state_tier",
+      "evidence": "registry:camreg_camberwell_au claims=GCS ops/runs: 1 run(s), claims_added \u03a3536 (max 536), last 2026-09-19T11:37Z; public export sites: 67; public evidence.json artifacts: 1",
+      "key": "AU-VIC; (pts non-US/unassigned",
+      "tier": ""
+    },
+    {
+      "covered": true,
+      "dimension": "state_tier",
+      "evidence": "registry:declarationcamera_be claims=0 claims \u2014 register behind Belgian eID (live_runs/2026-09-16_declarationcamera_be.json)",
+      "key": "BE",
+      "tier": ""
+    },
+    {
+      "covered": false,
+      "dimension": "state_tier",
+      "evidence": "registry:panopti_ca claims=none found",
+      "key": "CA",
+      "tier": ""
+    },
+    {
+      "covered": false,
+      "dimension": "state_tier",
+      "evidence": "registry:camreg_edmonton_ab claims=none found",
+      "key": "CA-AB",
+      "tier": ""
+    },
+    {
+      "covered": true,
+      "dimension": "state_tier",
+      "evidence": "registry:camreg_calgary_ab claims=GCS ops/runs: 1 run(s), claims_added \u03a32,466 (max 2,466), last 2026-09-19T08:33Z; public export sites: 274; public evidence.json artifacts: 1",
+      "key": "CA-AB; (pts non-US/unassigned",
+      "tier": ""
+    },
+    {
+      "covered": true,
+      "dimension": "state_tier",
+      "evidence": "registry:camreg_surrey_bc claims=GCS ops/runs: 1 run(s), claims_added \u03a36,315 (max 6,315), last 2026-09-19T12:26Z; public export sites: 611; public evidence.json artifacts: 1",
+      "key": "CA-BC; (pts",
+      "tier": ""
+    },
+    {
+      "covered": true,
+      "dimension": "state_tier",
+      "evidence": "registry:camreg_vancouver_bc claims=GCS ops/runs: 1 run(s), claims_added \u03a31,962 (max 1,962), last 2026-09-19T12:11Z; public export sites: 218; public evidence.json artifacts: 1",
+      "key": "CA-BC; (pts non-US/unassigned",
+      "tier": ""
+    },
+    {
+      "covered": true,
+      "dimension": "state_tier",
+      "evidence": "registry:camreg_winnipeg_mb claims=GCS ops/runs: 2 run(s), claims_added \u03a33,059 (max 1,610), last 2026-09-28T10:02Z; public export sites: 160; public evidence.json artifacts: 2",
+      "key": "CA-MB; (pts non-US/unassigned",
+      "tier": ""
+    },
+    {
+      "covered": true,
+      "dimension": "state_tier",
+      "evidence": "registry:camreg_ottawa_on claims=GCS ops/runs: 2 run(s), claims_added \u03a32,658 (max 1,402), last 2026-09-29T10:01Z; public export sites: 146; public evidence.json artifacts: 2",
+      "key": "CA-ON; (pts non-US/unassigned",
+      "tier": ""
+    },
+    {
+      "covered": true,
+      "dimension": "state_tier",
+      "evidence": "registry:camreg_puertogaitan_co claims=GCS ops/runs: 3 run(s), claims_added \u03a31,500 (max 500), last 2026-09-29T18:03Z; public export sites: 50; public evidence.json artifacts: 1",
+      "key": "CO-MET; (pts non-US/unassigned",
+      "tier": ""
+    },
+    {
+      "covered": false,
+      "dimension": "state_tier",
+      "evidence": "registry:denmark_politi_cctv claims=none found",
+      "key": "DK",
+      "tier": ""
+    },
+    {
+      "covered": true,
+      "dimension": "state_tier",
+      "evidence": "registry:ted_eu claims=GCS ops/runs: 3 run(s), claims_added \u03a3208,638 (max 69,546), last 2026-09-18T18:24Z; public evidence.json artifacts: 2",
+      "key": "EU/EEA (~30 countries)",
+      "tier": ""
+    },
+    {
+      "covered": false,
+      "dimension": "state_tier",
+      "evidence": "registry:panopticity claims=none found",
+      "key": "FR",
+      "tier": ""
+    },
+    {
+      "covered": false,
+      "dimension": "state_tier",
+      "evidence": "registry:technopolice claims=none found",
+      "key": "FR; BE",
+      "tier": ""
+    },
+    {
+      "covered": true,
+      "dimension": "state_tier",
+      "evidence": "registry:uk_surveillance_camera_commissioner claims=GCS ops/runs: 2 run(s), claims_added \u03a316 (max 8), last 2026-09-26T03:54Z; public evidence.json artifacts: 1",
+      "key": "GB",
+      "tier": ""
+    },
+    {
+      "covered": true,
+      "dimension": "state_tier",
+      "evidence": "registry:camreg_sheffield_gb claims=GCS ops/runs: 2 run(s), claims_added \u03a34,028 (max 2,120), last 2026-09-30T04:01Z; public export sites: 146; public evidence.json artifacts: 2",
+      "key": "GB-ENG; (pts non-US/unassigned",
+      "tier": ""
+    },
+    {
+      "covered": true,
+      "dimension": "state_tier",
+      "evidence": "registry:camreg_lisburn_gb claims=GCS ops/runs: 1 run(s), claims_added \u03a3162 (max 162), last 2026-09-19T07:51Z; public export sites: 18; public evidence.json artifacts: 1",
+      "key": "GB-NIR; (pts non-US/unassigned",
+      "tier": ""
+    },
+    {
+      "covered": true,
+      "dimension": "state_tier",
+      "evidence": "registry:camreg_glasgow_gb claims=GCS ops/runs: 2 run(s), claims_added \u03a310,143 (max 5,292), last 2026-09-28T18:12Z; public export sites: 441; public evidence.json artifacts: 1",
+      "key": "GB-SCT; (pts non-US/unassigned",
+      "tier": ""
+    },
+    {
+      "covered": true,
+      "dimension": "state_tier",
+      "evidence": "registry:camreg_donegal_ie claims=GCS ops/runs: 2 run(s), claims_added \u03a32,214 (max 1,107), last 2026-09-19T10:36Z; public export sites: 123; public evidence.json artifacts: 1",
+      "key": "IE-DL; (pts non-US/unassigned",
+      "tier": ""
+    },
+    {
+      "covered": false,
+      "dimension": "state_tier",
+      "evidence": "registry:osm_surveillance_tagging claims=none found",
+      "key": "INTL",
+      "tier": ""
+    },
+    {
+      "covered": true,
+      "dimension": "state_tier",
+      "evidence": "registry:carnegie_ai_gsi claims=public evidence.json artifacts: 2; 660 claims live 2026-09-16 (live_runs/2026-09-16_carnegie_ai_gsi.json)",
+      "key": "INTL (75 countries)",
+      "tier": ""
+    },
+    {
+      "covered": true,
+      "dimension": "state_tier",
+      "evidence": "registry:facial_recognition_world_map claims=public evidence.json artifacts: 2; 202 claims live 2026-09-16 (live_runs/2026-09-16_facial_recognition_world_map.json)",
+      "key": "INTL (~190 countries)",
+      "tier": ""
+    },
+    {
+      "covered": true,
+      "dimension": "state_tier",
+      "evidence": "registry:camreg_nzta_nz claims=GCS ops/runs: 1 run(s), claims_added \u03a39,063 (max 9,063), last 2026-09-19T07:48Z; public export sites: 783; public evidence.json artifacts: 1",
+      "key": "ISO",
+      "tier": ""
+    },
+    {
+      "covered": false,
+      "dimension": "state_tier",
+      "evidence": "registry:amsterdam_camerakaart claims=none found",
+      "key": "NL",
+      "tier": ""
+    },
+    {
+      "covered": false,
+      "dimension": "state_tier",
+      "evidence": "registry:drivers_against_flock claims=none found",
+      "key": "US",
+      "tier": ""
+    },
+    {
+      "covered": true,
+      "dimension": "state_tier",
+      "evidence": "registry:eyes_on_flock claims=GCS ops/runs: 4 run(s), claims_added \u03a347,738 (max 11,976), last 2026-09-27T05:01Z; public evidence.json artifacts: 1",
+      "key": "US (1,528 agency portals in 45 states; none in AK, DC, HI, MT, NH, VT)",
+      "tier": ""
+    },
+    {
+      "covered": true,
+      "dimension": "state_tier",
+      "evidence": "registry:state_alpr_statute_inventory claims=public evidence.json artifacts: 1; 108 claims in the hosted spine via one-time seed (SOURCE_LIVE_OPS_MATRIX \u00a7A, P25.7); ingestion_permitted=false by design (never re-fetches)",
+      "key": "US (16 states)",
+      "tier": ""
+    },
+    {
+      "covered": false,
+      "dimension": "state_tier",
+      "evidence": "registry:axon_community_connect claims=none found",
+      "key": "US (321 communities)",
+      "tier": ""
+    },
+    {
+      "covered": true,
+      "dimension": "state_tier",
+      "evidence": "registry:eff_atlas_of_surveillance claims=public evidence.json artifacts: 1; 15,187 claims committed to the hosted spine 2026-09-15 (docs/build/runs/P25.3.md:15,27); scheduler sig-sched-eff-atlas never attempted (gcloud scheduler list 2026-09-30T16:51Z)",
+      "key": "US (50 states + DC + PR/VI/GU)",
+      "tier": ""
+    },
+    {
+      "covered": false,
+      "dimension": "state_tier",
+      "evidence": "registry:dhs_fusion_centers claims=none found",
+      "key": "US (80 centers)",
+      "tier": ""
+    },
+    {
+      "covered": false,
+      "dimension": "state_tier",
+      "evidence": "registry:SRC-010 claims=none (acquisition_queue.toml candidate)",
+      "key": "US (MN cooperative, national reach)",
+      "tier": ""
+    },
+    {
+      "covered": true,
+      "dimension": "state_tier",
+      "evidence": "registry:usaspending claims=GCS ops/runs: 2 run(s), claims_added \u03a377,674 (max 38,837), last 2026-09-18T13:26Z; public evidence.json artifacts: 2",
+      "key": "US (federal)",
+      "tier": ""
+    },
+    {
+      "covered": false,
+      "dimension": "state_tier",
+      "evidence": "registry:future_statutory_disclosure_2027 claims=none found",
+      "key": "US (one state; first reports 2027-04-01)",
+      "tier": ""
+    },
+    {
+      "covered": false,
+      "dimension": "state_tier",
+      "evidence": "registry:private_eyes claims=none found",
+      "key": "US (southeast)",
+      "tier": ""
+    },
+    {
+      "covered": true,
+      "dimension": "state_tier",
+      "evidence": "registry:openstates claims=GCS ops/runs: 8 run(s), claims_added \u03a313,690 (max 4,591), last 2026-09-29T05:03Z; public evidence.json artifacts: 1",
+      "key": "US (states)",
+      "tier": ""
+    },
+    {
+      "covered": true,
+      "dimension": "state_tier",
+      "evidence": "registry:eff_data_driven claims=GCS ops/runs: 1 run(s), claims_added \u03a31,863 (max 1,863), last 2026-09-25T06:46Z; public evidence.json artifacts: 2",
+      "key": "US (~200 agencies, 2016-2017)",
+      "tier": ""
+    },
+    {
+      "covered": false,
+      "dimension": "state_tier",
+      "evidence": "registry:ccops_ordinance_disclosures claims=none found",
+      "key": "US (~26 jurisdictions)",
+      "tier": ""
+    },
+    {
+      "covered": true,
+      "dimension": "state_tier",
+      "evidence": "registry:dot_511_al claims=GCS ops/runs: 2 run(s), claims_added \u03a312,168 (max 6,084), last 2026-09-19T11:05Z; public export sites: 556; public evidence.json artifacts: 1",
+      "key": "US-AL; (pts",
+      "tier": ""
+    },
+    {
+      "covered": true,
+      "dimension": "state_tier",
+      "evidence": "registry:camreg_azdot_az claims=GCS ops/runs: 2 run(s), claims_added \u03a310,520 (max 5,260), last 2026-09-19T07:23Z; public export sites: 526; public evidence.json artifacts: 1",
+      "key": "US-AZ; (pts",
+      "tier": ""
+    },
+    {
+      "covered": true,
+      "dimension": "state_tier",
+      "evidence": "registry:ccops_sf claims=GCS ops/runs: 1 run(s), 0 claims (content_drift); 0 claims \u2014 sf.gov 202 interstitial (live_runs/2026-09-19_ccops_sf_p2617.json; GCS content_drift)",
+      "key": "US-CA",
+      "tier": ""
+    },
+    {
+      "covered": true,
+      "dimension": "state_tier",
+      "evidence": "registry:camreg_brea_ca claims=GCS ops/runs: 1 run(s), claims_added \u03a32,662 (max 2,662), last 2026-09-19T08:21Z; public export sites: 317; public evidence.json artifacts: 1",
+      "key": "US-CA; (pts",
+      "tier": ""
+    },
+    {
+      "covered": true,
+      "dimension": "state_tier",
+      "evidence": "registry:camreg_denver_co claims=GCS ops/runs: 2 run(s), claims_added \u03a3252 (max 126), last 2026-09-19T10:35Z; public export sites: 14; public evidence.json artifacts: 1",
+      "key": "US-CO; (pts",
+      "tier": ""
+    },
+    {
+      "covered": true,
+      "dimension": "state_tier",
+      "evidence": "registry:dot_511_dc claims=GCS ops/runs: 3 run(s), claims_added \u03a34,700 (max 2,350), last 2026-09-27T04:01Z; public export sites: 470; public evidence.json artifacts: 1",
+      "key": "US-DC; (pts",
+      "tier": ""
+    },
+    {
+      "covered": true,
+      "dimension": "state_tier",
+      "evidence": "registry:camreg_fl511_fl claims=GCS ops/runs: 1 run(s), claims_added \u03a3116,048 (max 116,048), last 2026-09-19T07:20Z; public export sites: 9,347; public evidence.json artifacts: 1",
+      "key": "US-FL; (pts",
+      "tier": ""
+    },
+    {
+      "covered": true,
+      "dimension": "state_tier",
+      "evidence": "registry:dot_511_ga claims=GCS ops/runs: 2 run(s), claims_added \u03a383,653 (max 83,653), last 2026-09-19T11:20Z; public export sites: 7,046; public evidence.json artifacts: 1",
+      "key": "US-GA; (pts",
+      "tier": ""
+    },
+    {
+      "covered": true,
+      "dimension": "state_tier",
+      "evidence": "registry:camreg_gmh_emc_ga claims=GCS ops/runs: 1 run(s), claims_added \u03a324 (max 24), last 2026-09-19T14:54Z; public export sites: 3; public evidence.json artifacts: 1",
+      "key": "US-GA; (pts non-US/unassigned",
+      "tier": ""
+    },
+    {
+      "covered": true,
+      "dimension": "state_tier",
+      "evidence": "registry:camreg_honolulu_hi claims=GCS ops/runs: 1 run(s), claims_added \u03a32,269 (max 2,269), last 2026-09-19T14:58Z; public export sites: 252; public evidence.json artifacts: 1",
+      "key": "US-HI; (pts",
+      "tier": ""
+    },
+    {
+      "covered": false,
+      "dimension": "state_tier",
+      "evidence": "registry:eyes_off_cedar_rapids claims=none found",
+      "key": "US-IA",
+      "tier": ""
+    },
+    {
+      "covered": true,
+      "dimension": "state_tier",
+      "evidence": "registry:dot_511_ia claims=GCS ops/runs: 3 run(s), claims_added \u03a342,582 (max 15,060), last 2026-09-26T04:01Z; public export sites: 1,708; public evidence.json artifacts: 1",
+      "key": "US-IA; (pts",
+      "tier": ""
+    },
+    {
+      "covered": true,
+      "dimension": "state_tier",
+      "evidence": "registry:camreg_achd_id claims=GCS ops/runs: 2 run(s), claims_added \u03a33,712 (max 1,856), last 2026-09-19T07:09Z; public export sites: 232; public evidence.json artifacts: 1",
+      "key": "US-ID; (pts",
+      "tier": ""
+    },
+    {
+      "covered": false,
+      "dimension": "state_tier",
+      "evidence": "registry:procportal_chicago_il claims=none found",
+      "key": "US-IL",
+      "tier": ""
+    },
+    {
+      "covered": true,
+      "dimension": "state_tier",
+      "evidence": "registry:dot_511_il claims=GCS ops/runs: 3 run(s), claims_added \u03a379,866 (max 27,000), last 2026-09-24T06:02Z; public export sites: 3,000; public evidence.json artifacts: 1",
+      "key": "US-IL; (pts",
+      "tier": ""
+    },
+    {
+      "covered": true,
+      "dimension": "state_tier",
+      "evidence": "registry:camreg_lawrence_ks claims=GCS ops/runs: 1 run(s), claims_added \u03a3654 (max 654), last 2026-09-19T07:34Z; public export sites: 69; public evidence.json artifacts: 1",
+      "key": "US-KS; (pts",
+      "tier": ""
+    },
+    {
+      "covered": true,
+      "dimension": "state_tier",
+      "evidence": "registry:dot_511_ky claims=GCS ops/runs: 3 run(s), claims_added \u03a312,904 (max 6,478), last 2026-09-24T04:04Z; public export sites: 768; public evidence.json artifacts: 1",
+      "key": "US-KY; (pts",
+      "tier": ""
+    },
+    {
+      "covered": true,
+      "dimension": "state_tier",
+      "evidence": "registry:dot_511_la claims=GCS ops/runs: 2 run(s), claims_added \u03a310,440 (max 5,220), last 2026-09-19T14:57Z; public export sites: 435; public evidence.json artifacts: 1",
+      "key": "US-LA; (pts",
+      "tier": ""
+    },
+    {
+      "covered": true,
+      "dimension": "state_tier",
+      "evidence": "registry:ccops_cambridge claims=GCS ops/runs: 2 run(s), claims_added \u03a384 (max 42), last 2026-09-26T10:17Z; public evidence.json artifacts: 1",
+      "key": "US-MA",
+      "tier": ""
+    },
+    {
+      "covered": true,
+      "dimension": "state_tier",
+      "evidence": "registry:camreg_massdot_ma claims=GCS ops/runs: 1 run(s), claims_added \u03a39,395 (max 9,395), last 2026-09-19T08:25Z; public export sites: 845; public evidence.json artifacts: 1",
+      "key": "US-MA; (pts",
+      "tier": ""
+    },
+    {
+      "covered": false,
+      "dimension": "state_tier",
+      "evidence": "registry:ccops_baltimore claims=none found",
+      "key": "US-MD",
+      "tier": ""
+    },
+    {
+      "covered": true,
+      "dimension": "state_tier",
+      "evidence": "registry:dot_511_md claims=GCS ops/runs: 2 run(s), claims_added \u03a39,936 (max 4,968), last 2026-09-19T15:07Z; public export sites: 552; public evidence.json artifacts: 1",
+      "key": "US-MD; (pts",
+      "tier": ""
+    },
+    {
+      "covered": false,
+      "dimension": "state_tier",
+      "evidence": "registry:ccops_grand_rapids claims=none found",
+      "key": "US-MI",
+      "tier": ""
+    },
+    {
+      "covered": true,
+      "dimension": "state_tier",
+      "evidence": "registry:camreg_carver_mn claims=GCS ops/runs: 3 run(s), claims_added \u03a316,934 (max 8,467), last 2026-09-19T09:21Z; public export sites: 915; public evidence.json artifacts: 1",
+      "key": "US-MN; (pts",
+      "tier": ""
+    },
+    {
+      "covered": true,
+      "dimension": "state_tier",
+      "evidence": "registry:procportal_kcmo_mo claims=GCS ops/runs: 2 run(s), claims_added \u03a39,687 (max 5,170), last 2026-09-30T10:01Z; public evidence.json artifacts: 3",
+      "key": "US-MO",
+      "tier": ""
+    },
+    {
+      "covered": true,
+      "dimension": "state_tier",
+      "evidence": "registry:dot_511_mo claims=GCS ops/runs: 3 run(s), claims_added \u03a324,388 (max 8,710), last 2026-09-27T06:02Z; public export sites: 1,742; public evidence.json artifacts: 1",
+      "key": "US-MO; (pts",
+      "tier": ""
+    },
+    {
+      "covered": true,
+      "dimension": "state_tier",
+      "evidence": "registry:camreg_raleigh_nc claims=GCS ops/runs: 2 run(s), claims_added \u03a3624 (max 312), last 2026-09-19T07:12Z; public export sites: 39; public evidence.json artifacts: 1",
+      "key": "US-NC; (pts",
+      "tier": ""
+    },
+    {
+      "covered": true,
+      "dimension": "state_tier",
+      "evidence": "registry:ccops_nyc_post claims=public evidence.json artifacts: 2; 94 rows live 2026-09-16 (live_runs/2026-09-16_ccops_nyc_post.json)",
+      "key": "US-NY",
+      "tier": ""
+    },
+    {
+      "covered": true,
+      "dimension": "state_tier",
+      "evidence": "registry:camreg_rochester_ny claims=GCS ops/runs: 2 run(s), claims_added \u03a33,363 (max 1,770), last 2026-09-29T14:02Z; public export sites: 177; public evidence.json artifacts: 1",
+      "key": "US-NY; (pts",
+      "tier": ""
+    },
+    {
+      "covered": true,
+      "dimension": "state_tier",
+      "evidence": "registry:osm_overpass claims=GCS ops/runs: 2 run(s), claims_added \u03a310,352 (max 5,214), last 2026-09-28T04:12Z; public evidence.json artifacts: 1",
+      "key": "US-OK",
+      "tier": ""
+    },
+    {
+      "covered": false,
+      "dimension": "state_tier",
+      "evidence": "registry:eyes_off_eugene claims=none found",
+      "key": "US-OR",
+      "tier": ""
+    },
+    {
+      "covered": true,
+      "dimension": "state_tier",
+      "evidence": "registry:dot_511_or claims=GCS ops/runs: 4 run(s), claims_added \u03a336,730 (max 11,880), last 2026-09-25T06:44Z; public export sites: 2,367; public evidence.json artifacts: 1",
+      "key": "US-OR; (pts",
+      "tier": ""
+    },
+    {
+      "covered": true,
+      "dimension": "state_tier",
+      "evidence": "registry:camreg_penndot_pa claims=GCS ops/runs: 1 run(s), claims_added \u03a310,237 (max 10,237), last 2026-09-20T04:34Z; public export sites: 1,249; public evidence.json artifacts: 1",
+      "key": "US-PA; (pts",
+      "tier": ""
+    },
+    {
+      "covered": true,
+      "dimension": "state_tier",
+      "evidence": "registry:camreg_siouxfalls_sd claims=GCS ops/runs: 2 run(s), claims_added \u03a32,001 (max 1,872), last 2026-09-29T06:04Z; public export sites: 234; public evidence.json artifacts: 2",
+      "key": "US-SD; (pts",
+      "tier": ""
+    },
+    {
+      "covered": false,
+      "dimension": "state_tier",
+      "evidence": "registry:ccops_nashville claims=none found",
+      "key": "US-TN",
+      "tier": ""
+    },
+    {
+      "covered": true,
+      "dimension": "state_tier",
+      "evidence": "registry:camreg_chattanooga_tn claims=GCS ops/runs: 3 run(s), claims_added \u03a34,056 (max 1,352), last 2026-09-19T09:48Z; public export sites: 166; public evidence.json artifacts: 1",
+      "key": "US-TN; (pts",
+      "tier": ""
+    },
+    {
+      "covered": true,
+      "dimension": "state_tier",
+      "evidence": "registry:procportal_austin_tx claims=GCS ops/runs: 2 run(s), claims_added \u03a310,393 (max 5,673), last 2026-09-30T06:01Z; public evidence.json artifacts: 3",
+      "key": "US-TX",
+      "tier": ""
+    },
+    {
+      "covered": true,
+      "dimension": "state_tier",
+      "evidence": "registry:camreg_austin_tx claims=GCS ops/runs: 2 run(s), claims_added \u03a323,125 (max 12,071), last 2026-09-28T04:02Z; public export sites: 1,005; public evidence.json artifacts: 2",
+      "key": "US-TX; (pts",
+      "tier": ""
+    },
+    {
+      "covered": true,
+      "dimension": "state_tier",
+      "evidence": "registry:dot_511_ut claims=GCS ops/runs: 5 run(s), claims_added \u03a314,245 (max 11,816), last 2026-09-25T06:44Z; public export sites: 1,469; public evidence.json artifacts: 1",
+      "key": "US-UT; (pts",
+      "tier": ""
+    },
+    {
+      "covered": true,
+      "dimension": "state_tier",
+      "evidence": "registry:camreg_arlington_va claims=GCS ops/runs: 3 run(s), claims_added \u03a37,016 (max 3,508), last 2026-09-19T15:34Z; public export sites: 383; public evidence.json artifacts: 1",
+      "key": "US-VA; (pts",
+      "tier": ""
+    },
+    {
+      "covered": true,
+      "dimension": "state_tier",
+      "evidence": "registry:ccops_seattle claims=public evidence.json artifacts: 2; 5 claims live 2026-09-16 (live_runs/2026-09-16_ccops_seattle.json); 4 filings link_rotted",
+      "key": "US-WA",
+      "tier": ""
+    },
+    {
+      "covered": true,
+      "dimension": "state_tier",
+      "evidence": "registry:dot_511_wa claims=GCS ops/runs: 3 run(s), claims_added \u03a357,346 (max 20,252), last 2026-09-26T06:01Z; public export sites: 3,661; public evidence.json artifacts: 1",
+      "key": "US-WA; (pts",
+      "tier": ""
+    },
+    {
+      "covered": true,
+      "dimension": "state_tier",
+      "evidence": "registry:legistar claims=GCS ops/runs: 4 run(s), claims_added \u03a3142,740 (max 36,257), last 2026-09-20T05:03Z; public evidence.json artifacts: 3",
+      "key": "US; CA (escribe)",
+      "tier": ""
+    },
+    {
+      "covered": true,
+      "dimension": "state_tier",
+      "evidence": "registry:deflock claims=public evidence.json artifacts: 1",
+      "key": "US; INTL",
+      "tier": ""
+    },
+    {
+      "covered": false,
+      "dimension": "technology_class",
+      "evidence": "registry:flock_transparency_portals claims=none found",
+      "key": "ALPR sharing network",
+      "tier": ""
+    },
+    {
+      "covered": true,
+      "dimension": "technology_class",
+      "evidence": "registry:osm_overpass claims=GCS ops/runs: 2 run(s), claims_added \u03a310,352 (max 5,214), last 2026-09-28T04:12Z; public evidence.json artifacts: 1",
+      "key": "CCTV registries",
+      "tier": ""
+    },
+    {
+      "covered": false,
+      "dimension": "technology_class",
+      "evidence": "registry:axon_community_connect claims=none found",
+      "key": "RTCC/camera integration",
+      "tier": ""
+    },
+    {
+      "covered": false,
+      "dimension": "technology_class",
+      "evidence": "registry:alpr_accountability_atlas claims=none found",
+      "key": "accountability/oversight",
+      "tier": ""
+    },
+    {
+      "covered": true,
+      "dimension": "technology_class",
+      "evidence": "registry:eff_atlas_of_surveillance claims=public evidence.json artifacts: 1; 15,187 claims committed to the hosted spine 2026-09-15 (docs/build/runs/P25.3.md:15,27); scheduler sig-sched-eff-atlas never attempted (gcloud scheduler list 2026-09-30T16:51Z)",
+      "key": "body-worn/evidence platform",
+      "tier": ""
+    },
+    {
+      "covered": true,
+      "dimension": "technology_class",
+      "evidence": "registry:eff_atlas_of_surveillance claims=public evidence.json artifacts: 1; 15,187 claims committed to the hosted spine 2026-09-15 (docs/build/runs/P25.3.md:15,27); scheduler sig-sched-eff-atlas never attempted (gcloud scheduler list 2026-09-30T16:51Z)",
+      "key": "cell-site simulator",
+      "tier": ""
+    },
+    {
+      "covered": true,
+      "dimension": "technology_class",
+      "evidence": "registry:eff_atlas_of_surveillance claims=public evidence.json artifacts: 1; 15,187 claims committed to the hosted spine 2026-09-15 (docs/build/runs/P25.3.md:15,27); scheduler sig-sched-eff-atlas never attempted (gcloud scheduler list 2026-09-30T16:51Z)",
+      "key": "data broker",
+      "tier": ""
+    },
+    {
+      "covered": true,
+      "dimension": "technology_class",
+      "evidence": "registry:eff_atlas_of_surveillance claims=public evidence.json artifacts: 1; 15,187 claims committed to the hosted spine 2026-09-15 (docs/build/runs/P25.3.md:15,27); scheduler sig-sched-eff-atlas never attempted (gcloud scheduler list 2026-09-30T16:51Z)",
+      "key": "drones/DFR",
+      "tier": ""
+    },
+    {
+      "covered": true,
+      "dimension": "technology_class",
+      "evidence": "registry:eff_atlas_of_surveillance claims=public evidence.json artifacts: 1; 15,187 claims committed to the hosted spine 2026-09-15 (docs/build/runs/P25.3.md:15,27); scheduler sig-sched-eff-atlas never attempted (gcloud scheduler list 2026-09-30T16:51Z)",
+      "key": "face recognition",
+      "tier": ""
+    },
+    {
+      "covered": true,
+      "dimension": "technology_class",
+      "evidence": "registry:osm_overpass claims=GCS ops/runs: 2 run(s), claims_added \u03a310,352 (max 5,214), last 2026-09-28T04:12Z; public evidence.json artifacts: 1",
+      "key": "fixed ALPR",
+      "tier": ""
+    },
+    {
+      "covered": true,
+      "dimension": "technology_class",
+      "evidence": "registry:pathways_fr_css_forensics claims=run record claim_count 2 but SOURCE_LIVE_OPS_MATRIX \u00a7A: 'artifact-only \u2014 no claim'; no public evidence artifact",
+      "key": "forensics",
+      "tier": ""
+    },
+    {
+      "covered": true,
+      "dimension": "technology_class",
+      "evidence": "registry:eff_atlas_of_surveillance claims=public evidence.json artifacts: 1; 15,187 claims committed to the hosted spine 2026-09-15 (docs/build/runs/P25.3.md:15,27); scheduler sig-sched-eff-atlas never attempted (gcloud scheduler list 2026-09-30T16:51Z)",
+      "key": "fusion center",
+      "tier": ""
+    },
+    {
+      "covered": true,
+      "dimension": "technology_class",
+      "evidence": "registry:eff_atlas_of_surveillance claims=public evidence.json artifacts: 1; 15,187 claims committed to the hosted spine 2026-09-15 (docs/build/runs/P25.3.md:15,27); scheduler sig-sched-eff-atlas never attempted (gcloud scheduler list 2026-09-30T16:51Z)",
+      "key": "gunshot detection",
+      "tier": ""
+    },
+    {
+      "covered": false,
+      "dimension": "technology_class",
+      "evidence": "registry:aclu_flock_toolkit claims=none found",
+      "key": "legislation/policy",
+      "tier": ""
+    },
+    {
+      "covered": true,
+      "dimension": "technology_class",
+      "evidence": "registry:eff_data_driven claims=GCS ops/runs: 1 run(s), claims_added \u03a31,863 (max 1,863), last 2026-09-25T06:46Z; public evidence.json artifacts: 2",
+      "key": "mobile ALPR",
+      "tier": ""
+    },
+    {
+      "covered": false,
+      "dimension": "technology_class",
+      "evidence": "registry:osm_surveillance_tagging claims=none found",
+      "key": "other",
+      "tier": ""
+    },
+    {
+      "covered": false,
+      "dimension": "technology_class",
+      "evidence": "registry:axon_community_connect claims=none found",
+      "key": "private camera registry",
+      "tier": ""
+    },
+    {
+      "covered": true,
+      "dimension": "technology_class",
+      "evidence": "registry:fema_hsgp_allocations claims=GCS ops/runs: 3 run(s), claims_added \u03a38,120 (max 4,060), last 2026-09-26T10:22Z; public evidence.json artifacts: 1",
+      "key": "procurement/contracts (multi-class)",
+      "tier": ""
+    },
+    {
+      "covered": true,
+      "dimension": "technology_class",
+      "evidence": "registry:camreg_camberwell_au claims=GCS ops/runs: 1 run(s), claims_added \u03a3536 (max 536), last 2026-09-19T11:37Z; public export sites: 67; public evidence.json artifacts: 1",
+      "key": "school surveillance",
+      "tier": ""
+    },
+    {
+      "covered": true,
+      "dimension": "technology_class",
+      "evidence": "registry:dot_511_ky claims=GCS ops/runs: 3 run(s), claims_added \u03a312,904 (max 6,478), last 2026-09-24T04:04Z; public export sites: 768; public evidence.json artifacts: 1",
+      "key": "traffic/DOT cameras",
+      "tier": ""
+    },
+    {
+      "covered": true,
+      "dimension": "technology_class",
+      "evidence": "registry:eff_atlas_of_surveillance claims=public evidence.json artifacts: 1; 15,187 claims committed to the hosted spine 2026-09-15 (docs/build/runs/P25.3.md:15,27); scheduler sig-sched-eff-atlas never attempted (gcloud scheduler list 2026-09-30T16:51Z)",
+      "key": "video analytics",
+      "tier": ""
+    }
+  ],
+  "label": "source_coverage.csv",
+  "layer": "registry",
+  "schema": "sig.coverage-snapshot/1"
+}
