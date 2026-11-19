@@ -117,7 +117,7 @@ remains (every catalog line was answered).
 | 48 | Inserted rows 287a P35.1a1 · 291a P35.1c · 320a P35.41a | lawful `mode=extend` splits under the round's rules | not accepted |
 | 49 | Inserted rows 489a–489e P37.61a…e | lawful `mode=extend` inserts under RULINGS H-1 + E-1…E-4 (verbatim in `readouts/RULINGS-2026-11-15.md`, GATE DECISIONS 2026-11-15); P37.61a's publish apply is the round's only in-scope live-executed mutation (H-1 pre-authorised) | not accepted |
 | 50 | D-P30.2b-1 | its fold target (the maintainer check) removed by B-31 — stays OPEN, non-blocking, trigger T-EVAL-IND | not accepted |
-| 51 | Deferred obligations the round carries | 193 owed rows (190 OPEN + 3 PARTIAL) of 278, each with `owner:`/`trigger:` in `docs/tickets/DEFERRALS.md`; 89 RETURN PASS map rows / 116 `[[row.legs]]` legs queued (`return_pass check` green — each in exactly one home); the promote chain `D-P36.72b-1` → `D-P37.65a-1` → `D-P37.65b-1` → the post-promote leg set (`D-P37.63-1`, `D-P37.64-1`, `D-P37.67-1`, `D-P37.68a-d-1/-2`) gates the 11B/11C/11D exits and the public layer | not accepted |
+| 51 | Deferred obligations the round carries | 193 owed rows (190 OPEN · 3 rows PARTIAL-deferred) of 278, each with `owner:`/`trigger:` in `docs/tickets/DEFERRALS.md`; 89 RETURN PASS map rows / 116 `[[row.legs]]` legs queued (`return_pass check` green — each in exactly one home); the promote chain `D-P36.72b-1` → `D-P37.65a-1` → `D-P37.65b-1` → the post-promote leg set (`D-P37.63-1`, `D-P37.64-1`, `D-P37.67-1`, `D-P37.68a-d-1/-2`) gates the 11B/11C/11D exits and the public layer | not accepted |
 | 52 | Recorded non-conformances kept | `NIGHTLY-RED-1` — `nightly.yml` red ≥40 consecutive completed runs (`oracle-unexpected` at `e8dfcb76`; repair routed by the operator, owed under `D-P34.7-1`/`D-P34.2-2`); `DIGEST-LINT-1` — digests stay uncommitted pending an owner decision; `D-P34.5-2` — billing export holds no rows (cost reads `prepared_not_executed`); watch items `VISUAL-MAP-LIGHT-1`/`VISUAL-MAP-DARK-1`/`LH-LCP-MARGINAL-1` — operator-owned allow-list calls; the carried external stack finding (#514-vs-#512 class) — operator-owned integration | not accepted |
 
 ### 1e. The anomaly carried for disposition — GAP-RP-1 (finding; the disposition is the operator's)
@@ -156,9 +156,10 @@ counts non-exclusive:
 | public | **0** | every publish/promote criterion — rides `P36.72b-promote` + `D-P37.65a-1 → D-P37.65b-1 → post-promote legs` | 0 |
 | human-completed | **3 sittings** + recorded decisions | `D-P34.4-2`, `D-P34.5-1`, `D-P35.60-1`, `D-K14-9`, OP-22 walkthroughs `D-P37.68a-d-2`, `D-P37.61d-1`/`D-P37.61e-1`, the HG-11 promote go, OP-26 flips | 0 |
 
-Coverage-matrix two-sum (SIG-ENG-041, at this read): engineering closed
-**896** (646 MET + 4 MET-DIFFERENTLY + 246 MET-ENGINEERED) and requirement
-satisfied **650** (MET + MET-DIFFERENTLY); 16 WAIVED (the G.7 register above
+Coverage-matrix two-sum (SIG-ENG-041, at this read) —
+`coverage two-sum: engineering closed = 896 · requirement satisfied = 650`:
+engineering closed 896 (646 MET + 4 MET-DIFFERENTLY + 246 MET-ENGINEERED) and
+requirement satisfied 650 (MET + MET-DIFFERENTLY); 16 WAIVED (the G.7 register above
 plus earlier accepted ADRs), 73 open verdicts (60 PARTIAL + 12 MISSING + 1
 AT-RISK-INTEGRATION, each routed to an unlanded row or open backlog home), 9
 N/A-RATIONALE. Reported as both sums, never "N MET" alone.
@@ -173,9 +174,9 @@ N/A-RATIONALE. Reported as both sums, never "N MET" alone.
   (SIG-CONF-012) ahead of landing (the landed-route rule); the eight bare `—`
   PR cells on BUILD_INDEX rows 475–482 recorded as a uniformity nit (append-only
   — cells not rewritten; PR numbers live in PHASE LOG #499–#506).
-- **Deferral register at close:** 193 owed of 278 (190 OPEN + 3 PARTIAL);
-  `obligation_events check` green (794 events, 515 assessments, 4 pre-existing
-  stale-ref warnings); `return_pass check` green (278 obligations, 193 owed,
+- **Deferral register at close:** 193 owed of 279 (190 OPEN · 3 rows PARTIAL-deferred, incl. `D-P38.2-1`);
+  `obligation_events check` green (795 events, 515 assessments, 4 pre-existing
+  stale-ref warnings); `return_pass check` green (279 obligations, 194 owed,
   each in exactly one home).
 - **Legs whose window extends past the sitting:** Wave-C `P37.2-l1…l5` — the
   strict ING-GO-C window ran 2026-11-16 → 11-20 and the legs were unrun at
