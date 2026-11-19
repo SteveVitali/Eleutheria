@@ -1,0 +1,56 @@
+{
+  "schema": "ci-boundary/1",
+  "tool": "docs/build/tools/ci_boundary.py",
+  "requested_pr": 537,
+  "pr": 537,
+  "head_sha": "694cc3e8b08725973e126917a0091493f6833c34",
+  "head_ref": "r11/P38.3a-round11-backlog-and-operational-readiness",
+  "base": "r11/P38.2-round11-gap-closure-and-acceptance-packet",
+  "read_at": "2026-11-19T09:46:40Z",
+  "prefix": "r11/",
+  "scope": "the current r11/ PR and its open r11/ ancestors; never #141–#190",
+  "required": [
+    "python",
+    "docs",
+    "composed",
+    "security",
+    "web"
+  ],
+  "stack": [],
+  "stack_stop": "base `main` is outside the `r11/` scope — the Round-10 stack (#141–#190) is never read (B-15)",
+  "stack_digest": "a540a4774d0aa5207455638c34c7b66499760b5715d1535648c2b9fd61111874",
+  "local_head": "694cc3e8b08725973e126917a0091493f6833c34",
+  "external": {
+    "read_at": "2026-11-19T09:46:41Z",
+    "since": "2026-11-19",
+    "fetch": "ok",
+    "main_sha": "65a36966700f950915ae3ca4c129f113dd4d4bd6",
+    "chain_descends": false,
+    "descends_note": "origin/main 65a3696 is not an ancestor of the tip — main carries commits the chain does not contain (the chain trails main, merged late by the operator)",
+    "ancestry": [
+      {
+        "child": 537,
+        "parent": 536,
+        "ancestor": false
+      }
+    ]
+  },
+  "flake_entries": [
+    "LH-PERF-1",
+    "PY-SUBSTR-1",
+    "DOCKERHUB-RATE-1",
+    "DOCKERHUB-RATE-2",
+    "DOCKERHUB-RATE-3",
+    "NPM-AUDIT-503-1",
+    "PY-STUB-1"
+  ],
+  "reruns": [],
+  "checks": [],
+  "waivers": 5,
+  "polls": 0,
+  "waited_s": 0,
+  "state": "fail",
+  "kind": "stack",
+  "line": "blockedOn: CI stack on #537@694cc3e (external): #537 does not contain its base #536's head 284b51f — rebased or retargeted outside the documented procedure",
+  "exit": 3
+}

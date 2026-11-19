@@ -102,6 +102,9 @@ from collections.abc import Iterable
 from dataclasses import dataclass, field
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import record_corrections  # noqa: E402
+
 SCHEMA = "memory-guard/1"
 EXIT_OK, EXIT_VIOLATIONS, EXIT_USAGE, EXIT_VACUOUS, EXIT_UNKNOWN = 0, 1, 2, 3, 5
 TOLERANCE_S = 300  # R1/R6: +5 min
@@ -180,7 +183,8 @@ ADR_STATUS_RE = re.compile(
 ADR_STATUS_BULLET_RE = re.compile(r"^\s*-\s*\*\*Status:\*\*")
 GATE_MARKER_RE = re.compile(r"\b(GATE-G\d+[a-z]?|HUMAN-H\d+[a-z]?|GATE-ACCEPT)\b")
 GATE_ID_RE = re.compile(
-    r"\b(GATE-[A-Z0-9]+|HUMAN-H\d+[a-z]?|HG-\d+|GL-GATE-\d+|[A-Z]{1,6}\d*\.\d+[a-z]?)\b"
+    r"\b(GATE-ACCEPT-R\d+|GATE-[A-Z0-9]+|HUMAN-H\d+[a-z]?|HG-\d+|GL-GATE-\d+|"
+    r"[A-Z]{1,6}\d*\.\d+[a-z]?)\b"
 )
 
 # `placeholder-fill` (B2 §7): a removed line may be replaced only by the same line with declared
@@ -1125,6 +1129,7 @@ class Judge:
         self.dates: list[DateRec] = []
         self.date_candidates = 0
         self.date_unparsed = 0
+        self.corrections = record_corrections.Corrections()
         self.changed: list[tuple[str, str]] = []
         self._bypath: dict[str, str] = {}
         self._executed: set[str] | None = None
@@ -1139,6 +1144,13 @@ class Judge:
         self.changed = self.c.changed(self.pol)
         self._bypath = {p: s for s, p in self.changed}
         self.c.attribute(self.pol)
+        self.corrections = record_corrections.load(
+            self.c.git.root, self.c.at_head,
+            self.c.head if self.c.committed else "HEAD", self.c.now,
+        )
+        self.r.count("record-dates", self.corrections.candidates, self.corrections.candidates)
+        for line, message in self.corrections.errors:
+            self.r.v("record-dates", "correction-record", record_corrections.REGISTER, line, message)
         changed_paths = {p for _, p in self.changed}
         cand = 0
         for status, path in self.changed:
@@ -1220,9 +1232,13 @@ class Judge:
         # landed: it may be edited or removed until merged. Its edits are judged as a new file's ("N");
         # the control files (LEDGER, DEFERRALS, BUILD_INDEX, manifest) keep their region rules.
         fresh = status != "A" and bool(cls) and not self.c.landed(path)
-        if fresh and status == "D":
+        if fresh and status == "D" and path != record_corrections.REGISTER:
             return
-        if fresh and cls not in ("ledger", "deferrals", "index", "manifest"):
+        if (
+            fresh
+            and cls not in ("ledger", "deferrals", "index", "manifest")
+            and path != record_corrections.REGISTER
+        ):
             status = "N"
         if status == "D":
             base = self.c.at_base(path) or ""
@@ -1742,8 +1758,11 @@ class Judge:
                             commit,
                         )
                 if kind == "decision":
+                    # An evidenced recording-time bound also constrains pause order:
+                    # a later pause cannot borrow the erroneous future date to pass.
+                    decision_bound = self.corrections.dates.get((path, row), cells[0])
                     self.answer_after_pause(
-                        path, ln, commit, cells[0], cells[gc] + " " + cells[tc], t.round, pauses
+                        path, ln, commit, decision_bound, cells[gc] + " " + cells[tc], t.round, pauses
                     )
         # Legacy bullet entries: a quoted delegation is reported (a warning — a bullet may quote it as a fact).
         for reg in regions(head):
@@ -3397,7 +3416,15 @@ class Judge:
             if why:
                 self.r.v(d.check, "R5-malformed", d.path, d.line, why, commit.short)
             if not exempt and not r1_ok(st, commit, now):
-                if not correction_context(d.text, st, commit, now):
+                corrected = self.corrections.dates.get((d.path, d.text))
+                if corrected:
+                    self.r.w(
+                        d.check, "R1-corrected", d.path, d.line,
+                        f"original record date retained; recording time corrected to ≤ {corrected} "
+                        f"by source-bound {record_corrections.REGISTER}; event time is not inferred",
+                        commit.short,
+                    )
+                elif not correction_context(d.text, st, commit, now):
                     expired = expired_allow(self.pol, d.path, d.text, now)
                     self.r.v(
                         d.check,
