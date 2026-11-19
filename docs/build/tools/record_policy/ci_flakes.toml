@@ -92,3 +92,13 @@ evidence_runs = ["40090842369"]
 reason = "one-shot environment race: the offline gcloud stub's canned 'sql instances patch --help' did not reach the flag probe (stub advertised all five flags; identical test green on two same-code runs today + local) — 'gcloud does not advertise --retain-backups-on-delete' on a stub that always echoes it is not a code defect; a genuine regression fails the rerun too (flake-exhausted)"
 tracking = "test_protect_iac.py stub PATH/capability probe — if this re-appears the stub should pin a private PATH rather than prepend (OM-18 three-use rule)"
 expires = "2026-11-24"
+
+[[flake]]
+id = "UBUNTU-APT-503-1"
+job = "web"
+step = "Build the pinned tippecanoe (no-op on cache hit) — sudo apt-get install build-essential"
+pattern = "exit code 100"
+evidence_runs = ["44512558010"]
+reason = "Ubuntu archive outage on the runner's egress: `sudo apt-get update`/`install` hit repeated `503 Service Unavailable` from security.ubuntu.com and archive.ubuntu.com mirrors (noble InRelease fetches Ign→Err, then the build-essential .deb fetch failed 503) — transient external repository outage, identical head's other four checks green, docs-only diff could not touch this step"
+tracking = "transient external apt-mirror availability — no repo change owed; escalate to the operator if recurring (OM-18 three-use rule)"
+expires = "2026-12-01"
