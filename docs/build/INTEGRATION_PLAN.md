@@ -12,6 +12,14 @@
 > v0.1.0 tag/release step described below was never run (the operator integrated
 > progressively instead, which the HG-05 skip allowed) — no tag/release step exists in
 > the current plan.
+>
+> **Current for the Round-11 tail — 2026-11-19 (P38.3c, row 507).** The operator has
+> since integrated the #112–#537 stack progressively (merged, or closed-not-merged
+> where a head was superseded — the ≈ 325-PR stack this plan's descendants sized);
+> the **current** operator procedure — the remaining merge legs
+> plus the promote-chain / REVIEW-R11 / GATE-ANNOUNCE ordering — is
+> [`reports/p38.3c-integration-plan/INTEGRATION_PLAN.md`](reports/p38.3c-integration-plan/INTEGRATION_PLAN.md).
+> The P33.6 document remains the dated Round-10 record.
 
 **This ticket (P20.3) merges nothing, tags nothing, and does not touch `main` or any branch.** It
 produces the *procedure* and *proof* the operator uses to integrate the stack **after the chain**
