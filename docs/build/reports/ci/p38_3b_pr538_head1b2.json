@@ -1,0 +1,185 @@
+{
+  "schema": "ci-boundary/1",
+  "tool": "docs/build/tools/ci_boundary.py",
+  "requested_pr": 538,
+  "pr": 538,
+  "head_sha": "1b2abb45d6967bc00524e8140219a6a3cbd9dae3",
+  "head_ref": "r11/P38.3b-round11-spec-reconciliation",
+  "base": "main",
+  "read_at": "2026-11-19T14:03:52Z",
+  "prefix": "r11/",
+  "scope": "the current r11/ PR and its open r11/ ancestors; never #141–#190",
+  "required": [
+    "python",
+    "docs",
+    "composed",
+    "security",
+    "web"
+  ],
+  "stack": [
+    {
+      "pr": 538,
+      "head_ref": "r11/P38.3b-round11-spec-reconciliation",
+      "head_sha": "1b2abb45d6967bc00524e8140219a6a3cbd9dae3",
+      "base": "main",
+      "pr_state": "OPEN",
+      "is_draft": false,
+      "mergeable": "MERGEABLE",
+      "state": "fail",
+      "detail": "failure — Process completed with exit code 1. (run 44524806403)"
+    }
+  ],
+  "stack_stop": "base `main` is outside the `r11/` scope — the Round-10 stack (#141–#190) is never read (B-15)",
+  "stack_digest": "f199bc9f2a0b9a06bb59fb0e0e47ff85175031712456f0e5e89d466927e9b25d",
+  "local_head": "1b2abb45d6967bc00524e8140219a6a3cbd9dae3",
+  "external": {
+    "read_at": "2026-11-19T14:03:52Z",
+    "since": "2026-11-19",
+    "fetch": "ok",
+    "main_sha": "1d090e7908e9fa775081092615d71cd557705c2f",
+    "chain_descends": false,
+    "descends_note": "origin/main 1d090e7 is not an ancestor of the tip — main carries commits the chain does not contain (the chain trails main, merged late by the operator)",
+    "ancestry": [],
+    "merged_since": [
+      {
+        "number": 537,
+        "head_ref": "r11/P38.3a-round11-backlog-and-operational-readiness",
+        "head_sha": "f8f1d0ddd5a34f0ee7c3a563b6a1d6bb559b7f87",
+        "base": "main",
+        "merged_at": "2026-11-19T11:53:00Z",
+        "on_stack": true
+      },
+      {
+        "number": 536,
+        "head_ref": "r11/P38.2-round11-gap-closure-and-acceptance-packet",
+        "head_sha": "284b51fea6f91368cfdf962b7cdef62b3b2a6948",
+        "base": "main",
+        "merged_at": "2026-11-19T11:01:58Z",
+        "on_stack": true
+      },
+      {
+        "number": 535,
+        "head_ref": "r11/P38.1b-round11-gap-analysis-11c-11d-and-composed-verification",
+        "head_sha": "566a9aead0e136a4eb14b1cc622b616e60b2787b",
+        "base": "main",
+        "merged_at": "2026-11-19T08:26:55Z",
+        "on_stack": true
+      },
+      {
+        "number": 534,
+        "head_ref": "r11/P38.1a-round11-gap-analysis-11a-11b",
+        "head_sha": "aea62e6827c64b6c22773ebc7bc1d05fc1b5edd8",
+        "base": "main",
+        "merged_at": "2026-11-19T02:16:09Z",
+        "on_stack": true
+      },
+      {
+        "number": 533,
+        "head_ref": "r11/P37.68d-ux-capstone-per-ask-checks-and-walkthrough-packet",
+        "head_sha": "90ffa8535f080155cf177216c6ebc03215462dcf",
+        "base": "main",
+        "merged_at": "2026-11-19T01:59:35Z",
+        "on_stack": true
+      },
+      {
+        "number": 532,
+        "head_ref": "r11/P37.68c-ux-capstone-organizer-journeys",
+        "head_sha": "acc9aaf26a509fbfab3d6530aba5166c5c6588eb",
+        "base": "main",
+        "merged_at": "2026-11-19T00:40:57Z",
+        "on_stack": true
+      }
+    ],
+    "open_off_chain": []
+  },
+  "flake_entries": [
+    "LH-PERF-1",
+    "PY-SUBSTR-1",
+    "DOCKERHUB-RATE-1",
+    "DOCKERHUB-RATE-2",
+    "DOCKERHUB-RATE-3",
+    "NPM-AUDIT-503-1",
+    "PY-STUB-1",
+    "UBUNTU-APT-503-1"
+  ],
+  "reruns": [],
+  "checks": [
+    {
+      "pr": 538,
+      "name": "python",
+      "required": true,
+      "check_run_id": 135595943723,
+      "run_id": "44524806403",
+      "status": "completed",
+      "conclusion": "success",
+      "bucket": "pass",
+      "started_at": "2026-11-19T12:32:50Z",
+      "completed_at": "2026-11-19T12:55:39Z",
+      "link": "https://github.com/SteveVitali/Eleutheria/actions/runs/44524806403/job/135595943723",
+      "waived": false
+    },
+    {
+      "pr": 538,
+      "name": "docs",
+      "required": true,
+      "check_run_id": 135595879201,
+      "run_id": "44524806403",
+      "status": "completed",
+      "conclusion": "success",
+      "bucket": "pass",
+      "started_at": "2026-11-19T12:32:50Z",
+      "completed_at": "2026-11-19T12:36:27Z",
+      "link": "https://github.com/SteveVitali/Eleutheria/actions/runs/44524806403/job/135595879201",
+      "waived": false
+    },
+    {
+      "pr": 538,
+      "name": "composed",
+      "required": true,
+      "check_run_id": 135595880308,
+      "run_id": "44524806403",
+      "status": "completed",
+      "conclusion": "success",
+      "bucket": "pass",
+      "started_at": "2026-11-19T12:32:50Z",
+      "completed_at": "2026-11-19T12:37:07Z",
+      "link": "https://github.com/SteveVitali/Eleutheria/actions/runs/44524806403/job/135595880308",
+      "waived": false
+    },
+    {
+      "pr": 538,
+      "name": "security",
+      "required": true,
+      "check_run_id": 135595938555,
+      "run_id": "44524806403",
+      "status": "completed",
+      "conclusion": "success",
+      "bucket": "pass",
+      "started_at": "2026-11-19T12:32:50Z",
+      "completed_at": "2026-11-19T12:33:25Z",
+      "link": "https://github.com/SteveVitali/Eleutheria/actions/runs/44524806403/job/135595938555",
+      "waived": false
+    },
+    {
+      "pr": 538,
+      "name": "web",
+      "required": true,
+      "check_run_id": 135595876835,
+      "run_id": "44524806403",
+      "status": "completed",
+      "conclusion": "failure",
+      "bucket": "fail",
+      "started_at": "2026-11-19T13:32:08Z",
+      "completed_at": "2026-11-19T14:29:55Z",
+      "link": "https://github.com/SteveVitali/Eleutheria/actions/runs/44524806403/job/135595876835",
+      "waived": false
+    }
+  ],
+  "waivers": 5,
+  "polls": 27,
+  "waited_s": 1585.8,
+  "state": "fail",
+  "kind": "fail",
+  "line": "blockedOn: CI fail on #538@1b2abb4 (web): failure — Process completed with exit code 1. (run 44524806403) — flake-exhausted: UBUNTU-APT-503-1 already used this head's one re-run (B-15); the failure is red, not re-run",
+  "exit": 3
+}
