@@ -45,6 +45,15 @@ placeholder ______
 placeholder re:DRAFT-[A-Z]+-[0-9]+
 placeholder pending at write
 placeholder pending head-bound read
+# `boundary-confirm + GATE PAUSE` (bare) — P38.3a's in-branch forward-repair of
+# `384c3fc4`'s `**GATE PAUSE**` PHASE-LOG head. The base's operator-approved
+# `record-correction/1` journal (`phase-log-heading-markup`, `284b51fe`) is the
+# sanctioned interpretation and requires the ORIGINAL marked-up bytes to
+# survive unchanged exactly once — so the catch-up merge restores them. The
+# literal token `boundary-confirm + GATE PAUSE` occurs only in the bare line
+# (the original reads `+ **GATE PAUSE**`), declaring the bare form fillable to
+# the journal-pinned original — one-way, every other byte identical, 2026-11-19.
+placeholder boundary-confirm + GATE PAUSE
 # `(recorded at closeout)` / `(recorded at push)` — the run-ledger template's close-time marker
 # wording already carried by ~20 committed ledgers (P37.50…P37.69, P36.73, P35.25, P32.x, …);
 # declared forward so a single-line pure fill is sanctioned (P38.1b, PR #535, 2026-11-19).
