@@ -1,0 +1,255 @@
+{
+  "schema": "ci-boundary/1",
+  "tool": "docs/build/tools/ci_boundary.py",
+  "requested_pr": 537,
+  "pr": 537,
+  "head_sha": "99d938b4e54982f20a2c7a8e86e40726497c8c7b",
+  "head_ref": "r11/P38.3a-round11-backlog-and-operational-readiness",
+  "base": "r11/P38.2-round11-gap-closure-and-acceptance-packet",
+  "read_at": "2026-11-19T08:30:18Z",
+  "prefix": "r11/",
+  "scope": "the current r11/ PR and its open r11/ ancestors; never #141–#190",
+  "required": [
+    "python",
+    "docs",
+    "composed",
+    "security",
+    "web"
+  ],
+  "stack": [
+    {
+      "pr": 537,
+      "head_ref": "r11/P38.3a-round11-backlog-and-operational-readiness",
+      "head_sha": "99d938b4e54982f20a2c7a8e86e40726497c8c7b",
+      "base": "r11/P38.2-round11-gap-closure-and-acceptance-packet",
+      "pr_state": "OPEN",
+      "is_draft": false,
+      "mergeable": "MERGEABLE",
+      "state": "pass",
+      "detail": null
+    },
+    {
+      "pr": 536,
+      "head_ref": "r11/P38.2-round11-gap-closure-and-acceptance-packet",
+      "head_sha": "a58af93363ed9fed20baeaa959e651f6d818a111",
+      "base": "main",
+      "pr_state": "OPEN",
+      "is_draft": false,
+      "mergeable": "MERGEABLE",
+      "state": "fail",
+      "detail": "failure — Process completed with exit code 2. (run 44473698730)"
+    }
+  ],
+  "stack_stop": "base `main` is outside the `r11/` scope — the Round-10 stack (#141–#190) is never read (B-15)",
+  "stack_digest": "ee8cb74408497ad5269647e5f1cf1aa11b03aa3900fa2fe03ee7d0ea25fc1d12",
+  "local_head": "99d938b4e54982f20a2c7a8e86e40726497c8c7b",
+  "external": {
+    "read_at": "2026-11-19T08:30:19Z",
+    "since": "2026-11-19",
+    "fetch": "ok",
+    "main_sha": "65a36966700f950915ae3ca4c129f113dd4d4bd6",
+    "chain_descends": false,
+    "descends_note": "origin/main 65a3696 is not an ancestor of the tip — main carries commits the chain does not contain (the chain trails main, merged late by the operator)",
+    "ancestry": [
+      {
+        "child": 537,
+        "parent": 536,
+        "ancestor": true
+      }
+    ],
+    "merged_since": [
+      {
+        "number": 535,
+        "head_ref": "r11/P38.1b-round11-gap-analysis-11c-11d-and-composed-verification",
+        "head_sha": "566a9aead0e136a4eb14b1cc622b616e60b2787b",
+        "base": "main",
+        "merged_at": "2026-11-19T08:26:55Z",
+        "on_stack": true
+      },
+      {
+        "number": 534,
+        "head_ref": "r11/P38.1a-round11-gap-analysis-11a-11b",
+        "head_sha": "aea62e6827c64b6c22773ebc7bc1d05fc1b5edd8",
+        "base": "main",
+        "merged_at": "2026-11-19T02:16:09Z",
+        "on_stack": true
+      },
+      {
+        "number": 533,
+        "head_ref": "r11/P37.68d-ux-capstone-per-ask-checks-and-walkthrough-packet",
+        "head_sha": "90ffa8535f080155cf177216c6ebc03215462dcf",
+        "base": "main",
+        "merged_at": "2026-11-19T01:59:35Z",
+        "on_stack": true
+      },
+      {
+        "number": 532,
+        "head_ref": "r11/P37.68c-ux-capstone-organizer-journeys",
+        "head_sha": "acc9aaf26a509fbfab3d6530aba5166c5c6588eb",
+        "base": "main",
+        "merged_at": "2026-11-19T00:40:57Z",
+        "on_stack": true
+      }
+    ],
+    "open_off_chain": []
+  },
+  "flake_entries": [
+    "LH-PERF-1",
+    "PY-SUBSTR-1",
+    "DOCKERHUB-RATE-1",
+    "DOCKERHUB-RATE-2",
+    "DOCKERHUB-RATE-3",
+    "NPM-AUDIT-503-1",
+    "PY-STUB-1"
+  ],
+  "reruns": [],
+  "checks": [
+    {
+      "pr": 537,
+      "name": "python",
+      "required": true,
+      "check_run_id": 135406042300,
+      "run_id": "44478852260",
+      "status": "completed",
+      "conclusion": "success",
+      "bucket": "pass",
+      "started_at": "2026-11-19T07:20:53Z",
+      "completed_at": "2026-11-19T07:41:51Z",
+      "link": "https://github.com/SteveVitali/Eleutheria/actions/runs/44478852260/job/135406042300",
+      "waived": false
+    },
+    {
+      "pr": 537,
+      "name": "docs",
+      "required": true,
+      "check_run_id": 135406041980,
+      "run_id": "44478852260",
+      "status": "completed",
+      "conclusion": "success",
+      "bucket": "pass",
+      "started_at": "2026-11-19T07:20:53Z",
+      "completed_at": "2026-11-19T07:23:40Z",
+      "link": "https://github.com/SteveVitali/Eleutheria/actions/runs/44478852260/job/135406041980",
+      "waived": false
+    },
+    {
+      "pr": 537,
+      "name": "composed",
+      "required": true,
+      "check_run_id": 135406042264,
+      "run_id": "44478852260",
+      "status": "completed",
+      "conclusion": "success",
+      "bucket": "pass",
+      "started_at": "2026-11-19T07:20:53Z",
+      "completed_at": "2026-11-19T07:24:36Z",
+      "link": "https://github.com/SteveVitali/Eleutheria/actions/runs/44478852260/job/135406042264",
+      "waived": false
+    },
+    {
+      "pr": 537,
+      "name": "security",
+      "required": true,
+      "check_run_id": 135406042476,
+      "run_id": "44478852260",
+      "status": "completed",
+      "conclusion": "success",
+      "bucket": "pass",
+      "started_at": "2026-11-19T07:20:53Z",
+      "completed_at": "2026-11-19T07:21:23Z",
+      "link": "https://github.com/SteveVitali/Eleutheria/actions/runs/44478852260/job/135406042476",
+      "waived": false
+    },
+    {
+      "pr": 537,
+      "name": "web",
+      "required": true,
+      "check_run_id": 135406042256,
+      "run_id": "44478852260",
+      "status": "completed",
+      "conclusion": "success",
+      "bucket": "pass",
+      "started_at": "2026-11-19T07:20:54Z",
+      "completed_at": "2026-11-19T08:24:40Z",
+      "link": "https://github.com/SteveVitali/Eleutheria/actions/runs/44478852260/job/135406042256",
+      "waived": false
+    },
+    {
+      "pr": 536,
+      "name": "python",
+      "required": true,
+      "check_run_id": 135389165016,
+      "run_id": "44473698730",
+      "status": "completed",
+      "conclusion": "failure",
+      "bucket": "fail",
+      "started_at": "2026-11-19T06:39:21Z",
+      "completed_at": "2026-11-19T06:58:27Z",
+      "link": "https://github.com/SteveVitali/Eleutheria/actions/runs/44473698730/job/135389165016",
+      "waived": false
+    },
+    {
+      "pr": 536,
+      "name": "docs",
+      "required": true,
+      "check_run_id": 135389165447,
+      "run_id": "44473698730",
+      "status": "completed",
+      "conclusion": "failure",
+      "bucket": "fail",
+      "started_at": "2026-11-19T06:39:21Z",
+      "completed_at": "2026-11-19T06:40:47Z",
+      "link": "https://github.com/SteveVitali/Eleutheria/actions/runs/44473698730/job/135389165447",
+      "waived": false
+    },
+    {
+      "pr": 536,
+      "name": "composed",
+      "required": true,
+      "check_run_id": 135389164562,
+      "run_id": "44473698730",
+      "status": "completed",
+      "conclusion": "success",
+      "bucket": "pass",
+      "started_at": "2026-11-19T06:39:20Z",
+      "completed_at": "2026-11-19T06:42:52Z",
+      "link": "https://github.com/SteveVitali/Eleutheria/actions/runs/44473698730/job/135389164562",
+      "waived": false
+    },
+    {
+      "pr": 536,
+      "name": "security",
+      "required": true,
+      "check_run_id": 135389164996,
+      "run_id": "44473698730",
+      "status": "completed",
+      "conclusion": "success",
+      "bucket": "pass",
+      "started_at": "2026-11-19T06:39:21Z",
+      "completed_at": "2026-11-19T06:40:02Z",
+      "link": "https://github.com/SteveVitali/Eleutheria/actions/runs/44473698730/job/135389164996",
+      "waived": false
+    },
+    {
+      "pr": 536,
+      "name": "web",
+      "required": true,
+      "check_run_id": 135389165183,
+      "run_id": "44473698730",
+      "status": "completed",
+      "conclusion": "success",
+      "bucket": "pass",
+      "started_at": "2026-11-19T06:39:20Z",
+      "completed_at": "2026-11-19T07:39:59Z",
+      "link": "https://github.com/SteveVitali/Eleutheria/actions/runs/44473698730/job/135389165183",
+      "waived": false
+    }
+  ],
+  "waivers": 5,
+  "polls": 1,
+  "waited_s": 0.0,
+  "state": "fail",
+  "kind": "fail",
+  "line": "blockedOn: CI fail on #536@a58af93 (python): failure — Process completed with exit code 2. (run 44473698730) — flake-exhausted: PY-STUB-1 already used this head's one re-run (B-15); the failure is red, not re-run",
+  "exit": 3
+}
