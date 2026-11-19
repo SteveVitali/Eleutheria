@@ -45,6 +45,13 @@ placeholder ______
 placeholder re:DRAFT-[A-Z]+-[0-9]+
 placeholder pending at write
 placeholder pending head-bound read
+# `**GATE PAUSE**` — the one markup-wrapped token in the strict PHASE LOG corrections
+# region (LEDGER `**GATE PAUSE**` in `384c3fc4`'s dispatch boundary-confirm head):
+# BM-LEDGER-06 requires the id bare; declaring it so the bare-text fill is a
+# sanctioned placeholder-fill (every other byte identical), not a rewrite — P38.3a
+# forward-repairs the unmerged base defect in-branch (the P35.4 phase-log-kind
+# precedent), 2026-11-19.
+placeholder re:\*\*GATE PAUSE\*\*
 # `(recorded at closeout)` / `(recorded at push)` — the run-ledger template's close-time marker
 # wording already carried by ~20 committed ledgers (P37.50…P37.69, P36.73, P35.25, P32.x, …);
 # declared forward so a single-line pure fill is sanctioned (P38.1b, PR #535, 2026-11-19).
