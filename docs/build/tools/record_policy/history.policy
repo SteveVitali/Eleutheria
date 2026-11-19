@@ -45,6 +45,11 @@ placeholder ______
 placeholder re:DRAFT-[A-Z]+-[0-9]+
 placeholder pending at write
 placeholder pending head-bound read
+# `(recorded at closeout)` / `(recorded at push)` — the run-ledger template's close-time marker
+# wording already carried by ~20 committed ledgers (P37.50…P37.69, P36.73, P35.25, P32.x, …);
+# declared forward so a single-line pure fill is sanctioned (P38.1b, PR #535, 2026-11-19).
+placeholder (recorded at closeout)
+placeholder (recorded at push)
 
 # ── Generated region (B3 §3.13; SEED-16, later P34.29's generator) ────────────────────────────────────────
 # The heading is "### RETURN PASS — current"; it is written here without the leading "###" because
@@ -208,6 +213,22 @@ seed-commit d130b54d
 # exists at base — i.e., normal BM-TICKET-04 semantics resume; subsequent edits must conform to it.
 # Scope: findings attributed to 427c5efb only; no other commit borrows the exemption.
 seed-commit 427c5efb
+
+# ── P38.1a closeout placeholder-fill commit (row 501; recorded by P38.1b, PR #535, 2026-11-19) ──
+# Commit e95da6fb (P38.1a's closeout, riding the merged #534's branch tip) filled its own run
+# ledger's close-time placeholders: `pending (`gh pr create` at push …)` → the #534 record,
+# `(recorded at closeout)` / `(recorded at push)` markers → the verification values, and the
+# sanctioned `Closed: none.` → dated stamp. The wordings were the established template shape
+# (~20 committed ledgers carry them) but were never declared tokens, and two of the fills
+# restructured beyond a single-line token replacement — so the range check's per-line
+# placeholder-fill mode cannot verify them (15 append-only findings, all attributed to
+# e95da6fb — verified on run 44446658504). The fills are sanctioned close-time writes of an
+# under-declared template, not history rewriting; the branch rule forbids force-push, so the
+# exempting declaration lands as a later commit rather than a reworded subject. The tokens
+# `(recorded at closeout)` / `(recorded at push)` are separately declared forward (above) so a
+# single-line pure fill is sanctioned in any later ledger.
+# Scope: findings attributed to e95da6fb only; no other commit borrows the exemption.
+seed-commit e95da6fb
 
 # ── P34.22a whole-tree future-date test — first-run entries ──────────────────────────────────────
 # tests/unit/test_no_future_date_literals.py (P34.22a) sweeps code, data, migrations and tests for

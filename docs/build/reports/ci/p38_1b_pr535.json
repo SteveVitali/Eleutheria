@@ -1,0 +1,160 @@
+{
+  "schema": "ci-boundary/1",
+  "tool": "docs/build/tools/ci_boundary.py",
+  "requested_pr": 535,
+  "pr": 535,
+  "head_sha": "2d514d837c64e015ff7853ac96de25468d1f8892",
+  "head_ref": "r11/P38.1b-round11-gap-analysis-11c-11d-and-composed-verification",
+  "base": "r11/P38.1a-round11-gap-analysis-11a-11b",
+  "read_at": "2026-11-19T02:35:24Z",
+  "prefix": "r11/",
+  "scope": "the current r11/ PR and its open r11/ ancestors; never #141–#190",
+  "required": [
+    "python",
+    "docs",
+    "composed",
+    "security",
+    "web"
+  ],
+  "stack": [
+    {
+      "pr": 535,
+      "head_ref": "r11/P38.1b-round11-gap-analysis-11c-11d-and-composed-verification",
+      "head_sha": "2d514d837c64e015ff7853ac96de25468d1f8892",
+      "base": "r11/P38.1a-round11-gap-analysis-11a-11b",
+      "pr_state": "OPEN",
+      "is_draft": false,
+      "mergeable": "MERGEABLE",
+      "state": "pending",
+      "detail": "in_progress"
+    }
+  ],
+  "stack_stop": "base `r11/P38.1a-round11-gap-analysis-11a-11b` is #534, already merged",
+  "stack_digest": "a1b68e1bd27d734f282da7de1a48d4255d6b06acbbab351e77513298f1ee1cd4",
+  "local_head": "2d514d837c64e015ff7853ac96de25468d1f8892",
+  "external": {
+    "read_at": "2026-11-19T02:35:25Z",
+    "since": "2026-11-19",
+    "fetch": "ok",
+    "main_sha": "b95d7ca2b0b2b00cbb7612314d59ef64395b9c24",
+    "chain_descends": false,
+    "descends_note": "origin/main b95d7ca is not an ancestor of the tip — main carries commits the chain does not contain (the chain trails main, merged late by the operator)",
+    "ancestry": [],
+    "merged_since": [
+      {
+        "number": 534,
+        "head_ref": "r11/P38.1a-round11-gap-analysis-11a-11b",
+        "head_sha": "aea62e6827c64b6c22773ebc7bc1d05fc1b5edd8",
+        "base": "main",
+        "merged_at": "2026-11-19T02:16:09Z",
+        "on_stack": true
+      },
+      {
+        "number": 533,
+        "head_ref": "r11/P37.68d-ux-capstone-per-ask-checks-and-walkthrough-packet",
+        "head_sha": "90ffa8535f080155cf177216c6ebc03215462dcf",
+        "base": "main",
+        "merged_at": "2026-11-19T01:59:35Z",
+        "on_stack": true
+      },
+      {
+        "number": 532,
+        "head_ref": "r11/P37.68c-ux-capstone-organizer-journeys",
+        "head_sha": "acc9aaf26a509fbfab3d6530aba5166c5c6588eb",
+        "base": "main",
+        "merged_at": "2026-11-19T00:40:57Z",
+        "on_stack": true
+      }
+    ],
+    "open_off_chain": []
+  },
+  "flake_entries": [
+    "LH-PERF-1",
+    "PY-SUBSTR-1",
+    "DOCKERHUB-RATE-1",
+    "DOCKERHUB-RATE-2",
+    "DOCKERHUB-RATE-3",
+    "NPM-AUDIT-503-1",
+    "PY-STUB-1"
+  ],
+  "reruns": [],
+  "checks": [
+    {
+      "pr": 535,
+      "name": "python",
+      "required": true,
+      "check_run_id": 135296237802,
+      "run_id": "44445414372",
+      "status": "in_progress",
+      "conclusion": null,
+      "bucket": "pending",
+      "started_at": "2026-11-19T02:35:23Z",
+      "completed_at": null,
+      "link": "https://github.com/SteveVitali/Eleutheria/actions/runs/44445414372/job/135296237802",
+      "waived": false
+    },
+    {
+      "pr": 535,
+      "name": "docs",
+      "required": true,
+      "check_run_id": 135296237448,
+      "run_id": "44445414372",
+      "status": "in_progress",
+      "conclusion": null,
+      "bucket": "pending",
+      "started_at": "2026-11-19T02:35:23Z",
+      "completed_at": null,
+      "link": "https://github.com/SteveVitali/Eleutheria/actions/runs/44445414372/job/135296237448",
+      "waived": false
+    },
+    {
+      "pr": 535,
+      "name": "composed",
+      "required": true,
+      "check_run_id": 135296237773,
+      "run_id": "44445414372",
+      "status": "queued",
+      "conclusion": null,
+      "bucket": "pending",
+      "started_at": "2026-11-19T02:35:22Z",
+      "completed_at": null,
+      "link": "https://github.com/SteveVitali/Eleutheria/actions/runs/44445414372/job/135296237773",
+      "waived": false
+    },
+    {
+      "pr": 535,
+      "name": "security",
+      "required": true,
+      "check_run_id": 135296238159,
+      "run_id": "44445414372",
+      "status": "in_progress",
+      "conclusion": null,
+      "bucket": "pending",
+      "started_at": "2026-11-19T02:35:23Z",
+      "completed_at": null,
+      "link": "https://github.com/SteveVitali/Eleutheria/actions/runs/44445414372/job/135296238159",
+      "waived": false
+    },
+    {
+      "pr": 535,
+      "name": "web",
+      "required": true,
+      "check_run_id": 135296237963,
+      "run_id": "44445414372",
+      "status": "in_progress",
+      "conclusion": null,
+      "bucket": "pending",
+      "started_at": "2026-11-19T02:35:24Z",
+      "completed_at": null,
+      "link": "https://github.com/SteveVitali/Eleutheria/actions/runs/44445414372/job/135296237963",
+      "waived": false
+    }
+  ],
+  "waivers": 5,
+  "polls": 1,
+  "waited_s": 0.0,
+  "state": "pending",
+  "kind": "pending",
+  "line": "blockedOn: CI pending on #535@2d514d8 (python): in_progress after 0 s of 0 s",
+  "exit": 4
+}
