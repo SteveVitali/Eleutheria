@@ -3401,6 +3401,17 @@ def build_parser() -> argparse.ArgumentParser:
         "predecessor)",
     )
     sub.add_parser(
+        "capstone-organizer",
+        help="P37.68c / K13 CAP-01 split c: the organizer-journeys (O1–O4) "
+        "capstone leg declaration — plan renders the "
+        "sig.capstone-organizer/1 leg set, check verifies the committed "
+        "leg machinery, run executes a deterministic leg (journeys-fixture, "
+        "cost-ledger) while every live/operator leg queues exit 42 "
+        "(prepared_not_executed; publish rides P37.65 Class S; O3's "
+        "attribution leg rides ACT-07, O4's channel is settled per "
+        "D-K11-4)",
+    )
+    sub.add_parser(
         "transparency-acceptance",
         help="P37.65a / J3 TX-16: the transparency-acceptance leg "
         "declaration — plan renders the sig.transparency-acceptance/1 leg "
@@ -6532,6 +6543,10 @@ def main(argv: list[str] | None = None) -> int:
         from . import capstone_journalist
 
         return capstone_journalist.main(raw[1:])
+    if raw and raw[0] == "capstone-organizer":
+        from . import capstone_organizer
+
+        return capstone_organizer.main(raw[1:])
     if raw and raw[0] == "at-rest":
         from . import at_rest_audit
 
