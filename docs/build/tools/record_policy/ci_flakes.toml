@@ -96,9 +96,9 @@ expires = "2026-11-24"
 [[flake]]
 id = "UBUNTU-APT-503-1"
 job = "web"
-step = "Build the pinned tippecanoe (no-op on cache hit) — sudo apt-get install build-essential"
-pattern = "exit code 100"
-evidence_runs = ["44512558010"]
-reason = "Ubuntu archive outage on the runner's egress: `sudo apt-get update`/`install` hit repeated `503 Service Unavailable` from security.ubuntu.com and archive.ubuntu.com mirrors (noble InRelease fetches Ign→Err, then the build-essential .deb fetch failed 503) — transient external repository outage, identical head's other four checks green, docs-only diff could not touch this step"
-tracking = "transient external apt-mirror availability — no repo change owed; escalate to the operator if recurring (OM-18 three-use rule)"
+step = "Build the pinned tippecanoe (no-op on cache hit) — sudo apt-get install build-essential · Playwright browser install (the job's two apt legs)"
+pattern = "exit code (100|1)"
+evidence_runs = ["44512558010", "44523478412"]
+reason = "Ubuntu archive outage on the runner's egress: `sudo apt-get update`/`install` hit repeated `503 Service Unavailable`/connection-timeouts from security.ubuntu.com, archive.ubuntu.com and azure.archive.ubuntu.com (noble InRelease + .deb fetches Err) — transient external repository outage; struck both apt legs in one window: the tippecanoe build's build-essential fetch on run 44512558010 (job exit 100→recorded as exit code 100) and the Playwright browser-install's fonts/mesa/xfonts fetches on run 44523478412 ('Failed to install browsers · Installation process exited with code: 100' → job exit 1). docs-only diff could not touch either step; identical steps green on the same day's earlier heads"
+tracking = "transient external apt-mirror availability — no repo change owed; two strikes in one round already: escalate to the operator if it recurs (OM-18)"
 expires = "2026-12-01"
