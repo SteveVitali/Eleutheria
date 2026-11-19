@@ -96,6 +96,7 @@ from dataclasses import dataclass, field
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
 import audit_current_state  # noqa: E402 — EXPECTED_KEYS is the shared key list
+import record_corrections  # noqa: E402
 
 ROOT = pathlib.Path(__file__).resolve().parents[3]
 SCHEMA = "ledger-contract/1"
@@ -944,7 +945,12 @@ def check_phase_log(rep: Report, src: Src, ctx: dict, kinds: set[str]) -> None:
                   f"PHASE LOG entry is {r['size']} B (> 2 KiB, BM-LEDGER-06) "
                   "— a byte budget, advisory under RULING E-4 / ADR-252"
                   + ("" if strict else " (legacy region)"))
-        if r["markup"]:
+        corrected = (LEDGER_REL, lines[r["line"] - 1]) in ctx.get("corrected_headings", set())
+        if r["markup"] and corrected:
+            rep.w(name, "markup-corrected", LEDGER_REL, r["line"],
+                  "original heading preserved; exact markup-only interpretation recorded in "
+                  + record_corrections.REGISTER)
+        elif r["markup"]:
             emit(name, "markup-id", LEDGER_REL, r["line"],
                  "PHASE LOG entry parses only after stripping markup "
                  "(`*`, `_`, backticks) — write the id bare (BM-LEDGER-06)"
@@ -1419,6 +1425,16 @@ def load_kinds(src: Src) -> set[str]:
 
 def run_checks(src: Src, ctx: dict) -> Report:
     rep = Report()
+    ctx = dict(ctx)
+    root = src.git.root if isinstance(src, RevSrc) else getattr(src, "root", ROOT)
+    revision = src.rev if isinstance(src, RevSrc) else "HEAD"
+    corrections = record_corrections.load(
+        root, src.read_text, revision, int(ctx["bound_dt"].timestamp())
+    )
+    rep.count("phase-log", corrections.candidates, corrections.candidates)
+    for line, message in corrections.errors:
+        rep.v("phase-log", "correction-record", record_corrections.REGISTER, line, message)
+    ctx["corrected_headings"] = corrections.headings
     check_orient_budget(rep, src, ctx)
     check_current_state(rep, src, ctx)
     check_named_paths(rep, src, ctx)
