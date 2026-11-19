@@ -388,3 +388,118 @@ the trigger.
   operator-facing procedures for the corrected posture — scheduled-window watch, first-fire
   read-back, retired-trigger handling — now sit in `docs/ops/RUNBOOK.md` §4 and §9;
   `D-P34.4-1` remains the queued `gh workflow disable reingest.yml` leg.
+
+## (g) Round-11 readiness — 2026-11-19 (P38.3a, post-GATE-ACCEPT-R11)
+
+*Agent record (labelled): written by Devin, harness `devin-desktop/swe-2-high/subagent`,
+manifest row 505 (`live_verification=false`, read-only). Dates from `date -u` / GitHub
+times as cited. Sections (a)–(f) are the earlier snapshots — nothing above is rewritten.*
+
+This section is the Round-11 state, recorded after the operator **signed** the Round-11
+accepted-deviations list (`docs/build/readouts/GATE-ACCEPT-R11.md`, SIGNED 2026-11-19T06:55Z —
+the verbatim words "I accept the readouts. Please continue", record commit `ede12a67`
+operator-signed). The signature accepts the packet **as presented** — explicitly *not* the
+owed register as closed. That register is
+**`docs/build/reports/p38.3a-round11-backlog.md`**: **195 owed obligations** (192 OPEN · 3
+rows PARTIAL-deferred, of 280) each with `owner:`/`trigger:`, the 116 carried
+`[[row.legs]]` legs of `return_pass.toml`, the promote-chain spine, and the recorded
+non-conformances. `projectStatus` stays `IN-PROGRESS` while the register is non-empty.
+
+### (g1) Readiness by domain — a fixture or staging pass is never a live or public pass
+
+- **implemented** (landed + green under `make check`/CI): the whole Round-11 engineering
+  spine — the composed two-sum over rows 201–500 reads **engineered 302/302** (the P38.1a +
+  P38.1b independent re-reads; `reports/p38.1b-gap-analysis-11c-11d.md` §2). Coverage
+  two-sum at this read: `coverage two-sum: engineering closed = 896 · requirement satisfied
+  = 650` (646 MET · 4 MET-DIFFERENTLY · 246 MET-ENGINEERED; 16 WAIVED; 73 open verdicts
+  routed; 9 N/A-RATIONALE).
+- **fixture-verified:** 255 rows; deterministic proof over committed fixtures — never live.
+- **staging-verified:** 15 rows (+ the artifact-verified class P35.61–P35.64 and the
+  seal-verified P36.79).
+- **hosted:** the pre-Round-11 hosted surface is **not re-verified by this read-only
+  row** — it stands only as last recorded (the `sig-pg`/`sig-api`/`sig-web` national
+  publish lineage). Round-11's hosted mutations that ran were pre-authorised, scripted and
+  recorded (the P35.61 bounded apply; the P37.61a publish apply — the round's only in-scope
+  recorded mutation, RULINGS H-1; the `D-P35.53-1` registry/staging-IAM apply DONE
+  2026-11-18); 12 rows still hold their recorded live legs. **Nothing else about hosted
+  state is asserted** — **115 mapped queued legs + 4 unmappable (GAP-RP-1) + the
+  post-promote set stay `prepared_not_executed`**, each with its window and go named in
+  the register.
+- **public:** **0** — the composed two-sum's public layer is zero; no release is promoted
+  (the promote chain gates it — register §3). The public surface is **not re-verified
+  here** — it stands only as the prior HG-11-signed publish last recorded; the newest
+  committed `sig.probe-run/1` is dated 2026-11-16 (`p37.61a-harm-republish-pre/post`),
+  outside the 24 h probe-citation window that `check_live_claims` enforces — nothing
+  fresh is asserted.
+- **human:** four sittings recorded — GATE-G4, GATE-G5, GATE-G6, GATE-ACCEPT-R11 (all
+  signed, operator-signed record commits). **Owed, all operator-side:** the merges (#535,
+  #536, this row's PR and the ≈325 stacked PRs — manifest row 507 sizes the merge legs);
+  the HG-11 promote go + signed readout + `sig.promotion-approval/1` object; the OP-22
+  walkthroughs (`D-P37.68a-d-2`); the reviewer rights lanes (`D-SOURCES.*`, `D-JURIS.2-1`);
+  credentials/accounts (`D-P21.3-2`, `D-P21.5-1`, `D-P21.7-1`, `D-SOURCES.7-2`/`8-2`); the
+  GAP-RP-1 disposition (`D-P38.2-1`); the deferred human-evaluation spine
+  (`D-R10-HUMAN-1`, `D-R6.1-EVAL`, `D-P30.2b-1/-2` — re-enter at manifest row 184); the
+  intake operating packet (`D-P32.16-1`); the K14 "beautiful" sign-off (`D-K14-9`).
+
+### (g2) Backlog reconciliation (the P38.3a sweep — verified, nothing re-homed)
+
+- `check_backlog.py` exits 0: deferral homes **195/195** (all open homes), ADR revisit
+  triggers 250/250, deferred risk rows 121/121, LD rows 90/90, 0 duplicate RISK ids, 0
+  duplicate sources. Twenty-one open BL homes: BL-087 (62), BL-084 (39), BL-086 (29),
+  BL-085 (26), BL-091 (13), BL-088 (5), pairs BL-039/BL-090/BL-082/BL-078/BL-025/BL-075,
+  singles BL-029/BL-040/BL-037/BL-058/BL-066/BL-041/BL-003/BL-092/BL-070 (register §0).
+- `obligation_events.py check` green (796 events / 515 assessments; 4 pre-existing
+  `coverage/stale-ref` warnings); `return_pass.py check` green (195 owed, one home each,
+  region byte-identical); `build_backlog_md.py --check` byte-identical — no CSV row
+  re-homed or re-triaged, no DEFERRALS status flipped, no landed ADR body edited.
+- **Five open verdicts routed to this row by the landed-route rule** — all carried
+  forward honestly, none discharged by the GATE-ACCEPT-R11 signature; at this row's close
+  all five re-route `P38.3a → P38.5` (register §0 + the matrix notes):
+  `SIG-MEM-007`/`SIG-ENG-046` stay `MET-ENGINEERED(D-…)` — `D-P34.1-1`'s literal form fails
+  (61/100 recent `push` runs on `main` cancelled — all pending-superseded during batch merge
+  sittings, never an in-progress cancellation; `cancel-in-progress` is `pull_request`-only,
+  so the rule held as designed — the audit's call, recorded not decided), `D-P34.2-2`'s
+  nightly `--all` sweep has no green run while NIGHTLY-RED-1 stands, and `D-P34.7-1`'s replay
+  stage fires and reports `oracle-unexpected` (judged > 0, unexpected > 0);
+  `SIG-CHART-006`/`SIG-CHART-021` stay PARTIAL — the demonstrable answerability/goals debts
+  are carried in the register; `SIG-ENG-025` stays PARTIAL — its standing quarterly review
+  is filed as `D-P38.3a-1`. Evidence is appended to the three DEFERRALS cells + register §4.
+
+### (g3) What runs / what pauses / what stays dark after the round
+
+- **runs (engineering-side, no human act needed):** PR CI on every `r11/**` push (the
+  five-job gate + head-bound boundary reads); `nightly.yml` fires on its cron — **red**,
+  NIGHTLY-RED-1 ≥43 consecutive completed failures (`oracle-unexpected` at `e8dfcb76`);
+  the scheduled cadences declared in `ops/cadence.toml` (the 6 h `sig-sched-probe`, the
+  monthly/weekly ingest jobs) stand as declared — hosted firing is not re-verified by this
+  read-only row; the `keepalive.yml` degraded-mode surface. The Round-11 tail rows 506–510
+  (P38.3b → P38.3c → P38.4 → P38.5 → GATE-ANNOUNCE) continue the chain.
+- **pauses (waiting on a named human/external act — the pauses are the design, not
+  stall):** the promote chain `D-P36.72b-1 → D-P37.65a-1 → D-P37.65b-1 →` the post-promote
+  set — the operator-signed `sig.promotion-approval/1` and the HG-11 go are the next acts;
+  the operator's merges (#535, #536 and the rest of the stack); `D-P38.2-1` (GAP-RP-1's
+  disposition); every HG-03 flip, HG-07/08/09 credential and reviewer lane in the register;
+  Wave-D's legs on their window (opens 2026-11-23; window 2 2026-12-14); Wave-C
+  `P37.2-l1…l5` re-windowing under OM-19 after the elapsed strict window.
+- **stays dark (honest posture, nothing fabricated):** the intake receiver stays non-operational
+  (`[intake].operational=false`, `503 receiver_not_operating`; its dark deploy a queued
+  mutation under `D-P37.59-1`); the 377 not-permitted registry rows (614 registered · 237
+  `ingestion_permitted=true` and loadable · 371 rights-UNDETERMINED — `sig-connectors
+  validate` at this read) — the loader gate refuses them fail-closed; the keyed APIs
+  without provisioned keys (`KeyNotProvisioned` refusals — `D-SOURCES.7-2`/`8-2`,
+  `D-P37.12-1`, `D-P37.70-1`); `eval-confidence/1` `mode=shadow` + the PROVISIONAL
+  disclosure (`D-R6.1-EVAL`); the records-request send path (`records_requests_sent`
+  hard-coded 0 — `D-R7.2-SEND`); SWH save-now (the repo stays private by operator
+  decision); every leg outside its window in register §2.
+
+### (g4) This row's own accounting
+
+- Deferrals: **+1/−0** — `D-P38.3a-1` filed (the SIG-ENG-025 standing quarterly review —
+  unlandable here, owner: the operator/maintainer, trigger: each quarter boundary); every other
+  finding lands on an existing named row. `### P38.3a` in `docs/tickets/DEFERRALS.md` records
+  the sweep; the `:e0` anchor is appended to `reports/obligations/events.jsonl`.
+- Records: `reports/p38.3a-round11-backlog.md` (the register) · this section · three
+  DEFERRALS cell updates (evidence appended, statuses unchanged) · `D-P38.3a-1` + its
+  `:e0` anchor · COVERAGE_MATRIX re-routes ×5 (`SIG-MEM-007`, `SIG-ENG-046`,
+  `SIG-CHART-006`, `SIG-CHART-021`, `SIG-ENG-025` → P38.5) · LEDGER
+  NIGHTLY-RED-1 extension (≥43) · the standard closeout set.
