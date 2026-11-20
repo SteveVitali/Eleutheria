@@ -1,0 +1,22 @@
+{
+  "action": "admit",
+  "leg": "L2",
+  "completed": [{"leg": "L1", "day": "2026-11-20"}],
+  "held_reports": {},
+  "now": "2026-11-20T08:32:41Z",
+  "go": {"verbatim": "Approve ING-GO-C (rec.)", "recorded_at": "2026-10-25T18:40:00Z"},
+  "q23": {"answered": true, "answer": "a"},
+  "review_status": {"osm_overpass": "green"},
+  "run_set": [],
+  "materialize_active": false,
+  "g2_slot_active": false,
+  "release_cut_active": false,
+  "active_manual_run": null,
+  "wave_b_pauses": {
+    "r11-layers-01": {"paused": true},
+    "r11-layers-02": {"paused": true},
+    "r11-ate-01": {"paused": true},
+    "r11-procurement-01": {"paused": true}
+  },
+  "tier_go": {"verbatim": "Bump the tier", "recorded_at": "2026-11-20T06:45:00Z", "ref": "d3c72f51 GATE DECISIONS 2026-11-20T06:45Z"}
+}
