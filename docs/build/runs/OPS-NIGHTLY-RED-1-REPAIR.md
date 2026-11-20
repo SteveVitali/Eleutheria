@@ -296,3 +296,11 @@ shape is stable, not a one-run marginal) · `python` ✗
 wall-clock line (35.27 base → 35.34 → 35.39). No same-head rerun burned
 on either head: the failure is deterministic and cannot clear until the
 fixture's frozen `T0` is advanced/frozen-clock on base.
+
+**Second records-head run 44829211043 @ `4bf2b5cf` (completed
+2026-11-20T23:17Z):** identical shape — `security`/`docs`/`composed`/
+`web` ✓ (**third consecutive** head-bound web green, attempt-1) ·
+`python` ✗ `PY-T0-FRESHNESS-1` at age=35.44d (fourth monotonic point).
+Tail-recording stops here: each further records commit spawns a run
+with the same deterministic verdict — the next head's python-failure
+row is owed to `flake_log.csv` by whatever lands next.
