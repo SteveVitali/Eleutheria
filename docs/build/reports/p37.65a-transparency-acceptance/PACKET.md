@@ -82,7 +82,8 @@ window (cut at 06:30:28Z, host-clock skew 0.678 s):
   `events/000004-…-sites-p-846b3554.json` (`trees:{}`). Candidate:
   `p-846b3554843914820c2e18658fad58204d5089992ad623adcee81cc2d3d3c33d`,
   label `sig-2026-09-27.1`, `environment=production`, integrity manifest
-  `complete` over 475,040 artifacts. `stage` was started per the declared
+  re-verified `complete` over 475,040 artifacts
+  (`sig-exports release validate`, exit 0). `stage` was started per the declared
   chain, measured ~0.37 objects/s (475,040-object plan ⇒ ~14.7 days
   serial), and halted — **no `staged` event exists**; `registry/LOCK`
   remains held by the interrupted attempt (`--break-lock <reason>` is the
