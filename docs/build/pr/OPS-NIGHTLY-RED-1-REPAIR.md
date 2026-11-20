@@ -118,6 +118,18 @@ This PR lands the diagnosis's recommended repair:
   **measured-gap** rows — four `lcpMs` gaps bound 1,600 under
   D-P36.48-1 + `/` re-recorded bound 1,750 under D-P36.64-2 — ratified
   ceilings stay warn-law, never smoothed.
+  `0b5f8f4f` run 44806837553 — security ✓ docs ✓ composed ✓ · **web ✓
+  attempt-1** (all three generated matrices: zero error assertions,
+  warnings only — `/` LCP 1,507.5 inside its 1,750 bound, the four
+  recorded routes under even ratified 1,500, `<=0` TBT held incl.
+  export-mode `/r/_fixture-record`; success rows recorded against
+  `LH-TBT-EXPLORE-1` + `LH-LCP-FLOOR-1`) · **python ✗
+  `PY-T0-FRESHNESS-1`** (unlisted — the `test_release_verify.py`
+  fixture's frozen `activated_at` T0 crossed the 35-day P1 freshness
+  bound at 2026-11-20T12:00Z; identical on base-branch job
+  136480253141 — deterministic wall-clock test-debt external to this
+  head; every tree red on that leg until a fixture freeze/advance lands
+  on base).
 
 ## Records
 

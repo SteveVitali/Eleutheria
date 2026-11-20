@@ -245,3 +245,43 @@ deferral next cycle, never absorbed.
 
 The closeout head's CI is a fresh verdict; `Harness:
 devin-desktop/swe-2-high/subagent` trailers throughout.
+
+## Final head-bound verdict (run 44806837553 @ `0b5f8f4f`, completed 2026-11-20T20:54Z)
+
+- `security` ✓ · `docs` ✓ · `composed` ✓ · **`web` ✓ (attempt-1, no
+  rerun)** · `python` ✗ — run conclusion `failure` on the python leg
+  alone.
+- **web green end-to-end:** all three generated Lighthouse matrices
+  passed on the first attempt — zero error assertions, warnings only.
+  Main matrix: `/` LCP 1,507.5 (warn ≤1,500; inside the 1,750 recorded
+  bound), `/search/` 1,507.7 (warn), `/map/` TBT 503 (warn ≤350 — the
+  pre-existing warn-level class); the four recorded gap routes
+  (`/releases/`, `/research-dossier/okc-alpr/`, `/entity/`,
+  `/coverage-metrics/`) produced **no warnings** — under even the
+  ratified 1,500 this run; all `<=0` TBT legs held. The export-mode leg
+  (`/r/_fixture-record` `<=0` TBT held — the unmeasured-route residual
+  named above cleared) and the national matrix both green. Both
+  toolchain families are satisfied on identical
+  bytes: the LH12.6.1-pinned measurement path (chrome-launcher 1.2.1 +
+  puppeteer-core/ws 8.21.3 + ws 7.5.13 overrides) restored the `<=0` TBT
+  semantics, and the ADR-230 measured-gap rows bound the D-P36.48-1/
+  D-P36.64-2 first-paint floor — ratified 1,500 ceilings untouched
+  (warn-law). `flake_log.csv` success rows recorded against
+  `LH-TBT-EXPLORE-1` + `LH-LCP-FLOOR-1`.
+- **`python` failed on a base-branch fixture wall-clock — external to
+  this head.** `tests/ops/test_release_verify.py::test_verb_verify_tree_p_mode_gates_unpromoted_namespaces`
+  asserts `non_pass == {"V5"}` but now also reports P1 freshness:
+  `latest=p-8494c9860dff… · age=35.34d · gen=2`. The fixture's frozen
+  `activated_at` (`T0 = 2026-10-16T12:00Z`, test line 45) crossed the
+  spec's P1 "release age < 35 days" bound (`release_verify.py:111`) at
+  **2026-11-20T12:00Z — today**. Corroborated on the base branch's own
+  python job `136480253141` (run `44791503380` @ `943d428a`, age=35.27d
+  ~97 min earlier — the delta is wall clock). Deterministic, monotonic,
+  not runner noise, unrelated to this diff; no same-head rerun burned
+  since it cannot clear. **Every tree is red on this leg until a
+  freeze/advance lands on base** — recorded `PY-T0-FRESHNESS-1`
+  (unlisted) in `flake_log.csv`; the fixture repair is its own row, out
+  of this repair's scope.
+- `D-P34.7-1` and the nightly leg of `D-P34.2-2` stay **OPEN** — this
+  was PR CI, not a scheduled nightly. `D-P34.2-1` stays OPEN pending the
+  LH13 recalibration / upstream advisory fixes.
