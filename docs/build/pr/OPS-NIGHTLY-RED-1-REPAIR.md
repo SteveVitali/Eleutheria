@@ -64,6 +64,9 @@ This PR lands the diagnosis's recommended repair:
      scoped `dev-only` allow entries expiring **2027-02-20**. npm gate
      `level=high candidates=3 allowed=3 blocked=0`. The two
      `ASTRO-CHAIN-*` prod entries stand under their own tracking.
+     Scoped `overrides` also pin the measurement path back to
+     f2d0effd's known-green tree (`lighthouse>chrome-launcher` 1.2.1,
+     `puppeteer-core>ws` 8.21.3, `ws` 7.5.13).
 
 ## Deferral register
 
@@ -105,14 +108,27 @@ This PR lands the diagnosis's recommended repair:
 - Head-bound CI: `a589ed1c` run 44676844367 — security ✓ docs ✓
   composed ✓ python ✓ · **web FAIL×2** (LH-TBT-EXPLORE-1 — the LH13
   measurement-drift signature above; recorded in `flake_log.csv`,
-  unlisted, disposition = toolchain revert not budget smoothing). The
-  closeout head re-runs green-or-real under the LH12 runner.
+  unlisted, disposition = toolchain revert not budget smoothing).
+  `1c658faa` run 44692468552 — docs fail on a DEFERRALS status-conflict
+  (fixed `72b925b`→fixup) then **web FAIL×2** on LCP (`/` 1661 vs its
+  recorded ≤1600 bound; four T1 routes 1506–1512 vs ratified ≤1500):
+  the D-P36.48-1 fleet first-paint floor reaching previously-unrecorded
+  routes — reproduced locally on the identical measurement tree
+  (Chrome/lab drift, not content). Disposition: sanctioned
+  **measured-gap** rows — four `lcpMs` gaps bound 1,600 under
+  D-P36.48-1 + `/` re-recorded bound 1,750 under D-P36.64-2 — ratified
+  ceilings stay warn-law, never smoothed.
 
 ## Records
 
 - `docs/build/runs/OPS-NIGHTLY-RED-1-REPAIR.md` — run ledger.
 - `docs/tickets/DEFERRALS.md` — `D-P34.2-1` OPEN↔DONE↔OPEN record (old
-  cells preserved).
+  cells preserved); `D-P36.48-1` fleet-widening + `D-P36.64-2` re-record
+  notes.
+- `web/tests/e2e/page-budgets.json` — four `lcpMs` measured-gap rows
+  (`/releases`, `/research-dossier/okc-alpr`, `/entity`,
+  `/coverage-metrics` @1,600) + `/` re-record (1,661 @1,750);
+  regenerated `web/lighthouserc*.json`.
 - `docs/build/reports/obligations/events.jsonl` — `D-P34.2-1:e1` + `:e2`.
 - `docs/build/LEDGER.md` — NIGHTLY-RED-1 OPEN FINDINGS line extended
   (additive).

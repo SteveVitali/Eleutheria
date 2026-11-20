@@ -217,5 +217,31 @@ stand — the critical `GHSA-jqcg-44mw-7w3h` stays resolved. The
 `LHCI-CHAIN-BASIC-FTP`/`LHCI-CHAIN-TMP` entries stay removed (dead
 grants); `LHCI-CHAIN-EXTRACT-ZIP` restored + new `LHCI-CHAIN-ZOD`.
 
+**Second correction (run 44692468552, head `1c658faa`):** the LH12
+revert fixed the TBT `<=0` drift but exposed the *other* floor — the
+check:perf leg failed `largest-contentful-paint` on five routes, both
+attempts consistent: `/` 1661.2–1661.5 (over its D-P36.64-2 recorded
+bound ≤1600), `/releases` 1510.4, `/research-dossier/okc-alpr` 1511.9,
+`/entity` 1507.8, `/coverage-metrics` 1506.9 (over ratified ≤1500).
+Diagnosis verified stepwise: (a) my regenerated lockfile had drifted
+three measurement-path transitives vs f2d0effd's known-green tree —
+`chrome-launcher` 1.2.3→**pinned 1.2.1**, `puppeteer-core/ws` 8.23.0→**8.21.3**,
+`ws`→**7.5.13** via scoped `overrides` (the lhci subtree now resolves
+~identically to f2d0effd's); (b) the emitted bytes are identical —
+astro/vite/esbuild/preact all match f2d0effd's lock and `web/` is
+untouched; (c) a local `lhci autorun` on the pinned tree reproduces the
+floor (~1,656 on `/`, ~1,504–1,510 fleet) — the D-P36.48-1 "shared ~1.5 s
+first-paint floor" (TTFB ≈452 + render-delay ≈1,055, LCP≡FCP) now holds
+previously-unrecorded routes — Chrome/lab-floor drift on the runner
+image, not content, not the LH-LCP-MARGINAL noise class (both attempts +
+local agree). Disposition — the sanctioned **measured-gap accommodation**
+(ADR-230, the same mechanism P36.48/P37.61 used): four unscoped `lcpMs`
+rows bound at 1,600 under D-P36.48-1; `/` re-recorded 1,661→bound 1,750
+under D-P36.64-2; ratified ceilings untouched (warn-level), stale-row
+fails. `flake_log.csv` rows LH-LCP-FLOOR-1. Residual risk: the export +
+national legs' distinct T0 routes (`/r/_fixture-record`, `/dossier/ok*`)
+are unmeasured this round — if they read over, they record under the same
+deferral next cycle, never absorbed.
+
 The closeout head's CI is a fresh verdict; `Harness:
 devin-desktop/swe-2-high/subagent` trailers throughout.

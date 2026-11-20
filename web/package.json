@@ -68,6 +68,13 @@
   },
   "overrides": {
     "basic-ftp": "6.2.6",
-    "tmp": "0.2.7"
+    "tmp": "0.2.7",
+    "lighthouse": {
+      "chrome-launcher": "1.2.1"
+    },
+    "puppeteer-core": {
+      "ws": "8.21.3"
+    },
+    "ws": "7.5.13"
   }
 }
