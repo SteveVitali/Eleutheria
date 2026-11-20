@@ -67,3 +67,40 @@ and ADC exist inside a valid window.
 halves green at fixture layer; J4's durable-pin half is recorded as
 release scope, never claimed. `page-type budget all types` — cited at
 the national measure.
+
+## Live dispatch — 2026-11-20 (`D-P37.65a-1` attempt; run ledger `runs/P37.65a-live-1.md`)
+
+Under GATE-ACCEPT-R11 `2026-11-20T00:15Z` ("Authorize now" — release-cut +
+live-crawl ONLY; promote still paused pending the operator-signed
+`sig.promotion-approval/1`), the authorized legs ran against the real
+registry `gs://zeta-medley-508121-u7-sig-release` inside a clean AR-3
+window (cut at 06:30:28Z, host-clock skew 0.678 s):
+
+- **`release-cut` — partially executed.** Journal rows:
+  `events/000002-…-cut-root.json` (t0 06:30:28Z),
+  `events/000003-…-built-p-846b3554.json`,
+  `events/000004-…-sites-p-846b3554.json` (`trees:{}`). Candidate:
+  `p-846b3554843914820c2e18658fad58204d5089992ad623adcee81cc2d3d3c33d`,
+  label `sig-2026-09-27.1`, `environment=production`, integrity manifest
+  `complete` over 475,040 artifacts. `stage` was started per the declared
+  chain, measured ~0.37 objects/s (475,040-object plan ⇒ ~14.7 days
+  serial), and halted — **no `staged` event exists**; `registry/LOCK`
+  remains held by the interrupted attempt (`--break-lock <reason>` is the
+  designed recovery); 262 staged objects landed (resume-safe).
+- **`live-crawl` — not run.** No staged candidate exists to verify; the
+  journal, candidate, and registry state above are the leg's honest
+  boundary.
+- **Blocking finding:** the newest authorized export
+  (`…/exports/national/2026-09-27T005153Z/`) predates the `web/*`
+  artifact set — `SIG_DATA_SOURCE=export` fails closed on missing
+  `web/evaluation.json`, so no latest/snapshot dists exist and `sites`
+  journaled `trees:{}`. Without `v/<pub>/`/`s/<pub>/`, V3/V5 cannot go
+  green; V14 has no baseline; no `sig.quality-report/1` exists so V15
+  skips. A skip blocks (SIG-ENG-042) — `D-P37.65a-1` stays **OPEN**.
+  Refusals recorded verbatim in `docs/build/logs/p37.65a-live-1/`:
+  AR-3 daily-window cut refusal (04:15:45Z), dist build failure
+  (04:15:52Z), label/snapshot-mismatch build refusal (06:30:59Z),
+  lock-held refusal + recorded break (06:34:45Z), premature no-release
+  verify refusal (04:52:12Z), stage halt (06:58:43Z).
+- **Promotion remained paused throughout** — `registry/catalog.json`
+  still `{"publications":[]}`, no `latest.json`, no approval record.
