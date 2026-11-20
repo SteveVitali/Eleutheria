@@ -129,7 +129,10 @@ This PR lands the diagnosis's recommended repair:
   bound at 2026-11-20T12:00Z; identical on base-branch job
   136480253141 — deterministic wall-clock test-debt external to this
   head; every tree red on that leg until a fixture freeze/advance lands
-  on base).
+  on base). `b2ab92fa` run 44817840719 (records head) — same shape:
+  security ✓ docs ✓ composed ✓ **web ✓ second consecutive attempt-1** ·
+  python ✗ `PY-T0-FRESHNESS-1` at 35.39d (monotonic wall-clock,
+  confirmed deterministic).
 
 ## Records
 

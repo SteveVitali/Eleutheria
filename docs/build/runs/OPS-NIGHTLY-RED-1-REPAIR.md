@@ -285,3 +285,14 @@ devin-desktop/swe-2-high/subagent` trailers throughout.
 - `D-P34.7-1` and the nightly leg of `D-P34.2-2` stay **OPEN** — this
   was PR CI, not a scheduled nightly. `D-P34.2-1` stays OPEN pending the
   LH13 recalibration / upstream advisory fixes.
+
+**Records-head confirmation (run 44817840719 @ `b2ab92fa`, completed
+2026-11-20T22:27Z):** the records-only head concluded exactly as
+predicted — `security`/`docs`/`composed`/`web` ✓ (web green a **second
+consecutive** head-bound run, attempt-1: J1–J10 journeys, visual grid,
+national + export matrices all clean — the toolchain + measured-gap
+shape is stable, not a one-run marginal) · `python` ✗
+`PY-T0-FRESHNESS-1` at age=35.39d — the third point on the monotonic
+wall-clock line (35.27 base → 35.34 → 35.39). No same-head rerun burned
+on either head: the failure is deterministic and cannot clear until the
+fixture's frozen `T0` is advanced/frozen-clock on base.
