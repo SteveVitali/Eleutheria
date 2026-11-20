@@ -81,4 +81,8 @@ the first head carrying the latch. **Standing `blockedOn` (verbatim):**
 the catch-up-merge remedy is the chain owner's / operator's call, not
 this repair branch's. This head's own ancestry is clean
 (`{child: 540, parent: 539, ancestor: true}`), `mergeStateStatus:
-CLEAN`.
+CLEAN`. Records head `c681fbaa`'s run 44653782948 went 4/5 green with
+the web leg **stalled** (step 13 "Build the static site" in_progress
+62+ min vs 5s on the green run — `RUNNER-STALL-1` class, unlisted,
+recorded in `flake_log.csv`; docs-only delta vs the green head, zero
+`web/` bytes differ; the cancel/rerun call is the operator's).

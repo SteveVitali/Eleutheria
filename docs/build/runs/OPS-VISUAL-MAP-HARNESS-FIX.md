@@ -133,3 +133,21 @@ full gate is CI's.
 - `main:` `1d090e79` at the boundary read — `chain_descends: no` (the
   same recorded posture the chain carries; merge legs are the
   operator's).
+- **Records head `c681fbaa` (the boundary-read records above) drew run
+  44653782948 — the web leg stalled.** security 47s · docs 2m24s ·
+  composed 4m50s · python 20m19s all pass; web's step 13
+  ("Build the static site (zero-JS-by-default)") has read `in_progress`
+  since 01:28:49Z — **62+ minutes** at the 02:31Z read against the same
+  step's 5-second duration on green run 44645374966 one head back: a
+  stalled step process, not an assertion. The head's delta vs the green
+  `e8736906` is docs-records only — zero `web/` bytes differ — and the
+  stall sits in the build step, which never touches the spec change.
+  Recorded unlisted in `flake_log.csv` under the `RUNNER-STALL-1` class
+  (the 2026-10-07 signature's second occurrence — not in
+  `ci_flakes.toml`, so no entry matches and no B-15 rerun fires; the
+  cancel/rerun call is the operator's). The green run's step
+  decomposition confirms the verdict leg itself ran and passed: step 32
+  "Visual regression grid (national build)" green at
+  01:22:16→01:23:37Z on `e8736906`. This records commit draws a fresh
+  head; the stalled run is superseded on push (recorded, never counted)
+  and the fresh head's run is read head-bound forward.
