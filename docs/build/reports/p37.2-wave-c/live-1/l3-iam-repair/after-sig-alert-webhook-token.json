@@ -1,0 +1,14 @@
+{
+  "bindings": [
+    {
+      "members": [
+        "serviceAccount:873541617837-compute@developer.gserviceaccount.com",
+        "serviceAccount:sig-alerts-rt@zeta-medley-508121-u7.iam.gserviceaccount.com",
+        "serviceAccount:sig-probe-rt@zeta-medley-508121-u7.iam.gserviceaccount.com"
+      ],
+      "role": "roles/secretmanager.secretAccessor"
+    }
+  ],
+  "etag": "BwZgt1mhI8Y=",
+  "version": 1
+}

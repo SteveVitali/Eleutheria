@@ -1,0 +1,36 @@
+=== grant receipts 2026-11-20T16:00:57Z — authorized: 'Scoped grants + create secrets' (signed b4bbae0e, GATE DECISIONS 2026-11-20T09:40Z) ===
+--- sig-probe-rt -> sig-pg-password
+  - serviceAccount:sig-probe-rt@zeta-medley-508121-u7.iam.gserviceaccount.com
+  role: roles/secretmanager.secretAccessor
+etag: BwZgt1mQD6s=
+version: 1
+--- sig-probe-rt -> sig-alert-webhook-token
+  - serviceAccount:sig-probe-rt@zeta-medley-508121-u7.iam.gserviceaccount.com
+  role: roles/secretmanager.secretAccessor
+etag: BwZgt1mhI8Y=
+version: 1
+--- sig-ingest-rt -> sig-pg-password
+  - serviceAccount:sig-probe-rt@zeta-medley-508121-u7.iam.gserviceaccount.com
+  role: roles/secretmanager.secretAccessor
+etag: BwZgt1mzIAA=
+version: 1
+--- sig-ingest-rt -> sig-muckrock-refresh
+  - serviceAccount:sig-ingest-rt@zeta-medley-508121-u7.iam.gserviceaccount.com
+  role: roles/secretmanager.secretAccessor
+etag: BwZgt1nINu4=
+version: 1
+--- sig-ingest-rt -> sig-sam-gov-key
+  - serviceAccount:sig-ingest-rt@zeta-medley-508121-u7.iam.gserviceaccount.com
+  role: roles/secretmanager.secretAccessor
+etag: BwZgt1naAyo=
+version: 1
+--- sig-ingest-rt -> sig-openstates-key
+  - serviceAccount:sig-ingest-rt@zeta-medley-508121-u7.iam.gserviceaccount.com
+  role: roles/secretmanager.secretAccessor
+etag: BwZgt1np_cM=
+version: 1
+--- sig-ingest-rt -> sig-data-gov-key
+  - serviceAccount:sig-ingest-rt@zeta-medley-508121-u7.iam.gserviceaccount.com
+  role: roles/secretmanager.secretAccessor
+etag: BwZgt1n8XvE=
+version: 1
