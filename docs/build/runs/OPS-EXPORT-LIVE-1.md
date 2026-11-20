@@ -97,7 +97,67 @@ Wider drift found (all read-only probes, no mutation): `sig-export-rt` held
 → **Resolved by the resumed leg:** the operator's `b4bbae0e` go authorized the
 three verbatim bindings; all three applied + receipt-verified (see above).
 
-## Blocker 2 — CURRENT (declaration gap: the mount needs `storage.objects.list`)
+## Resumed leg 2 — 2026-11-20T17:55Z→17:57Z (declaration gap cleared by `4c75c68e`)
+
+The operator's `"objectUser on the bucket"` (signed commit `4c75c68e`, GATE
+DECISIONS `2026-11-20T16:30Z`) authorized amending the declaration + applying
+the binding:
+
+1. **Declaration amended + committed** — `ops/iam_identities.toml`:
+   `sig-export-rt` on `sig-restricted` `objectCreator` → `objectUser`, with
+   the reason + `4c75c68e` cited in the block comment (commit `32b2255e` on
+   this branch). `sig-ops iam plan --leg jobs` step 25 re-renders as
+   `objectUser`.
+2. **Binding applied verbatim** (`13-bind-objectuser.txt`) —
+   `add-iam-policy-binding … --role=roles/storage.objectUser --condition=None`
+   (etag `CAY=`); then the now-undeclared `objectCreator` **removed**
+   (`--all`, etag `CAc=`) — the declared=live convention flags a live grant
+   the TOML no longer declares (`iam_identities.py:1534` "undeclared bucket
+   role on a runtime SA"). Final state: exactly `objectUser` for
+   `sig-export-rt` on the bucket.
+3. **`export.sh --apply run`** — `SIG_EXPORT_AS_OF=2026-11-20T17:56:21Z` →
+   prefix `exports/national/2026-11-20T175621Z/`. Execution `sig-export-qjhg8`:
+   **mount OK** (objectUser fixed it — `GetStorageLayout` + mount logged
+   clean), **secret fetch OK**, **Cloud SQL connect OK** — then the export
+   crashed inside the spine read:
+
+   ```
+   File "/app/exports/src/exports/shaping.py", line 2484, in fetch_shaping_raw
+   psycopg.errors.UndefinedColumn: column ce.bound_at does not exist
+   LINE 1: ...ource_id, ce.capture_id, ec.retrieved_at, ce.bound_a...
+   ```
+
+   `failedCount:1`, exit 1, 17:57:06Z. **Zero objects** under the prefix.
+
+## Blocker 3 — CURRENT (hosted spine schema behind the image)
+
+`claim_evidence.bound_at` is added by sqitch change
+`claim_assertion_bindings` (P32.2, plan line 44, 2026-10-03). The HEAD
+`fetch_shaping_raw` queries read it directly (the `shaping_claims` /
+eligible-occurrence SQL). The hosted `sig-pg` spine predates that change —
+it is **at least ~40 committed sqitch changes behind** the schema the current
+export image expects (every change after `claim_assertion_bindings` in
+`db/sqitch.plan`: `shared_temporal_contract`, `publication_dispositions`,
+`transparency_views`, `claim_sightings`, `camera_site_derivation`, …). The
+September export succeeded because its image matched the then-deployed
+schema; the live spine has not received the Round-11 schema chain.
+
+The fix is a **hosted-schema deploy** (`sqitch deploy` of the missing chain
+on `sig-pg`) — a production DDL migration, outside the signed scope of this
+leg (IAM bindings + `export.sh` actions only). **STOP** — recorded, not
+improvised.
+
+**Resume path (operator / next leg):** deploy the missing sqitch chain to the
+hosted spine under its own authorization, then `export.sh --apply run`
+(the job is `Ready=True` on `export-c7a2b53edf7e`/`bddfef084d…`, IAM now
+declared-synced) → `fetch` → fresh `cut` → `build → sites → stage → verify
+--mode S`.
+
+## Blocker 2 — RESOLVED at 17:56Z (the mount's missing `storage.objects.list`)
+
+_(Resolution: the `4c75c68e` "objectUser on the bucket" decision — declaration
+amended at `32b2255e`, binding applied + undeclared `objectCreator` removed;
+the next execution mounted cleanly. Original record below.)_
 
 `export.sh --apply run` executed `sig-export-dpwsm` (created 16:05:21Z,
 failed 16:06:04Z — `failedCount:1`, "exit code: 0 / Unknown error" at the
@@ -152,6 +212,10 @@ fresh `cut`.
 | 16:00:53→16:04:00 | Cloud Build `00f9dc32` → image `sig-api:export-c7a2b53edf7e` digest `…bddfef08` pushed (tag re-derived on the ledger commit's HEAD — the "image" action is idempotent-by-design) | image absent → present |
 | 16:04:3x | `gcloud run jobs deploy sig-export` → template on `…@sha256:bddfef084d…`, `Ready=True` | `Ready=False`/`SecretsAccessCheckFailed` → `Ready=True` |
 | 16:05:21→16:06:04 | `gcloud run jobs execute sig-export` → execution `sig-export-dpwsm` **failed** at the gcsfuse mount (`storage.objects.list` denied); `exports/national/2026-11-20T160419Z/` left with **zero objects** | execution created → failed; no bucket writes |
+| 17:55:5x | declaration commit `32b2255e` — `ops/iam_identities.toml`: `sig-export-rt`/`sig-restricted` `objectCreator`→`objectUser` (cites `4c75c68e`) | declaration amended on `r11/ops-export-live-1` |
+| 17:56:05 | `gcloud storage buckets add-iam-policy-binding …-sig-restricted --condition=None` — `roles/storage.objectUser` → `sig-export-rt` | absent → present (etag `CAY=`) |
+| 17:56:16 | `gcloud storage buckets remove-iam-policy-binding …-sig-restricted --all` — `roles/storage.objectCreator` → `sig-export-rt` **removed** (declared=live sync) | present → absent (etag `CAc=`) |
+| 17:56:21→17:57:06 | `gcloud run jobs execute sig-export` → execution `sig-export-qjhg8`: mount OK, secret OK, Cloud SQL OK — **failed** `UndefinedColumn: ce.bound_at` (exit 1); `exports/national/2026-11-20T175621Z/` left with **zero objects** | execution created → failed; no bucket writes |
 
 Unchanged: `registry/labels.json` (stranded `sig-2026-11-20.1` allocation
 untouched), `registry/catalog.json` (`{"publications":[]}`), `staged/` (262
