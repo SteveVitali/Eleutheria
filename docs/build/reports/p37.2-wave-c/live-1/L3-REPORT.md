@@ -69,6 +69,28 @@ Every secret-binding deploy in the reconcile would hit the same
 refusal — the reconcile cannot proceed past job #1 while the
 declared consumer bindings are absent.
 
+## Second declared-vs-live gap — 12 declared secrets do not exist
+
+`scheduled-ops.sh` deploys **every** `[[sources]]`/`[[batches]]` row's
+job unconditionally (`state = "paused"` only binds the trigger
+posture). The keyed rows bind secrets that are absent in Secret
+Manager entirely:
+
+- `sig-us511-{fl,ny,az,nv,oh,pa,wi,ak,ct,ne}-key` — all ten
+  (dot_511 rows, `state=paused`, `ingestion_permitted=false`)
+- `sig-qldtraffic-key`, `sig-nsw-live-key` — same posture
+
+None of the 12 exist (`gcloud secrets list`; `sig-us511-*` carry the
+declared comment "no version exists until OP-13 — the declaration
+binds no value, only access"). Their jobs are likewise absent
+(`sig-ingest-dot-511-fl`, `sig-ingest-camreg-qldtraffic-au`,
+`sig-ingest-camreg-nsw-live-au` → NOT_FOUND). A `--set-secrets`
+reference to a missing secret fails the same deploy validation —
+the reconcile dies again at the first keyed row even after the
+accessor grants. Registering those secrets is the operator's OP-13
+act (the declaration binds no value — only the operator registers
+them); nothing here may fabricate a placeholder credential.
+
 ## Why the driver is stopped here (not improvised around)
 
 - Restoring the bindings is a production IAM grant **not enumerated**
@@ -95,20 +117,30 @@ declared consumer bindings are absent.
 Nothing else mutated: no ingest/batch job re-deployed, no scheduler
 trigger changed, no declaration bundle republished, no run invoked.
 
-## Bounded repair options for the operator (either unblocks L3 today)
+## Bounded repair options for the operator (a choice unblocks L3 today)
 
-1. **Scoped grants (smallest):** `gcloud secrets add-iam-policy-binding`
-   for the declared-but-absent consumers the reconcile deploys:
-   `sig-probe-rt` on `sig-pg-password` + `sig-alert-webhook-token`;
-   `sig-ingest-rt` on `sig-pg-password` + the per-source keyed secrets
-   (`sig-muckrock-refresh`, `sig-data-gov-key`, `sig-openstates-key`,
-   `sig-sam-gov-key`, `sig-us511-*-key`). All are verbatim-declared
-   consumers in `ops/iam_identities.toml`.
+1. **Scoped repair (smallest):** (a) `gcloud secrets
+   add-iam-policy-binding` for the declared-but-absent consumers the
+   reconcile deploys: `sig-probe-rt` on `sig-pg-password` +
+   `sig-alert-webhook-token`; `sig-ingest-rt` on `sig-pg-password` +
+   the existing keyed secrets (`sig-muckrock-refresh`,
+   `sig-sam-gov-key`, `sig-openstates-key`, `sig-data-gov-key`); and
+   (b) the 12 missing keyed secrets — either the operator registers
+   them under OP-13, or a recorded operator decision stands them up
+   (the declaration itself binds no value). Note (b) is the part the
+   scoped path can't shortcut — a missing secret fails the deploy as
+   surely as a missing grant.
 2. **The declared leg:** `ops/gcp/iam-job-identities.sh --apply
    bindings` — applies the whole consumer matrix + class grants
    (heavier; also applies bucket/project grants + `jobs_revoke`
    removals off `default-compute` — wider blast radius inside a live
-   wave; the scoped set is the tighter repair).
+   wave; and it does not create the missing secrets either — OP-13
+   remains the operator's).
+3. **A recorded operator direction on scope** — e.g., a signed
+   decision that the keyed-source rows' deploys may carry stand-in
+   secret versions until OP-13 lands real keys (recorded, never
+   silent), or a different reconciliation order the ticket's runner
+   is authorised to take.
 
 After the repair: re-run the same admit inputs with a fresh `now`
 (the admission re-judges) → `wave-c.sh --apply --leg L3` with the same
