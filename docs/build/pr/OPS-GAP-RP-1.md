@@ -56,6 +56,12 @@ This PR is the recorded execution of that row — records only; no leg runs.
 - `obligation_events.py check` — green.
 - `memory_guard all --staged` — 0 violations; `check-build-memory.sh` —
   clean.
+- Head-bound CI run 44672810298 — attempt 1: security 45s · docs 2m33s ·
+  composed 4m31s · python 20m28s green; `web` red at 1h1m34s on the `map`
+  dark-1440 visual cell (96,179 px, 0.08 — the byte-identical
+  `VISUAL-MAP-DARK-1` env-flake signature; unlisted, operator-owned;
+  zero `web/` bytes in this diff). One B-15 same-head rerun issued;
+  `flake_log.csv` rows appended.
 
 ## Boundaries
 

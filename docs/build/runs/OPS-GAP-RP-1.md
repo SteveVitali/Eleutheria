@@ -87,6 +87,18 @@
 
 ## Heads / CI
 
-Recorded at PR open + at verdict, verbatim (`gh pr checks`), in §Heads of
-`docs/build/pr/OPS-GAP-RP-1.md` and the post-closeout record. `ci:`
-verdict lands at the next record entry.
+- Head `45704317` · PR **#542** (base
+  `r11/P38.3c-round11-integration-plan-2`) — opened 2026-11-20.
+- **Attempt 1 — `ci: fail #542@4570431`** (run 44672810298): security 45s
+  · docs 2m33s · composed 4m31s · python 20m28s — all green; `web` failed
+  at 1h1m34s on the `map` **dark-1440** visual cell
+  (`toHaveScreenshot(map--dark-1440.png)` — **96,179 px (0.08) differ**):
+  the byte-identical adjudicated `VISUAL-MAP-DARK-1` env-flake signature
+  (the #524/#532 count; unlisted in `ci_flakes.toml` — the allow-list call
+  is the operator's; this diff touches zero `web/` bytes). `failure` +
+  `rerun-requested` rows appended to `docs/build/reports/ci/flake_log.csv`;
+  the one B-15 same-head `gh run rerun --failed` issued 05:20Z
+  (attempt 2).
+- **Attempt 2:** in flight at this commit — the landing verdict row is
+  recorded in `flake_log.csv`; the `ci:` verdict line lands at the next
+  record entry.
