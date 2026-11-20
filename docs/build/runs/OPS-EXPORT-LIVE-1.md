@@ -41,8 +41,8 @@
 |---|---|
 | `export.sh --check all` | plan OK |
 | `export.sh --apply image` | **DONE** — `sig-api:export-1bc1a1298da8`, digest `sha256:e9bf33e01b927214592db9a8e7997ba4576952e804e438acee59a21a8dd5799a`, Cloud Build `7c43ada1-1bec-493b-9c34-ea775170c8ca` SUCCESS 4m21s |
-| `export.sh --apply job` | **REFUSED (IAM)** — see below. The template still updated to the new pinned digest but the job is `Ready=False` (`SecretsAccessCheckFailed`). |
-| `export.sh --apply run` / `fetch` | **not run — blocked upstream.** No fresh `exports/national/<as-of>/` exists. |
+| `export.sh --apply job` | **REFUSED (IAM)** — first attempt; see "Resumed leg" (the bindings landed at 16:00Z and the re-pin went `Ready=True`). The template still updated to the new pinned digest but the job was `Ready=False` (`SecretsAccessCheckFailed`). |
+| `export.sh --apply run` / `fetch` | **attempted in the resumed leg — `run` refused at the gcsfuse mount (Blocker 2); `fetch` not reached.** No fresh `exports/national/<as-of>/` exists. |
 | cleanup: break stale `registry/LOCK` | **DONE** — via `release cut --apply --break-lock "<reason>"`; reason recorded into the versioned lock chain; `registry/LOCK` absent poststate. |
 | stranded label `sig-2026-11-20.1` | **left recorded-not-deleted** — `labels.json` byte-identical pre/post. |
 | `release cut` | **journaled** — event `registry/events/000005-20261120T091438-cut-root.json`, T0 `2026-11-20T09:14:38Z`, `host_clock.ok=true` (skew 0.214 s). The event's declared legs (`restore-point`, `materialize`, `export run`, `fetch`) did **not** run — the export leg is blocked; a follow-on attempt re-cuts (journal is append-only). |
@@ -50,7 +50,30 @@
 
 `D-P37.65a-1` remains **OPEN**.
 
-## The blocker (verbatim refuse + diagnosis)
+---
+
+## Resumed leg — 2026-11-20T15:59Z→16:09Z (gate cleared by `b4bbae0e`)
+
+The operator's signed `"Yes — include export SA"` (commit `b4bbae0e`, GATE
+DECISIONS `2026-11-20T09:40Z`) extended the scoped-grants go to
+`sig-export-rt`'s three declared bindings. Applied verbatim + receipts:
+
+| binding | before | after (receipt) |
+|---|---|---|
+| `roles/cloudsql.client` (project) → `sig-export-rt` | members `default-compute`, `sig-api-rt` | **added** — policy etag `BwZgt1WXcN4=`; member now listed (`07-bind-cloudsql.txt`, `09-iam-poststate.txt`) |
+| `roles/storage.objectCreator` on `…-sig-restricted` → `sig-export-rt` | no `objectCreator` binding | **added** — `--condition=None` (the declared binding is unconditional; gcloud required the explicit flag non-interactively — recorded refuse + retry verbatim in `08-bind-bucket-secret.txt`); etag `CAU=` |
+| `roles/secretmanager.secretAccessor` on `sig-pg-password` → `sig-export-rt` | members `default-compute`, `sig-api-rt` | **added** — etag `BwZgt1ZRxd4=`; member now listed |
+
+No wider IAM change was made.
+
+| leg | verdict |
+|---|---|
+| `export.sh --apply image` (re-run — the tag derives from `HEAD`, which moved to `c7a2b53e` on the ledger commit) | **DONE** — `sig-api:export-c7a2b53edf7e`, digest `sha256:bddfef084d3ba27fb92cd675241361812415a860e312b5a59e74273af913e357`, build `00f9dc32-0ac4-4ced-9c0a-bc80675b2f03` SUCCESS 3m7s (`10-image-rebuild.txt`) |
+| `export.sh --apply job` | **DONE** — `sig-export` deployed on `…@sha256:bddfef084d…`, `Ready=True` (the secret-access check now passes) |
+| `export.sh --apply run` (`SIG_EXPORT_AS_OF=2026-11-20T16:04:19Z` → `exports/national/2026-11-20T160419Z/`) | **REFUSED — declaration gap.** Execution `sig-export-dpwsm` failed at the gcsfuse mount (~100 s): `PermissionDenied … sig-export-rt does not have storage.objects.list access … Permission 'storage.objects.list' denied on …-sig-restricted` (`12-run-poststate.txt`, execution logs). Zero objects written under the prefix. |
+| `fetch` / re-cut `build → sites → stage → verify --mode S` | **not run** — no fresh export exists. |
+
+## Blocker 1 — RESOLVED at 16:00Z (the IAM bindings)
 
 `export.sh --apply job` → `gcloud run jobs deploy sig-export …` refused
 (`03-job.txt`, 09:13:15Z):
@@ -65,32 +88,55 @@ The service account used must be granted the 'Secret Manager Secret Accessor' ro
 
 Poststate read (`status.conditions`, observedGeneration 6): the job template
 **did** update to `sig-api@sha256:e9bf33e0…` with the declared env/volume/SA
-shape, but the job is `Ready=False`, `reason=SecretsAccessCheckFailed`.
+shape, but the job was `Ready=False`, `reason=SecretsAccessCheckFailed`.
 
-Wider drift found (all read-only probes, no mutation): `sig-export-rt` holds
-**none** of its declared bindings:
+Wider drift found (all read-only probes, no mutation): `sig-export-rt` held
+**none** of its declared bindings — all three were **absent** live vs
+`ops/iam_identities.toml` / `sig-ops iam plan --leg jobs` (steps 14, 25, 29).
 
-| declared (ops/iam_identities.toml / `sig-ops iam plan --leg jobs`) | live |
-|---|---|
-| step 14: `roles/cloudsql.client` (project) | **absent** — the only `-rt` project grant is `sig-api-rt`'s |
-| step 25: `roles/storage.objectCreator` on `…-sig-restricted` | **absent** — bucket policy carries only legacy + the conditioned `sig-release-rt` viewer on `exports/` |
-| step 29: `roles/secretmanager.secretAccessor` on `sig-pg-password` (`consumers` line 443) | **absent** — the secret grants only `default-compute` + `sig-api-rt` |
+→ **Resolved by the resumed leg:** the operator's `b4bbae0e` go authorized the
+three verbatim bindings; all three applied + receipt-verified (see above).
 
-So the deploy refusal is the **first** of three denials the run leg would hit
-(secret fetch at container start; then Cloud SQL socket connect; then the
-`exports/national/<as-of>/` create). The declared state is already correct —
-this is live-vs-declared **drift**, i.e. the `iam-job-identities.sh` bindings
-block for the job-class SAs is unapplied or was reverted. Per the run rules —
-*the export refusing on missing IAM/secrets outside the enumerated actions →
-STOP, do not broaden scope* — no binding was added.
+## Blocker 2 — CURRENT (declaration gap: the mount needs `storage.objects.list`)
 
-**Resume path (for the operator / next leg):** restore the declared bindings
-via the windowed `ops/gcp/iam-job-identities.sh` leg (or the verbatim
-`gcloud secrets add-iam-policy-binding sig-pg-password --member=serviceAccount:sig-export-rt@… --role=roles/secretmanager.secretAccessor`
-plus steps 14 + 25), then re-run `export.sh --apply job` (idempotent re-pin —
-the template already carries `export-1bc1a1298da8` but is `Ready=False`),
-`run`, `fetch`, then the release-cut chain with a fresh `cut` (T0 must share
-the export's day for a same-day label).
+`export.sh --apply run` executed `sig-export-dpwsm` (created 16:05:21Z,
+failed 16:06:04Z — `failedCount:1`, "exit code: 0 / Unknown error" at the
+Cloud Run layer). The execution log shows the gcsfuse volume mount itself
+refused before any write:
+
+```
+mountWithStorageHandle: fs.NewServer: create file system: SetUpBucket:
+BucketHandle: storageLayout call failed: GetStorageLayout for
+"projects/_/buckets/zeta-medley-508121-u7-sig-restricted/storageLayout" failed
+… rpc error: code = PermissionDenied desc =
+sig-export-rt@… does not have storage.objects.list access to the Google Cloud
+Storage bucket. Permission 'storage.objects.list' denied on resource
+'//storage.googleapis.com/projects/_/buckets/zeta-medley-508121-u7-sig-restricted'
+```
+
+**Diagnosis — a declaration gap, not more drift.** `ops/iam_identities.toml`
+grants `sig-export-rt` exactly one bucket binding:
+`roles/storage.objectCreator` on `sig-restricted` ("create only"). The rebuilt
+job's gcsfuse `3.13.0` mount (EnableHns + `GetStorageLayout` handshake +
+implicit-dirs listing) needs `storage.objects.list` — which `objectCreator`
+does not carry. The declared grant set is insufficient for the job's declared
+mount; fixing it is a **declaration amendment** (a fourth binding — e.g.
+`roles/storage.objectUser`, or `legacyBucketReader` alongside `objectCreator`
+as the `sig-probe-rt` row precedents) plus its own OM-20 go — the
+`D-P34.42a-1` precedent routes that call to the operator, never the agent.
+Adding any binding beyond the three enumerated in `b4bbae0e` is outside the
+signed scope → **STOP**, recorded, not improvised.
+
+(Why the 2026-09-24/27 executions succeeded: not established — either the job
+then ran a different runtime identity/posture or an older gcsfuse skipped the
+`GetStorageLayout` call. Recorded, not asserted.)
+
+**Resume path (for the operator / next leg):** amend
+`ops/iam_identities.toml` so `sig-export-rt` can list+create on the
+restricted bucket (operator decision on the declared shape), apply the
+binding, then `export.sh --apply run` (job is already `Ready=True` on
+`export-c7a2b53edf7e`/`bddfef084d…`) → `fetch` → the release-cut chain with a
+fresh `cut`.
 
 ## Mutations performed (exact receipts)
 
@@ -100,6 +146,12 @@ the export's day for a same-day label).
 | 09:13:15 | `gcloud run jobs deploy sig-export` (from `export.sh --apply job`) — **reported failed**, but the job template generation advanced (observedGeneration 6): image `…1cccde1a` → `…e9bf33e0`, `Ready=False`/`SecretsAccessCheckFailed` | see above |
 | 09:14:38 | `registry/LOCK` broken via `release cut --apply --break-lock` — fresh lock (gen `1795166125113684`) carried `broke_lock` with the recorded reason verbatim, then released on clean exit | `registry/LOCK` held (verb=stage, 06:48:17Z) → **absent**; break chain survives in the versioned noncurrent generations |
 | 09:14:38 | `registry/events/000005-20261120T091438-cut-root.json` inserted (create-if-absent, `sig.release-event/1`, verb=cut, outcome=recorded) | events 000000–000004 → 000000–000005 |
+| 15:59:5x | `gcloud projects add-iam-policy-binding` — `roles/cloudsql.client` → `sig-export-rt` (authorized by `b4bbae0e`, declared step 14) | absent → present (etag `BwZgt1WXcN4=`) |
+| 16:00:02 | `gcloud storage buckets add-iam-policy-binding …-sig-restricted --condition=None` — `roles/storage.objectCreator` → `sig-export-rt` (step 25; first attempt refused non-interactively on the conditioned policy — `--condition=None` is the verbatim unconditional form) | absent → present (etag `CAU=`) |
+| 16:00:02 | `gcloud secrets add-iam-policy-binding sig-pg-password` — `roles/secretmanager.secretAccessor` → `sig-export-rt` (step 29) | absent → present (etag `BwZgt1ZRxd4=`) |
+| 16:00:53→16:04:00 | Cloud Build `00f9dc32` → image `sig-api:export-c7a2b53edf7e` digest `…bddfef08` pushed (tag re-derived on the ledger commit's HEAD — the "image" action is idempotent-by-design) | image absent → present |
+| 16:04:3x | `gcloud run jobs deploy sig-export` → template on `…@sha256:bddfef084d…`, `Ready=True` | `Ready=False`/`SecretsAccessCheckFailed` → `Ready=True` |
+| 16:05:21→16:06:04 | `gcloud run jobs execute sig-export` → execution `sig-export-dpwsm` **failed** at the gcsfuse mount (`storage.objects.list` denied); `exports/national/2026-11-20T160419Z/` left with **zero objects** | execution created → failed; no bucket writes |
 
 Unchanged: `registry/labels.json` (stranded `sig-2026-11-20.1` allocation
 untouched), `registry/catalog.json` (`{"publications":[]}`), `staged/` (262
