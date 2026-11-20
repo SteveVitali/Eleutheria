@@ -263,11 +263,18 @@ service_account = "sig-probe-rt"
 bucket = "sig-backups"
 role = "roles/storage.legacyBucketReader"
 
-# Export: writes a new exports/national/<as-of>/ prefix per run — create only.
+# Export: writes a new exports/national/<as-of>/ prefix per run through the
+# gcsfuse volume mount — the mount's GetStorageLayout handshake + implicit-dirs
+# listing need storage.objects.list and its file writes need get/delete, so the
+# declared role is objectUser (get+list+create+delete on the bucket), not
+# objectCreator. Amended by operator decision "objectUser on the bucket"
+# (GATE DECISIONS 2026-11-20T16:30Z, commit 4c75c68e) after the
+# OPS-EXPORT-LIVE-1 run leg refused at the mount — see
+# docs/build/runs/OPS-EXPORT-LIVE-1.md "Blocker 2".
 [[bucket_role]]
 service_account = "sig-export-rt"
 bucket = "sig-restricted"
-role = "roles/storage.objectCreator"
+role = "roles/storage.objectUser"
 
 # Materialize: the run-completions backfill reads ops/runs rows — read only.
 [[bucket_role]]
