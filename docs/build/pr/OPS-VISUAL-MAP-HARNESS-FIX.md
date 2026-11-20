@@ -68,21 +68,24 @@ race the wait removes.
 `docs/build/runs/OPS-VISUAL-MAP-HARNESS-FIX.md` (run ledger) · the
 diagnosed root cause in `runs/P38.3b.md`/`P38.3c.md` ·
 `flake_log.csv`'s adjudicated strike history · boundary JSON
-`docs/build/reports/ci/ops_visual_map_harness_fix_pr540_heade873.json`.
+`docs/build/reports/ci/ops_visual_map_harness_fix_pr540_heade873.json`
++ `…_head4d5f.json`.
 
 ## CI (head-bound, standing)
 
-`ci: pass #540@e873690` — 5/5 head-bound (run 44645374966: security
-36s · docs 2m35s · composed 3m35s · python 19m42s · web 1h2m35s). The
-visual grid ran clean — `VISUAL-MAP-LIGHT-1`/`DARK-1` did not recur on
-the first head carrying the latch. **Standing `blockedOn` (verbatim):**
-`CI stack on #540@e873690 (external): #539 does not contain its base
-#538's head d5d38c9` — #538's head moved after #539's catch-up merge;
-the catch-up-merge remedy is the chain owner's / operator's call, not
-this repair branch's. This head's own ancestry is clean
-(`{child: 540, parent: 539, ancestor: true}`), `mergeStateStatus:
-CLEAN`. Records head `c681fbaa`'s run 44653782948 went 4/5 green with
-the web leg **stalled** (step 13 "Build the static site" in_progress
-62+ min vs 5s on the green run — `RUNNER-STALL-1` class, unlisted,
-recorded in `flake_log.csv`; docs-only delta vs the green head, zero
-`web/` bytes differ; the cancel/rerun call is the operator's).
+`ci: pass #540@4d5f11f` — 5/5 head-bound (run 44661279664: security
+33s · docs 3m45s · composed 3m36s · python 25m4s · web 59m41s), the
+**second** consecutive head-bound green after `e8736906` (run
+44645374966). The visual grid ran clean on both — `VISUAL-MAP-LIGHT-1`/
+`DARK-1` did not recur on either head carrying the latch. Interim
+records head `c681fbaa`'s run 44653782948 went 4/5 with the web leg
+**stalled** on step 13 "Build the static site" (`RUNNER-STALL-1` class
+— in_progress 62+ min vs the step's 5s on the green run; unlisted,
+recorded in `flake_log.csv`, cancelled-superseded by the records push,
+never counted; docs-only delta, zero `web/` bytes differ). **Standing
+`blockedOn` (verbatim):** `CI stack on #540@4d5f11f (external): #539
+does not contain its base #538's head d5d38c9` — #538's head moved
+after #539's catch-up merge; the catch-up-merge remedy is the chain
+owner's / operator's call, not this repair branch's. This head's own
+ancestry is clean (`{child: 540, parent: 539, ancestor: true}`),
+`mergeStateStatus: CLEAN` at the e873 read.

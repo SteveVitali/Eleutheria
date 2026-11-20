@@ -13,10 +13,12 @@
 - **PR:** #540 (`gh pr create` 2026-11-20T00:22Z) — base
   `r11/P38.3c-round11-integration-plan`
 - **Started:** 2026-11-20 (`date -u`)
-- **Closed:** `ci: pass #540@e873690` 5/5 head-bound (run 44645374966);
-  the stack flag is recorded verbatim in §Heads — a pre-existing chain
-  condition on the #539/#538 pair, operator-side, never self-authorised
-  here. PR OPEN awaiting the operator's merge.
+- **Closed:** `ci: pass #540@4d5f11f` 5/5 head-bound (run 44661279664)
+  — the second consecutive head-bound green carrying the latch
+  (`e8736906` first, run 44645374966); the stack flag is recorded
+  verbatim in §Heads — a pre-existing chain condition on the #539/#538
+  pair, operator-side, never self-authorised here. PR OPEN awaiting the
+  operator's merge.
 - **Config:** read-only repair in `web/tests/`; live legs: **none**;
   `Production mutations (OM-14): none`; gate cell `none`; not an OM-20
   row.
@@ -151,3 +153,17 @@ full gate is CI's.
   01:22:16→01:23:37Z on `e8736906`. This records commit draws a fresh
   head; the stalled run is superseded on push (recorded, never counted)
   and the fresh head's run is read head-bound forward.
+- **`4d5f11f8` run 44661279664 — `ci: pass #540@4d5f11f` 5/5
+  head-bound** (security 33s · docs 3m45s · composed 3m36s · python
+  25m4s · web 59m41s, completed 03:32Z): the stall did not recur —
+  step 13 completed normally and the visual grid (step 32) ran green
+  with the latch in place: **two consecutive head-bound greens** on
+  heads carrying the fix (`e8736906`, `4d5f11f8`), zero `web/` bytes
+  between them. Boundary re-read (`ci_boundary.py --pr 540 --no-wait`,
+  03:33Z; JSON
+  `reports/ci/ops_visual_map_harness_fix_pr540_head4d5f.json`): the same
+  standing stack flag — `#539 does not contain its base #538's head
+  d5d38c9` — recorded verbatim, unchanged, operator-side. Flake rows:
+  the stall's two `RUNNER-STALL-1` rows (in-progress-stalled →
+  cancelled-superseded) plus the fresh head's success row, all
+  committed in `flake_log.csv`.
