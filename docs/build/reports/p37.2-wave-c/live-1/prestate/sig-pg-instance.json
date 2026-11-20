@@ -1,0 +1,95 @@
+{
+  "availableMaintenanceVersions": [
+    "POSTGRES_18_6.R20261013.06_02"
+  ],
+  "backendType": "SECOND_GEN",
+  "connectionName": "zeta-medley-508121-u7:us-central1:sig-pg",
+  "createTime": "2026-09-15T16:02:20.786Z",
+  "databaseInstalledVersion": "POSTGRES_18_6",
+  "databaseVersion": "POSTGRES_18",
+  "etag": "c104b911988de6e483d7df7ff25feea373db524b3dd2903df6e55e1f39ebab18",
+  "gceZone": "us-central1-a",
+  "geminiConfig": {
+    "activeQueryEnabled": false,
+    "entitled": false,
+    "googleVacuumMgmtEnabled": false,
+    "indexAdvisorEnabled": false,
+    "oomSessionCancelEnabled": true
+  },
+  "includeReplicasForMajorVersionUpgrade": false,
+  "instanceType": "CLOUD_SQL_INSTANCE",
+  "ipAddresses": [
+    {
+      "ipAddress": "34.135.62.179",
+      "type": "PRIMARY"
+    },
+    {
+      "ipAddress": "35.254.161.126",
+      "type": "OUTGOING"
+    }
+  ],
+  "kind": "sql#instance",
+  "maintenanceVersion": "POSTGRES_18_6.R20261013.02_04",
+  "name": "sig-pg",
+  "project": "zeta-medley-508121-u7",
+  "region": "us-central1",
+  "satisfiesPzi": true,
+  "selfLink": "https://sqladmin.googleapis.com/sql/v1beta4/projects/zeta-medley-508121-u7/instances/sig-pg",
+  "serverCaCert": {
+    "cert": "-----BEGIN CERTIFICATE-----\nMIIDcTCCAlmgAwIBAgIBADANBgkqhkiG9w0BAQsFADBwMS0wKwYDVQQuEyQ3YzU4\nODIxNC1jNzBlLTQ4YTItODJjMy05NjQ0ZWRmODQyNWMxHDAaBgNVBAMTE0Nsb3Vk\nIFNRTCBTZXJ2ZXIgQ0ExFDASBgNVBAoTC0dvb2dsZSwgSW5jMQswCQYDVQQGEwJV\nUzAeFw0yNjA5MTUxNjAyNTVaFw0zNjA5MTIxNjAzNTVaMHAxLTArBgNVBC4TJDdj\nNTg4MjE0LWM3MGUtNDhhMi04MmMzLTk2NDRlZGY4NDI1YzEcMBoGA1UEAxMTQ2xv\ndWQgU1FMIFNlcnZlciBDQTEUMBIGA1UEChMLR29vZ2xlLCBJbmMxCzAJBgNVBAYT\nAlVTMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA86eG0GhwmyXB/CIs\n6AqeflnFxYFnSLxLi0COBw4DyCDH/psGq8cj0lnGQAt4FMXtwdhMgXvnXalx13P3\n7+TT5w1R4gZxENlwzZC3slX8wbj2O4LZptvMG/iNeY6LLb1WSlmRR6BrJ/MN10sk\n20dI+TgUyRSZZ97zaPy+5XncxmaOskq7lYV3a6YfpdXk6m9Ztd1p/LZVrCVapgzj\n7bYEqyFxx++3vZunTbCIRdW0DqpwFpPBzcMegzQMA1goMAfQWLqXwEOOJ7j+RE9b\nI87mGvN/XS4J9Rj38DBiiYfDIn8UK5iqJgO3nXxrRLg0l517J2CSsmMLjt/7KjKF\n+JOSdwIDAQABoxYwFDASBgNVHRMBAf8ECDAGAQH/AgEAMA0GCSqGSIb3DQEBCwUA\nA4IBAQC9Aqt5wbicO1r92ybA0HfI6NdS/c6m/M1dQ0J7rihUUs/FzJsW9X826fUD\n/xeQjENNVHgUK25UCplDIi/aHObdZKTZxI9qyuVD0rF4hz0uAHgyYYdbO6UwRC/c\n5J3QBersJ26+r6tolzobIAaZXMRD79tOKtVaqNs+6mJPEETsr8OJtMM/H/8t9bbh\nRbYvlI3SjjjOpaiS7ir2EaHxKX2xtZ1thwL8zKofB98dlFrRbpMPZXB2VOqoqW4E\nMH3JSpF2RwWinfVKZ9sIGSLNkFU96gCj7o0P4Xi6G1cICoZfce1W63ui9vcZbgwP\nhJKYtahP2KzpQqctzKrdKp6kuxXQ\n-----END CERTIFICATE-----",
+    "certSerialNumber": "0",
+    "commonName": "C=US,O=Google\\, Inc,CN=Cloud SQL Server CA,dnQualifier=7c588214-c70e-48a2-82c3-9644edf8425c",
+    "createTime": "2026-09-15T16:02:55.026Z",
+    "expirationTime": "2036-09-12T16:03:55.026Z",
+    "instance": "sig-pg",
+    "kind": "sql#sslCert",
+    "sha1Fingerprint": "47294c2657df78d2ed0bb08b7341a0f618fc67a0"
+  },
+  "serviceAccountEmailAddress": "p873541617837-ebpjcd@gcp-sa-cloud-sql.iam.gserviceaccount.com",
+  "settings": {
+    "activationPolicy": "ALWAYS",
+    "availabilityType": "ZONAL",
+    "backupConfiguration": {
+      "backupRetentionSettings": {
+        "retainedBackups": 7,
+        "retentionUnit": "COUNT"
+      },
+      "backupTier": "STANDARD",
+      "enabled": true,
+      "kind": "sql#backupConfiguration",
+      "pointInTimeRecoveryEnabled": true,
+      "replicationLogArchivingEnabled": true,
+      "startTime": "05:00",
+      "transactionLogRetentionDays": 7,
+      "transactionalLogStorageState": "CLOUD_STORAGE"
+    },
+    "connectorEnforcement": "NOT_REQUIRED",
+    "dataDiskSizeGb": "15",
+    "dataDiskType": "PD_SSD",
+    "deletionProtectionEnabled": false,
+    "edition": "ENTERPRISE",
+    "enableDataplexIntegration": true,
+    "ipConfiguration": {
+      "ipv4Enabled": true,
+      "message": "Configuring authorized network or using CloudSQL auth proxy or language connectors is a prerequisite for connecting to Public IP. Please refer to the documentation for more details https://cloud.google.com/sql/docs/mysql/authorize-networks.",
+      "requireSsl": false,
+      "serverCaMode": "GOOGLE_MANAGED_INTERNAL_CA",
+      "serverCertificateRotationMode": "SERVER_CERTIFICATE_ROTATION_MODE_UNSPECIFIED",
+      "sslMode": "ALLOW_UNENCRYPTED_AND_ENCRYPTED"
+    },
+    "kind": "sql#settings",
+    "locationPreference": {
+      "kind": "sql#locationPreference",
+      "zone": "us-central1-a"
+    },
+    "pricingPlan": "PER_USE",
+    "replicationLagMaxSeconds": 31536000,
+    "replicationType": "SYNCHRONOUS",
+    "settingsVersion": "141",
+    "storageAutoResize": true,
+    "storageAutoResizeLimit": "0",
+    "tier": "db-custom-1-3840"
+  },
+  "sqlNetworkArchitecture": "NEW_NETWORK_ARCHITECTURE",
+  "state": "RUNNABLE"
+}

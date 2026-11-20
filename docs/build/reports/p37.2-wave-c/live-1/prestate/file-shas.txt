@@ -1,0 +1,3 @@
+0675a5c11b24008774cfd412733b58f98de6e3b6ff2fe65df2b9b8188f61c5c7  connectors/src/connectors/data/sources.toml
+2ce5319f2dfcddc9a57804be8390df4494c2aa192f07c12916e527e724e6129f  connectors/src/connectors/data/camera_registry_targets.toml
+b0756cca8402e237bb9c1bcf93abcf25c5c0f17e3e92dba02aaa049ac0834b99  ops/cadence.toml

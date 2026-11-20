@@ -1,0 +1,138 @@
+{
+  "action": "admit",
+  "criteria": [
+    {
+      "detail": "L1 is next in order (green=[], held=[])",
+      "id": "order",
+      "ok": true,
+      "value": null
+    },
+    {
+      "detail": "now 2026-11-20T04:05:30+00:00 \u2014 in-window=True earliest(landings=False)=False soak-grace=False never-band-03:00-06:30Z=True",
+      "id": "window",
+      "ok": false,
+      "value": "2026-11-20T04:05:30+00:00"
+    },
+    {
+      "detail": "ING-GO-C verbatim recorded 2026-10-25T18:40:00+00:00 (GATE-G5 \u00a73; the tier-bump go stays its own in-ticket pause)",
+      "id": "go",
+      "ok": true,
+      "value": "2026-10-25T18:40:00+00:00"
+    },
+    {
+      "detail": "Q-23 recorded answered \u2014 the adopted posture binds (cap 40 GB, pre-grow to 25 GB, temporary tier bump only; B-11 'As stated (Recommended)', GATE-P log 2026-10-01T04:35:53Z)",
+      "id": "q23",
+      "ok": true,
+      "value": "a"
+    },
+    {
+      "detail": "osm_overpass review-status recorded green \u2014 the run may fetch (SIG-INGEST-036; the fail-closed line was read, never written)",
+      "id": "review",
+      "ok": true,
+      "value": "green"
+    },
+    {
+      "detail": "materialize_active=False g2_slot_active=False release_cut_active=False \u2014 no leg runs while materialize, a G2 slot or a cut day is active",
+      "id": "exclusions",
+      "ok": true,
+      "value": null
+    },
+    {
+      "detail": "active_manual_run=None \u2014 one manual run at a time, across waves (P36.12's sequencing rule rides Wave C)",
+      "id": "serialize",
+      "ok": true,
+      "value": null
+    },
+    {
+      "detail": "run_set == the declared L1 set (0 entries)",
+      "id": "scope",
+      "ok": true,
+      "value": []
+    },
+    {
+      "detail": "the four early-fire r11 batch rows recorded held for the window (paused_until declared; live schedulers paused or absent-consolidated \u2014 FEA-15)",
+      "id": "wave_b_pause",
+      "ok": true,
+      "value": {
+        "unheld": []
+      }
+    },
+    {
+      "detail": "pre-state capture recorded (instance describe, job/trigger JSON, sources.toml sha, cadence --check green)",
+      "id": "prestate",
+      "ok": true,
+      "value": "docs/build/reports/p37.2-wave-c/live-1/prestate"
+    },
+    {
+      "detail": "no AR-2 backup read supplied",
+      "id": "backup",
+      "ok": false,
+      "value": null
+    }
+  ],
+  "decision": "no-go",
+  "kind": "sig.wave-c-gate/1",
+  "leg": "L1",
+  "refusals": [
+    "window: now 2026-11-20T04:05:30+00:00 \u2014 in-window=True earliest(landings=False)=False soak-grace=False never-band-03:00-06:30Z=True",
+    "backup: no AR-2 backup read supplied"
+  ],
+  "rerun_prompt": "implement-spec spec=docs/tickets/345_P37.2__wave-c-osm-national-alpr-layer.md live_verification=true (scope: the queued Wave-C legs only \u2014 each leg needs the recorded ING-GO-C, the window, its own gate inputs and, for the tier leg, the operator's verbatim in-ticket go; the disk pre-grow is one-way \u2014 a resumed run reads the current state, never re-grows blindly)",
+  "thresholds": {
+    "autoresize_limit_gb": 40,
+    "disk_gb": 25,
+    "earliest_start": "2026-10-26T00:00:00Z",
+    "early_fire_batches": [
+      "r11-layers-01",
+      "r11-layers-02",
+      "r11-ate-01",
+      "r11-procurement-01"
+    ],
+    "early_landings": [
+      "P37.1",
+      "PKG-07",
+      "Q-23"
+    ],
+    "er_merge_min_pct": 95.0,
+    "keep_targets": [
+      "osm_surveillance_cctv_london",
+      "osm_surveillance_thailand",
+      "osm_surveillance_ucp_amini",
+      "osm_surveillance_ucp_osm"
+    ],
+    "legs": [
+      "L1",
+      "L2",
+      "L3",
+      "L4",
+      "L5"
+    ],
+    "mirror_batch": "camreg-batch-05",
+    "mirror_republish_rows": 132689,
+    "mirror_targets": [
+      "osm_surveillance_deflock",
+      "osm_surveillance_alpr_nationwide"
+    ],
+    "mutation_legs": [
+      "L1",
+      "L2",
+      "L3",
+      "L5"
+    ],
+    "never_band_minutes": [
+      180,
+      390
+    ],
+    "new_cron": "12 8 24 * *",
+    "osm_source": "osm_overpass",
+    "soak_grace_end": "2026-11-22T00:00:00Z",
+    "soak_hours": 24,
+    "taginfo_total": 154814,
+    "tier_down": "db-custom-1-3840",
+    "tier_up": "db-custom-2-7680",
+    "tile_tolerance_pct": 0.02,
+    "window_end": "2026-11-21T00:00:00Z",
+    "window_start": "2026-11-16T00:00:00Z"
+  },
+  "wave": "C"
+}

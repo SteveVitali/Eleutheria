@@ -1,0 +1,162 @@
+probes: job=sig-probe scheduler=sig-sched-probe cron='0 */6 * * *' → gs://<restricted>/ops/probes/
+  target sig-api-root (http)
+  target sig-api-coverage-okc (http)
+  target sig-api-health (http)
+  target sig-web-root (http)
+  target sig-public-licences (http)
+  target sig-public-compartment-sites (http)
+  target sig-public-national-manifest (http)
+  target sig-pg-cloudsql (cloudsql)
+  target absent-apex-curate (http-absent)
+  target absent-apex-curate-submit (http-absent)
+  target absent-apex-demo-task (http-absent)
+  target absent-apex-task-new (http-absent)
+  target absent-apex-releases (http-absent)
+  target absent-apex-research-dossier (http-absent)
+  target absent-apex-intake (http-absent)
+  target absent-apex-visual-language (http-absent)
+  target absent-web-curate (http-absent)
+  target absent-web-curate-submit (http-absent)
+  target absent-web-demo-task (http-absent)
+  target absent-web-task-new (http-absent)
+  target absent-web-releases (http-absent)
+  target absent-web-research-dossier (http-absent)
+  target absent-web-intake (http-absent)
+  target absent-web-visual-language (http-absent)
+  target absent-bucket-curate (http-absent)
+  target absent-bucket-curate-submit (http-absent)
+  target absent-bucket-demo-task (http-absent)
+  target absent-bucket-task-new (http-absent)
+  target absent-bucket-releases (http-absent)
+  target absent-bucket-research-dossier (http-absent)
+  target absent-bucket-intake (http-absent)
+  target absent-bucket-visual-language (http-absent)
+  target sig-release-pointer (sig-release-pointer)
+  target sig-release-age (sig-release-age)
+  target sig-conf-gen (sig-conf-gen)
+  target absent-api-release-unpromoted (http-absent)
+runs → gs://<restricted>/ops/runs/<source>/<date>/<ts>.json
+scheduled sources:
+  osm_overpass                           monthly  12 8 24 * *  sig-ingest-osm-overpass ← sig-sched-osm-overpass
+  decp_fr                                weekly   12 4 * * 2   sig-ingest-decp-fr ← sig-sched-decp-fr
+  raa_prefectures                        weekly   12 4 * * 3   sig-ingest-raa-prefectures ← sig-sched-raa-prefectures
+  muckrock                               monthly  0 6 1 * *    sig-ingest-muckrock ← sig-sched-muckrock (existing — verify only)
+  eff_atlas_of_surveillance              monthly  0 5 2 * *    sig-ingest-eff-atlas ← sig-sched-eff-atlas
+  usaspending                            monthly  0 5 3 * *    sig-ingest-usaspending ← sig-sched-usaspending
+  eff_data_driven                        monthly  0 5 4 * *    sig-ingest-eff-data-driven ← sig-sched-eff-data-driven
+  osm_element_history                    monthly  0 5 5 * *    sig-ingest-osm-element-history ← sig-sched-osm-element-history
+  madada                                 monthly  0 5 7 * *    sig-ingest-madada ← sig-sched-madada
+  ccops_seattle                          monthly  0 5 8 * *    sig-ingest-ccops-seattle ← sig-sched-ccops-seattle
+  ccops_nyc_post                         monthly  0 5 9 * *    sig-ingest-ccops-nyc-post ← sig-sched-ccops-nyc-post
+  ccops_sf                               monthly  0 5 10 * *   sig-ingest-ccops-sf ← sig-sched-ccops-sf
+  pathways_rtcc_federation               monthly  0 5 11 * *   sig-ingest-pathways-rtcc ← sig-sched-pathways-rtcc
+  pathways_fr_css_forensics              monthly  0 5 12 * *   sig-ingest-pathways-fr-css ← sig-sched-pathways-fr-css
+  pathways_acoustic_drone_location       monthly  0 5 13 * *   sig-ingest-pathways-drones ← sig-sched-pathways-drones
+  carnegie_ai_gsi                        monthly  0 5 14 * *   sig-ingest-carnegie-ai-gsi ← sig-sched-carnegie-ai-gsi
+  facial_recognition_world_map           monthly  0 5 15 * *   sig-ingest-frwm ← sig-sched-frwm
+  aspi_mapping_chinas_tech_giants        monthly  0 5 16 * *   sig-ingest-aspi ← sig-sched-aspi
+  ok_statute                             monthly  0 5 17 * *   sig-ingest-ok-statute ← sig-sched-ok-statute
+  okcpd_policy                           monthly  0 5 18 * *   sig-ingest-okcpd-policy ← sig-sched-okcpd-policy
+  okc_procurement                        monthly  0 5 19 * *   sig-ingest-okc-procurement ← sig-sched-okc-procurement
+  legistar                               daily    5 5 * * *    sig-ingest-legistar ← sig-sched-legistar
+  primegov                               daily    20 5 * * *   sig-ingest-primegov ← sig-sched-primegov
+  civicclerk                             daily    35 5 * * *   sig-ingest-civicclerk ← sig-sched-civicclerk
+  escribe                                daily    50 5 * * *   sig-ingest-escribe ← sig-sched-escribe
+  eyes_on_flock                          weekly   0 5 * * 0    sig-ingest-eyes-on-flock ← sig-sched-eyes-on-flock
+  fbi_cde_agency_registry                quarterly 0 5 1 1,4,7,10 * sig-ingest-fbi-cde ← sig-sched-fbi-cde
+  sam_gov                                twice-weekly 0 5 * * 1,4  sig-ingest-sam-gov ← sig-sched-sam-gov
+  openstates                             weekly   0 5 * * 2    sig-ingest-openstates ← sig-sched-openstates
+  congress_gov                           monthly  0 5 3 * *    sig-ingest-congress-gov ← sig-sched-congress-gov
+  dot_511_ky                             monthly  0 4 24 * *   sig-ingest-dot-511-ky ← sig-sched-dot-511-ky
+  dot_511_il                             monthly  0 6 24 * *   sig-ingest-dot-511-il ← sig-sched-dot-511-il
+  dot_511_ut                             monthly  0 4 25 * *   sig-ingest-dot-511-ut ← sig-sched-dot-511-ut
+  dot_511_or                             monthly  0 6 25 * *   sig-ingest-dot-511-or ← sig-sched-dot-511-or
+  dot_511_ia                             monthly  0 4 26 * *   sig-ingest-dot-511-ia ← sig-sched-dot-511-ia
+  dot_511_wa                             monthly  0 6 26 * *   sig-ingest-dot-511-wa ← sig-sched-dot-511-wa
+  dot_511_dc                             monthly  0 4 27 * *   sig-ingest-dot-511-dc ← sig-sched-dot-511-dc
+  dot_511_mo                             monthly  0 6 27 * *   sig-ingest-dot-511-mo ← sig-sched-dot-511-mo
+  dot_511_fl                             monthly  7 4 28 * *   sig-ingest-dot-511-fl ← sig-sched-dot-511-fl
+  dot_511_ny                             monthly  11 4 28 * *  sig-ingest-dot-511-ny ← sig-sched-dot-511-ny
+  dot_511_az                             monthly  17 4 28 * *  sig-ingest-dot-511-az ← sig-sched-dot-511-az
+  dot_511_nvroads                        monthly  23 4 28 * *  sig-ingest-dot-511-nvroads ← sig-sched-dot-511-nvroads
+  dot_511_oh                             monthly  29 4 28 * *  sig-ingest-dot-511-oh ← sig-sched-dot-511-oh
+  dot_511_pa                             monthly  35 4 28 * *  sig-ingest-dot-511-pa ← sig-sched-dot-511-pa
+  dot_511_wi                             monthly  41 4 28 * *  sig-ingest-dot-511-wi ← sig-sched-dot-511-wi
+  dot_511_ak                             monthly  47 4 28 * *  sig-ingest-dot-511-ak ← sig-sched-dot-511-ak
+  dot_511_ct                             monthly  53 4 28 * *  sig-ingest-dot-511-ct ← sig-sched-dot-511-ct
+  dot_511_newengland                     monthly  59 4 28 * *  sig-ingest-dot-511-newengland ← sig-sched-dot-511-newengland
+  camreg_qldtraffic_au                   monthly  5 5 28 * *   sig-ingest-camreg-qldtraffic-au ← sig-sched-camreg-qldtraffic-au
+  camreg_nsw_live_au                     monthly  13 5 28 * *  sig-ingest-camreg-nsw-live-au ← sig-sched-camreg-nsw-live-au
+  camreg_austin_tx                       monthly  0 4 28 * *   sig-ingest-camreg-austin-tx ← sig-sched-camreg-austin-tx
+  camreg_nola_la                         monthly  0 6 28 * *   sig-ingest-camreg-nola-la ← sig-sched-camreg-nola-la
+  camreg_batonrouge_la                   monthly  0 8 28 * *   sig-ingest-camreg-batonrouge-la ← sig-sched-camreg-batonrouge-la
+  camreg_winnipeg_mb                     monthly  0 10 28 * *  sig-ingest-camreg-winnipeg-mb ← sig-sched-camreg-winnipeg-mb
+  camreg_act_au                          monthly  0 4 29 * *   sig-ingest-camreg-act-au ← sig-sched-camreg-act-au
+  camreg_siouxfalls_sd                   monthly  0 6 29 * *   sig-ingest-camreg-siouxfalls-sd ← sig-sched-camreg-siouxfalls-sd
+  camreg_baltimore_md                    monthly  0 8 29 * *   sig-ingest-camreg-baltimore-md ← sig-sched-camreg-baltimore-md
+  camreg_ottawa_on                       monthly  0 10 29 * *  sig-ingest-camreg-ottawa-on ← sig-sched-camreg-ottawa-on
+  camreg_sheffield_gb                    monthly  0 4 30 * *   sig-ingest-camreg-sheffield-gb ← sig-sched-camreg-sheffield-gb
+  camreg_washington_dc                   monthly  0 12 28 * *  sig-ingest-camreg-washington-dc ← sig-sched-camreg-washington-dc
+  camreg_nottingham_gb                   monthly  0 14 28 * *  sig-ingest-camreg-nottingham-gb ← sig-sched-camreg-nottingham-gb
+  camreg_york_gb                         monthly  0 16 28 * *  sig-ingest-camreg-york-gb ← sig-sched-camreg-york-gb
+  camreg_glasgow_gb                      monthly  0 18 28 * *  sig-ingest-camreg-glasgow-gb ← sig-sched-camreg-glasgow-gb
+  camreg_northayrshire_gb                monthly  0 20 28 * *  sig-ingest-camreg-northayrshire-gb ← sig-sched-camreg-northayrshire-gb
+  camreg_lambeth_gb                      monthly  0 22 28 * *  sig-ingest-camreg-lambeth-gb ← sig-sched-camreg-lambeth-gb
+  camreg_peel_on                         monthly  0 12 29 * *  sig-ingest-camreg-peel-on ← sig-sched-camreg-peel-on
+  camreg_rochester_ny                    monthly  0 14 29 * *  sig-ingest-camreg-rochester-ny ← sig-sched-camreg-rochester-ny
+  camreg_goldcoast_au                    monthly  0 16 29 * *  sig-ingest-camreg-goldcoast-au ← sig-sched-camreg-goldcoast-au
+  camreg_puertogaitan_co                 monthly  0 18 29 * *  sig-ingest-camreg-puertogaitan-co ← sig-sched-camreg-puertogaitan-co
+  procportal_austin_tx                   monthly  0 6 30 * *   sig-ingest-procportal-austin-tx ← sig-sched-procportal-austin-tx
+  procportal_sf_ca                       monthly  0 8 30 * *   sig-ingest-procportal-sf-ca ← sig-sched-procportal-sf-ca
+  procportal_kcmo_mo                     monthly  0 10 30 * *  sig-ingest-procportal-kcmo-mo ← sig-sched-procportal-kcmo-mo
+  procportal_nyc_ny                      monthly  0 12 30 * *  sig-ingest-procportal-nyc-ny ← sig-sched-procportal-nyc-ny
+  ted_eu                                 monthly  0 6 5 * *    sig-ingest-ted-eu ← sig-sched-ted-eu
+  gao_surveillance_reports               monthly  9 6 14 * *   sig-ingest-gao-surveillance-reports ← sig-sched-gao-surveillance-reports
+  dhs_oig_reports                        monthly  9 6 15 * *   sig-ingest-dhs-oig-reports ← sig-sched-dhs-oig-reports
+  dhs_fusion_center_assessments          monthly  9 6 16 * *   sig-ingest-dhs-fusion-center-assessments ← sig-sched-dhs-fusion-center-assessments
+  uk_surveillance_camera_commissioner    monthly  9 6 17 * *   sig-ingest-uk-surveillance-camera-commissioner ← sig-sched-uk-surveillance-camera-commissioner
+  ccops_oakland                          monthly  9 6 18 * *   sig-ingest-ccops-oakland ← sig-sched-ccops-oakland
+  ccops_cambridge                        monthly  9 6 19 * *   sig-ingest-ccops-cambridge ← sig-sched-ccops-cambridge
+  ccops_somerville                       monthly  9 6 20 * *   sig-ingest-ccops-somerville ← sig-sched-ccops-somerville
+  fema_hsgp_allocations                  monthly  9 6 21 * *   sig-ingest-fema-hsgp-allocations ← sig-sched-fema-hsgp-allocations
+  camreg_tribal_all_leaders_directory    monthly  41 7 24 * *  sig-ingest-camreg-tribal-all-leaders-directory ← sig-sched-camreg-tribal-all-leaders-directory
+  legis_tribal_tohono_oodham_notice      monthly  43 7 24 * *  sig-ingest-legis-tribal-tohono-oodham-notice ← sig-sched-legis-tribal-tohono-oodham-notice
+scheduled batches (P26.16 GL-GATE-07):
+  camreg-batch-01                        monthly  7 3 6 * *    sig-ingest-camreg-batch-01 ← sig-sched-camreg-batch-01  [19 members]
+  camreg-batch-02                        monthly  14 3 7 * *   sig-ingest-camreg-batch-02 ← sig-sched-camreg-batch-02  [23 members]
+  camreg-batch-03                        monthly  21 3 8 * *   sig-ingest-camreg-batch-03 ← sig-sched-camreg-batch-03  [16 members]
+  camreg-batch-04                        monthly  28 3 9 * *   sig-ingest-camreg-batch-04 ← sig-sched-camreg-batch-04  [26 members]
+  camreg-batch-05                        monthly  35 3 10 * *  sig-ingest-camreg-batch-05 ← sig-sched-camreg-batch-05  [17 members]
+  camreg-batch-06                        monthly  42 3 11 * *  sig-ingest-camreg-batch-06 ← sig-sched-camreg-batch-06  [22 members]
+  camreg-batch-07                        monthly  49 3 12 * *  sig-ingest-camreg-batch-07 ← sig-sched-camreg-batch-07  [17 members]
+  camreg-batch-08                        monthly  56 3 13 * *  sig-ingest-camreg-batch-08 ← sig-sched-camreg-batch-08  [11 members]
+  r11-ate-01                             monthly  17 7 18 * *  sig-ingest-r11-ate-01 ← sig-sched-r11-ate-01  [9 members]
+  r11-disclosures-01                     monthly  27 7 21 * *  sig-ingest-r11-disclosures-01 ← sig-sched-r11-disclosures-01  [10 members]
+  r11-disclosures-02                     monthly  27 7 22 * *  sig-ingest-r11-disclosures-02 ← sig-sched-r11-disclosures-02  [16 members]
+  r11-documents-01                       monthly  27 7 23 * *  sig-ingest-r11-documents-01 ← sig-sched-r11-documents-01  [28 members]
+  r11-layers-01                          monthly  17 7 16 * *  sig-ingest-r11-layers-01 ← sig-sched-r11-layers-01  [8 members]
+  r11-layers-02                          monthly  17 7 17 * *  sig-ingest-r11-layers-02 ← sig-sched-r11-layers-02  [15 members]
+  r11-procurement-01                     monthly  17 7 19 * *  sig-ingest-r11-procurement-01 ← sig-sched-r11-procurement-01  [3 members]
+  r11-tier2-01                           monthly  37 7 25 * *  sig-ingest-r11-tier2-01 ← sig-sched-r11-tier2-01  [49 members]
+  r11-tier2-02                           monthly  37 7 26 * *  sig-ingest-r11-tier2-02 ← sig-sched-r11-tier2-02  [48 members]
+  r11-tier2-03                           monthly  37 7 27 * *  sig-ingest-r11-tier2-03 ← sig-sched-r11-tier2-03  [51 members]
+maintenance rows (P35.1a — triggers reconcile PAUSED, never enabled):
+  pg-logical-export                      monthly  0 12 1 * *   state=paused ← sig-sched-pg-logical-export
+  restricted-replica                     weekly   0 9 * * 0    state=paused ← sig-sched-restricted-replica
+  pg-export-copy                         monthly  30 14 2 * *  state=paused ← sig-sched-pg-export-copy
+  watch-publish                          daily    30 7 * * *   state=paused ← sig-sched-watch-publish
+declared-manual jobs (no trigger expected):
+  sig-export
+  sig-materialize
+  sig-replay-ingest
+retired jobs (P35.1b sweep — declared absent):
+  aspi-egress-probe
+  ccops-sf-egress-probe
+  muckrock-egress-probe
+  okc-doc-egress-probe
+  sig-ingest-resume-test
+  sig-sink-bench
+live-diff trigger: sig-sched-live-diff cron='30 11 * * *' → sig-probe '["-c","exec sig-ops live-diff --live --alert"]'
+dispatcher: sig-sched-due cron='13 * * * *' → sig-sched-due (sa_class=ingest)
+retire list (P35.1c): 105 names (kept-declared-pin=13, kept-manual=3, retired=89)
+cadence check OK — every loadable live-target source has a cadence row; cron semantics + pin schema lint clean
