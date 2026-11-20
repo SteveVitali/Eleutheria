@@ -99,6 +99,20 @@
   `rerun-requested` rows appended to `docs/build/reports/ci/flake_log.csv`;
   the one B-15 same-head `gh run rerun --failed` issued 05:20Z
   (attempt 2).
-- **Attempt 2:** in flight at this commit — the landing verdict row is
-  recorded in `flake_log.csv`; the `ci:` verdict line lands at the next
-  record entry.
+- Head `53515c6e` (records pushes re-rolled the head) — run
+  44680644911 attempt 1 also struck **both** cells: `map` light-1440
+  96,676 px + dark-1440 96,179 px (0.08) — `VISUAL-MAP-LIGHT-1` +
+  `VISUAL-MAP-DARK-1`, the `b57d7aee` combined strike. The `45704317`
+  rerun was cancelled-superseded by the records push (recorded, never
+  counted — the bound is per-head); `53515c6e` got its own one B-15
+  attempt: `failure` + `rerun-requested` rows in `flake_log.csv`.
+- **`ci: pass-after-rerun #542@53515c6`** — run 44680644911 attempt 2,
+  5/5 head-bound: security 29s · docs 2m37s · composed 3m41s · python
+  20m17s · web a2 **1h13m13s GREEN** (the byte-identical signatures did
+  not recur; `success` row logged 07:46Z).
+- The post-verdict records commits sit past `53515c6e` on the tip and
+  re-roll the head for a fresh runner; `53515c6e`'s green is the
+  recorded boundary.
+- Surfaced to the operator, not decided: `VISUAL-MAP-*` remains
+  unlisted — this PR alone took the dark signature on `45704317` and
+  both signatures on `53515c6e`; the allow-list call is the operator's.

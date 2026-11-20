@@ -56,12 +56,19 @@ This PR is the recorded execution of that row — records only; no leg runs.
 - `obligation_events.py check` — green.
 - `memory_guard all --staged` — 0 violations; `check-build-memory.sh` —
   clean.
-- Head-bound CI run 44672810298 — attempt 1: security 45s · docs 2m33s ·
-  composed 4m31s · python 20m28s green; `web` red at 1h1m34s on the `map`
-  dark-1440 visual cell (96,179 px, 0.08 — the byte-identical
-  `VISUAL-MAP-DARK-1` env-flake signature; unlisted, operator-owned;
-  zero `web/` bytes in this diff). One B-15 same-head rerun issued;
-  `flake_log.csv` rows appended.
+- Head-bound CI, run 44672810298 (head `45704317`) — attempt 1: security
+  45s · docs 2m33s · composed 4m31s · python 20m28s green; `web` red at
+  1h1m34s on the `map` dark-1440 visual cell (96,179 px, 0.08 — the
+  byte-identical `VISUAL-MAP-DARK-1` env-flake signature; unlisted,
+  operator-owned; zero `web/` bytes in this diff). The B-15 rerun was
+  cancelled-superseded by the records push (recorded, never counted).
+- **`ci: pass-after-rerun #542@53515c6`** — run 44680644911 attempt 2,
+  5/5 head-bound: security 29s · docs 2m37s · composed 3m41s · python
+  20m17s · web a2 1h13m13s. Attempt 1 struck BOTH `map` 1440 cells at
+  the byte-identical `VISUAL-MAP-LIGHT-1`/`DARK-1` signatures (96,676 +
+  96,179 px, 0.08); the B-15 same-head rerun greened. All flake_log
+  rows appended (`failure`/`rerun-requested`/`rerun-cancelled-superseded`
+  /`success`). Post-verdict records commits re-roll the head once.
 
 ## Boundaries
 
