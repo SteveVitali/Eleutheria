@@ -67,4 +67,18 @@ race the wait removes.
 
 `docs/build/runs/OPS-VISUAL-MAP-HARNESS-FIX.md` (run ledger) · the
 diagnosed root cause in `runs/P38.3b.md`/`P38.3c.md` ·
-`flake_log.csv`'s adjudicated strike history.
+`flake_log.csv`'s adjudicated strike history · boundary JSON
+`docs/build/reports/ci/ops_visual_map_harness_fix_pr540_heade873.json`.
+
+## CI (head-bound, standing)
+
+`ci: pass #540@e873690` — 5/5 head-bound (run 44645374966: security
+36s · docs 2m35s · composed 3m35s · python 19m42s · web 1h2m35s). The
+visual grid ran clean — `VISUAL-MAP-LIGHT-1`/`DARK-1` did not recur on
+the first head carrying the latch. **Standing `blockedOn` (verbatim):**
+`CI stack on #540@e873690 (external): #539 does not contain its base
+#538's head d5d38c9` — #538's head moved after #539's catch-up merge;
+the catch-up-merge remedy is the chain owner's / operator's call, not
+this repair branch's. This head's own ancestry is clean
+(`{child: 540, parent: 539, ancestor: true}`), `mergeStateStatus:
+CLEAN`.

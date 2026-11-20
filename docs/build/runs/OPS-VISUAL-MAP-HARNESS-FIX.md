@@ -10,9 +10,13 @@
 - **Harness:** devin-desktop/swe-2-high/subagent
 - **Base / branch:** `e7b888f8` (the P38.3c chain tip) →
   `r11/ops-visual-map-harness-fix`
-- **PR:** <!-- FILLED on open -->
+- **PR:** #540 (`gh pr create` 2026-11-20T00:22Z) — base
+  `r11/P38.3c-round11-integration-plan`
 - **Started:** 2026-11-20 (`date -u`)
-- **Closed:** pending — head-bound CI read owed after the PR opens
+- **Closed:** `ci: pass #540@e873690` 5/5 head-bound (run 44645374966);
+  the stack flag is recorded verbatim in §Heads — a pre-existing chain
+  condition on the #539/#538 pair, operator-side, never self-authorised
+  here. PR OPEN awaiting the operator's merge.
 - **Config:** read-only repair in `web/tests/`; live legs: **none**;
   `Production mutations (OM-14): none`; gate cell `none`; not an OM-20
   row.
@@ -107,5 +111,25 @@ full gate is CI's.
   drawn bound fails loud as a timeout — a loud red, never a wrong
   baseline; (c) unrelated runner-class flakes (e.g. the recorded
   LH-LCP-MARGINAL-1 budget variant) are untouched.
-- Head-bound CI verdict and any flake_log rows owed: recorded forward
-  after the PR's own run.
+- **`e8736906` run 44645374966 — `ci: pass #540@e873690` 5/5
+  head-bound** (security 36s · docs 2m35s · composed 3m35s · python
+  19m42s · web 1h2m35s, completed 2026-11-20T01:25Z): the web leg —
+  including the full visual grid — ran clean; the
+  `VISUAL-MAP-LIGHT-1`/`DARK-1` signature **did not recur** on the first
+  head carrying the latch. No flake_log row is owed (no occurrence).
+- **Stack flag (recorded verbatim, never decided):**
+  `ci_boundary.py --pr 540 --no-wait` reads
+  `blockedOn: CI stack on #540@e873690 (external): #539 does not contain
+  its base #538's head d5d38c9 — rebased or retargeted outside the
+  documented procedure` (exit 3; boundary JSON
+  `docs/build/reports/ci/ops_visual_map_harness_fix_pr540_heade873.json`,
+  read 2026-11-20T01:27Z). Reads: #538's head moved to `d5d38c9` after
+  #539's catch-up merge at `e7b888f8`; my ancestry is clean
+  (`{child: 540, parent: 539, ancestor: true}` — this head contains
+  `e7b888f8`). The flag is the same base-head-moved class P38.3c
+  recorded; the catch-up-merge remedy belongs to the chain's owner /
+  the operator, not this repair branch. `mergeStateStatus: CLEAN` at
+  read.
+- `main:` `1d090e79` at the boundary read — `chain_descends: no` (the
+  same recorded posture the chain carries; merge legs are the
+  operator's).
