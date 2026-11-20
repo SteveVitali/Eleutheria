@@ -57,7 +57,7 @@
   "devDependencies": {
     "@astrojs/check": "0.9.10",
     "@axe-core/playwright": "4.13.0",
-    "@lhci/cli": "0.16.1",
+    "@lhci/cli": "0.15.1",
     "@playwright/test": "1.62.1",
     "@protomaps/basemaps": "^5.7.2",
     "@types/node": "22.10.2",
@@ -65,5 +65,9 @@
     "preact-render-to-string": "6.8.2",
     "typescript": "5.9.3",
     "vitest": "4.1.11"
+  },
+  "overrides": {
+    "basic-ftp": "6.2.6",
+    "tmp": "0.2.7"
   }
 }

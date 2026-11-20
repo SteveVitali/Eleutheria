@@ -46,23 +46,34 @@ This PR lands the diagnosis's recommended repair:
      `certifi 2026.7.22 → 2026.10.23` (uv lock + PEP 751 `pylock.toml`
      export; pip-audit over the tree now reports **no known
      vulnerabilities** — was 26 in 3 packages).
-   - `web`: `@lhci/cli 0.15.1 → 0.16.1` (lighthouse 12.6.1→13.6.0,
-     puppeteer-core→25.18.1, compression→1.8.2) fixes zod
-     `GHSA-mrhx-c7xc-m3w5` + compression `GHSA-vc2v-76pw-4v95`;
-     `body-parser→1.20.9` + `proxy-addr→2.0.8` resolved in-range inside
-     express 4.22.3's own `~` ranges fixes `GHSA-27r3-jxmh-p828` +
-     the **critical** `GHSA-jqcg-44mw-7w3h`. npm gate
-     `level=high blocked=0`. The three `LHCI-CHAIN-*` allow-list entries
-     covered no current finding after the bump → **removed** (a dead
-     grant is a permanent silencer); history note left in the file
-     header. The two `ASTRO-CHAIN-*` entries were dormant before this
-     change and keep their own tracking rows.
+   - `web`: the express-chain fixes stay (`body-parser→1.20.9`,
+     `proxy-addr→2.0.8`, `compression→1.8.2` — resolves the **critical**
+     `GHSA-jqcg-44mw-7w3h`, `GHSA-27r3-jxmh-p828`,
+     `GHSA-vc2v-76pw-4v95`). The `@lhci/cli` runner **stays at 0.15.1**
+     after the head-bound web job failed twice under lighthouse 13.6.0 —
+     LH13's new measurement set reports nonzero TBT on routes
+     `sig.page-budgets/1` budgets at `<=0` (attempt 1: `/explore` 239 vs
+     ≤200; attempt 2: `/r/_fixture-record/` 8 vs ≤0). The ceilings are
+     ADR-155-generated ground — recalibrating them for LH13 is the
+     operator's ADR call, not a dep-repair workaround — so instead:
+     npm `overrides` pins `basic-ftp` 6.2.6 + `tmp` 0.2.7 (two of the
+     four re-surfaced advisories resolved by real bumps, require-smoke +
+     real `lhci collect` verified); `extract-zip` (no fixed release —
+     2.0.1 is both vulnerable ceiling and latest) and chromium-bidi's
+     nested `zod@^3` (fix 4.6.6 is an unsupported major) return to two
+     scoped `dev-only` allow entries expiring **2027-02-20**. npm gate
+     `level=high candidates=3 allowed=3 blocked=0`. The two
+     `ASTRO-CHAIN-*` prod entries stand under their own tracking.
 
 ## Deferral register
 
-- **`D-P34.2-1` → DONE** (verified for real): `npm_audit_gate.sh --full`
-  green **with the entries removed** + `npm audit --json` shows the chain
-  gone — the row's own verify verbatim. Transition event `D-P34.2-1:e1`.
+- **`D-P34.2-1` → OPEN** (e1 flipped DONE on the zero-finding state,
+  then e2 reopened it the same day): e1's verify — gate green with the
+  entries REMOVED — stopped holding once the LH13 runner the bump
+  depended on proved incompatible with ADR-155's `<=0` TBT ceilings
+  (run 44676844367 attempts 1–2). The residual `extract-zip`/`zod`
+  advisories retire on an upstream release or the operator's LH13
+  recalibration — expiry 2027-02-20 keeps the grant loud.
 - **`D-P34.7-1` — stays OPEN.** Its verify condition is a *scheduled
   nightly* reporting `judged > 0` with 0 missed / 0 breached / 0
   unexpected — owed to the first nightly after this merges, not claimed
@@ -91,16 +102,25 @@ This PR lands the diagnosis's recommended repair:
   ~62+73 re-anchoring cells, ~105 born-at-merge/intra-PR-transient cells,
   the rest unadjudicated findings) — green needs a re-adjudication pass
   that is `D-P34.7-1`'s remaining substance, not a silent re-baseline.
-- Head-bound CI verdicts recorded at closeout.
+- Head-bound CI: `a589ed1c` run 44676844367 — security ✓ docs ✓
+  composed ✓ python ✓ · **web FAIL×2** (LH-TBT-EXPLORE-1 — the LH13
+  measurement-drift signature above; recorded in `flake_log.csv`,
+  unlisted, disposition = toolchain revert not budget smoothing). The
+  closeout head re-runs green-or-real under the LH12 runner.
 
 ## Records
 
 - `docs/build/runs/OPS-NIGHTLY-RED-1-REPAIR.md` — run ledger.
-- `docs/tickets/DEFERRALS.md` — `D-P34.2-1` DONE flip (old cell preserved).
-- `docs/build/reports/obligations/events.jsonl` — `D-P34.2-1:e1`.
+- `docs/tickets/DEFERRALS.md` — `D-P34.2-1` OPEN↔DONE↔OPEN record (old
+  cells preserved).
+- `docs/build/reports/obligations/events.jsonl` — `D-P34.2-1:e1` + `:e2`.
 - `docs/build/LEDGER.md` — NIGHTLY-RED-1 OPEN FINDINGS line extended
   (additive).
-- `docs/build/tools/record_policy/npm_audit_allow.toml` — 3 dormant
-  entries retired + history note.
+- `docs/build/tools/record_policy/npm_audit_allow.toml` — history note +
+  `LHCI-CHAIN-EXTRACT-ZIP` restored / `LHCI-CHAIN-ZOD` added (scoped,
+  expiring 2027-02-20); `LHCI-CHAIN-BASIC-FTP`/`LHCI-CHAIN-TMP` stay
+  retired — their advisories are resolved by the `overrides` bumps.
+- `docs/build/reports/ci/flake_log.csv` — `LH-TBT-EXPLORE-1` attempt
+  rows + verdict (unlisted; disposition = revert, not ceiling).
 
 Harness: devin-desktop/swe-2-high/subagent
