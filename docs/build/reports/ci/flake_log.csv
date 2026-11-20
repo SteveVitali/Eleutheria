@@ -148,3 +148,7 @@ date,pr,head_sha,check,flake_id,run_id,attempt,outcome
 2026-11-19T00:40Z,532,acc9aaf2,web,VISUAL-MAP-DARK-1 (run 44414172719 attempt 2 GREEN — the byte-identical 96,179 px (0.08) dark-1440 map signature did not recur; identical web bytes, the adjudicated env-flake class, the #517 arc's twin; still unlisted in ci_flakes.toml — the operator's allow-list call; third recorded dark-signature red across heads (1b310b7a, b57d7aee, acc9aaf2) — at the OM-18 escalation threshold the operator owns),44414172719,2,success
 2026-11-19T07:06:35Z,536,a58af93363ed9fed20baeaa959e651f6d818a111,python,PY-STUB-1,44473698730,1,failure
 2026-11-19T07:06:35Z,536,a58af93363ed9fed20baeaa959e651f6d818a111,python,PY-STUB-1,44473698730,2,rerun-requested
+2026-11-19T12:23:18Z,538,ee7759b2f35ecd055dca6db5055557d90fbf6365,web,UBUNTU-APT-503-1,44512558010,1,failure
+2026-11-19T12:23:18Z,538,ee7759b2f35ecd055dca6db5055557d90fbf6365,web,UBUNTU-APT-503-1,44512558010,2,rerun-requested
+2026-11-19T13:32:01Z,538,1b2abb45d6967bc00524e8140219a6a3cbd9dae3,web,UBUNTU-APT-503-1,44524806403,1,failure
+2026-11-19T13:32:01Z,538,1b2abb45d6967bc00524e8140219a6a3cbd9dae3,web,UBUNTU-APT-503-1,44524806403,2,rerun-requested
