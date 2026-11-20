@@ -1,0 +1,1 @@
+us-central1-docker.pkg.dev/zeta-medley-508121-u7/sig/sig-api@sha256:6ad5477d4aacde23d508f5eea765a6ad835e603ad794b10df56710acca4414f5	873541617837-compute@developer.gserviceaccount.com

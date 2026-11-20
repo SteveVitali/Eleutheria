@@ -1,0 +1,1 @@
+us-central1-docker.pkg.dev/zeta-medley-508121-u7/sig/sig-api@sha256:9aaec8661bfdfd6386707e8c3e9fdb3da1c1715918ad2881b664658df2a05489

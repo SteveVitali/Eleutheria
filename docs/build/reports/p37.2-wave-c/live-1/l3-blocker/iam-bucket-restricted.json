@@ -1,0 +1,42 @@
+{
+  "bindings": [
+    {
+      "members": [
+        "projectEditor:zeta-medley-508121-u7",
+        "projectOwner:zeta-medley-508121-u7"
+      ],
+      "role": "roles/storage.legacyBucketOwner"
+    },
+    {
+      "members": [
+        "projectViewer:zeta-medley-508121-u7"
+      ],
+      "role": "roles/storage.legacyBucketReader"
+    },
+    {
+      "members": [
+        "projectEditor:zeta-medley-508121-u7",
+        "projectOwner:zeta-medley-508121-u7"
+      ],
+      "role": "roles/storage.legacyObjectOwner"
+    },
+    {
+      "members": [
+        "projectViewer:zeta-medley-508121-u7"
+      ],
+      "role": "roles/storage.legacyObjectReader"
+    },
+    {
+      "condition": {
+        "description": "sig-release-rt fetches signed exports for release build — nothing else in sig-restricted",
+        "expression": "resource.name.startsWith(\"projects/_/buckets/zeta-medley-508121-u7-sig-restricted/objects/exports/\")",
+        "title": "release-reads-exports"
+      },
+      "members": [
+        "serviceAccount:sig-release-rt@zeta-medley-508121-u7.iam.gserviceaccount.com"
+      ],
+      "role": "roles/storage.objectViewer"
+    }
+  ],
+  "etag": "CAQ="
+}

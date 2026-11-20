@@ -1,0 +1,6 @@
+sig-probe	sig-probe-rt@zeta-medley-508121-u7.iam.gserviceaccount.com	us-central1-docker.pkg.dev/zeta-medley-508121-u7/sig/sig-api@sha256:9aaec8661bfdfd6386707e8c3e9fdb3da1c1715918ad2881b664658df2a05489
+sig-ingest-osm-overpass	873541617837-compute@developer.gserviceaccount.com	us-central1-docker.pkg.dev/zeta-medley-508121-u7/sig/sig-api@sha256:6ad5477d4aacde23d508f5eea765a6ad835e603ad794b10df56710acca4414f5
+sig-ingest-camreg-batch-05	873541617837-compute@developer.gserviceaccount.com	us-central1-docker.pkg.dev/zeta-medley-508121-u7/sig/sig-api@sha256:feff986cf66f551ed12031d6627acdefd3217192a9e20d452c3d4fe0376833f2
+sig-replay-ingest	873541617837-compute@developer.gserviceaccount.com	us-central1-docker.pkg.dev/zeta-medley-508121-u7/sig/sig-api:p31-6-184e3644adea@sha256:ad06e964a4119fc7c1135826114e2314bb1bbb8813d8d45b3d522a24823e6f99
+sig-ingest-muckrock	873541617837-compute@developer.gserviceaccount.com	us-central1-docker.pkg.dev/zeta-medley-508121-u7/sig/sig-api@sha256:6ad5477d4aacde23d508f5eea765a6ad835e603ad794b10df56710acca4414f5
+sig-materialize	873541617837-compute@developer.gserviceaccount.com	us-central1-docker.pkg.dev/zeta-medley-508121-u7/sig/sig-api@sha256:9aaec8661bfdfd6386707e8c3e9fdb3da1c1715918ad2881b664658df2a05489

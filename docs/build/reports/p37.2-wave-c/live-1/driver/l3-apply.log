@@ -1,0 +1,165 @@
+DRIVER START 2026-11-20T08:49:05Z
+==============================================================
+SIG GCP IaC — Wave-C activation (P37.2; window 2026-11-16→11-20; ING-GO-C) (mode=apply)
+  project=zeta-medley-508121-u7 region=us-central1 zone=us-central1-a
+==============================================================
+gate: sig-ops wave-c-gate --inputs docs/build/reports/p37.2-wave-c/live-1/inputs-l3-admit.json (leg L3)
+{
+  "action": "admit",
+  "criteria": [
+    {
+      "detail": "L3 is next in order (green=['L1', 'L2'], held=[])",
+      "id": "order",
+      "ok": true,
+      "value": null
+    },
+    {
+      "detail": "now 2026-11-20T08:48:36+00:00 \u2014 in-window=True earliest(landings=False)=False soak-grace=False never-band-03:00-06:30Z=False",
+      "id": "window",
+      "ok": true,
+      "value": "2026-11-20T08:48:36+00:00"
+    },
+    {
+      "detail": "ING-GO-C verbatim recorded 2026-10-25T18:40:00+00:00 (GATE-G5 \u00a73; the tier-bump go stays its own in-ticket pause)",
+      "id": "go",
+      "ok": true,
+      "value": "2026-10-25T18:40:00+00:00"
+    },
+    {
+      "detail": "Q-23 recorded answered \u2014 the adopted posture binds (cap 40 GB, pre-grow to 25 GB, temporary tier bump only; B-11 'As stated (Recommended)', GATE-P log 2026-10-01T04:35:53Z)",
+      "id": "q23",
+      "ok": true,
+      "value": "a"
+    },
+    {
+      "detail": "osm_overpass review-status recorded green \u2014 the run may fetch (SIG-INGEST-036; the fail-closed line was read, never written)",
+      "id": "review",
+      "ok": true,
+      "value": "green"
+    },
+    {
+      "detail": "materialize_active=False g2_slot_active=False release_cut_active=False \u2014 no leg runs while materialize, a G2 slot or a cut day is active",
+      "id": "exclusions",
+      "ok": true,
+      "value": null
+    },
+    {
+      "detail": "active_manual_run=None \u2014 one manual run at a time, across waves (P36.12's sequencing rule rides Wave C)",
+      "id": "serialize",
+      "ok": true,
+      "value": null
+    },
+    {
+      "detail": "run_set == the declared L3 set (1 entries)",
+      "id": "scope",
+      "ok": true,
+      "value": [
+        "osm_overpass"
+      ]
+    },
+    {
+      "detail": "the four early-fire r11 batch rows recorded held for the window (paused_until declared; live schedulers paused or absent-consolidated \u2014 FEA-15)",
+      "id": "wave_b_pause",
+      "ok": true,
+      "value": {
+        "unheld": []
+      }
+    }
+  ],
+  "decision": "go",
+  "kind": "sig.wave-c-gate/1",
+  "leg": "L3",
+  "refusals": [],
+  "rerun_prompt": null,
+  "thresholds": {
+    "autoresize_limit_gb": 40,
+    "disk_gb": 25,
+    "earliest_start": "2026-10-26T00:00:00Z",
+    "early_fire_batches": [
+      "r11-layers-01",
+      "r11-layers-02",
+      "r11-ate-01",
+      "r11-procurement-01"
+    ],
+    "early_landings": [
+      "P37.1",
+      "PKG-07",
+      "Q-23"
+    ],
+    "er_merge_min_pct": 95.0,
+    "keep_targets": [
+      "osm_surveillance_cctv_london",
+      "osm_surveillance_thailand",
+      "osm_surveillance_ucp_amini",
+      "osm_surveillance_ucp_osm"
+    ],
+    "legs": [
+      "L1",
+      "L2",
+      "L3",
+      "L4",
+      "L5"
+    ],
+    "mirror_batch": "camreg-batch-05",
+    "mirror_republish_rows": 132689,
+    "mirror_targets": [
+      "osm_surveillance_deflock",
+      "osm_surveillance_alpr_nationwide"
+    ],
+    "mutation_legs": [
+      "L1",
+      "L2",
+      "L3",
+      "L5"
+    ],
+    "never_band_minutes": [
+      180,
+      390
+    ],
+    "new_cron": "12 8 24 * *",
+    "osm_source": "osm_overpass",
+    "soak_grace_end": "2026-11-22T00:00:00Z",
+    "soak_hours": 24,
+    "taginfo_total": 154814,
+    "tier_down": "db-custom-1-3840",
+    "tier_up": "db-custom-2-7680",
+    "tile_tolerance_pct": 0.02,
+    "window_end": "2026-11-21T00:00:00Z",
+    "window_start": "2026-11-16T00:00:00Z"
+  },
+  "wave": "C"
+}
+-- L3.1 Wave-B pause posture (FEA-15): the four early-fire r11 batch
+   schedulers — absent under the consolidated dispatcher shape or held
+   PAUSED; the declared paused_until rows bind the due-set either way.
++ gcloud scheduler jobs describe sig-sched-r11-layers-01 --location us-central1 --project zeta-medley-508121-u7 --format=value(name,schedule,state)
+ERROR: (gcloud.scheduler.jobs.describe) NOT_FOUND: Job not found. This command is authenticated as 14stevevitali@gmail.com which is the active account specified by the [core/account] property.
++ gcloud scheduler jobs describe sig-sched-r11-layers-02 --location us-central1 --project zeta-medley-508121-u7 --format=value(name,schedule,state)
+ERROR: (gcloud.scheduler.jobs.describe) NOT_FOUND: Job not found. This command is authenticated as 14stevevitali@gmail.com which is the active account specified by the [core/account] property.
++ gcloud scheduler jobs describe sig-sched-r11-ate-01 --location us-central1 --project zeta-medley-508121-u7 --format=value(name,schedule,state)
+ERROR: (gcloud.scheduler.jobs.describe) NOT_FOUND: Job not found. This command is authenticated as 14stevevitali@gmail.com which is the active account specified by the [core/account] property.
++ gcloud scheduler jobs describe sig-sched-r11-procurement-01 --location us-central1 --project zeta-medley-508121-u7 --format=value(name,schedule,state)
+ERROR: (gcloud.scheduler.jobs.describe) NOT_FOUND: Job not found. This command is authenticated as 14stevevitali@gmail.com which is the active account specified by the [core/account] property.
+-- L3.2 the fleet reconcile on one pinned digest (ADR-111): the osm job
+   carries P37.1's national-tile code; camreg-batch-05 carries the
+   committed mirror-retirement diff; the declaration bundle republish
+   binds the monthly retarget + the paused_until rows (SIG-OPS-005).
++ /tmp/sig-p372-live/ops/gcp/scheduled-ops.sh --apply
+==============================================================
+SIG GCP IaC — scheduled live operations (P26.1 / OPS.2) (mode=apply)
+  project=zeta-medley-508121-u7 region=us-central1 zone=us-central1-a
+==============================================================
+job image (pinned digest): us-central1-docker.pkg.dev/zeta-medley-508121-u7/sig/sig-api@sha256:9aaec8661bfdfd6386707e8c3e9fdb3da1c1715918ad2881b664658df2a05489
+-- APIs + invoker service account --
++ gcloud services enable cloudscheduler.googleapis.com --project zeta-medley-508121-u7
+  invoker SA sig-scheduler@zeta-medley-508121-u7.iam.gserviceaccount.com exists
+-- sig-probe (hosted sweep → gs://…-sig-restricted/ops/probes/) --
++ gcloud run jobs deploy sig-probe --image us-central1-docker.pkg.dev/zeta-medley-508121-u7/sig/sig-api@sha256:9aaec8661bfdfd6386707e8c3e9fdb3da1c1715918ad2881b664658df2a05489 --region us-central1 --project zeta-medley-508121-u7 --service-account sig-probe-rt@zeta-medley-508121-u7.iam.gserviceaccount.com --command sh --args -c,exec sig-ops probe-hosted --alert --tasks 1 --task-timeout 10m --max-retries 0 --set-cloudsql-instances zeta-medley-508121-u7:us-central1:sig-pg --set-env-vars SIG_GCP_PROJECT=zeta-medley-508121-u7,SIG_OPS_GCS_BUCKET=zeta-medley-508121-u7-sig-restricted,SIG_OPS_CADENCE=/app/ops/cadence.toml,SIG_OPS_CADENCE_SHA256=b0756cca8402e237bb9c1bcf93abcf25c5c0f17e3e92dba02aaa049ac0834b99,SIG_OPS_DECLARED_GCS=gs://zeta-medley-508121-u7-sig-restricted/ops/declared/live-diff.json,SIG_PG_USER=sig,SIG_PG_DB=sig,SIG_CLOUDSQL_CONNECTION=zeta-medley-508121-u7:us-central1:sig-pg,SIG_PROBE_API_URL=https://sig-api-e5ctyx36jq-uc.a.run.app,SIG_PROBE_WEB_URL=https://sig-web-e5ctyx36jq-uc.a.run.app,SIG_ALERT_WEBHOOK_URL=https://sig-alerts-e5ctyx36jq-uc.a.run.app --set-secrets SIG_PG_PASSWORD=sig-pg-password:latest,SIG_ALERT_WEBHOOK_TOKEN=sig-alert-webhook-token:latest
+Deploying container to Cloud Run job [[1msig-probe[m] in project [[1mzeta-medley-508121-u7[m] region [[1mus-central1[m]
+Updating job...
+failed
+Job failed to deploy
+ERROR: (gcloud.run.jobs.deploy) spec.template.spec.containers[0].env[11].value_from.secret_key_ref.name: Permission denied on secret: projects/873541617837/secrets/sig-pg-password/versions/latest for Revision service account sig-probe-rt@zeta-medley-508121-u7.iam.gserviceaccount.com. The service account used must be granted the 'Secret Manager Secret Accessor' role (roles/secretmanager.secretAccessor) at the secret, project or higher level.
+spec.template.spec.containers[0].env[12].value_from.secret_key_ref.name: Permission denied on secret: projects/873541617837/secrets/sig-alert-webhook-token/versions/latest for Revision service account sig-probe-rt@zeta-medley-508121-u7.iam.gserviceaccount.com. The service account used must be granted the 'Secret Manager Secret Accessor' role (roles/secretmanager.secretAccessor) at the secret, project or higher level.
+DRIVER-EXIT: 1
+DRIVER END 2026-11-20T08:49:56Z

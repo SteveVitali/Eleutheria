@@ -1,0 +1,1422 @@
+Uploading local file [/var/folders/0r/9hmb0nh57nv2tqxgh71hd92m0000gn/T/tmp.wBOV38l19p/ctx.tgz] to [gs://zeta-medley-508121-u7_cloudbuild/source/1795164297.728788-5c552955443741ad8887c00961b737af.tgz].
+Created [https://cloudbuild.googleapis.com/v1/projects/zeta-medley-508121-u7/locations/us-central1/builds/e26a2a8d-e571-49b6-8f5f-e605cdac677c].
+Logs are available at [ https://console.cloud.google.com/cloud-build/builds;region=us-central1/e26a2a8d-e571-49b6-8f5f-e605cdac677c?project=873541617837 ].
+Waiting for build to complete. Polling interval: 1 second(s).
+----------------------------- REMOTE BUILD OUTPUT ------------------------------
+starting build "e26a2a8d-e571-49b6-8f5f-e605cdac677c" using release legacy
+
+FETCHSOURCE
+Fetching storage object: gs://zeta-medley-508121-u7_cloudbuild/source/1795164297.728788-5c552955443741ad8887c00961b737af.tgz#1795164303350842
+BUILD
+Already have image (with digest): gcr.io/cloud-builders/docker
+Sending build context to Docker daemon    188MB
+Step 1/34 : FROM python:3.12-slim AS tippecanoe-build
+3.12-slim: Pulling from library/python
+37fb86c2a767: Already exists
+68bced9e0afa: Pulling fs layer
+2dc99d2d0a39: Pulling fs layer
+05e0eee5572e: Pulling fs layer
+05e0eee5572e: Verifying Checksum
+05e0eee5572e: Download complete
+68bced9e0afa: Verifying Checksum
+68bced9e0afa: Download complete
+2dc99d2d0a39: Verifying Checksum
+2dc99d2d0a39: Download complete
+68bced9e0afa: Pull complete
+2dc99d2d0a39: Pull complete
+05e0eee5572e: Pull complete
+Digest: sha256:5e2bdb1b0d542d5039cffb8181c65930093949194a65c365dfb1b0fe13a4fa5b
+Status: Downloaded newer image for python:3.12-slim
+ ---> 78976a69c067
+Step 2/34 : ARG TIPPECANOE_VERSION=2.79.0
+ ---> Running in 24f0bbe5495d
+Removing intermediate container 24f0bbe5495d
+ ---> b3a53d3031c1
+Step 3/34 : ARG TIPPECANOE_SHA256=b0fd9df49b6efc988288ea48774822c6de19eb48428017f27ee0b3b01d44f05d
+ ---> Running in 4680caab2573
+Removing intermediate container 4680caab2573
+ ---> 3502d1960720
+Step 4/34 : RUN apt-get update  && apt-get install -y --no-install-recommends       build-essential ca-certificates curl libsqlite3-dev zlib1g-dev  && curl -fsSL       "https://github.com/felt/tippecanoe/archive/refs/tags/${TIPPECANOE_VERSION}.tar.gz"       -o /tmp/tippecanoe.tar.gz  && echo "${TIPPECANOE_SHA256}  /tmp/tippecanoe.tar.gz" | sha256sum -c -  && tar -xzf /tmp/tippecanoe.tar.gz -C /tmp  && make -C "/tmp/tippecanoe-${TIPPECANOE_VERSION}" -j"$(nproc)" tippecanoe  && install -Dm0755 "/tmp/tippecanoe-${TIPPECANOE_VERSION}/tippecanoe"       /usr/local/bin/tippecanoe  && rm -rf "/tmp/tippecanoe-${TIPPECANOE_VERSION}" /tmp/tippecanoe.tar.gz  && apt-get purge -y --auto-remove build-essential libsqlite3-dev zlib1g-dev curl  && rm -rf /var/lib/apt/lists/*
+ ---> Running in 134bf327976b
+Hit:1 http://deb.debian.org/debian trixie InRelease
+Get:2 http://deb.debian.org/debian trixie-updates InRelease [47.3 kB]
+Get:3 http://deb.debian.org/debian-security trixie-security InRelease [43.4 kB]
+Get:4 http://deb.debian.org/debian trixie/main amd64 Packages [9678 kB]
+Get:5 http://deb.debian.org/debian trixie-updates/main amd64 Packages [1108 B]
+Get:6 http://deb.debian.org/debian-security trixie-security/main amd64 Packages [306 kB]
+Fetched 10.1 MB in 2s (4805 kB/s)
+Reading package lists...
+Reading package lists...
+Building dependency tree...
+Reading state information...
+ca-certificates is already the newest version (20250419+deb13u1).
+The following additional packages will be installed:
+  binutils binutils-common binutils-x86-64-linux-gnu bzip2 cpp cpp-14
+  cpp-14-x86-64-linux-gnu cpp-x86-64-linux-gnu dpkg-dev g++ g++-14
+  g++-14-x86-64-linux-gnu g++-x86-64-linux-gnu gcc gcc-14
+  gcc-14-x86-64-linux-gnu gcc-x86-64-linux-gnu libasan8 libatomic1 libbinutils
+  libbrotli1 libc-dev-bin libc6-dev libcc1-0 libcom-err2 libcrypt-dev
+  libctf-nobfd0 libctf0 libcurl4t64 libdpkg-perl libgcc-14-dev
+  libgdbm-compat4t64 libgnutls30t64 libgomp1 libgprofng0 libgssapi-krb5-2
+  libhwasan0 libidn2-0 libisl23 libitm1 libjansson4 libk5crypto3 libkeyutils1
+  libkrb5-3 libkrb5support0 libldap2 liblsan0 libmpc3 libmpfr6 libnghttp2-14
+  libnghttp3-9 libp11-kit0 libperl5.40 libpsl5t64 libquadmath0 librtmp1
+  libsasl2-2 libsasl2-modules-db libsframe1 libssh2-1t64 libstdc++-14-dev
+  libtasn1-6 libtsan2 libubsan1 libunistring5 linux-libc-dev make patch perl
+  perl-modules-5.40 rpcsvc-proto xz-utils zlib1g
+Suggested packages:
+  binutils-doc gprofng-gui binutils-gold bzip2-doc cpp-doc gcc-14-locales
+  cpp-14-doc debian-keyring debian-tag2upload-keyring g++-multilib
+  g++-14-multilib gcc-14-doc gcc-multilib manpages-dev autoconf automake
+  libtool flex bison gdb gcc-doc gcc-14-multilib gdb-x86-64-linux-gnu
+  libc-devtools glibc-doc sq | sqop | rsop | gosop | pgpainless-cli | gpg-sq
+  | gnupg sensible-utils git bzr gnutls-bin krb5-doc krb5-user sqlite3-doc
+  libstdc++-14-doc make-doc ed diffutils-doc perl-doc
+  libterm-readline-gnu-perl | libterm-readline-perl-perl
+  libtap-harness-archive-perl
+Recommended packages:
+  bash-completion fakeroot sq | sqop | rsop | gosop | pgpainless-cli | gpg-sq
+  | gnupg libalgorithm-merge-perl manpages manpages-dev libfile-fcntllock-perl
+  liblocale-gettext-perl krb5-locales libldap-common publicsuffix
+  libsasl2-modules
+The following NEW packages will be installed:
+  binutils binutils-common binutils-x86-64-linux-gnu build-essential bzip2 cpp
+  cpp-14 cpp-14-x86-64-linux-gnu cpp-x86-64-linux-gnu curl dpkg-dev g++ g++-14
+  g++-14-x86-64-linux-gnu g++-x86-64-linux-gnu gcc gcc-14
+  gcc-14-x86-64-linux-gnu gcc-x86-64-linux-gnu libasan8 libatomic1 libbinutils
+  libbrotli1 libc-dev-bin libc6-dev libcc1-0 libcom-err2 libcrypt-dev
+  libctf-nobfd0 libctf0 libcurl4t64 libdpkg-perl libgcc-14-dev
+  libgdbm-compat4t64 libgnutls30t64 libgomp1 libgprofng0 libgssapi-krb5-2
+  libhwasan0 libidn2-0 libisl23 libitm1 libjansson4 libk5crypto3 libkeyutils1
+  libkrb5-3 libkrb5support0 libldap2 liblsan0 libmpc3 libmpfr6 libnghttp2-14
+  libnghttp3-9 libp11-kit0 libperl5.40 libpsl5t64 libquadmath0 librtmp1
+  libsasl2-2 libsasl2-modules-db libsframe1 libsqlite3-dev libssh2-1t64
+  libstdc++-14-dev libtasn1-6 libtsan2 libubsan1 libunistring5 linux-libc-dev
+  make patch perl perl-modules-5.40 rpcsvc-proto xz-utils zlib1g-dev
+The following packages will be upgraded:
+  zlib1g
+1 upgraded, 76 newly installed, 0 to remove and 0 not upgraded.
+Need to get 89.7 MB of archives.
+After this operation, 356 MB of additional disk space will be used.
+Get:1 http://deb.debian.org/debian-security trixie-security/main amd64 zlib1g amd64 1:1.3.dfsg+really1.3.1-1+deb13u1 [88.7 kB]
+Get:2 http://deb.debian.org/debian trixie/main amd64 bzip2 amd64 1.0.8-6 [40.5 kB]
+Get:3 http://deb.debian.org/debian trixie/main amd64 perl-modules-5.40 all 5.40.1-6+deb13u1 [3014 kB]
+Get:4 http://deb.debian.org/debian trixie/main amd64 libgdbm-compat4t64 amd64 1.24-2 [50.3 kB]
+Get:5 http://deb.debian.org/debian trixie/main amd64 libperl5.40 amd64 5.40.1-6+deb13u1 [4326 kB]
+Get:6 http://deb.debian.org/debian trixie/main amd64 perl amd64 5.40.1-6+deb13u1 [268 kB]
+Get:7 http://deb.debian.org/debian-security trixie-security/main amd64 xz-utils amd64 5.8.1-1+deb13u2 [660 kB]
+Get:8 http://deb.debian.org/debian trixie/main amd64 libsframe1 amd64 2.44-3 [78.4 kB]
+Get:9 http://deb.debian.org/debian trixie/main amd64 binutils-common amd64 2.44-3 [2509 kB]
+Get:10 http://deb.debian.org/debian trixie/main amd64 libbinutils amd64 2.44-3 [534 kB]
+Get:11 http://deb.debian.org/debian trixie/main amd64 libgprofng0 amd64 2.44-3 [808 kB]
+Get:12 http://deb.debian.org/debian trixie/main amd64 libctf-nobfd0 amd64 2.44-3 [156 kB]
+Get:13 http://deb.debian.org/debian trixie/main amd64 libctf0 amd64 2.44-3 [88.6 kB]
+Get:14 http://deb.debian.org/debian trixie/main amd64 libjansson4 amd64 2.14-2+b3 [39.8 kB]
+Get:15 http://deb.debian.org/debian trixie/main amd64 binutils-x86-64-linux-gnu amd64 2.44-3 [1014 kB]
+Get:16 http://deb.debian.org/debian trixie/main amd64 binutils amd64 2.44-3 [265 kB]
+Get:17 http://deb.debian.org/debian trixie/main amd64 libc-dev-bin amd64 2.41-12+deb13u4 [60.0 kB]
+Get:18 http://deb.debian.org/debian-security trixie-security/main amd64 linux-libc-dev all 6.12.117-1 [3086 kB]
+Get:19 http://deb.debian.org/debian trixie/main amd64 libcrypt-dev amd64 1:4.4.38-1 [119 kB]
+Get:20 http://deb.debian.org/debian trixie/main amd64 rpcsvc-proto amd64 1.4.3-1 [63.3 kB]
+Get:21 http://deb.debian.org/debian trixie/main amd64 libc6-dev amd64 2.41-12+deb13u4 [1995 kB]
+Get:22 http://deb.debian.org/debian trixie/main amd64 libisl23 amd64 0.27-1 [659 kB]
+Get:23 http://deb.debian.org/debian trixie/main amd64 libmpfr6 amd64 4.2.2-1 [729 kB]
+Get:24 http://deb.debian.org/debian trixie/main amd64 libmpc3 amd64 1.3.1-1+b3 [52.2 kB]
+Get:25 http://deb.debian.org/debian trixie/main amd64 cpp-14-x86-64-linux-gnu amd64 14.2.0-19 [11.0 MB]
+Get:26 http://deb.debian.org/debian trixie/main amd64 cpp-14 amd64 14.2.0-19 [1280 B]
+Get:27 http://deb.debian.org/debian trixie/main amd64 cpp-x86-64-linux-gnu amd64 4:14.2.0-1 [4840 B]
+Get:28 http://deb.debian.org/debian trixie/main amd64 cpp amd64 4:14.2.0-1 [1568 B]
+Get:29 http://deb.debian.org/debian trixie/main amd64 libcc1-0 amd64 14.2.0-19 [42.8 kB]
+Get:30 http://deb.debian.org/debian trixie/main amd64 libgomp1 amd64 14.2.0-19 [137 kB]
+Get:31 http://deb.debian.org/debian trixie/main amd64 libitm1 amd64 14.2.0-19 [26.0 kB]
+Get:32 http://deb.debian.org/debian trixie/main amd64 libatomic1 amd64 14.2.0-19 [9308 B]
+Get:33 http://deb.debian.org/debian trixie/main amd64 libasan8 amd64 14.2.0-19 [2725 kB]
+Get:34 http://deb.debian.org/debian trixie/main amd64 liblsan0 amd64 14.2.0-19 [1204 kB]
+Get:35 http://deb.debian.org/debian trixie/main amd64 libtsan2 amd64 14.2.0-19 [2460 kB]
+Get:36 http://deb.debian.org/debian trixie/main amd64 libubsan1 amd64 14.2.0-19 [1074 kB]
+Get:37 http://deb.debian.org/debian trixie/main amd64 libhwasan0 amd64 14.2.0-19 [1488 kB]
+Get:38 http://deb.debian.org/debian trixie/main amd64 libquadmath0 amd64 14.2.0-19 [145 kB]
+Get:39 http://deb.debian.org/debian trixie/main amd64 libgcc-14-dev amd64 14.2.0-19 [2672 kB]
+Get:40 http://deb.debian.org/debian trixie/main amd64 gcc-14-x86-64-linux-gnu amd64 14.2.0-19 [21.4 MB]
+Get:41 http://deb.debian.org/debian trixie/main amd64 gcc-14 amd64 14.2.0-19 [540 kB]
+Get:42 http://deb.debian.org/debian trixie/main amd64 gcc-x86-64-linux-gnu amd64 4:14.2.0-1 [1436 B]
+Get:43 http://deb.debian.org/debian trixie/main amd64 gcc amd64 4:14.2.0-1 [5136 B]
+Get:44 http://deb.debian.org/debian trixie/main amd64 libstdc++-14-dev amd64 14.2.0-19 [2376 kB]
+Get:45 http://deb.debian.org/debian trixie/main amd64 g++-14-x86-64-linux-gnu amd64 14.2.0-19 [12.1 MB]
+Get:46 http://deb.debian.org/debian trixie/main amd64 g++-14 amd64 14.2.0-19 [22.5 kB]
+Get:47 http://deb.debian.org/debian trixie/main amd64 g++-x86-64-linux-gnu amd64 4:14.2.0-1 [1200 B]
+Get:48 http://deb.debian.org/debian trixie/main amd64 g++ amd64 4:14.2.0-1 [1344 B]
+Get:49 http://deb.debian.org/debian trixie/main amd64 make amd64 4.4.1-2 [463 kB]
+Get:50 http://deb.debian.org/debian trixie/main amd64 libdpkg-perl all 1.22.22 [651 kB]
+Get:51 http://deb.debian.org/debian trixie/main amd64 patch amd64 2.8-2 [134 kB]
+Get:52 http://deb.debian.org/debian trixie/main amd64 dpkg-dev all 1.22.22 [1337 kB]
+Get:53 http://deb.debian.org/debian trixie/main amd64 build-essential amd64 12.12 [4624 B]
+Get:54 http://deb.debian.org/debian-security trixie-security/main amd64 libbrotli1 amd64 1.1.0-2+deb13u1 [304 kB]
+Get:55 http://deb.debian.org/debian trixie/main amd64 libkrb5support0 amd64 1.21.3-5+deb13u1 [33.1 kB]
+Get:56 http://deb.debian.org/debian trixie/main amd64 libcom-err2 amd64 1.47.2-3+b12 [25.0 kB]
+Get:57 http://deb.debian.org/debian trixie/main amd64 libk5crypto3 amd64 1.21.3-5+deb13u1 [81.2 kB]
+Get:58 http://deb.debian.org/debian trixie/main amd64 libkeyutils1 amd64 1.6.3-6 [9456 B]
+Get:59 http://deb.debian.org/debian trixie/main amd64 libkrb5-3 amd64 1.21.3-5+deb13u1 [326 kB]
+Get:60 http://deb.debian.org/debian trixie/main amd64 libgssapi-krb5-2 amd64 1.21.3-5+deb13u1 [138 kB]
+Get:61 http://deb.debian.org/debian trixie/main amd64 libunistring5 amd64 1.3-2 [477 kB]
+Get:62 http://deb.debian.org/debian trixie/main amd64 libidn2-0 amd64 2.3.8-2 [109 kB]
+Get:63 http://deb.debian.org/debian trixie/main amd64 libsasl2-modules-db amd64 2.1.28+dfsg1-9 [19.8 kB]
+Get:64 http://deb.debian.org/debian trixie/main amd64 libsasl2-2 amd64 2.1.28+dfsg1-9 [57.5 kB]
+Get:65 http://deb.debian.org/debian trixie/main amd64 libldap2 amd64 2.6.10+dfsg-1 [194 kB]
+Get:66 http://deb.debian.org/debian trixie/main amd64 libnghttp2-14 amd64 1.64.0-1.1+deb13u1 [76.2 kB]
+Get:67 http://deb.debian.org/debian trixie/main amd64 libnghttp3-9 amd64 1.8.0-1 [67.7 kB]
+Get:68 http://deb.debian.org/debian trixie/main amd64 libpsl5t64 amd64 0.21.2-1.1+b1 [57.2 kB]
+Get:69 http://deb.debian.org/debian trixie/main amd64 libp11-kit0 amd64 0.25.5-3 [425 kB]
+Get:70 http://deb.debian.org/debian trixie/main amd64 libtasn1-6 amd64 4.20.0-2+deb13u1 [50.1 kB]
+Get:71 http://deb.debian.org/debian trixie/main amd64 libgnutls30t64 amd64 3.8.9-3+deb13u4 [1469 kB]
+Get:72 http://deb.debian.org/debian trixie/main amd64 librtmp1 amd64 2.4+20151223.gitfa8646d.1-2+b5 [58.8 kB]
+Get:73 http://deb.debian.org/debian trixie/main amd64 libssh2-1t64 amd64 1.11.1-1+deb13u2 [245 kB]
+Get:74 http://deb.debian.org/debian-security trixie-security/main amd64 libcurl4t64 amd64 8.14.1-2+deb13u7 [392 kB]
+Get:75 http://deb.debian.org/debian-security trixie-security/main amd64 curl amd64 8.14.1-2+deb13u7 [270 kB]
+Get:76 http://deb.debian.org/debian trixie/main amd64 libsqlite3-dev amd64 3.46.1-7+deb13u2 [1109 kB]
+Get:77 http://deb.debian.org/debian-security trixie-security/main amd64 zlib1g-dev amd64 1:1.3.dfsg+really1.3.1-1+deb13u1 [920 kB]
+[91mdebconf: unable to initialize frontend: Dialog
+debconf: (TERM is not set, so the dialog frontend is not usable.)
+debconf: falling back to frontend: Readline
+[0m[91mdebconf: unable to initialize frontend: Readline
+debconf: (Can't locate Term/ReadLine.pm in @INC (you may need to install the Term::ReadLine module) (@INC entries checked: /etc/perl /usr/local/lib/x86_64-linux-gnu/perl/5.40.1 /usr/local/share/perl/5.40.1 /usr/lib/x86_64-linux-gnu/perl5/5.40 /usr/share/perl5 /usr/lib/x86_64-linux-gnu/perl-base /usr/lib/x86_64-linux-gnu/perl/5.40 /usr/share/perl/5.40 /usr/local/lib/site_perl) at /usr/share/perl5/Debconf/FrontEnd/Readline.pm line 8, <STDIN> line 77.)
+debconf: falling back to frontend: Teletype
+[0m[91mdebconf: unable to initialize frontend: Teletype
+debconf: (This frontend requires a controlling tty.)
+debconf: falling back to frontend: Noninteractive
+[0mFetched 89.7 MB in 6s (15.0 MB/s)
+(Reading database ... (Reading database ... 5%(Reading database ... 10%(Reading database ... 15%(Reading database ... 20%(Reading database ... 25%(Reading database ... 30%(Reading database ... 35%(Reading database ... 40%(Reading database ... 45%(Reading database ... 50%(Reading database ... 55%(Reading database ... 60%(Reading database ... 65%(Reading database ... 70%(Reading database ... 75%(Reading database ... 80%(Reading database ... 85%(Reading database ... 90%(Reading database ... 95%(Reading database ... 100%(Reading database ... 5658 files and directories currently installed.)
+Preparing to unpack .../zlib1g_1%3a1.3.dfsg+really1.3.1-1+deb13u1_amd64.deb ...
+Unpacking zlib1g:amd64 (1:1.3.dfsg+really1.3.1-1+deb13u1) over (1:1.3.dfsg+really1.3.1-1+b1) ...
+Setting up zlib1g:amd64 (1:1.3.dfsg+really1.3.1-1+deb13u1) ...
+Selecting previously unselected package bzip2.
+(Reading database ... (Reading database ... 5%(Reading database ... 10%(Reading database ... 15%(Reading database ... 20%(Reading database ... 25%(Reading database ... 30%(Reading database ... 35%(Reading database ... 40%(Reading database ... 45%(Reading database ... 50%(Reading database ... 55%(Reading database ... 60%(Reading database ... 65%(Reading database ... 70%(Reading database ... 75%(Reading database ... 80%(Reading database ... 85%(Reading database ... 90%(Reading database ... 95%(Reading database ... 100%(Reading database ... 5657 files and directories currently installed.)
+Preparing to unpack .../00-bzip2_1.0.8-6_amd64.deb ...
+Unpacking bzip2 (1.0.8-6) ...
+Selecting previously unselected package perl-modules-5.40.
+Preparing to unpack .../01-perl-modules-5.40_5.40.1-6+deb13u1_all.deb ...
+Unpacking perl-modules-5.40 (5.40.1-6+deb13u1) ...
+Selecting previously unselected package libgdbm-compat4t64:amd64.
+Preparing to unpack .../02-libgdbm-compat4t64_1.24-2_amd64.deb ...
+Unpacking libgdbm-compat4t64:amd64 (1.24-2) ...
+Selecting previously unselected package libperl5.40:amd64.
+Preparing to unpack .../03-libperl5.40_5.40.1-6+deb13u1_amd64.deb ...
+Unpacking libperl5.40:amd64 (5.40.1-6+deb13u1) ...
+Selecting previously unselected package perl.
+Preparing to unpack .../04-perl_5.40.1-6+deb13u1_amd64.deb ...
+Unpacking perl (5.40.1-6+deb13u1) ...
+Selecting previously unselected package xz-utils.
+Preparing to unpack .../05-xz-utils_5.8.1-1+deb13u2_amd64.deb ...
+Unpacking xz-utils (5.8.1-1+deb13u2) ...
+Selecting previously unselected package libsframe1:amd64.
+Preparing to unpack .../06-libsframe1_2.44-3_amd64.deb ...
+Unpacking libsframe1:amd64 (2.44-3) ...
+Selecting previously unselected package binutils-common:amd64.
+Preparing to unpack .../07-binutils-common_2.44-3_amd64.deb ...
+Unpacking binutils-common:amd64 (2.44-3) ...
+Selecting previously unselected package libbinutils:amd64.
+Preparing to unpack .../08-libbinutils_2.44-3_amd64.deb ...
+Unpacking libbinutils:amd64 (2.44-3) ...
+Selecting previously unselected package libgprofng0:amd64.
+Preparing to unpack .../09-libgprofng0_2.44-3_amd64.deb ...
+Unpacking libgprofng0:amd64 (2.44-3) ...
+Selecting previously unselected package libctf-nobfd0:amd64.
+Preparing to unpack .../10-libctf-nobfd0_2.44-3_amd64.deb ...
+Unpacking libctf-nobfd0:amd64 (2.44-3) ...
+Selecting previously unselected package libctf0:amd64.
+Preparing to unpack .../11-libctf0_2.44-3_amd64.deb ...
+Unpacking libctf0:amd64 (2.44-3) ...
+Selecting previously unselected package libjansson4:amd64.
+Preparing to unpack .../12-libjansson4_2.14-2+b3_amd64.deb ...
+Unpacking libjansson4:amd64 (2.14-2+b3) ...
+Selecting previously unselected package binutils-x86-64-linux-gnu.
+Preparing to unpack .../13-binutils-x86-64-linux-gnu_2.44-3_amd64.deb ...
+Unpacking binutils-x86-64-linux-gnu (2.44-3) ...
+Selecting previously unselected package binutils.
+Preparing to unpack .../14-binutils_2.44-3_amd64.deb ...
+Unpacking binutils (2.44-3) ...
+Selecting previously unselected package libc-dev-bin.
+Preparing to unpack .../15-libc-dev-bin_2.41-12+deb13u4_amd64.deb ...
+Unpacking libc-dev-bin (2.41-12+deb13u4) ...
+Selecting previously unselected package linux-libc-dev.
+Preparing to unpack .../16-linux-libc-dev_6.12.117-1_all.deb ...
+Unpacking linux-libc-dev (6.12.117-1) ...
+Selecting previously unselected package libcrypt-dev:amd64.
+Preparing to unpack .../17-libcrypt-dev_1%3a4.4.38-1_amd64.deb ...
+Unpacking libcrypt-dev:amd64 (1:4.4.38-1) ...
+Selecting previously unselected package rpcsvc-proto.
+Preparing to unpack .../18-rpcsvc-proto_1.4.3-1_amd64.deb ...
+Unpacking rpcsvc-proto (1.4.3-1) ...
+Selecting previously unselected package libc6-dev:amd64.
+Preparing to unpack .../19-libc6-dev_2.41-12+deb13u4_amd64.deb ...
+Unpacking libc6-dev:amd64 (2.41-12+deb13u4) ...
+Selecting previously unselected package libisl23:amd64.
+Preparing to unpack .../20-libisl23_0.27-1_amd64.deb ...
+Unpacking libisl23:amd64 (0.27-1) ...
+Selecting previously unselected package libmpfr6:amd64.
+Preparing to unpack .../21-libmpfr6_4.2.2-1_amd64.deb ...
+Unpacking libmpfr6:amd64 (4.2.2-1) ...
+Selecting previously unselected package libmpc3:amd64.
+Preparing to unpack .../22-libmpc3_1.3.1-1+b3_amd64.deb ...
+Unpacking libmpc3:amd64 (1.3.1-1+b3) ...
+Selecting previously unselected package cpp-14-x86-64-linux-gnu.
+Preparing to unpack .../23-cpp-14-x86-64-linux-gnu_14.2.0-19_amd64.deb ...
+Unpacking cpp-14-x86-64-linux-gnu (14.2.0-19) ...
+Selecting previously unselected package cpp-14.
+Preparing to unpack .../24-cpp-14_14.2.0-19_amd64.deb ...
+Unpacking cpp-14 (14.2.0-19) ...
+Selecting previously unselected package cpp-x86-64-linux-gnu.
+Preparing to unpack .../25-cpp-x86-64-linux-gnu_4%3a14.2.0-1_amd64.deb ...
+Unpacking cpp-x86-64-linux-gnu (4:14.2.0-1) ...
+Selecting previously unselected package cpp.
+Preparing to unpack .../26-cpp_4%3a14.2.0-1_amd64.deb ...
+Unpacking cpp (4:14.2.0-1) ...
+Selecting previously unselected package libcc1-0:amd64.
+Preparing to unpack .../27-libcc1-0_14.2.0-19_amd64.deb ...
+Unpacking libcc1-0:amd64 (14.2.0-19) ...
+Selecting previously unselected package libgomp1:amd64.
+Preparing to unpack .../28-libgomp1_14.2.0-19_amd64.deb ...
+Unpacking libgomp1:amd64 (14.2.0-19) ...
+Selecting previously unselected package libitm1:amd64.
+Preparing to unpack .../29-libitm1_14.2.0-19_amd64.deb ...
+Unpacking libitm1:amd64 (14.2.0-19) ...
+Selecting previously unselected package libatomic1:amd64.
+Preparing to unpack .../30-libatomic1_14.2.0-19_amd64.deb ...
+Unpacking libatomic1:amd64 (14.2.0-19) ...
+Selecting previously unselected package libasan8:amd64.
+Preparing to unpack .../31-libasan8_14.2.0-19_amd64.deb ...
+Unpacking libasan8:amd64 (14.2.0-19) ...
+Selecting previously unselected package liblsan0:amd64.
+Preparing to unpack .../32-liblsan0_14.2.0-19_amd64.deb ...
+Unpacking liblsan0:amd64 (14.2.0-19) ...
+Selecting previously unselected package libtsan2:amd64.
+Preparing to unpack .../33-libtsan2_14.2.0-19_amd64.deb ...
+Unpacking libtsan2:amd64 (14.2.0-19) ...
+Selecting previously unselected package libubsan1:amd64.
+Preparing to unpack .../34-libubsan1_14.2.0-19_amd64.deb ...
+Unpacking libubsan1:amd64 (14.2.0-19) ...
+Selecting previously unselected package libhwasan0:amd64.
+Preparing to unpack .../35-libhwasan0_14.2.0-19_amd64.deb ...
+Unpacking libhwasan0:amd64 (14.2.0-19) ...
+Selecting previously unselected package libquadmath0:amd64.
+Preparing to unpack .../36-libquadmath0_14.2.0-19_amd64.deb ...
+Unpacking libquadmath0:amd64 (14.2.0-19) ...
+Selecting previously unselected package libgcc-14-dev:amd64.
+Preparing to unpack .../37-libgcc-14-dev_14.2.0-19_amd64.deb ...
+Unpacking libgcc-14-dev:amd64 (14.2.0-19) ...
+Selecting previously unselected package gcc-14-x86-64-linux-gnu.
+Preparing to unpack .../38-gcc-14-x86-64-linux-gnu_14.2.0-19_amd64.deb ...
+Unpacking gcc-14-x86-64-linux-gnu (14.2.0-19) ...
+Selecting previously unselected package gcc-14.
+Preparing to unpack .../39-gcc-14_14.2.0-19_amd64.deb ...
+Unpacking gcc-14 (14.2.0-19) ...
+Selecting previously unselected package gcc-x86-64-linux-gnu.
+Preparing to unpack .../40-gcc-x86-64-linux-gnu_4%3a14.2.0-1_amd64.deb ...
+Unpacking gcc-x86-64-linux-gnu (4:14.2.0-1) ...
+Selecting previously unselected package gcc.
+Preparing to unpack .../41-gcc_4%3a14.2.0-1_amd64.deb ...
+Unpacking gcc (4:14.2.0-1) ...
+Selecting previously unselected package libstdc++-14-dev:amd64.
+Preparing to unpack .../42-libstdc++-14-dev_14.2.0-19_amd64.deb ...
+Unpacking libstdc++-14-dev:amd64 (14.2.0-19) ...
+Selecting previously unselected package g++-14-x86-64-linux-gnu.
+Preparing to unpack .../43-g++-14-x86-64-linux-gnu_14.2.0-19_amd64.deb ...
+Unpacking g++-14-x86-64-linux-gnu (14.2.0-19) ...
+Selecting previously unselected package g++-14.
+Preparing to unpack .../44-g++-14_14.2.0-19_amd64.deb ...
+Unpacking g++-14 (14.2.0-19) ...
+Selecting previously unselected package g++-x86-64-linux-gnu.
+Preparing to unpack .../45-g++-x86-64-linux-gnu_4%3a14.2.0-1_amd64.deb ...
+Unpacking g++-x86-64-linux-gnu (4:14.2.0-1) ...
+Selecting previously unselected package g++.
+Preparing to unpack .../46-g++_4%3a14.2.0-1_amd64.deb ...
+Unpacking g++ (4:14.2.0-1) ...
+Selecting previously unselected package make.
+Preparing to unpack .../47-make_4.4.1-2_amd64.deb ...
+Unpacking make (4.4.1-2) ...
+Selecting previously unselected package libdpkg-perl.
+Preparing to unpack .../48-libdpkg-perl_1.22.22_all.deb ...
+Unpacking libdpkg-perl (1.22.22) ...
+Selecting previously unselected package patch.
+Preparing to unpack .../49-patch_2.8-2_amd64.deb ...
+Unpacking patch (2.8-2) ...
+Selecting previously unselected package dpkg-dev.
+Preparing to unpack .../50-dpkg-dev_1.22.22_all.deb ...
+Unpacking dpkg-dev (1.22.22) ...
+Selecting previously unselected package build-essential.
+Preparing to unpack .../51-build-essential_12.12_amd64.deb ...
+Unpacking build-essential (12.12) ...
+Selecting previously unselected package libbrotli1:amd64.
+Preparing to unpack .../52-libbrotli1_1.1.0-2+deb13u1_amd64.deb ...
+Unpacking libbrotli1:amd64 (1.1.0-2+deb13u1) ...
+Selecting previously unselected package libkrb5support0:amd64.
+Preparing to unpack .../53-libkrb5support0_1.21.3-5+deb13u1_amd64.deb ...
+Unpacking libkrb5support0:amd64 (1.21.3-5+deb13u1) ...
+Selecting previously unselected package libcom-err2:amd64.
+Preparing to unpack .../54-libcom-err2_1.47.2-3+b12_amd64.deb ...
+Unpacking libcom-err2:amd64 (1.47.2-3+b12) ...
+Selecting previously unselected package libk5crypto3:amd64.
+Preparing to unpack .../55-libk5crypto3_1.21.3-5+deb13u1_amd64.deb ...
+Unpacking libk5crypto3:amd64 (1.21.3-5+deb13u1) ...
+Selecting previously unselected package libkeyutils1:amd64.
+Preparing to unpack .../56-libkeyutils1_1.6.3-6_amd64.deb ...
+Unpacking libkeyutils1:amd64 (1.6.3-6) ...
+Selecting previously unselected package libkrb5-3:amd64.
+Preparing to unpack .../57-libkrb5-3_1.21.3-5+deb13u1_amd64.deb ...
+Unpacking libkrb5-3:amd64 (1.21.3-5+deb13u1) ...
+Selecting previously unselected package libgssapi-krb5-2:amd64.
+Preparing to unpack .../58-libgssapi-krb5-2_1.21.3-5+deb13u1_amd64.deb ...
+Unpacking libgssapi-krb5-2:amd64 (1.21.3-5+deb13u1) ...
+Selecting previously unselected package libunistring5:amd64.
+Preparing to unpack .../59-libunistring5_1.3-2_amd64.deb ...
+Unpacking libunistring5:amd64 (1.3-2) ...
+Selecting previously unselected package libidn2-0:amd64.
+Preparing to unpack .../60-libidn2-0_2.3.8-2_amd64.deb ...
+Unpacking libidn2-0:amd64 (2.3.8-2) ...
+Selecting previously unselected package libsasl2-modules-db:amd64.
+Preparing to unpack .../61-libsasl2-modules-db_2.1.28+dfsg1-9_amd64.deb ...
+Unpacking libsasl2-modules-db:amd64 (2.1.28+dfsg1-9) ...
+Selecting previously unselected package libsasl2-2:amd64.
+Preparing to unpack .../62-libsasl2-2_2.1.28+dfsg1-9_amd64.deb ...
+Unpacking libsasl2-2:amd64 (2.1.28+dfsg1-9) ...
+Selecting previously unselected package libldap2:amd64.
+Preparing to unpack .../63-libldap2_2.6.10+dfsg-1_amd64.deb ...
+Unpacking libldap2:amd64 (2.6.10+dfsg-1) ...
+Selecting previously unselected package libnghttp2-14:amd64.
+Preparing to unpack .../64-libnghttp2-14_1.64.0-1.1+deb13u1_amd64.deb ...
+Unpacking libnghttp2-14:amd64 (1.64.0-1.1+deb13u1) ...
+Selecting previously unselected package libnghttp3-9:amd64.
+Preparing to unpack .../65-libnghttp3-9_1.8.0-1_amd64.deb ...
+Unpacking libnghttp3-9:amd64 (1.8.0-1) ...
+Selecting previously unselected package libpsl5t64:amd64.
+Preparing to unpack .../66-libpsl5t64_0.21.2-1.1+b1_amd64.deb ...
+Unpacking libpsl5t64:amd64 (0.21.2-1.1+b1) ...
+Selecting previously unselected package libp11-kit0:amd64.
+Preparing to unpack .../67-libp11-kit0_0.25.5-3_amd64.deb ...
+Unpacking libp11-kit0:amd64 (0.25.5-3) ...
+Selecting previously unselected package libtasn1-6:amd64.
+Preparing to unpack .../68-libtasn1-6_4.20.0-2+deb13u1_amd64.deb ...
+Unpacking libtasn1-6:amd64 (4.20.0-2+deb13u1) ...
+Selecting previously unselected package libgnutls30t64:amd64.
+Preparing to unpack .../69-libgnutls30t64_3.8.9-3+deb13u4_amd64.deb ...
+Unpacking libgnutls30t64:amd64 (3.8.9-3+deb13u4) ...
+Selecting previously unselected package librtmp1:amd64.
+Preparing to unpack .../70-librtmp1_2.4+20151223.gitfa8646d.1-2+b5_amd64.deb ...
+Unpacking librtmp1:amd64 (2.4+20151223.gitfa8646d.1-2+b5) ...
+Selecting previously unselected package libssh2-1t64:amd64.
+Preparing to unpack .../71-libssh2-1t64_1.11.1-1+deb13u2_amd64.deb ...
+Unpacking libssh2-1t64:amd64 (1.11.1-1+deb13u2) ...
+Selecting previously unselected package libcurl4t64:amd64.
+Preparing to unpack .../72-libcurl4t64_8.14.1-2+deb13u7_amd64.deb ...
+Unpacking libcurl4t64:amd64 (8.14.1-2+deb13u7) ...
+Selecting previously unselected package curl.
+Preparing to unpack .../73-curl_8.14.1-2+deb13u7_amd64.deb ...
+Unpacking curl (8.14.1-2+deb13u7) ...
+Selecting previously unselected package libsqlite3-dev:amd64.
+Preparing to unpack .../74-libsqlite3-dev_3.46.1-7+deb13u2_amd64.deb ...
+Unpacking libsqlite3-dev:amd64 (3.46.1-7+deb13u2) ...
+Selecting previously unselected package zlib1g-dev:amd64.
+Preparing to unpack .../75-zlib1g-dev_1%3a1.3.dfsg+really1.3.1-1+deb13u1_amd64.deb ...
+Unpacking zlib1g-dev:amd64 (1:1.3.dfsg+really1.3.1-1+deb13u1) ...
+Setting up libkeyutils1:amd64 (1.6.3-6) ...
+Setting up libgdbm-compat4t64:amd64 (1.24-2) ...
+Setting up libbrotli1:amd64 (1.1.0-2+deb13u1) ...
+Setting up binutils-common:amd64 (2.44-3) ...
+Setting up libnghttp2-14:amd64 (1.64.0-1.1+deb13u1) ...
+Setting up linux-libc-dev (6.12.117-1) ...
+Setting up libctf-nobfd0:amd64 (2.44-3) ...
+Setting up libcom-err2:amd64 (1.47.2-3+b12) ...
+Setting up libgomp1:amd64 (14.2.0-19) ...
+Setting up bzip2 (1.0.8-6) ...
+Setting up libsframe1:amd64 (2.44-3) ...
+Setting up libjansson4:amd64 (2.14-2+b3) ...
+Setting up libkrb5support0:amd64 (1.21.3-5+deb13u1) ...
+Setting up libsasl2-modules-db:amd64 (2.1.28+dfsg1-9) ...
+Setting up rpcsvc-proto (1.4.3-1) ...
+Setting up make (4.4.1-2) ...
+Setting up libmpfr6:amd64 (4.2.2-1) ...
+Setting up xz-utils (5.8.1-1+deb13u2) ...
+update-alternatives: using /usr/bin/xz to provide /usr/bin/lzma (lzma) in auto mode
+update-alternatives: warning: skip creation of /usr/share/man/man1/lzma.1.gz because associated file /usr/share/man/man1/xz.1.gz (of link group lzma) doesn't exist
+update-alternatives: warning: skip creation of /usr/share/man/man1/unlzma.1.gz because associated file /usr/share/man/man1/unxz.1.gz (of link group lzma) doesn't exist
+update-alternatives: warning: skip creation of /usr/share/man/man1/lzcat.1.gz because associated file /usr/share/man/man1/xzcat.1.gz (of link group lzma) doesn't exist
+update-alternatives: warning: skip creation of /usr/share/man/man1/lzmore.1.gz because associated file /usr/share/man/man1/xzmore.1.gz (of link group lzma) doesn't exist
+update-alternatives: warning: skip creation of /usr/share/man/man1/lzless.1.gz because associated file /usr/share/man/man1/xzless.1.gz (of link group lzma) doesn't exist
+update-alternatives: warning: skip creation of /usr/share/man/man1/lzdiff.1.gz because associated file /usr/share/man/man1/xzdiff.1.gz (of link group lzma) doesn't exist
+update-alternatives: warning: skip creation of /usr/share/man/man1/lzcmp.1.gz because associated file /usr/share/man/man1/xzcmp.1.gz (of link group lzma) doesn't exist
+update-alternatives: warning: skip creation of /usr/share/man/man1/lzgrep.1.gz because associated file /usr/share/man/man1/xzgrep.1.gz (of link group lzma) doesn't exist
+update-alternatives: warning: skip creation of /usr/share/man/man1/lzegrep.1.gz because associated file /usr/share/man/man1/xzegrep.1.gz (of link group lzma) doesn't exist
+update-alternatives: warning: skip creation of /usr/share/man/man1/lzfgrep.1.gz because associated file /usr/share/man/man1/xzfgrep.1.gz (of link group lzma) doesn't exist
+Setting up libquadmath0:amd64 (14.2.0-19) ...
+Setting up libp11-kit0:amd64 (0.25.5-3) ...
+Setting up libunistring5:amd64 (1.3-2) ...
+Setting up libmpc3:amd64 (1.3.1-1+b3) ...
+Setting up libatomic1:amd64 (14.2.0-19) ...
+Setting up patch (2.8-2) ...
+Setting up libk5crypto3:amd64 (1.21.3-5+deb13u1) ...
+Setting up libsasl2-2:amd64 (2.1.28+dfsg1-9) ...
+Setting up libnghttp3-9:amd64 (1.8.0-1) ...
+Setting up libubsan1:amd64 (14.2.0-19) ...
+Setting up perl-modules-5.40 (5.40.1-6+deb13u1) ...
+Setting up libhwasan0:amd64 (14.2.0-19) ...
+Setting up libcrypt-dev:amd64 (1:4.4.38-1) ...
+Setting up libasan8:amd64 (14.2.0-19) ...
+Setting up libtasn1-6:amd64 (4.20.0-2+deb13u1) ...
+Setting up libkrb5-3:amd64 (1.21.3-5+deb13u1) ...
+Setting up libssh2-1t64:amd64 (1.11.1-1+deb13u2) ...
+Setting up libtsan2:amd64 (14.2.0-19) ...
+Setting up libbinutils:amd64 (2.44-3) ...
+Setting up libisl23:amd64 (0.27-1) ...
+Setting up libc-dev-bin (2.41-12+deb13u4) ...
+Setting up libcc1-0:amd64 (14.2.0-19) ...
+Setting up libldap2:amd64 (2.6.10+dfsg-1) ...
+Setting up liblsan0:amd64 (14.2.0-19) ...
+Setting up libitm1:amd64 (14.2.0-19) ...
+Setting up libctf0:amd64 (2.44-3) ...
+Setting up libidn2-0:amd64 (2.3.8-2) ...
+Setting up libperl5.40:amd64 (5.40.1-6+deb13u1) ...
+Setting up perl (5.40.1-6+deb13u1) ...
+Setting up libgprofng0:amd64 (2.44-3) ...
+Setting up libgssapi-krb5-2:amd64 (1.21.3-5+deb13u1) ...
+Setting up cpp-14-x86-64-linux-gnu (14.2.0-19) ...
+Setting up libdpkg-perl (1.22.22) ...
+Setting up cpp-14 (14.2.0-19) ...
+Setting up libc6-dev:amd64 (2.41-12+deb13u4) ...
+Setting up libgcc-14-dev:amd64 (14.2.0-19) ...
+Setting up libstdc++-14-dev:amd64 (14.2.0-19) ...
+Setting up binutils-x86-64-linux-gnu (2.44-3) ...
+Setting up cpp-x86-64-linux-gnu (4:14.2.0-1) ...
+Setting up libgnutls30t64:amd64 (3.8.9-3+deb13u4) ...
+Setting up libpsl5t64:amd64 (0.21.2-1.1+b1) ...
+Setting up binutils (2.44-3) ...
+Setting up dpkg-dev (1.22.22) ...
+Setting up libsqlite3-dev:amd64 (3.46.1-7+deb13u2) ...
+Setting up librtmp1:amd64 (2.4+20151223.gitfa8646d.1-2+b5) ...
+Setting up zlib1g-dev:amd64 (1:1.3.dfsg+really1.3.1-1+deb13u1) ...
+Setting up cpp (4:14.2.0-1) ...
+Setting up gcc-14-x86-64-linux-gnu (14.2.0-19) ...
+Setting up gcc-x86-64-linux-gnu (4:14.2.0-1) ...
+Setting up libcurl4t64:amd64 (8.14.1-2+deb13u7) ...
+Setting up gcc-14 (14.2.0-19) ...
+Setting up g++-14-x86-64-linux-gnu (14.2.0-19) ...
+Setting up g++-x86-64-linux-gnu (4:14.2.0-1) ...
+Setting up curl (8.14.1-2+deb13u7) ...
+Setting up g++-14 (14.2.0-19) ...
+Setting up gcc (4:14.2.0-1) ...
+Setting up g++ (4:14.2.0-1) ...
+update-alternatives: using /usr/bin/g++ to provide /usr/bin/c++ (c++) in auto mode
+Setting up build-essential (12.12) ...
+Processing triggers for libc-bin (2.41-12+deb13u4) ...
+/tmp/tippecanoe.tar.gz: OK
+make: Entering directory '/tmp/tippecanoe-2.79.0'
+g++ -MMD  -I/usr/local/include -I. -Iclipper2/include -g -Wall -Wshadow -Wsign-compare -Wextra -Wunreachable-code -Wuninitialized -Wshadow -O3 -DNDEBUG  -std=c++17 -fPIE -DBUILD_INFO= -c -o geojson.o geojson.cpp
+cc -MMD  -I/usr/local/include -I. -Iclipper2/include -g -Wall -Wshadow -Wsign-compare -Wextra -Wunreachable-code -Wuninitialized -Wshadow -O3 -DNDEBUG  -fPIE -DBUILD_INFO= -c -o jsonpull/jsonpull.o jsonpull/jsonpull.c
+g++ -MMD  -I/usr/local/include -I. -Iclipper2/include -g -Wall -Wshadow -Wsign-compare -Wextra -Wunreachable-code -Wuninitialized -Wshadow -O3 -DNDEBUG  -std=c++17 -fPIE -DBUILD_INFO= -c -o tile.o tile.cpp
+g++ -MMD  -I/usr/local/include -I. -Iclipper2/include -g -Wall -Wshadow -Wsign-compare -Wextra -Wunreachable-code -Wuninitialized -Wshadow -O3 -DNDEBUG  -std=c++17 -fPIE -DBUILD_INFO= -c -o pool.o pool.cpp
+g++ -MMD  -I/usr/local/include -I. -Iclipper2/include -g -Wall -Wshadow -Wsign-compare -Wextra -Wunreachable-code -Wuninitialized -Wshadow -O3 -DNDEBUG  -std=c++17 -fPIE -DBUILD_INFO= -c -o mbtiles.o mbtiles.cpp
+g++ -MMD  -I/usr/local/include -I. -Iclipper2/include -g -Wall -Wshadow -Wsign-compare -Wextra -Wunreachable-code -Wuninitialized -Wshadow -O3 -DNDEBUG  -std=c++17 -fPIE -DBUILD_INFO= -c -o geometry.o geometry.cpp
+g++ -MMD  -I/usr/local/include -I. -Iclipper2/include -g -Wall -Wshadow -Wsign-compare -Wextra -Wunreachable-code -Wuninitialized -Wshadow -O3 -DNDEBUG  -std=c++17 -fPIE -DBUILD_INFO= -c -o projection.o projection.cpp
+g++ -MMD  -I/usr/local/include -I. -Iclipper2/include -g -Wall -Wshadow -Wsign-compare -Wextra -Wunreachable-code -Wuninitialized -Wshadow -O3 -DNDEBUG  -std=c++17 -fPIE -DBUILD_INFO= -c -o memfile.o memfile.cpp
+g++ -MMD  -I/usr/local/include -I. -Iclipper2/include -g -Wall -Wshadow -Wsign-compare -Wextra -Wunreachable-code -Wuninitialized -Wshadow -O3 -DNDEBUG  -std=c++17 -fPIE -DBUILD_INFO= -c -o mvt.o mvt.cpp
+g++ -MMD  -I/usr/local/include -I. -Iclipper2/include -g -Wall -Wshadow -Wsign-compare -Wextra -Wunreachable-code -Wuninitialized -Wshadow -O3 -DNDEBUG  -std=c++17 -fPIE -DBUILD_INFO= -c -o serial.o serial.cpp
+g++ -MMD  -I/usr/local/include -I. -Iclipper2/include -g -Wall -Wshadow -Wsign-compare -Wextra -Wunreachable-code -Wuninitialized -Wshadow -O3 -DNDEBUG  -std=c++17 -fPIE -DBUILD_INFO= -c -o main.o main.cpp
+g++ -MMD  -I/usr/local/include -I. -Iclipper2/include -g -Wall -Wshadow -Wsign-compare -Wextra -Wunreachable-code -Wuninitialized -Wshadow -O3 -DNDEBUG  -std=c++17 -fPIE -DBUILD_INFO= -c -o platform.o platform.cpp
+g++ -MMD  -I/usr/local/include -I. -Iclipper2/include -g -Wall -Wshadow -Wsign-compare -Wextra -Wunreachable-code -Wuninitialized -Wshadow -O3 -DNDEBUG  -std=c++17 -fPIE -DBUILD_INFO= -c -o text.o text.cpp
+g++ -MMD  -I/usr/local/include -I. -Iclipper2/include -g -Wall -Wshadow -Wsign-compare -Wextra -Wunreachable-code -Wuninitialized -Wshadow -O3 -DNDEBUG  -std=c++17 -fPIE -DBUILD_INFO= -c -o dirtiles.o dirtiles.cpp
+g++ -MMD  -I/usr/local/include -I. -Iclipper2/include -g -Wall -Wshadow -Wsign-compare -Wextra -Wunreachable-code -Wuninitialized -Wshadow -O3 -DNDEBUG  -std=c++17 -fPIE -DBUILD_INFO= -c -o pmtiles_file.o pmtiles_file.cpp
+g++ -MMD  -I/usr/local/include -I. -Iclipper2/include -g -Wall -Wshadow -Wsign-compare -Wextra -Wunreachable-code -Wuninitialized -Wshadow -O3 -DNDEBUG  -std=c++17 -fPIE -DBUILD_INFO= -c -o plugin.o plugin.cpp
+g++ -MMD  -I/usr/local/include -I. -Iclipper2/include -g -Wall -Wshadow -Wsign-compare -Wextra -Wunreachable-code -Wuninitialized -Wshadow -O3 -DNDEBUG  -std=c++17 -fPIE -DBUILD_INFO= -c -o read_json.o read_json.cpp
+g++ -MMD  -I/usr/local/include -I. -Iclipper2/include -g -Wall -Wshadow -Wsign-compare -Wextra -Wunreachable-code -Wuninitialized -Wshadow -O3 -DNDEBUG  -std=c++17 -fPIE -DBUILD_INFO= -c -o write_json.o write_json.cpp
+g++ -MMD  -I/usr/local/include -I. -Iclipper2/include -g -Wall -Wshadow -Wsign-compare -Wextra -Wunreachable-code -Wuninitialized -Wshadow -O3 -DNDEBUG  -std=c++17 -fPIE -DBUILD_INFO= -c -o geobuf.o geobuf.cpp
+g++ -MMD  -I/usr/local/include -I. -Iclipper2/include -g -Wall -Wshadow -Wsign-compare -Wextra -Wunreachable-code -Wuninitialized -Wshadow -O3 -DNDEBUG  -std=c++17 -fPIE -DBUILD_INFO= -c -o flatgeobuf.o flatgeobuf.cpp
+g++ -MMD  -I/usr/local/include -I. -Iclipper2/include -g -Wall -Wshadow -Wsign-compare -Wextra -Wunreachable-code -Wuninitialized -Wshadow -O3 -DNDEBUG  -std=c++17 -fPIE -DBUILD_INFO= -c -o evaluator.o evaluator.cpp
+g++ -MMD  -I/usr/local/include -I. -Iclipper2/include -g -Wall -Wshadow -Wsign-compare -Wextra -Wunreachable-code -Wuninitialized -Wshadow -O3 -DNDEBUG  -std=c++17 -fPIE -DBUILD_INFO= -c -o geocsv.o geocsv.cpp
+g++ -MMD  -I/usr/local/include -I. -Iclipper2/include -g -Wall -Wshadow -Wsign-compare -Wextra -Wunreachable-code -Wuninitialized -Wshadow -O3 -DNDEBUG  -std=c++17 -fPIE -DBUILD_INFO= -c -o csv.o csv.cpp
+g++ -MMD  -I/usr/local/include -I. -Iclipper2/include -g -Wall -Wshadow -Wsign-compare -Wextra -Wunreachable-code -Wuninitialized -Wshadow -O3 -DNDEBUG  -std=c++17 -fPIE -DBUILD_INFO= -c -o geojson-loop.o geojson-loop.cpp
+g++ -MMD  -I/usr/local/include -I. -Iclipper2/include -g -Wall -Wshadow -Wsign-compare -Wextra -Wunreachable-code -Wuninitialized -Wshadow -O3 -DNDEBUG  -std=c++17 -fPIE -DBUILD_INFO= -c -o json_logger.o json_logger.cpp
+g++ -MMD  -I/usr/local/include -I. -Iclipper2/include -g -Wall -Wshadow -Wsign-compare -Wextra -Wunreachable-code -Wuninitialized -Wshadow -O3 -DNDEBUG  -std=c++17 -fPIE -DBUILD_INFO= -c -o visvalingam.o visvalingam.cpp
+g++ -MMD  -I/usr/local/include -I. -Iclipper2/include -g -Wall -Wshadow -Wsign-compare -Wextra -Wunreachable-code -Wuninitialized -Wshadow -O3 -DNDEBUG  -std=c++17 -fPIE -DBUILD_INFO= -c -o compression.o compression.cpp
+g++ -MMD  -I/usr/local/include -I. -Iclipper2/include -g -Wall -Wshadow -Wsign-compare -Wextra -Wunreachable-code -Wuninitialized -Wshadow -O3 -DNDEBUG  -std=c++17 -fPIE -DBUILD_INFO= -c -o clip.o clip.cpp
+g++ -MMD  -I/usr/local/include -I. -Iclipper2/include -g -Wall -Wshadow -Wsign-compare -Wextra -Wunreachable-code -Wuninitialized -Wshadow -O3 -DNDEBUG  -std=c++17 -fPIE -DBUILD_INFO= -c -o sort.o sort.cpp
+g++ -MMD  -I/usr/local/include -I. -Iclipper2/include -g -Wall -Wshadow -Wsign-compare -Wextra -Wunreachable-code -Wuninitialized -Wshadow -O3 -DNDEBUG  -std=c++17 -fPIE -DBUILD_INFO= -c -o attribute.o attribute.cpp
+g++ -MMD  -I/usr/local/include -I. -Iclipper2/include -g -Wall -Wshadow -Wsign-compare -Wextra -Wunreachable-code -Wuninitialized -Wshadow -O3 -DNDEBUG  -std=c++17 -fPIE -DBUILD_INFO= -c -o thread.o thread.cpp
+g++ -MMD  -I/usr/local/include -I. -Iclipper2/include -g -Wall -Wshadow -Wsign-compare -Wextra -Wunreachable-code -Wuninitialized -Wshadow -O3 -DNDEBUG  -std=c++17 -fPIE -DBUILD_INFO= -c -o shared_borders.o shared_borders.cpp
+g++ -MMD  -I/usr/local/include -I. -Iclipper2/include -g -Wall -Wshadow -Wsign-compare -Wextra -Wunreachable-code -Wuninitialized -Wshadow -O3 -DNDEBUG  -std=c++17 -fPIE -DBUILD_INFO= -c -o clipper2/src/clipper.engine.o clipper2/src/clipper.engine.cpp
+g++  -L/usr/local/lib -g -Wall -Wshadow -Wsign-compare -Wextra -Wunreachable-code -Wuninitialized -Wshadow -O3 -DNDEBUG  -std=c++17 -fPIE -DBUILD_INFO= -o tippecanoe geojson.o jsonpull/jsonpull.o tile.o pool.o mbtiles.o geometry.o projection.o memfile.o mvt.o serial.o main.o platform.o text.o dirtiles.o pmtiles_file.o plugin.o read_json.o write_json.o geobuf.o flatgeobuf.o evaluator.o geocsv.o csv.o geojson-loop.o json_logger.o visvalingam.o compression.o clip.o sort.o attribute.o thread.o shared_borders.o clipper2/src/clipper.engine.o  -lm -lz -lsqlite3 -lpthread
+make: Leaving directory '/tmp/tippecanoe-2.79.0'
+Reading package lists...
+Building dependency tree...
+Reading state information...
+The following packages will be REMOVED:
+  binutils* binutils-common* binutils-x86-64-linux-gnu* build-essential*
+  bzip2* cpp* cpp-14* cpp-14-x86-64-linux-gnu* cpp-x86-64-linux-gnu* curl*
+  dpkg-dev* g++* g++-14* g++-14-x86-64-linux-gnu* g++-x86-64-linux-gnu* gcc*
+  gcc-14* gcc-14-x86-64-linux-gnu* gcc-x86-64-linux-gnu* libasan8* libatomic1*
+  libbinutils* libbrotli1* libc-dev-bin* libc6-dev* libcc1-0* libcom-err2*
+  libcrypt-dev* libctf-nobfd0* libctf0* libcurl4t64* libdpkg-perl*
+  libgcc-14-dev* libgdbm-compat4t64* libgnutls30t64* libgomp1* libgprofng0*
+  libgssapi-krb5-2* libhwasan0* libisl23* libitm1* libjansson4* libk5crypto3*
+  libkeyutils1* libkrb5-3* libkrb5support0* libldap2* liblsan0* libmpc3*
+  libmpfr6* libnghttp2-14* libnghttp3-9* libp11-kit0* libperl5.40* libpsl5t64*
+  libquadmath0* librtmp1* libsasl2-2* libsasl2-modules-db* libsframe1*
+  libsqlite3-dev* libssh2-1t64* libstdc++-14-dev* libtasn1-6* libtsan2*
+  libubsan1* linux-libc-dev* make* patch* perl* perl-modules-5.40*
+  rpcsvc-proto* xz-utils* zlib1g-dev*
+0 upgraded, 0 newly installed, 74 to remove and 0 not upgraded.
+After this operation, 353 MB disk space will be freed.
+(Reading database ... (Reading database ... 5%(Reading database ... 10%(Reading database ... 15%(Reading database ... 20%(Reading database ... 25%(Reading database ... 30%(Reading database ... 35%(Reading database ... 40%(Reading database ... 45%(Reading database ... 50%(Reading database ... 55%(Reading database ... 60%(Reading database ... 65%(Reading database ... 70%(Reading database ... 75%(Reading database ... 80%(Reading database ... 85%(Reading database ... 90%(Reading database ... 95%(Reading database ... 100%(Reading database ... 13787 files and directories currently installed.)
+Removing build-essential (12.12) ...
+Removing g++ (4:14.2.0-1) ...
+Removing gcc (4:14.2.0-1) ...
+Removing dpkg-dev (1.22.22) ...
+Removing g++-x86-64-linux-gnu (4:14.2.0-1) ...
+Removing gcc-x86-64-linux-gnu (4:14.2.0-1) ...
+Removing bzip2 (1.0.8-6) ...
+Removing cpp (4:14.2.0-1) ...
+Removing cpp-x86-64-linux-gnu (4:14.2.0-1) ...
+Removing curl (8.14.1-2+deb13u7) ...
+Removing g++-14 (14.2.0-19) ...
+Removing g++-14-x86-64-linux-gnu (14.2.0-19) ...
+Removing libstdc++-14-dev:amd64 (14.2.0-19) ...
+Removing libcurl4t64:amd64 (8.14.1-2+deb13u7) ...
+Removing libbrotli1:amd64 (1.1.0-2+deb13u1) ...
+Removing zlib1g-dev:amd64 (1:1.3.dfsg+really1.3.1-1+deb13u1) ...
+Removing libsqlite3-dev:amd64 (3.46.1-7+deb13u2) ...
+Removing libc6-dev:amd64 (2.41-12+deb13u4) ...
+Removing libc-dev-bin (2.41-12+deb13u4) ...
+Removing libgssapi-krb5-2:amd64 (1.21.3-5+deb13u1) ...
+Removing libkrb5-3:amd64 (1.21.3-5+deb13u1) ...
+Removing libcom-err2:amd64 (1.47.2-3+b12) ...
+Removing libcrypt-dev:amd64 (1:4.4.38-1) ...
+Removing libdpkg-perl (1.22.22) ...
+Removing perl (5.40.1-6+deb13u1) ...
+Removing libperl5.40:amd64 (5.40.1-6+deb13u1) ...
+Removing libgdbm-compat4t64:amd64 (1.24-2) ...
+Removing librtmp1:amd64 (2.4+20151223.gitfa8646d.1-2+b5) ...
+Removing libgnutls30t64:amd64 (3.8.9-3+deb13u4) ...
+Removing libk5crypto3:amd64 (1.21.3-5+deb13u1) ...
+Removing libkeyutils1:amd64 (1.6.3-6) ...
+Removing libkrb5support0:amd64 (1.21.3-5+deb13u1) ...
+Removing libldap2:amd64 (2.6.10+dfsg-1) ...
+Removing libnghttp2-14:amd64 (1.64.0-1.1+deb13u1) ...
+Removing libnghttp3-9:amd64 (1.8.0-1) ...
+Removing libp11-kit0:amd64 (0.25.5-3) ...
+Removing libpsl5t64:amd64 (0.21.2-1.1+b1) ...
+Removing libsasl2-2:amd64 (2.1.28+dfsg1-9) ...
+Removing libsasl2-modules-db:amd64 (2.1.28+dfsg1-9) ...
+Removing libssh2-1t64:amd64 (1.11.1-1+deb13u2) ...
+Removing libtasn1-6:amd64 (4.20.0-2+deb13u1) ...
+Removing linux-libc-dev (6.12.117-1) ...
+Removing make (4.4.1-2) ...
+Removing patch (2.8-2) ...
+Removing perl-modules-5.40 (5.40.1-6+deb13u1) ...
+Removing rpcsvc-proto (1.4.3-1) ...
+Removing xz-utils (5.8.1-1+deb13u2) ...
+Removing gcc-14 (14.2.0-19) ...
+Removing binutils (2.44-3) ...
+Removing libgprofng0:amd64 (2.44-3) ...
+Removing gcc-14-x86-64-linux-gnu (14.2.0-19) ...
+Removing binutils-x86-64-linux-gnu (2.44-3) ...
+Removing libctf0:amd64 (2.44-3) ...
+Removing libbinutils:amd64 (2.44-3) ...
+Removing binutils-common:amd64 (2.44-3) ...
+Removing cpp-14 (14.2.0-19) ...
+Removing cpp-14-x86-64-linux-gnu (14.2.0-19) ...
+Removing libgcc-14-dev:amd64 (14.2.0-19) ...
+Removing libasan8:amd64 (14.2.0-19) ...
+Removing libatomic1:amd64 (14.2.0-19) ...
+Removing libcc1-0:amd64 (14.2.0-19) ...
+Removing libctf-nobfd0:amd64 (2.44-3) ...
+Removing libgomp1:amd64 (14.2.0-19) ...
+Removing libhwasan0:amd64 (14.2.0-19) ...
+Removing libisl23:amd64 (0.27-1) ...
+Removing libitm1:amd64 (14.2.0-19) ...
+Removing libjansson4:amd64 (2.14-2+b3) ...
+Removing liblsan0:amd64 (14.2.0-19) ...
+Removing libmpc3:amd64 (1.3.1-1+b3) ...
+Removing libmpfr6:amd64 (4.2.2-1) ...
+Removing libquadmath0:amd64 (14.2.0-19) ...
+Removing libsframe1:amd64 (2.44-3) ...
+Removing libtsan2:amd64 (14.2.0-19) ...
+Removing libubsan1:amd64 (14.2.0-19) ...
+Processing triggers for libc-bin (2.41-12+deb13u4) ...
+(Reading database ... (Reading database ... 5%(Reading database ... 10%(Reading database ... 15%(Reading database ... 20%(Reading database ... 25%(Reading database ... 30%(Reading database ... 35%(Reading database ... 40%(Reading database ... 45%(Reading database ... 50%(Reading database ... 55%(Reading database ... 60%(Reading database ... 65%(Reading database ... 70%(Reading database ... 75%(Reading database ... 80%(Reading database ... 85%(Reading database ... 90%(Reading database ... 95%(Reading database ... 100%(Reading database ... 5706 files and directories currently installed.)
+Purging configuration files for binutils-common:amd64 (2.44-3) ...
+Purging configuration files for binutils (2.44-3) ...
+Purging configuration files for dpkg-dev (1.22.22) ...
+Purging configuration files for perl (5.40.1-6+deb13u1) ...
+Purging configuration files for libgssapi-krb5-2:amd64 (1.21.3-5+deb13u1) ...
+Purging configuration files for libcrypt-dev:amd64 (1:4.4.38-1) ...
+Purging configuration files for cpp (4:14.2.0-1) ...
+Removing intermediate container 134bf327976b
+ ---> df45e2db73cd
+Step 5/34 : FROM python:3.12-slim
+ ---> 78976a69c067
+Step 6/34 : ENV PYTHONUNBUFFERED=1     PIP_NO_CACHE_DIR=1     UV_SYSTEM_PYTHON=1
+ ---> Running in 16aa16a4e6f9
+Removing intermediate container 16aa16a4e6f9
+ ---> 3e3416d85b7a
+Step 7/34 : WORKDIR /app
+ ---> Running in 402438d14cfd
+Removing intermediate container 402438d14cfd
+ ---> a28deeee0751
+Step 8/34 : COPY pyproject.toml uv.lock pylock.toml ./
+ ---> 886f11f85f4a
+Step 9/34 : COPY ontology ./ontology
+ ---> 80b175b08941
+Step 10/34 : COPY db ./db
+ ---> b657967cacb9
+Step 11/34 : COPY connectors ./connectors
+ ---> 5392979aab34
+Step 12/34 : COPY parsing ./parsing
+ ---> 5b4b0ade1087
+Step 13/34 : COPY resolution ./resolution
+ ---> f7a42677efdc
+Step 14/34 : COPY reconcile ./reconcile
+ ---> 0e0fbbd22cd3
+Step 15/34 : COPY inference ./inference
+ ---> e00265c8dfdc
+Step 16/34 : COPY tasks ./tasks
+ ---> 9b46a4e355cd
+Step 17/34 : COPY api ./api
+ ---> 7895e1e4d6d7
+Step 18/34 : COPY exports ./exports
+ ---> da8ef32c5da1
+Step 19/34 : COPY orchestration ./orchestration
+ ---> 05a39a096013
+Step 20/34 : COPY policy ./policy
+ ---> fd3de683e217
+Step 21/34 : COPY ops ./ops
+ ---> 0a34c1a1e259
+Step 22/34 : COPY evidence ./evidence
+ ---> c5b040f53b18
+Step 23/34 : COPY tests/rdc ./tests/rdc
+ ---> d221a7d417a7
+Step 24/34 : COPY tests/parser_canary ./tests/parser_canary
+ ---> 1e9a270e3466
+Step 25/34 : RUN pip install --no-cache-dir "uv==0.12.6"  && uv export --frozen --no-emit-workspace --no-hashes --all-packages --no-dev       -o /tmp/constraints.txt  && uv pip install --system -c /tmp/constraints.txt ./api ./connectors ./ops  && rm /tmp/constraints.txt
+ ---> Running in 0fa0bdaf0364
+Collecting uv==0.12.6
+  Downloading uv-0.12.6-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (11 kB)
+Downloading uv-0.12.6-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (20.9 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 20.9/20.9 MB 200.5 MB/s eta 0:00:00
+Installing collected packages: uv
+Successfully installed uv-0.12.6
+[91mWARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.
+[0m[91m
+[notice] A new release of pip is available: 25.0.1 -> 26.3
+[notice] To update, run: pip install --upgrade pip
+[0m# This file was autogenerated by uv via the following command:
+#    uv export --frozen --no-emit-workspace --no-hashes --all-packages --no-dev -o /tmp/constraints.txt
+alabaster==1.0.0
+    # via sphinx
+altair==6.2.2
+    # via splink
+annotated-doc==0.0.5
+    # via fastapi
+annotated-types==0.8.0
+    # via pydantic
+antlr4-python3-runtime==4.9.3
+    # via
+    #   linkml
+    #   pyjsg
+    #   pyshexc
+anyio==4.14.2
+    # via
+    #   httpx
+    #   starlette
+arrow==1.4.0
+    # via isoduration
+attrs==26.1.0
+    # via
+    #   jsonschema
+    #   referencing
+babel==2.18.0
+    # via sphinx
+backports-zstd==1.7.0 ; python_full_version < '3.14'
+    # via pystow
+blake3==1.0.9
+    # via sig-evidence
+boto3==1.43.81
+    # via
+    #   sig-evidence
+    #   sig-exports
+botocore==1.43.81
+    # via
+    #   boto3
+    #   s3transfer
+certifi==2026.7.22
+    # via
+    #   httpcore
+    #   httpx
+    #   requests
+cfgraph==0.2.1
+    # via pyshex
+chardet==7.6.0
+    # via
+    #   pyshex
+    #   pyshexc
+charset-normalizer==3.5.1
+    # via requests
+click==8.5.0
+    # via
+    #   json-flattener
+    #   linkml
+    #   linkml-runtime
+    #   prefixcommons
+    #   sphinx-click
+    #   uvicorn
+colorama==0.4.6 ; sys_platform == 'win32'
+    # via
+    #   pytest
+    #   sphinx
+    #   tqdm
+curies==0.15.0
+    # via
+    #   linkml-runtime
+    #   prefixmaps
+deprecated==1.3.1
+    # via linkml-runtime
+docutils==0.22.4
+    # via
+    #   sphinx
+    #   sphinx-click
+duckdb==1.5.5
+    # via
+    #   sig-db
+    #   sig-exports
+    #   sig-resolution
+    #   splink
+et-xmlfile==2.0.0
+    # via openpyxl
+fastapi==0.141.1
+    # via sig-api
+fqdn==1.5.1
+    # via jsonschema
+graphviz==0.21
+    # via linkml
+greenlet==3.5.5 ; platform_machine == 'AMD64' or platform_machine == 'WIN32' or platform_machine == 'aarch64' or platform_machine == 'amd64' or platform_machine == 'ppc64le' or platform_machine == 'win32' or platform_machine == 'x86_64'
+    # via sqlalchemy
+h11==0.16.0
+    # via
+    #   httpcore
+    #   uvicorn
+h3==4.5.0
+    # via sig-exports
+hbreader==0.9.1
+    # via
+    #   jsonasobj2
+    #   linkml
+    #   linkml-runtime
+httpcore==1.0.9
+    # via httpx
+httpx==0.28.1
+    # via
+    #   sig-connectors
+    #   sig-exports
+    #   sig-ops
+idna==3.19
+    # via
+    #   anyio
+    #   httpx
+    #   jsonschema
+    #   requests
+igraph==1.0.0
+    # via splink
+imagesize==2.0.1
+    # via sphinx
+iniconfig==2.3.0
+    # via pytest
+isodate==0.7.2
+    # via linkml
+isoduration==20.11.0
+    # via jsonschema
+jinja2==3.1.6
+    # via
+    #   altair
+    #   linkml
+    #   sphinx
+    #   splink
+jmespath==1.1.0
+    # via
+    #   boto3
+    #   botocore
+json-flattener==0.1.9
+    # via linkml-runtime
+jsonasobj==1.3.1
+    # via
+    #   pyjsg
+    #   pyshexc
+jsonasobj2==1.0.4
+    # via
+    #   linkml
+    #   linkml-runtime
+jsonpointer==3.1.1
+    # via jsonschema
+jsonschema==4.26.0
+    # via
+    #   altair
+    #   linkml
+    #   linkml-runtime
+jsonschema-specifications==2025.9.1
+    # via jsonschema
+linkml==1.11.1
+    # via sig-ontology
+linkml-runtime==1.11.1
+    # via linkml
+markupsafe==3.0.3
+    # via jinja2
+narwhals==2.25.0
+    # via altair
+numpy==2.4.6 ; python_full_version < '3.12'
+    # via
+    #   pandas
+    #   splink
+numpy==2.5.2 ; python_full_version >= '3.12'
+    # via
+    #   pandas
+    #   splink
+openpyxl==3.1.5
+    # via linkml
+packaging==26.3
+    # via
+    #   altair
+    #   pytest
+    #   sphinx
+pandas==3.0.5
+    # via splink
+parse==1.22.1
+    # via linkml
+pluggy==1.6.0
+    # via pytest
+prefixcommons==0.1.12
+    # via
+    #   linkml
+    #   linkml-runtime
+prefixmaps==0.2.6
+    # via
+    #   linkml
+    #   linkml-runtime
+psycopg==3.3.4
+    # via
+    #   sig-db
+    #   sig-ops
+psycopg-binary==3.3.4 ; implementation_name != 'pypy'
+    # via psycopg
+psycopg-pool==3.3.3
+    # via sig-api
+pydantic==2.13.4
+    # via
+    #   curies
+    #   fastapi
+    #   linkml
+    #   linkml-runtime
+pydantic-core==2.46.4
+    # via pydantic
+pygments==2.21.0
+    # via
+    #   pytest
+    #   sphinx
+pyjsg==0.12.4
+    # via
+    #   linkml
+    #   pyshexc
+    #   shexjsg
+pyparsing==3.3.2
+    # via rdflib
+pypdf==6.18.1
+    # via sig-parsing
+pyshex==0.9.0
+    # via linkml
+pyshexc==0.10.3.post1
+    # via
+    #   linkml
+    #   pyshex
+pystow==0.9.2
+    # via curies
+pytest==9.1.1
+    # via pytest-logging
+pytest-logging==2015.11.4
+    # via prefixcommons
+python-dateutil==2.9.0.post0
+    # via
+    #   arrow
+    #   botocore
+    #   linkml
+    #   pandas
+pyyaml==6.0.3
+    # via
+    #   json-flattener
+    #   linkml
+    #   linkml-runtime
+    #   prefixcommons
+    #   prefixmaps
+    #   sig-ontology
+rdflib==7.6.0
+    # via
+    #   cfgraph
+    #   linkml
+    #   linkml-runtime
+    #   rdflib-jsonld
+    #   rdflib-shim
+    #   sig-exports
+    #   sig-ontology
+    #   sparqlslurper
+    #   sparqlwrapper
+rdflib-jsonld==0.6.1
+    # via rdflib-shim
+rdflib-shim==1.0.3
+    # via
+    #   pyshex
+    #   pyshexc
+    #   sparqlslurper
+referencing==0.37.0
+    # via
+    #   jsonschema
+    #   jsonschema-specifications
+requests==2.34.2
+    # via
+    #   linkml
+    #   linkml-runtime
+    #   prefixcommons
+    #   pyjsg
+    #   pyshex
+    #   sphinx
+rfc3339-validator==0.1.4
+    # via jsonschema
+rfc3987==1.3.8
+    # via jsonschema
+roman-numerals==4.1.0
+    # via sphinx
+rpds-py==2026.6.3
+    # via
+    #   jsonschema
+    #   referencing
+s3transfer==0.19.2
+    # via boto3
+shexjsg==0.9.0
+    # via
+    #   pyshex
+    #   pyshexc
+six==1.17.0
+    # via
+    #   python-dateutil
+    #   rfc3339-validator
+snowballstemmer==3.1.1
+    # via sphinx
+sparqlslurper==0.5.1
+    # via pyshex
+sparqlwrapper==2.0.0
+    # via
+    #   pyshex
+    #   sparqlslurper
+sphinx==9.0.4 ; python_full_version < '3.12'
+    # via sphinx-click
+sphinx==9.1.0 ; python_full_version >= '3.12'
+    # via sphinx-click
+sphinx-click==6.2.0
+    # via linkml
+sphinxcontrib-applehelp==2.0.0
+    # via sphinx
+sphinxcontrib-devhelp==2.0.0
+    # via sphinx
+sphinxcontrib-htmlhelp==2.1.0
+    # via sphinx
+sphinxcontrib-jsmath==1.0.1
+    # via sphinx
+sphinxcontrib-qthelp==2.0.0
+    # via sphinx
+sphinxcontrib-serializinghtml==2.0.0
+    # via sphinx
+splink==4.0.16
+    # via sig-resolution
+sqlalchemy==2.0.52
+    # via linkml
+sqlglot==30.17.0
+    # via splink
+starlette==1.6.0
+    # via
+    #   fastapi
+    #   sig-api
+texttable==1.7.0
+    # via igraph
+tqdm==4.70.0
+    # via pystow
+typing-extensions==4.16.0
+    # via
+    #   altair
+    #   anyio
+    #   blake3
+    #   fastapi
+    #   linkml
+    #   psycopg
+    #   psycopg-pool
+    #   pydantic
+    #   pydantic-core
+    #   pystow
+    #   referencing
+    #   sqlalchemy
+    #   starlette
+    #   typing-inspection
+typing-inspection==0.4.4
+    # via
+    #   fastapi
+    #   pydantic
+tzdata==2026.3
+    # via
+    #   arrow
+    #   pandas
+    #   psycopg
+uri-template==1.3.0
+    # via jsonschema
+urllib3==2.7.0
+    # via
+    #   botocore
+    #   pyshex
+    #   requests
+uvicorn==0.39.0
+    # via sig-api
+watchdog==6.0.0
+    # via linkml
+webcolors==25.10.0
+    # via jsonschema
+wrapt==2.3.0
+    # via deprecated
+[91mUsing Python 3.12.16 environment at: /usr/local
+[0m[91mResolved 125 packages in 2.33s
+[0m[91m   Building sig-inference @ file:///app/inference
+[0m[91m   Building sig-ops @ file:///app/ops
+[0m[91m   Building antlr4-python3-runtime==4.9.3
+[0m[91m   Building sig-resolution @ file:///app/resolution
+[0m[91m   Building sig-policy @ file:///app/policy
+[0m[91m   Building sig-db @ file:///app/db
+[0m[91m   Building sig-connectors @ file:///app/connectors
+[0m[91m   Building sig-exports @ file:///app/exports
+[0m[91m   Building sig-tasks @ file:///app/tasks
+[0m[91m   Building sig-ontology @ file:///app/ontology
+[0m[91m   Building sig-evidence @ file:///app/evidence
+[0m[91m   Building sig-parsing @ file:///app/parsing
+[0m[91m   Building sig-reconcile @ file:///app/reconcile
+[0m[91m   Building sig-api @ file:///app/api
+[0m[91mDownloading[0m[91m [0m[91mbotocore[0m[91m [0m[91m(15.0MiB)[0m[91m
+[0m[91mDownloading[0m[91m [0m[91mpydantic-core[0m[91m [0m[91m(2.0MiB)[0m[91m
+[0m[91mDownloading[0m[91m [0m[91msplink[0m[91m [0m[91m(2.1MiB)[0m[91m
+[0m[91mDownloading[0m[91m [0m[91mpsycopg-binary[0m[91m [0m[91m(4.9MiB)[0m[91m
+[0m[91mDownloading[0m[91m [0m[91mbabel[0m[91m [0m[91m(9.7MiB)[0m[91m
+[0m[91mDownloading[0m[91m [0m[91migraph[0m[91m [0m[91m(5.4MiB)[0m[91m
+[0m[91mDownloading[0m[91m [0m[91mpygments[0m[91m [0m[91m(1.2MiB)[0m[91m
+[0m[91mDownloading[0m[91m [0m[91mpandas[0m[91m [0m[91m(10.5MiB)[0m[91m
+[0m[91mDownloading[0m[91m [0m[91mduckdb[0m[91m [0m[91m(20.5MiB)[0m[91m
+[0m[91mDownloading[0m[91m [0m[91msphinx[0m[91m [0m[91m(3.7MiB)[0m[91m
+[0m[91mDownloading[0m[91m [0m[91mnumpy[0m[91m [0m[91m(15.9MiB)[0m[91m
+[0m[91mDownloading[0m[91m [0m[91msqlalchemy[0m[91m [0m[91m(3.2MiB)[0m[91m
+[0m[91mDownloading[0m[91m [0m[91mchardet[0m[91m [0m[91m(1.4MiB)[0m[91m
+[0m[91mDownloading[0m[91m [0m[91mh3[0m[91m [0m[91m(1.0MiB)[0m[91m
+[0m[91m      Built antlr4-python3-runtime==4.9.3
+[0m[91m   [0m[91mBuilding[0m[91m cfgraph[0m[91m==0.2.1[0m[91m
+[0m[91m   [0m[91mBuilding[0m[91m pytest-logging[0m[91m==2015.11.4[0m[91m
+[0m[91m Downloaded h3
+[0m[91m Downloaded pydantic-core
+[0m[91m Downloaded chardet
+[0m[91m      Built cfgraph==0.2.1
+[0m[91m Downloaded splink
+[0m[91m      Built pytest-logging==2015.11.4
+[0m[91m Downloaded pygments
+[0m[91m Downloaded sqlalchemy
+[0m[91m Downloaded psycopg-binary
+[0m[91m Downloaded igraph
+[0m[91m Downloaded sphinx
+[0m[91m Downloaded babel
+[0m[91m [0m[91mDownloaded[0m[91m [0m[91mnumpy[0m[91m
+[0m[91m [0m[91mDownloaded[0m[91m [0m[91mduckdb[0m[91m
+[0m[91m [0m[91mDownloaded[0m[91m [0m[91mpandas[0m[91m
+[0m[91m [0m[91mDownloaded[0m[91m [0m[91mbotocore[0m[91m
+[0m[91m      [0m[91mBuilt[0m[91m sig-api[0m[91m @ file:///app/api[0m[91m
+[0m[91m      [0m[91mBuilt[0m[91m sig-reconcile[0m[91m @ file:///app/reconcile[0m[91m
+[0m[91m      Built sig-tasks @ file:///app/tasks
+[0m[91m      Built sig-evidence @ file:///app/evidence
+[0m[91m      [0m[91mBuilt[0m[91m sig-exports[0m[91m @ file:///app/exports[0m[91m
+[0m[91m      [0m[91mBuilt[0m[91m sig-parsing[0m[91m @ file:///app/parsing[0m[91m
+[0m[91m      Built sig-ontology @ file:///app/ontology
+[0m[91m      Built sig-db @ file:///app/db
+[0m[91m      Built sig-connectors @ file:///app/connectors
+[0m[91m      Built sig-policy @ file:///app/policy
+[0m[91m      [0m[91mBuilt[0m[91m sig-ops[0m[91m @ file:///app/ops[0m[91m
+[0m[91m      Built sig-resolution @ file:///app/resolution
+[0m[91m      Built sig-inference @ file:///app/inference
+[0m[91mPrepared 125 packages in 5.76s
+[0m[91mInstalled 125 packages in 341ms
+[0m[91m + alabaster==1.0.0
+ + altair==6.2.2
+ + annotated-doc==0.0.5
+ + annotated-types==0.8.0
+ + antlr4-python3-runtime==4.9.3
+ + anyio==4.14.2
+ + arrow==1.4.0
+ + attrs==26.1.0[0m[91m
+ + babel==2.18.0
+ + backports-zstd==1.7.0
+ + blake3==1.0.9
+ + boto3==1.43.81
+ + botocore==1.43.81
+ + certifi==2026.7.22
+ + cfgraph==0.2.1
+ + chardet==7.6.0
+ + charset-normalizer==3.5.1
+ + click==8.5.0
+ + curies==0.15.0
+ + deprecated==1.3.1
+ + docutils==0.22.4
+ + duckdb==1.5.5
+ + et-xmlfile==2.0.0
+ + fastapi==0.141.1
+ + fqdn==1.5.1
+ + graphviz==0.21
+ + greenlet==3.5.5
+ + h11==0.16.0
+ + h3==4.5.0
+ + hbreader==0.9.1
+ + httpcore==1.0.9
+ + httpx==0.28.1
+ + idna==3.19
+ + igraph==1.0.0
+ + imagesize==2.0.1
+ + iniconfig==2.3.0
+ + isodate==0.7.2
+ + isoduration==20.11.0
+ + jinja2==3.1.6
+ + jmespath==1.1.0
+ + json-flattener==0.1.9
+ + jsonasobj==1.3.1
+ + jsonasobj2==1.0.4
+ + jsonpointer==3.1.1
+ + jsonschema==4.[0m[91m26.0
+ + jsonschema-specifications==2025.9.1
+ + linkml==1.11.1
+ + linkml-runtime==1.11.1
+ + markupsafe==3.0.3
+ + narwhals==2.25.0
+ + numpy==2.5.2
+ + openpyxl==3.1.5
+ + packaging==26.3
+ + pandas==3.0.5
+ + parse==1.22.1
+ + pluggy==1.6.0
+ + prefixcommons==0.1.12
+ + prefixmaps==0.2.6
+ + psycopg==3.3.4
+ + psycopg-binary==3.3.4
+ + psycopg-pool==3.3.3
+ + pydantic==2.13.4
+ + pydantic-core==2.46.4
+ + pygments==2.21.0
+ + pyjsg==0[0m[91m.12.4[0m[91m
+[0m[91m [0m[91m+[0m[91m [0m[91mpyparsing[0m[91m==3[0m[91m.[0m[91m3[0m[91m.[0m[91m2[0m[91m
+ [0m[91m+ [0m[91mpypdf==6[0m[91m.[0m[91m18.[0m[91m1[0m[91m
+ [0m[91m+[0m[91m [0m[91mpyshex==[0m[91m0[0m[91m.[0m[91m9[0m[91m.[0m[91m0
+[0m[91m + [0m[91mpyshexc[0m[91m==[0m[91m0[0m[91m.10[0m[91m.3.post[0m[91m1
+ [0m[91m+[0m[91m [0m[91mpystow[0m[91m==[0m[91m0.[0m[91m9.[0m[91m2
+[0m[91m [0m[91m+ [0m[91mpytest[0m[91m==[0m[91m9[0m[91m.[0m[91m1.1[0m[91m
+[0m[91m [0m[91m+ pytest-logging==2015.[0m[91m11[0m[91m.4
+ + python-dateutil==2.9.0.post0
+ + pyyaml==6.0.3
+[0m[91m +[0m[91m rdflib==7.6.0
+ + rdflib-jsonld[0m[91m==0.6.1
+ + rdflib-shim==1.0.3
+[0m[91m + referencing==0.37.0
+ +[0m[91m requests==2.34.2
+ + [0m[91mrfc3339-validator==0.1.4
+ + rfc3987==1.3.8
+[0m[91m [0m[91m+[0m[91m [0m[91mroman-numerals==4.1[0m[91m.0
+ + rpds-py==2026.6.3
+ + s3transfer[0m[91m==0.19.2
+ + shexjsg==0[0m[91m.9.0
+ + sig-api==0.[0m[91m1.0 (from file:///app/api)
+ + sig-connectors==0.1.0 (from file:///app/connectors)
+ + [0m[91msig-db==0.1.0 (from file:///app/db)
+ + sig-evidence[0m[91m==0.1.0 (from file:///app/evidence)
+[0m[91m + sig-exports==0.1.0 (from file:///app/exports)
+ + sig-inference==0.1.0 (from file:///app/inference)
+ + sig-ontology==0.1.0 (from file:///app/ontology)
+ + sig-ops==0.1.0 (from file:///app/ops)
+ + sig-parsing==0.1.0 (from file:///app/parsing)
+ + [0m[91msig-policy[0m[91m==[0m[91m0.1.0 (from file:///app/policy[0m[91m)
+ + sig-reconcile[0m[91m==0.1.0 (from file:///app/reconcile)
+ + sig-resolution==0.[0m[91m1.0 (from file:///app/resolution)
+ + sig-tasks[0m[91m==0.1.0 (from file:///app/tasks)
+[0m[91m + six==1.17.0
+[0m[91m + snowballstemmer==3.1.1
+ + sparqlslurper[0m[91m==0.5.1
+ [0m[91m+[0m[91m sparqlwrapper==2.0.0
+ + sphinx==9.1.0[0m[91m
+ + sphinx-click==6.2.0
+ [0m[91m+ sphinxcontrib-applehelp==2.0.0
+ +[0m[91m sphinxcontrib-devhelp==2.0.0
+ + [0m[91msphinxcontrib-htmlhelp==2.1.0
+ + sphinxcontrib-jsmath==1.0.1
+ + sphinxcontrib-qthelp==2.[0m[91m0.0
+ + sphinxcontrib-serializinghtml==2.0.0
+ + splink==4.0.16
+ + sqlalchemy==2.0.52
+ + [0m[91msqlglot==30.17.0
+ + starlette==1.6.0
+ + texttable==1.7.0
+ + tqdm==4.70.0
+ + typing-extensions==4.16.0
+ + typing-inspection==0.4.4
+ + tzdata==[0m[91m2026.3
+ + uri-template==1.3.0
+ + urllib3==2.7.0
+ + uvicorn==0.39.0
+ + watchdog==6.0.0
+ + webcolors==25.10.0
+ + wrapt==2.3.0
+[0mRemoving intermediate container 0fa0bdaf0364
+ ---> 533842bfa24b
+Step 26/34 : RUN apt-get update  && apt-get install -y --no-install-recommends libstdc++6 libsqlite3-0 zlib1g  && rm -rf /var/lib/apt/lists/*
+ ---> Running in 7aca22b86a30
+Hit:1 http://deb.debian.org/debian trixie InRelease
+Get:2 http://deb.debian.org/debian trixie-updates InRelease [47.3 kB]
+Get:3 http://deb.debian.org/debian-security trixie-security InRelease [43.4 kB]
+Get:4 http://deb.debian.org/debian trixie/main amd64 Packages [9678 kB]
+Get:5 http://deb.debian.org/debian trixie-updates/main amd64 Packages [1108 B]
+Get:6 http://deb.debian.org/debian-security trixie-security/main amd64 Packages [306 kB]
+Fetched 10.1 MB in 1s (11.6 MB/s)
+Reading package lists...
+Reading package lists...
+Building dependency tree...
+Reading state information...
+libstdc++6 is already the newest version (14.2.0-19).
+libstdc++6 set to manually installed.
+libsqlite3-0 is already the newest version (3.46.1-7+deb13u2).
+The following packages will be upgraded:
+  zlib1g
+1 upgraded, 0 newly installed, 0 to remove and 0 not upgraded.
+Need to get 88.7 kB of archives.
+After this operation, 1024 B disk space will be freed.
+Get:1 http://deb.debian.org/debian-security trixie-security/main amd64 zlib1g amd64 1:1.3.dfsg+really1.3.1-1+deb13u1 [88.7 kB]
+[91mdebconf: unable to initialize frontend: Dialog
+debconf: (TERM is not set, so the dialog frontend is not usable.)
+debconf: falling back to frontend: Readline
+[0m[91mdebconf: unable to initialize frontend: Readline
+debconf: (Can't locate Term/ReadLine.pm in @INC (you may need to install the Term::ReadLine module) (@INC entries checked: /etc/perl /usr/local/lib/x86_64-linux-gnu/perl/5.40.1 /usr/local/share/perl/5.40.1 /usr/lib/x86_64-linux-gnu/perl5/5.40 /usr/share/perl5 /usr/lib/x86_64-linux-gnu/perl-base /usr/lib/x86_64-linux-gnu/perl/5.40 /usr/share/perl/5.40 /usr/local/lib/site_perl) at /usr/share/perl5/Debconf/FrontEnd/Readline.pm line 8, <STDIN> line 1.)
+debconf: falling back to frontend: Teletype
+[0m[91mdebconf: unable to initialize frontend: Teletype
+debconf: (This frontend requires a controlling tty.)
+debconf: falling back to frontend: Noninteractive
+[0mFetched 88.7 kB in 0s (1141 kB/s)
+(Reading database ... (Reading database ... 5%(Reading database ... 10%(Reading database ... 15%(Reading database ... 20%(Reading database ... 25%(Reading database ... 30%(Reading database ... 35%(Reading database ... 40%(Reading database ... 45%(Reading database ... 50%(Reading database ... 55%(Reading database ... 60%(Reading database ... 65%(Reading database ... 70%(Reading database ... 75%(Reading database ... 80%(Reading database ... 85%(Reading database ... 90%(Reading database ... 95%(Reading database ... 100%(Reading database ... 5658 files and directories currently installed.)
+Preparing to unpack .../zlib1g_1%3a1.3.dfsg+really1.3.1-1+deb13u1_amd64.deb ...
+Unpacking zlib1g:amd64 (1:1.3.dfsg+really1.3.1-1+deb13u1) over (1:1.3.dfsg+really1.3.1-1+b1) ...
+Setting up zlib1g:amd64 (1:1.3.dfsg+really1.3.1-1+deb13u1) ...
+Processing triggers for libc-bin (2.41-12+deb13u4) ...
+Removing intermediate container 7aca22b86a30
+ ---> 0a96006a4309
+Step 27/34 : RUN python -c "import duckdb; duckdb.connect().execute('INSTALL spatial')"
+ ---> Running in 1e3afab1e7b4
+Removing intermediate container 1e3afab1e7b4
+ ---> 51a3ad6eb929
+Step 28/34 : COPY --from=tippecanoe-build /usr/local/bin/tippecanoe /usr/local/bin/tippecanoe
+ ---> bd311f297967
+Step 29/34 : ENV SIG_API_HOST=0.0.0.0     SIG_PG_USER=sig     SIG_PG_DB=sig     SIG_API_ROLE=sig_read_public
+ ---> Running in 7df7b0fbcb13
+Removing intermediate container 7df7b0fbcb13
+ ---> 975b6dbdde6d
+Step 30/34 : ARG SIG_CODE_COMMIT=""
+ ---> Running in 1dffd4111a18
+Removing intermediate container 1dffd4111a18
+ ---> a10ca4aecee4
+Step 31/34 : LABEL org.opencontainers.image.revision="${SIG_CODE_COMMIT}"
+ ---> Running in 5e5c1efaac90
+Removing intermediate container 5e5c1efaac90
+ ---> ba6b50a746de
+Step 32/34 : ENV SIG_CODE_COMMIT="${SIG_CODE_COMMIT}"
+ ---> Running in d6379a4546cd
+Removing intermediate container d6379a4546cd
+ ---> 00e620e1e710
+Step 33/34 : EXPOSE 8080
+ ---> Running in e6d1b53ce5fd
+Removing intermediate container e6d1b53ce5fd
+ ---> 3459e04d6462
+Step 34/34 : CMD ["sh", "-c", "REG=${SIG_RELEASE_REGISTRY:-/mnt/rel/registry}; if [ -d \"$REG\" ]; then REG_FLAG=\"--release-registry $REG\"; else REG_FLAG=; fi; if [ -n \"$SIG_CLOUDSQL_CONNECTION\" ]; then exec sig-api serve --host 0.0.0.0 --port ${PORT:-8080} --dsn \"postgresql://${SIG_PG_USER}:${SIG_PG_PASSWORD}@/${SIG_PG_DB}?host=/cloudsql/${SIG_CLOUDSQL_CONNECTION}\" ${SIG_API_ROLE:+--role \"$SIG_API_ROLE\"} $REG_FLAG; else exec sig-api serve --host 0.0.0.0 --port ${PORT:-8080} $REG_FLAG; fi"]
+ ---> Running in 415f9b833e17
+Removing intermediate container 415f9b833e17
+ ---> 1d432cb1f71b
+Successfully built 1d432cb1f71b
+Successfully tagged us-central1-docker.pkg.dev/zeta-medley-508121-u7/sig/sig-api:p37-2-80ec72ba6534
+PUSH
+Pushing us-central1-docker.pkg.dev/zeta-medley-508121-u7/sig/sig-api:p37-2-80ec72ba6534
+The push refers to repository [us-central1-docker.pkg.dev/zeta-medley-508121-u7/sig/sig-api]
+6b87ef6acb0d: Preparing
+580c04a162ae: Preparing
+25b50fd5f385: Preparing
+a103ce46f56f: Preparing
+492d76bf24eb: Preparing
+0196071028ef: Preparing
+cf2fcf0f871f: Preparing
+59a150f229f7: Preparing
+513fb84e680e: Preparing
+cad82e1da6d6: Preparing
+2a5308dc61fa: Preparing
+6e6693d6bc16: Preparing
+8a6b1377b83d: Preparing
+916ee9aa2dcb: Preparing
+4949cb80ea78: Preparing
+502eb090c774: Preparing
+367cb9e62f51: Preparing
+08b8cf7fb078: Preparing
+d9a9fd518cc7: Preparing
+e8f3fa93f52e: Preparing
+225eeaa1d07d: Preparing
+01632100fcee: Preparing
+340931a1d986: Preparing
+96a69f98ae07: Preparing
+3dc3efdf0110: Preparing
+dd57f90311a2: Preparing
+2a5308dc61fa: Waiting
+6e6693d6bc16: Waiting
+8a6b1377b83d: Waiting
+916ee9aa2dcb: Waiting
+4949cb80ea78: Waiting
+502eb090c774: Waiting
+367cb9e62f51: Waiting
+08b8cf7fb078: Waiting
+d9a9fd518cc7: Waiting
+e8f3fa93f52e: Waiting
+225eeaa1d07d: Waiting
+01632100fcee: Waiting
+340931a1d986: Waiting
+96a69f98ae07: Waiting
+3dc3efdf0110: Waiting
+dd57f90311a2: Waiting
+cf2fcf0f871f: Pushed
+cad82e1da6d6: Pushed
+492d76bf24eb: Pushed
+25b50fd5f385: Pushed
+513fb84e680e: Pushed
+59a150f229f7: Pushed
+0196071028ef: Pushed
+6b87ef6acb0d: Pushed
+8a6b1377b83d: Pushed
+6e6693d6bc16: Pushed
+916ee9aa2dcb: Pushed
+4949cb80ea78: Pushed
+2a5308dc61fa: Pushed
+367cb9e62f51: Pushed
+502eb090c774: Pushed
+580c04a162ae: Pushed
+08b8cf7fb078: Pushed
+225eeaa1d07d: Pushed
+01632100fcee: Pushed
+e8f3fa93f52e: Pushed
+340931a1d986: Pushed
+d9a9fd518cc7: Pushed
+3dc3efdf0110: Pushed
+96a69f98ae07: Pushed
+dd57f90311a2: Pushed
+a103ce46f56f: Pushed
+p37-2-80ec72ba6534: digest: sha256:9aaec8661bfdfd6386707e8c3e9fdb3da1c1715918ad2881b664658df2a05489 size: 5778
+DONE
+--------------------------------------------------------------------------------
+ID                                    CREATE_TIME                DURATION  SOURCE                                                                                               IMAGES                                                                           STATUS
+e26a2a8d-e571-49b6-8f5f-e605cdac677c  2026-11-20T08:45:03+00:00  2M53S     gs://zeta-medley-508121-u7_cloudbuild/source/1795164297.728788-5c552955443741ad8887c00961b737af.tgz  us-central1-docker.pkg.dev/zeta-medley-508121-u7/sig/sig-api:p37-2-80ec72ba6534  SUCCESS
