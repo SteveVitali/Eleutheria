@@ -1,0 +1,47 @@
+# wave-c.sh --apply --leg L1 --inputs live-1/inputs-l1-admit.json — driver transcript (salient lines, verbatim)
+# start 2026-11-20T06:33:09Z · SIG_GCP_PROJECT=zeta-medley-508121-u7 · mode=apply · sha256sum shim on PATH
+# (the session's `tee` failed on a missing dir; the full stdout was captured in the runner transcript —
+# these are the verbatim driver lines from it; the gate's stdout JSON is under ../gates/)
+
+==============================================================
+SIG GCP IaC — Wave-C activation (P37.2; window 2026-11-16→11-20; ING-GO-C) (mode=apply)
+  project=zeta-medley-508121-u7 region=us-central1 zone=us-central1-a
+==============================================================
+gate: sig-ops wave-c-gate --inputs docs/build/reports/p37.2-wave-c/live-1/inputs-l1-admit.json (leg L1)
+  → decision "go" (the admit verdict JSON: ../gates/l1-admit-2026-11-20T0633Z.json)
+-- L1.1 OM-14 pre-state: instance + job/trigger JSON, sources.toml sha, cadence --check
++ gcloud sql instances describe sig-pg --project zeta-medley-508121-u7 --format=json
++ gcloud run jobs describe sig-ingest-osm-overpass --region us-central1 --project zeta-medley-508121-u7 --format=json
++ gcloud run jobs describe sig-ingest-camreg-batch-05 --region us-central1 --project zeta-medley-508121-u7 --format=json
++ gcloud run jobs describe sig-materialize --region us-central1 --project zeta-medley-508121-u7 --format=json
++ gcloud scheduler jobs list --location us-central1 --project zeta-medley-508121-u7 --format=json
++ sha256sum connectors/src/connectors/data/sources.toml connectors/src/connectors/data/camera_registry_targets.toml ops/cadence.toml
++ uv run sig-ops cadence --check
+cadence check OK — every loadable live-target source has a cadence row; cron semantics + pin schema lint clean
+-- L1.2 AR-2 on-demand backup — poll to DONE, verify SUCCESSFUL before the first mutation
+backup: issued op 78c8589d-3c4a-4d33-80f2-412800000032
+op 78c8589d-3c4a-4d33-80f2-412800000032: DONE
+[ {"id": "1795156395816", "type": "ON_DEMAND", "status": "SUCCESSFUL",
+   "windowStartTime": "2026-11-20T06:33:15.816Z", "endTime": "2026-11-20T06:34:47.163Z",
+   "instance": "sig-pg", "backupKind": "SNAPSHOT", "databaseVersion": "POSTGRES_18"} ]
+record the newest backup id + status=SUCCESSFUL into the close inputs
+-- L1.3 disk pre-grow to 25 GB — ONE-WAY: read the current size first,
+   record SKIP when already ≥25 (a resumed run never re-grows blindly)
+current dataDiskSizeGb=15
+{"name": "sig-pg", "project": "zeta-medley-508121-u7", "settings": {"dataDiskSizeGb": "25"}}
+patch 'disk-pre-grow-25': issued op 9566e478-6d77-4fba-b24b-cd8200000032
+op 9566e478-6d77-4fba-b24b-cd8200000032: DONE
+-- L1.4 autoresize limit — Q-23's adopted posture caps at 40 GB
+current storageAutoResizeLimit=0
+{"name": "sig-pg", "project": "zeta-medley-508121-u7", "settings": {"storageAutoResizeLimit": "40"}}
+patch 'autoresize-limit-40': issued op f3166b78-33cf-4696-9b63-5f4e00000032
+op f3166b78-33cf-4696-9b63-5f4e00000032: DONE
+-- L1.5 read-back for the close gate: dataDiskSizeGb ≥25, limit ==40 —
+   collect the close evidence and re-gate with action=close
++ gcloud sql instances describe sig-pg --project zeta-medley-508121-u7 --format=value(settings.dataDiskSizeGb,settings.storageAutoResizeLimit,settings.tier)
+25	40	db-custom-1-3840
+wave-c.sh: leg L1 admit-phase steps executed — collect the close evidence and re-gate with action=close
+DRIVER-EXIT=0
+
+# close invocation: wave-c.sh --apply --leg L1 --inputs live-1/inputs-l1-close.json (now=2026-11-20T06:36:53Z)
+# → "wave-c.sh: leg L1 close gated green — record the leg report under docs/build/runs/P37.2.md"
