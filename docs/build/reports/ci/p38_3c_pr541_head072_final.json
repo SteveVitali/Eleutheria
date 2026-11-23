@@ -1,0 +1,144 @@
+{
+  "schema": "ci-boundary/1",
+  "tool": "docs/build/tools/ci_boundary.py",
+  "requested_pr": 541,
+  "pr": 541,
+  "head_sha": "0721661e48331ddc47c814083d5f15a20fcf5e64",
+  "head_ref": "r11/P38.3c-round11-integration-plan-2",
+  "base": "main",
+  "read_at": "2026-11-23T17:01:19Z",
+  "prefix": "r11/",
+  "scope": "the current r11/ PR and its open r11/ ancestors; never #141–#190",
+  "required": [
+    "python",
+    "docs",
+    "composed",
+    "security",
+    "web"
+  ],
+  "stack": [
+    {
+      "pr": 541,
+      "head_ref": "r11/P38.3c-round11-integration-plan-2",
+      "head_sha": "0721661e48331ddc47c814083d5f15a20fcf5e64",
+      "base": "main",
+      "pr_state": "OPEN",
+      "is_draft": true,
+      "mergeable": "MERGEABLE",
+      "state": "fail",
+      "detail": "#541 is a draft"
+    }
+  ],
+  "stack_stop": "base `main` is outside the `r11/` scope — the Round-10 stack (#141–#190) is never read (B-15)",
+  "stack_digest": "480068c2819c77ae5e1afb9ab479d33c47b362882c6b4d85ace3dad449eb4d12",
+  "local_head": null,
+  "external": {
+    "read_at": "2026-11-23T17:01:20Z",
+    "since": "2026-11-23",
+    "fetch": "ok",
+    "main_sha": "89a23c27e568e4c52d214435fe6f372d0185c2fb",
+    "chain_descends": true,
+    "ancestry": [],
+    "merged_since": [
+      {
+        "number": 538,
+        "head_ref": "r11/P38.3b-round11-spec-reconciliation",
+        "head_sha": "ee9fa5a356a491f707486dbd09b711993ef19154",
+        "base": "main",
+        "merged_at": "2026-11-23T15:17:13Z",
+        "on_stack": true
+      }
+    ],
+    "open_off_chain": []
+  },
+  "flake_entries": [
+    "LH-PERF-1",
+    "PY-SUBSTR-1",
+    "DOCKERHUB-RATE-1",
+    "DOCKERHUB-RATE-2",
+    "DOCKERHUB-RATE-3",
+    "NPM-AUDIT-503-1",
+    "PY-STUB-1",
+    "UBUNTU-APT-503-1"
+  ],
+  "reruns": [],
+  "checks": [
+    {
+      "pr": 541,
+      "name": "python",
+      "required": true,
+      "check_run_id": 137819143064,
+      "run_id": "45210900959",
+      "status": "completed",
+      "conclusion": "success",
+      "bucket": "pass",
+      "started_at": "2026-11-23T15:56:57Z",
+      "completed_at": "2026-11-23T16:17:11Z",
+      "link": "https://github.com/SteveVitali/Eleutheria/actions/runs/45210900959/job/137819143064",
+      "waived": false
+    },
+    {
+      "pr": 541,
+      "name": "docs",
+      "required": true,
+      "check_run_id": 137819143282,
+      "run_id": "45210900959",
+      "status": "completed",
+      "conclusion": "success",
+      "bucket": "pass",
+      "started_at": "2026-11-23T15:56:56Z",
+      "completed_at": "2026-11-23T16:00:29Z",
+      "link": "https://github.com/SteveVitali/Eleutheria/actions/runs/45210900959/job/137819143282",
+      "waived": false
+    },
+    {
+      "pr": 541,
+      "name": "composed",
+      "required": true,
+      "check_run_id": 137819143428,
+      "run_id": "45210900959",
+      "status": "completed",
+      "conclusion": "success",
+      "bucket": "pass",
+      "started_at": "2026-11-23T15:56:57Z",
+      "completed_at": "2026-11-23T16:00:44Z",
+      "link": "https://github.com/SteveVitali/Eleutheria/actions/runs/45210900959/job/137819143428",
+      "waived": false
+    },
+    {
+      "pr": 541,
+      "name": "security",
+      "required": true,
+      "check_run_id": 137819143551,
+      "run_id": "45210900959",
+      "status": "completed",
+      "conclusion": "success",
+      "bucket": "pass",
+      "started_at": "2026-11-23T15:56:57Z",
+      "completed_at": "2026-11-23T15:57:28Z",
+      "link": "https://github.com/SteveVitali/Eleutheria/actions/runs/45210900959/job/137819143551",
+      "waived": false
+    },
+    {
+      "pr": 541,
+      "name": "web",
+      "required": true,
+      "check_run_id": 137819143545,
+      "run_id": "45210900959",
+      "status": "completed",
+      "conclusion": "success",
+      "bucket": "pass",
+      "started_at": "2026-11-23T15:56:57Z",
+      "completed_at": "2026-11-23T16:59:16Z",
+      "link": "https://github.com/SteveVitali/Eleutheria/actions/runs/45210900959/job/137819143545",
+      "waived": false
+    }
+  ],
+  "waivers": 5,
+  "polls": 1,
+  "waited_s": 0.0,
+  "state": "fail",
+  "kind": "stack",
+  "line": "blockedOn: CI stack on #541@0721661 (-): #541 is a draft",
+  "exit": 3
+}
