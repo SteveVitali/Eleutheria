@@ -600,6 +600,7 @@ export default function MapApp(props: MapAppProps): JSX.Element {
   const [statements, setStatements] = useState<StatementRow[]>([]);
   const popupRef = useRef<import("maplibre-gl").Popup | null>(null);
   const focusReturnRef = useRef<HTMLElement | null>(null);
+  const selectionTabIdentityRef = useRef<{ focus: string; release: string | null } | null>(null);
   const listRef = useRef<HTMLDivElement | null>(null);
   const canvasNoteRef = useRef<HTMLParagraphElement | null>(null);
   const drawnSourceIds = useRef<string[]>([]);
@@ -1239,10 +1240,21 @@ export default function MapApp(props: MapAppProps): JSX.Element {
   ]);
 
   // ---------------------------------------------- tile-prop selection //
+  const activateSelection = useCallback((focus: string, explicit: boolean) => {
+    const release = state.release ?? props.release;
+    const previous = selectionTabIdentityRef.current;
+    // Reconcile selection data without undoing a later user tab choice.
+    // A new focus/release or an explicit selection still opens the panel.
+    if (explicit || previous?.focus !== focus || previous?.release !== release) {
+      setTab("selected");
+    }
+    selectionTabIdentityRef.current = { focus, release };
+  }, [state.release, props.release]);
+
   // Declared before the selection effects: the focus effect resolves a
   // focus= rk through this same path under tileMode (P37.63).
   const selectTileProps = useCallback(
-    (p: Record<string, unknown>, lngLat: { lng: number; lat: number }) => {
+    (p: Record<string, unknown>, lngLat: { lng: number; lat: number }, explicit = true) => {
       const rk = String(p.rk ?? "");
       const rel = state.release ?? props.release;
       const routes = rel && rk ? recordRoutes(rel, rk) : null;
@@ -1254,7 +1266,7 @@ export default function MapApp(props: MapAppProps): JSX.Element {
         },
       );
       setSelection(model);
-      setTab("selected");
+      activateSelection(rk, explicit);
       // P37.63 (K1 §3.4/§9.3 J1): the selection must round-trip through the
       // share URL — focus= is the workspace-state selection param, so a
       // tile-path select writes it exactly like the fixtures path does.
@@ -1284,7 +1296,7 @@ export default function MapApp(props: MapAppProps): JSX.Element {
         popupRef.current = popup;
       }
     },
-    [state.release, state.focus, props.release, update],
+    [state.release, state.focus, props.release, update, activateSelection],
   );
 
   // ------------------------------------------------- selection effects //
@@ -1292,6 +1304,7 @@ export default function MapApp(props: MapAppProps): JSX.Element {
     const focus = state.focus;
     if (!isBrowser) return;
     if (focus === null) {
+      selectionTabIdentityRef.current = null;
       setSelection(null);
       setStatements([]);
       popupRef.current?.remove();
@@ -1308,6 +1321,7 @@ export default function MapApp(props: MapAppProps): JSX.Element {
       selectTileProps(
         tileHit.props as Record<string, unknown>,
         tileHit.lngLat,
+        false,
       );
       return;
     }
@@ -1320,7 +1334,7 @@ export default function MapApp(props: MapAppProps): JSX.Element {
         disputeHref: withBase(`dispute/?subject=${encodeURIComponent(focus)}`),
       });
       setSelection(model);
-      setTab("selected");
+      activateSelection(focus, false);
       mapRef.current?.jumpTo({
         center: [rec.lon, rec.lat],
         zoom: Math.max(mapRef.current.getZoom(), 9),
@@ -1359,7 +1373,7 @@ export default function MapApp(props: MapAppProps): JSX.Element {
         disputeHref: null,
         located: false,
       });
-      setTab("selected");
+      activateSelection(focus, false);
       fetch(routes.jsonHref)
         .then((r) => {
           if (!r.ok) throw new Error(`HTTP ${r.status}`);
@@ -1434,7 +1448,7 @@ export default function MapApp(props: MapAppProps): JSX.Element {
       disputeHref: null,
       located: false,
     });
-  }, [state.focus, state.release, props.release, recordById, tileMode, selectTileProps]);
+  }, [state.focus, state.release, props.release, recordById, tileMode, selectTileProps, activateSelection]);
 
   // P37.18 (K1 §4.6): selecting a record scrolls its In-view row into view.
   useEffect(() => {
@@ -1481,7 +1495,7 @@ export default function MapApp(props: MapAppProps): JSX.Element {
     if (selection?.id === focus && selection.located) return;
     const hit = tileByRk.current.get(focus);
     if (!hit) return;
-    selectTileProps(hit.props as Record<string, unknown>, hit.lngLat);
+    selectTileProps(hit.props as Record<string, unknown>, hit.lngLat, false);
   }, [viewRows, state.focus, tileMode, selection, selectTileProps]);
 
   // ------------------------------------------- compartment + facet fx //
@@ -2084,7 +2098,15 @@ export default function MapApp(props: MapAppProps): JSX.Element {
                 aria-selected={tab === id}
                 className={tab === id ? "sig-map-app__tab is-active" : "sig-map-app__tab"}
                 data-testid={`map-tab-${id}`}
-                onClick={() => setTab(id)}
+                onClick={() => {
+                  // A user tab choice also owns an unresolved focus identity;
+                  // later tile hydration must not override that choice.
+                  selectionTabIdentityRef.current = state.focus === null ? null : {
+                    focus: state.focus,
+                    release: state.release ?? props.release,
+                  };
+                  setTab(id);
+                }}
               >
                 {label}
               </button>

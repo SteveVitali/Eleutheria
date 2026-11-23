@@ -102,6 +102,33 @@ for (const pick of PICKS) {
       await route.fulfill({ response: resp, body, headers });
     });
     await gotoSettled(page, path);
+    // MapLibre's load/draw latches can precede the debounced In-view list.
+    // Detect the static mount marker as well as the hydrated island, so a
+    // late mount cannot silently skip these waits. `data-drawn` latches
+    // after any drawn compartment source loads; it is not an all-source
+    // completion signal. The seeded map case checks actual list status below.
+    const mapMount = page.locator(
+      '[data-testid="map-island"], [data-testid="map-island-placeholder"]',
+    );
+    if ((await mapMount.count()) > 0) {
+      const island = page.getByTestId("map-island");
+      await expect(island).toHaveAttribute("data-ready", "true", {
+        timeout: 30_000,
+      });
+      await expect(island).toHaveAttribute("data-drawn", "true", {
+        // The national tile storm's recorded bound — the same arm the
+        // J1–J10 battery uses (map-journeys' DRAWN_TIMEOUT).
+        timeout: IS_NATIONAL ? 120_000 : 20_000,
+      });
+    }
+    if (pick.group.id === "map") {
+      // Drawn can precede the debounced list update. This seeded, unfiltered
+      // route must show populated groups before capture; the unchanged image
+      // assertion still checks their appearance, not all-source completeness.
+      await expect(page.getByTestId("inview-status")).toHaveText(
+        /^[1-9]\d* records? in view — grouped by place$/,
+      );
+    }
     await expect(page).toHaveScreenshot(`${pick.group.id}--${testInfo.project.name}.png`, {
       // GPU-rastered surfaces (MapLibre/sigma) are not cross-runner
       // deterministic — masked per SIG-UI-152; [data-visual-mask] is the

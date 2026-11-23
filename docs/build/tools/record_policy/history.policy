@@ -1781,3 +1781,13 @@ seed-commit 72490776
 # Scope: the append-only findings attributed to 6c48c0a9's placeholder
 # fills only; no other commit borrows the exemption.
 seed-commit 6c48c0a9
+
+# ── P38.3c #541 — LEDGER GATE DECISIONS row `2026-11-20T18:20Z | P37.2` (operator-approved 2026-11-23) ──
+# Row 366 (introduced by ddaa969e, committed 2026-11-20T18:08:37Z) records the operator's signed answer
+# "I'll create them now" with a date cell 11 min after its own commit (R1). The row is signed and
+# append-only, so it cannot carry an inline `future-ok:` marker, and the source-bound
+# `gate-row-recording-date` correction (record_corrections.md) accepts only GATE-* ticket rows. Its
+# sibling GATE-ACCEPT-R11 row 365 uses that correction instead. Operator approved "Scoped allow entry"
+# (2026-11-23). This entry exempts only this exact row text and expires soon after landing. It is not
+# an assertion that the decision happened at 18:20Z, and it changes no signed bytes or gate outcome.
+allow docs/build/LEDGER.md 2026-12-14T00:00:00Z | 2026-11-20T18:20Z | P37.2 | P37.2-l3 keyed secrets — operator is creating them |
