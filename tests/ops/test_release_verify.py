@@ -1039,6 +1039,7 @@ def test_verb_verify_tree_p_mode_gates_unpromoted_namespaces(tmp_path: Path) -> 
         results_dir=tmp_path / "results",
         api_fetcher=_ApiFixture(work_dir, pub),
         quality_report=_quality_report(),
+        now=T0,
     )
     non_pass = {
         (r["check"], r["status"], r.get("detail"))
