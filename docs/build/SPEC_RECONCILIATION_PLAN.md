@@ -191,3 +191,45 @@ Residual (tracked, not a spec proposal):
 - The `ticket-added` rows dispositioned **Appendix G** or **impl-detail** in `TICKET_VS_SPEC.md` were
   deliberately *not* folded back (they are data/process/plumbing choices, not new requirements); they
   are recorded rather than proposed.
+
+---
+
+## Round 11 (P38.3b, 2026-11-19) — the landed-design reconciliation proposals
+
+Appended by P38.3b (manifest row 506, `reconcile-build mode=spec`,
+`apply_amendments=false`). The Round-11 classification and deviation-coverage
+check live in `docs/build/reports/p38.3b-round11-spec-reconciliation.md`; the
+decision record is **ADR-253**. Posture: **proposals only** — every row below is
+unticked; the operator ticks and `reconcile-build mode=spec
+apply_amendments=true` applies each ticked row through `spec_src` + `BUILD.sh`
+(`docs/2_canonical_design_spec.md` is regenerated, never edited directly). The
+owed apply is `D-P38.3b-1`. No proposal weakens a MUST, so none is a waiver; the
+signed deviations of GATE-ACCEPT-R11 need no amendment (each already maps to a
+recorded spec state — report §5).
+
+### Proposed amendments (all unticked)
+
+| # | tick | target (`spec_src`) | anchor | before → after (summary) |
+|---|---|---|---|---|
+| R11-REC-1 | [ ] | `96c_partXII_s56_round11.md` | `### 56.9 Traceability` — the "Landed-status text for this part is appended … as its rows land" sentence | the sentence stands; **append** the dated Round-11 landed-status record (the Part-XII mirror of §55.9's R10-A6): `coverage two-sum: engineering closed = 896 · requirement satisfied = 650` at the tail read — 646 MET + 4 MET-DIFFERENTLY + 246 MET-ENGINEERED whose owed remainders are named OPEN obligations; 16 WAIVED under the 13 signed waivers (G.7.2); 73 open verdicts each routed (P38.5 / open BL homes / Stage-B owners); 9 N/A-RATIONALE; the promote chain `D-P36.72b-1 → D-P37.65a-1 → D-P37.65b-1` and the post-promote legs owed, public layer 0; GATE-ACCEPT-R11 SIGNED 2026-11-19 (`ede12a67`); 196 owed obligations with `owner:`/`trigger:` |
+| R11-REC-2 | [ ] | `99c_appG_corrections.md` | after `### G.7.5` (section end) | append `## G.8 Round-11 landed-design reconciliation (P38.3b, 2026-11-19, ADR-253)` — the disposition tables mirroring G.6: deviations where the requirement stands (the signed §1b/§1c records, the G.7.5 set); the obligation map (73 routed opens, the MET-ENGINEERED remainders, `D-P38.3b-1`); checked-and-consistent (Owner resolution, no id minted — count stays 994) |
+| R11-REC-3 | [ ] | `00_front_part0.md` | the `**Spec date:**` line | the line gains `; Round-11 landed-design reconciliation 2026-11-19 (P38.3b, ADR-253)` |
+
+### Apply procedure (once ticked)
+
+1. The operator's ticks recorded verbatim (channel + time), then this plan's
+   boxes flipped `[ ]` → `[x]` in the applying run's commit.
+2. Apply each ticked row at its `spec_src` target; run
+   `sh docs/research/_meta/spec_src/BUILD.sh`; commit the regenerated spec.
+3. `python3 docs/build/tools/check_spec_src.py` — byte-identical reproduction,
+   994 ids unchanged, Appendix F == ADR file set.
+4. The manifest amendment log line + `D-P38.3b-1` transition
+   (`obligation-event/1`) in the same applying commit; G.8's record cites it.
+
+### What stays a proposal / residual
+
+- Everything above stays unticked until the operator ticks it — no default
+  applies silence to an amendment, and none was applied at authoring.
+- No fold-back ids are proposed: no `ticket-added` deliverable of the round
+  needs a new requirement id (the §56 families cover the ratified scope; the
+  count stays 994).

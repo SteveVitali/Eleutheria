@@ -256,6 +256,7 @@ One row per ADR, numeric order. Regenerate with `build-memory adr-index`
 | [ADR-250](ADR-250-current-state-projection-leaves-the-commit-path.md) | The current-state projection leaves the commit path: generated on demand, verified from a temp dir (P37.61c) | P37.61c (Round 11 / P37, sub-round 11D, manifest row 489c — on `r11/P37.61c-projection-out-of-commit-path`) | accepted (engineering; records/CI posture only — no control-state writes) |
 | [ADR-251](ADR-251-live-claim-lint-scoped-to-public-and-readiness-surfaces.md) | The live-claim lint is scoped to public and readiness surfaces (P37.61d) | P37.61d (Round 11 / P37, sub-round 11D, manifest row 489d — on | accepted (engineering; lint policy only — no control-state writes) |
 | [ADR-252](ADR-252-byte-budgets-warn-shape-checks-stay-hard.md) | Ledger byte budgets become warnings; shape checks stay hard (RULING E-4) | P37.61e (Round 11 / P37, sub-round 11D, manifest row 489e — on | accepted (engineering; check severity — no control-state writes) |
+| [ADR-253](ADR-253-round11-spec-reconciliation.md) | Round-11 spec reconciliation to the landed design (proposals-only) | P38.3b (Round 11 / P38, sub-round 11D-tail, manifest row 506 — on | accepted (records-only — changes no behaviour and no normative spec |
 
 ## Notes
 
