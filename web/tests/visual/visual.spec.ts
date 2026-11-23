@@ -102,23 +102,11 @@ for (const pick of PICKS) {
       await route.fulfill({ response: resp, body, headers });
     });
     await gotoSettled(page, path);
-    // VISUAL-MAP harness-race repair (the operator's GATE DECISIONS row
-    // @2026-11-20T00:15Z — "Fix the harness"; the signature stays
-    // UNLISTED in ci_flakes.toml — the fix, not the list): the /map/
-    // island fills its In-view list from `map.querySourceFeatures` —
-    // already-drawn features only — so a shot taken before the
-    // compartment tiles land catches the "0 records in view" empty state
-    // against the populated baseline (the adjudicated VISUAL-MAP-LIGHT-1/
-    // DARK-1 ~96k-px class). The island ships the same latches the
-    // budget/journey specs wait on (MapApp `markDrawn`): `data-ready`
-    // once the map loads, `data-drawn` once a drawn compartment source
-    // reports loaded — the same sourcedata event that re-lists, so the
-    // attribute and the populated list land in one render.
-    // `toHaveAttribute` polls to its bound — a feature-populated signal,
-    // never a fixed sleep — and fails loud if the island never mounts or
-    // never draws. Detection anchors on the server-rendered placeholder
-    // (present from first paint), because polling for the island element
-    // itself would re-create the race this wait removes.
+    // MapLibre's load/draw latches can precede the debounced In-view list.
+    // Detect the static mount marker as well as the hydrated island, so a
+    // late mount cannot silently skip these waits. `data-drawn` latches
+    // after any drawn compartment source loads; it is not an all-source
+    // completion signal. The seeded map case checks actual list status below.
     const mapMount = page.locator(
       '[data-testid="map-island"], [data-testid="map-island-placeholder"]',
     );
@@ -132,6 +120,14 @@ for (const pick of PICKS) {
         // J1–J10 battery uses (map-journeys' DRAWN_TIMEOUT).
         timeout: IS_NATIONAL ? 120_000 : 20_000,
       });
+    }
+    if (pick.group.id === "map") {
+      // Drawn can precede the debounced list update. This seeded, unfiltered
+      // route must show populated groups before capture; the unchanged image
+      // assertion still checks their appearance, not all-source completeness.
+      await expect(page.getByTestId("inview-status")).toHaveText(
+        /^[1-9]\d* records? in view — grouped by place$/,
+      );
     }
     await expect(page).toHaveScreenshot(`${pick.group.id}--${testInfo.project.name}.png`, {
       // GPU-rastered surfaces (MapLibre/sigma) are not cross-runner
