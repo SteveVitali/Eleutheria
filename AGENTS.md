@@ -56,15 +56,15 @@ Every Python package is `<pkg>/src/<pkg>/…` and exposes a CLI: `uv run python 
 
 | File | Lines | Purpose |
 |---|---|---|
-| `Makefile` | ~120 | the single source of build/test/gen commands — humans and CI run the same targets (the `python` CI job runs the same suite partitioned via `make test-par`) |
-| `.github/workflows/ci.yml` | ~205 | CI: the `python` job runs `make check`'s suite partitioned via `make test-par` (P35.41a); the `web` job runs `npm run check` |
+| `Makefile` | ~400 | the single source of build/test/gen commands — humans and CI run the same targets (the `python` CI job runs the same suite partitioned via `make test-par`) |
+| `.github/workflows/ci.yml` | ~750 | CI: the `python` job runs `make check`'s suite partitioned via `make test-par` (P35.41a); the `web` job runs `npm run check` |
 | `connectors/src/connectors/loader.py` | ~170 | the fail-closed ingestion gate (`assert_loadable`, `ingestion_permitted`) |
-| `ontology/src/ontology/generate.py` | ~550 | ontology generation; canonicalises graphs (`to_canonical_graph`) |
-| `db/src/db/claim_sink.py` | ~1860 | `PgClaimSink` — insert-only, chunk-batched writes to the claim spine |
-| `api/src/api/store_pg.py` | ~1410 | `PgReadStore` — read-only view over the spine (pooled, ADR-108) |
-| `tests/db/conftest.py` | ~230 | PG18+PostGIS testcontainer; `SIG_REQUIRE_DB_TESTS` fail-loud switch |
-| `tests/e2e/test_composed_stack.py` | ~860 | Docker-gated composed-stack e2e; the `LD-`/xfail convention |
-| `docs/tickets/00_MANIFEST.md` | ~470 | the ordered ticket backlog and how to drive the build |
+| `ontology/src/ontology/generate.py` | ~650 | ontology generation; canonicalises graphs (`to_canonical_graph`) |
+| `db/src/db/claim_sink.py` | ~2560 | `PgClaimSink` — insert-only, chunk-batched writes to the claim spine |
+| `api/src/api/store_pg.py` | ~1790 | `PgReadStore` — read-only view over the spine (pooled, ADR-108) |
+| `tests/db/conftest.py` | ~380 | PG18+PostGIS testcontainer; `SIG_REQUIRE_DB_TESTS` fail-loud switch |
+| `tests/e2e/test_composed_stack.py` | ~1250 | Docker-gated composed-stack e2e; the `LD-`/xfail convention |
+| `docs/tickets/00_MANIFEST.md` | ~990 | the ordered ticket backlog and how to drive the build |
 
 ## Build & Test
 
@@ -78,7 +78,7 @@ Every Python package is `<pkg>/src/<pkg>/…` and exposes a CLI: `uv run python 
 | `make test-db` | `SIG_REQUIRE_DB_TESTS=1 uv run pytest tests/db` — the claim-spine DB suite (**needs Docker**) |
 | `SIG_REQUIRE_DB_TESTS=1 uv run pytest tests/e2e` | the composed-stack e2e (**needs Docker**) |
 | `npm --prefix web run check` | the web gate: `typecheck` → `test:unit` → `build` → `check:licenses` → `test:e2e` |
-| `make docs-check` | both vendored doc detectors (repo docs + agent docs); structural, read-only |
+| `make docs-check` | the doc/memory gate — both vendored doc detectors (repo + agent docs) plus the build-memory/coverage/ledger/obligation/round-close/runbook/redaction checks and the live-claim lint (`check_live_claims`: a production-state assertion on a corpus surface needs a fresh `sig.probe-run/1` citation or bounding language); structural, read-only |
 
 - One package's CLI: `uv run python -m <package> --help` (every stage is a plain CLI, SIG-ENG-013).
 - Regenerate committed generated artifacts with `make gen`; verify with `make verify-gen`.
@@ -128,7 +128,7 @@ Every Python package is `<pkg>/src/<pkg>/…` and exposes a CLI: `uv run python 
    `/dispute/`, `/intake/**`) ships **no `<script>`**. **T1 content** (dossiers, entities,
    sources, queue, methodology, …) must show every fact with JS off (the `nojs-parity` spec diffs
    `main` text minus `[data-enhancement]`) and may load only allow-listed `type="module"`
-   enhancement entries (`web/tests/e2e/t1-module-entries.json` — empty until UXK0-4 lands one).
+   enhancement entries (`web/tests/e2e/t1-module-entries.json` — six entries since ADR-224, `/_kit/sig-{cite,copy,details,table,typeahead,activate}.js`).
    **T2 explore** (`/map/`, `/explore/`, `/search/` today — `/network/` 301s to
    `/explore/?v=2&overview=access` since P37.26/ADR-242; the `/s/<pub>/` forms
    are registered ahead of their rows) may be app-like but must keep URL state
