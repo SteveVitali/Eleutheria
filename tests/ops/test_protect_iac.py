@@ -18,6 +18,7 @@ from __future__ import annotations
 
 import json
 import os
+import shutil
 import subprocess
 from pathlib import Path
 
@@ -222,6 +223,75 @@ def test_verify_from_state_is_green_on_the_desired_state() -> None:
     assert "0 DRIFT" in proc.stdout
     assert "result=ok" in proc.stdout
     assert "OK qa-7:sig-web-no-allusers" in proc.stdout
+
+
+def test_verify_from_state_accepts_gcloud_describe_shape(tmp_path: Path) -> None:
+    """gcloud >= ~580 `storage buckets describe` emits flat
+    `versioning_enabled` + `lifecycle_config` (the shape captured live in
+    D-P34.3-1 attempt 3, gcloud 583.0.0) — verify must normalize it, not
+    read it as drift. `lifecycle_config.rule` items keep camelCase keys."""
+    state = tmp_path / "state"
+    shutil.copytree(FIXTURES / "desired", state)
+    for suffix in ("sig-restricted", "sig-public", "sig-web"):
+        f = next(state.glob(f"describe.*{suffix}*.json"))
+        d = json.loads(f.read_text())
+        days = d["lifecycle"]["rule"][0]["condition"]["daysSinceNoncurrentTime"]
+        f.write_text(
+            json.dumps(
+                {
+                    "name": d["name"],
+                    "location": d["location"],
+                    "versioning_enabled": True,
+                    "lifecycle_config": {
+                        "rule": [
+                            {
+                                "action": {"type": "Delete"},
+                                "condition": {"daysSinceNoncurrentTime": days},
+                            }
+                        ]
+                    },
+                }
+            )
+        )
+    proc = _run(["--verify", "--from-state", str(state)])
+    assert proc.returncode == 0, proc.stdout + proc.stderr
+    assert "0 DRIFT" in proc.stdout
+    assert "result=ok" in proc.stdout
+
+
+def test_bucket_leg_refuses_foreign_lifecycle_in_gcloud_shape(
+    tmp_path: Path,
+) -> None:
+    """`_bucket_rule_count` must read `lifecycle_config` too — under the old
+    shape-blindness it always returned 0, making the foreign-rule
+    refuse-guard vacuous. A gcloud-shape describe with a foreign rule must
+    refuse the lifecycle write."""
+    describe = tmp_path / "bucket-foreign.json"
+    describe.write_text(
+        json.dumps(
+            {
+                "name": "example-proj-sig-web",
+                "versioning_enabled": True,
+                "lifecycle_config": {
+                    "rule": [
+                        {
+                            "action": {"type": "AbortIncompleteMultipartUpload"},
+                            "condition": {"age": 7},
+                        }
+                    ]
+                },
+            }
+        )
+    )
+    env, log = _stubbed_env(
+        tmp_path,
+        SIG_PROTECT_NOW=OPEN_WINDOW,
+        STUB_BUCKET_DESCRIBE=str(describe),
+    )
+    proc = _run(["--apply", "buckets"], env=env)
+    assert proc.returncode == 7, proc.stdout + proc.stderr
+    assert "lifecycle rules that are not this script's" in proc.stderr
+    assert _mutations_in(log) == []
 
 
 def test_verify_from_state_refuses_a_missing_dir() -> None:
@@ -435,6 +505,27 @@ def test_iam_leg_removes_allusers_and_site_stays_green(tmp_path: Path) -> None:
     assert not any("add-iam-policy-binding" in m for m in mutations)
     assert "403" in proc.stdout or "404" in proc.stdout  # direct bucket URL check
     assert clog.read_text().count("sig-web-stub.run.app") >= 2  # run.app checked
+
+
+def test_iam_leg_bucket_probe_is_cache_busted(tmp_path: Path) -> None:
+    """The direct bucket URL probe carries a unique query — index.html
+    serves `cache-control: public, max-age=3600`, so a bare-URL 200 can be
+    an edge-cached pre-removal copy (the attempt-3 false red that rolled
+    back a successful removal)."""
+    env, _glog, clog = _iam_env(
+        tmp_path,
+        iam_fixture=FIXTURES / "pre" / "iam-sig-web-20261002T041028Z.json",
+        green_calls=13,
+    )
+    proc = _run(["--apply", "iam"], env=env)
+    assert proc.returncode == 0, proc.stdout + proc.stderr
+    bucket_probes = [
+        line
+        for line in clog.read_text().splitlines()
+        if "storage.googleapis.com" in line
+    ]
+    assert bucket_probes, "direct bucket probe not invoked"
+    assert all("sig-protect-probe=" in line for line in bucket_probes)
 
 
 def test_iam_leg_rolls_back_the_removal_on_a_post_site_failure(tmp_path: Path) -> None:
