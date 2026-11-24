@@ -242,7 +242,7 @@ _assert_sql_flags() {
   for flag in --deletion-protection --retain-backups-on-delete \
               --maintenance-window-day --maintenance-window-hour \
               --storage-auto-increase-limit; do
-    printf '%s' "$help_text" | grep -q -- "$flag" || {
+    grep -q -- "$flag" <<<"$help_text" || {
       echo "protect.sh: gcloud does not advertise '$flag' on 'sql instances patch' — check the CLI version before mutating" >&2
       exit 4; }
   done

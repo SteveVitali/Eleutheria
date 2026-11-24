@@ -41,9 +41,13 @@ printf '%s\\n' "$*" >> "${GCLOUD_STUB_LOG:-/dev/null}"
 case "$*" in
   "auth application-default print-access-token") echo stub-token ;;
   "sql instances patch --help")
-    echo '--deletion-protection --retain-backups-on-delete'
-    echo '--maintenance-window-day --maintenance-window-hour'
-    echo '--storage-auto-increase-limit'
+    if [ -n "$STUB_PATCH_HELP" ]; then
+      cat "$STUB_PATCH_HELP"
+    else
+      echo '--deletion-protection --retain-backups-on-delete'
+      echo '--maintenance-window-day --maintenance-window-hour'
+      echo '--storage-auto-increase-limit'
+    fi
     ;;
   "sql instances describe"*)
     cat "$STUB_SQL_DESCRIBE"
@@ -311,6 +315,31 @@ def test_sigpg_leg_proceeds_with_terminal_materialize_history(tmp_path: Path) ->
     )
     proc = _run(["--apply", "instance"], env=env)
     assert proc.returncode == 0, proc.stdout + proc.stderr
+    assert proc.stdout.count("SKIP") == 3
+    assert _mutations_in(log) == []
+
+
+def test_flag_check_handles_large_patch_help(tmp_path: Path) -> None:
+    """`gcloud ... patch --help` is ~48 KB live — bigger than the pipe
+    buffer. `printf | grep -q` SIGPIPEs under `set -o pipefail` when the flag
+    matches before printf finishes writing (the D-P34.3-1 attempt-2 exit 4).
+    The flags here sit in the first ~100 bytes of a ~130 KB payload, which
+    forces the race reliably under the old pipe shape."""
+    help_file = tmp_path / "patch-help.txt"
+    help_file.write_text(
+        "gcloud sql instances patch\n"
+        "  --deletion-protection\n  --retain-backups-on-delete\n"
+        "  --maintenance-window-day\n  --maintenance-window-hour\n"
+        "  --storage-auto-increase-limit\n" + "pad\n" * 32768
+    )
+    env, log = _stubbed_env(
+        tmp_path,
+        SIG_PROTECT_NOW=OPEN_WINDOW,
+        STUB_PATCH_HELP=str(help_file),
+    )
+    proc = _run(["--apply", "instance"], env=env)
+    assert proc.returncode == 0, proc.stdout + proc.stderr
+    assert "flag-check: 'gcloud sql instances patch' supports all five flags" in proc.stdout
     assert proc.stdout.count("SKIP") == 3
     assert _mutations_in(log) == []
 
