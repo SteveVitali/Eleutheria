@@ -16,6 +16,7 @@ fully offline.
 
 from __future__ import annotations
 
+import json
 import os
 import subprocess
 from pathlib import Path
@@ -49,7 +50,8 @@ case "$*" in
     ;;
   "sql operations describe"*) echo '{"status":"DONE","operationType":"UPDATE"}' ;;
   "sql backups create --help") echo 'creates a backup' ;;
-  "run jobs executions list"*) echo '[]' ;;
+  "run jobs executions list"*)
+    if [ -n "$STUB_MEXEC" ]; then cat "$STUB_MEXEC"; else echo '[]'; fi ;;
   "run services describe"*) echo 'https://sig-web-stub.run.app' ;;
   "storage buckets describe"*) cat "$STUB_BUCKET_DESCRIBE" ;;
   "storage buckets get-iam-policy"*) cat "$STUB_IAM" ;;
@@ -275,6 +277,61 @@ def test_sigpg_leg_is_idempotent_when_already_set(tmp_path: Path) -> None:
     proc = _run(["--apply", "instance"], env=env)
     assert proc.returncode == 0, proc.stdout + proc.stderr
     assert proc.stdout.count("SKIP") == 3
+    assert _mutations_in(log) == []
+
+
+def _write_mexec(tmp_path: Path, rows: list[dict]) -> str:
+    f = tmp_path / "mexec.json"
+    f.write_text(json.dumps(rows))
+    return str(f)
+
+
+def test_sigpg_leg_proceeds_with_terminal_materialize_history(tmp_path: Path) -> None:
+    """Failed/cancelled executions in the job's history are terminal, not
+    running — the guard must not read them as a live execution (the
+    restore-drill.sh convention; D-P34.3-1's first leg died on this)."""
+    mexec = _write_mexec(
+        tmp_path,
+        [
+            # Completed:False + completionTime — a cancelled execution.
+            {
+                "status": {
+                    "conditions": [{"type": "Completed", "status": "False"}],
+                    "completionTime": "2026-09-24T10:00:00Z",
+                }
+            },
+            # Completed:False with no completionTime — still terminal.
+            {"status": {"conditions": [{"type": "Completed", "status": "False"}]}},
+            # Completed:True — succeeded.
+            {"status": {"conditions": [{"type": "Completed", "status": "True"}]}},
+        ],
+    )
+    env, log = _stubbed_env(
+        tmp_path, SIG_PROTECT_NOW=OPEN_WINDOW, STUB_MEXEC=mexec
+    )
+    proc = _run(["--apply", "instance"], env=env)
+    assert proc.returncode == 0, proc.stdout + proc.stderr
+    assert proc.stdout.count("SKIP") == 3
+    assert _mutations_in(log) == []
+
+
+def test_sigpg_leg_refuses_while_materialize_running(tmp_path: Path) -> None:
+    """An execution with no Completed condition and no completionTime is
+    genuinely running — the guard stays fail-closed and refuses."""
+    mexec = _write_mexec(
+        tmp_path,
+        [
+            {"status": {"conditions": [{"type": "Running", "status": "True"}]}},
+            # Never scheduled — no markers at all; fail-closed refuses too.
+            {"status": {}},
+        ],
+    )
+    env, log = _stubbed_env(
+        tmp_path, SIG_PROTECT_NOW=OPEN_WINDOW, STUB_MEXEC=mexec
+    )
+    proc = _run(["--apply", "instance"], env=env)
+    assert proc.returncode == 42, proc.stdout + proc.stderr
+    assert "REFUSED" in proc.stderr
     assert _mutations_in(log) == []
 
 

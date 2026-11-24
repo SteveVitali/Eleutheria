@@ -218,11 +218,18 @@ try:
     rows = json.loads(os.environ["SIG_MEXEC"])
 except Exception:
     sys.exit(1)
-running = any(
-    not any(
-        c.get("type") == "Completed" and str(c.get("status")) == "True"
-        for c in ((e.get("status") or {}).get("conditions")) or [])
-    for e in (rows if isinstance(rows, list) else []))
+# Terminal = a `Completed` condition in either state (True = succeeded,
+# False = failed/cancelled — both terminal) or a recorded completionTime.
+# Running = neither marker — still executing (or never scheduled, which the
+# fail-closed reading also refuses to clear). Same semantics as
+# restore-drill.sh — terminal failure history is not a running execution.
+def terminal(e):
+    s = e.get("status") or {}
+    if s.get("completionTime"):
+        return True
+    return any(
+        c.get("type") == "Completed" for c in s.get("conditions") or [])
+running = any(not terminal(e) for e in (rows if isinstance(rows, list) else []))
 sys.exit(1 if running else 0)
 PY
 }
