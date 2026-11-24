@@ -208,3 +208,161 @@ re-run of this leg under the same authorization scope — the P34.46
 rehearsal of `closed_vocabulary`→tip before the next live attempt is
 recommended (it would have caught this class the same way D-P34.24b-1
 was caught).
+
+---
+
+# ATTEMPT 2 — re-deploy, 2026-11-24 (SUCCESS — plan tip landed)
+
+The fix landed as `1debdb6d` (`@r11-vocab-verify-scope` rework — the
+metadata assert scoped to registry-seeded rows, `skos_concept_iri IS
+NOT NULL`); this branch carries it via merge-forward `5e01c45d`. Same
+authorization scope (GATE DECISIONS 2026-11-20T18:20Z, `ddaa969e`);
+same mechanism; the prior ledger's two named prerequisites ran in
+order.
+
+- **Window:** `date -u` 2026-11-24T13:43Z → 2026-11-24T14:09Z
+- **Harness:** devin-desktop/swe-2-high/subagent
+- **Branch:** `r11/ops-spine-schema-deploy` @ `5e01c45d`
+
+## Result — SUCCESS, plan tip landed
+
+`sqitch deploy --verify` applied **all 42 pending changes** to
+production `sig-pg`, every one `ok` — including both `closed_vocabulary`
+occurrences (the tagged full projection at its plan position and the
+no-op rework at tip). `sqitch status` post-deploy: **`Nothing to
+deploy (up-to-date)`**, head `closed_vocabulary`
+(`ce6faff91be8b3383396b80d29fdbd87269556ec`, committed
+2026-11-24 14:06:08+00). `sqitch.changes` count **81** (39 prestate +
+42 deployed — equals the plan's 81 change lines).
+`claim_evidence.bound_at` **present** (`information_schema` probe →
+1 row) — the export leg's crash cause is cleared.
+
+## Step 1 — PITR-clone rehearsal (the P34.24b/P34.46 procedure, CLEAN)
+
+Ran through `ops/gcp/restore-drill.sh --apply` (the sanctioned harness;
+evidence dir redirected to
+`docs/build/logs/ops-spine-schema-deploy/restore-drill/`):
+
+- `prestate` — read-only capture, `pre-20261124T134318Z`.
+- `clone` — window-guard OK (13:43Z, outside 03:00–10:00Z; no
+  sig-materialize execution running); newest sig-pg backup
+  `SUCCESSFUL`/`AUTOMATED`; latest `sig-probe` sweep **red exit 6** —
+  the recorded stale-targets class (france/okc manifest, red since
+  2026-09-27, per P34.4/P34.5/P34.6/P34.46 ledgers), judgment carried
+  verbatim via `--probe-note`, not a new-class red. Clone issued as
+  `sig-pg-drill-20261124t1343z` at point-in-time
+  **2026-11-24T13:33:52Z**, op `f0bdd465-51ec-4a26-a9e4-d2dc00000032`
+  DONE (CLONE), RUNNABLE.
+- `rehearse` — full pending chain `closed_vocabulary`→tip (42 changes)
+  deployed `--verify` on the clone over the **real 133 NULL-iri
+  `vocab_predicate` rows**: deploy exit **0**, second `sqitch verify`
+  exit **0**. The reworked assert passed — the pre-existing rows stay
+  outside the registry-seeded scope by design. Per-change timings in
+  `rehearsal/record.json`; max sampled `ACCESS EXCLUSIVE` on
+  `claim_evidence` ≈ 21.0 s observed (well inside the 20-min FEA-07
+  bound). Source `sig-pg` untouched (read-only snapshots only).
+- `deleteclone sig-pg-drill-20261124t1343z` — name-checked delete;
+  post-state `gcloud sql instances list` shows **no `sig-pg-drill-*`
+  remains** (`sig-pg` only, RUNNABLE).
+
+## Step 2 — live re-deploy (14:03:42Z → 14:06:08Z, exit 0)
+
+Verbatim `do_schema()` from `ops/gcp/materialize.sh` plus the prior
+leg's two recorded deltas — `-e PGOPTIONS=-c lock_timeout=1200000`
+and `:ro` on the `db/` mount:
+
+```text
+cloud-sql-proxy zeta-medley-508121-u7:us-central1:sig-pg --address 127.0.0.1 --port 5433
+docker run --rm -e SQITCH_PASSWORD -e "PGOPTIONS=-c lock_timeout=1200000" \
+  -v <repo>/db:/repo:ro -w /repo \
+  sqitch/sqitch@sha256:f247ab0e0b66e9c2d09a400864f7314358893f5cf209cddcc4f213f7d5bfe4d3 \
+  deploy --verify db:pg://sig@host.docker.internal:5433/sig
+```
+
+`SQITCH_PASSWORD` from Secret Manager (`sig-pg-password`) into env
+only — never argv, never a file. `DOCKER_DEFAULT_PLATFORM=linux/amd64`
+on the arm64 host (emulated pull; recorded).
+
+**PRESTATE** (14:02Z): head `camera_site_human_decisions`; 42
+undeployed (the prior 41 + the rework `closed_vocabulary`);
+`sqitch.changes` 39; `bound_at` absent; 133 NULL-iri predicate rows;
+plan sha256 `6da4128c…6e88` (identical to the rehearsed clone's).
+
+**Deployed (all 42, all `ok`):** claim_assertion_bindings ·
+partner_org_scoped_identity_key · shared_temporal_contract ·
+publication_dispositions · human_eval_campaign ·
+disposition_decided_at_authority · intake_storage ·
+intake_application_bridge · recovery_apply @r11-sqitch-hygiene ·
+shared_temporal_contract (rework) · public_read_allowlist
+@r11-read-allowlist · read_surface_grants (rework) · review_campaign
+(rework) · intake_reporter_outcome · audit_login · seal_register ·
+er_rerun_login @r11-verify-membership · intake_storage (rework) ·
+intake_application_bridge (rework) · closed_vocabulary ·
+entity_typing_mobility_check · vocab_enforcement_count ·
+vocab_geometry_defect · coverage_exclusion_disclosure ·
+claim_payload_version · subject_rekey · declared_lineage ·
+role_edges · vocab_published_by · ingest_run_report ·
+transparency_views · ingest_run_report_upstream_recon ·
+transparency_source · capture_freshness_marks · claim_sightings ·
+camera_site_derivation · ingest_run_report_execution_key ·
+disappearance_event_grant · operator_purge ·
+research_task_predicates · organization_cascade
+@r11-vocab-verify-scope · closed_vocabulary (rework).
+
+Benign NOTICEs only: `sig` already granted the eval/intake role
+memberships by `cloudsqladmin` (the P34.46 verify-membership fix,
+idempotent re-grant) and one `DROP TRIGGER … skipping` in
+`ingest_run_report` (guarded drop of a not-yet-existing trigger).
+
+**POSTSTATE** (14:06Z): `sqitch.changes` **81**, head
+`closed_vocabulary` tip (`ce6faff9`, 14:06:08Z); `sqitch status`
+→ `Nothing to deploy (up-to-date)`; `bound_at` present; the 133
+pre-existing NULL-iri `vocab_predicate` rows retained verbatim
+(honest runtime state — correcting them stays queued hosted work);
+150 registry-seeded rows carry IRIs; 42 `deploy` events
+(14:03:42→14:06:08Z) in `sqitch.events`; instance RUNNABLE; proxy
+stopped; no lock_timeout event observed.
+
+## Unblocked status
+
+- **Export leg resume path is CLEAR** — `claim_evidence.bound_at`
+  (plus `extractor_version`/`extraction_config_digest`/
+  `binding_status`, `claim.assertion_map_*`, `evidence_capture.
+  capture_classification`, `assertion_quarantine`) is deployed; the
+  `export.sh --apply run` crash cause no longer exists.
+- **Wave-C L3 ingest path** — the typed-assertion surface
+  (`claim_assertion_bindings`), subject-key pins + rekey log
+  (`subject_rekey`), declared lineage (`declared_lineage`), role
+  edges (`role_edges`) and the transparency views
+  (`transparency_views`/`transparency_source`/`claim_sightings`) are
+  live.
+- `operator_purge` DDL landed (the role `sig_purge_operator` exists
+  with no member — by design; each use is still the operator's
+  in-ticket go under ADR-189/WV-11, never agent-run).
+
+## Evidence (gitignored `docs/build/logs/ops-spine-schema-deploy/`)
+
+| file | contents |
+|---|---|
+| `restore-drill/pre-20261124T134318Z/` | prestate instance/backup/probe/op captures + sha256s |
+| `restore-drill/drill-20261124T134352Z/meta.env`, `clone.json` | clone identity + point-in-time receipt |
+| `restore-drill/drill-20261124T134352Z/rehearsal/` | the full `sig.sqitch-rehearsal/1` bundle: `record.json` (deploy exit 0, verify exit 0), `deploy.stamped.log`, `samples.jsonl`, `head/post/source*.json`, `operations-*.json`, `plan-hashes.json`, `verify.log/json` |
+| `proxy.log` | live-leg cloud-sql-proxy (ready 14:02:30Z; SIGTERM 14:06:41Z) |
+| `prestate-status.txt` | `sqitch status` — head + the 42 undeployed |
+| `prestate-probe.txt` | 39 deployed, head, `bound_at` absent, 133 NULL-iri rows |
+| `plan-sha256.txt` | `db/sqitch.plan` sha256 (rehearsal == live) |
+| `deploy-start.txt` / `deploy-end.txt` | 14:02:52Z / 14:06:17Z markers |
+| `deploy.log` | full live `deploy --verify` output — 42 `ok` |
+| `poststate-status.txt` | `Nothing to deploy (up-to-date)`, head `closed_vocabulary` |
+| `poststate-probe.txt` | 81 deployed, tip head, `bound_at` present, 133/150 predicate counts |
+| `poststate-events.txt` | the 42 `sqitch.events` deploy rows |
+
+## Deviations from the committed script (attempt 2)
+
+Identical to attempt 1 plus the recorded platform note:
+`-e PGOPTIONS=-c lock_timeout=1200000`, `:ro` on the `db/` mount,
+`DOCKER_DEFAULT_PLATFORM=linux/amd64` (arm64 host). The rehearsal
+ran through `restore-drill.sh` with `SIG_DRILL_EVIDENCE_DIR`
+redirected under this leg's log root and a verbatim `--probe-note`
+for the recorded red-probe class. No script, migration, or verify
+edited; no gate-affecting record committed by this agent.
