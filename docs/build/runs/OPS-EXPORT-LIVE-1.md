@@ -223,6 +223,125 @@ objects: the prior leg's partial `r/p-846b3554…/` + the two 2026-11-18
 fixture `p-0bf8b897` rows — resume-safe), `registry/latest.json` still
 absent. Nothing published, activated, or promoted.
 
+## Resumed leg 3 — 2026-11-24T14:10Z→17:16Z (schema gap closed by OPS-SPINE-SCHEMA-DEPLOY)
+
+Under the same signed gos (`d3c72f51` "Run the export" + `99018e1b`
+"Authorize now"), after `OPS-SPINE-SCHEMA-DEPLOY` attempt 2 landed all 42
+pending sqitch changes on `sig-pg` (plan tip `closed_vocabulary`,
+`bound_at` verified present, 14:06Z — see that ledger). Window check:
+14:10Z→17:16Z — outside AR-3 (03:00Z→06:30Z) and the Dec freeze.
+
+| leg | verdict |
+|---|---|
+| `export.sh --check all` | plan OK — image tag derives from HEAD `4741345e` → `sig-api:export-4741345e4fb3` (rebuild dictated: deployed `export-c7a2b53edf7e` predated the merge-forward) |
+| `export.sh --apply image` | **DONE** — digest `sha256:7dd590e8dfcc7b3f55ce4dea01cd8b05896a22c7f99ac9914d1fb1a7055db185`, Cloud Build `d49b581f-8253-49da-9b25-6d3d5f466d9f` SUCCESS 3m2s (`21-image.txt`) |
+| `export.sh --apply job` (4cpu/16Gi — declared shape) | **DONE** — `sig-export` on `…@sha256:7dd590e8`, `Ready=True` gen 8 (`22-job.txt`, `23-job-poststate.txt`) |
+| `export.sh --apply run` ×5 | **all five executions failed — see Blocker 4.** `sig-export-rtzrn` OOM@16Gi; `sig-export-gl4bd` cancelled (doomed: work_mem-bound ~74min/query × 6 `{EFFECTIVE}` queries vs 4h timeout); `sig-export-k286p` OOM@32Gi; `sig-export-ljvft` refused exit 4 (host-clock check HTTP 429, transient → honoured + retried); `sig-export-kftm6` OOM@32Gi. **Zero objects under any prefix** (`43-prefix-poststate.txt`). |
+| `export.sh --apply fetch` | **not run** — no fresh `exports/national/<as-of>/` exists. |
+| release re-cut (cut → build → sites → stage → verify --mode S) | **not run** — the DOA blocker on the stale `2026-09-27` export stands; re-cutting over it would only re-produce `p-846b3554…`. Registry untouched this leg: `registry/LOCK` absent, `labels.json` byte-identical, no new events. |
+
+### Sequence detail
+
+1. **14:13:56Z `sig-export-rtzrn` (4cpu/16Gi)** — mount OK, secret fetch OK,
+   Cloud SQL connect OK, **`bound_at` read fine** (Blocker 3 fully cleared:
+   it survived ~6 min inside `fetch_shaping_raw` vs the instant
+   `UndefinedColumn` crash of `qjhg8`) — then **signal 9 / "The configured
+   memory limit was reached"** at 8m17s elapsed during the fetch
+   (`26-run-poststate.txt`, `27-run-logs.txt`).
+2. **Spec deviation 1 (recorded):** probe `--memory 32Gi` at 4cpu REFUSED
+   verbatim — `For 4.0 CPU, memory must be between 2Gi and 16Gi inclusive`
+   (`36-job-probe-64gi.txt` also records a 16cpu/64Gi probe refused: cpu
+   must be ∈ {.08–1,1,2,4,6,8}). `ops/gcp/export.sh` parameterised:
+   `SIG_EXPORT_JOB_CPU`/`SIG_EXPORT_JOB_MEMORY` (defaults = declared 4/16).
+   Redeployed **8cpu/32Gi** — the platform maximum (gen 9, `28-job-32gi.txt`,
+   `29-job-8cpu-32gi.txt`).
+3. **14:24:05Z `sig-export-gl4bd` (8cpu/32Gi)** — the fetch ran but every
+   `{EFFECTIVE}` query re-computes the `claim_source` CTE (`DISTINCT ON`
+   over **4,783,704** `claim_evidence` rows) at `work_mem=4096kB`:
+   `shaping_claims` alone ran ~74 min spilling ~63 GB temp on
+   `db-custom-2-7680` (read-only `pg_stat_activity`/`pg_settings` probe via
+   cloud-sql-proxy + `sig` read session — `PGPASSWORD` env-only). Six
+   `{EFFECTIVE}` queries × ~60–75 min > the 4h task timeout ⇒ **doomed —
+   cancelled** 15:41Z (`33-cancel-gl4bd.txt`). Spine size measured at the
+   same probe: 2,928,254 claims / 4,783,704 claim_evidence / 260,819
+   entities / 41 rights_decision.
+4. **Spec deviation 2 (recorded):** `export.sh` gained
+   `SIG_EXPORT_RUN_ENV` → per-execution `--update-env-vars`
+   (`PGOPTIONS=--work_mem=2GB` honored by libpq — verified `SHOW work_mem`
+   = `2048MB` through the proxy before use).
+5. **15:41:38Z `sig-export-k286p` (32Gi + work_mem=2GB)** — fetch phase
+   completed in ~20 min (heavy queries down to seconds–minutes; session
+   `idle in transaction` by ~16:00Z) — then **OOM at 32 GiB ~28 min into
+   the in-memory `build_shaped_dataset`** (`35-run-poststate.txt`).
+6. **16:30:51Z `sig-export-ljvft`** — refused **exit 4** at the §3.3
+   host-clock guard: remote `Date` header fetch got HTTP 429 from
+   google.com (transient egress rate-limit; verbatim in
+   `39-run-poststate.txt`). Honoured — no `--skip-host-clock-check`;
+   retried 16:35Z.
+7. **16:35:36Z `sig-export-kftm6`** (32Gi + work_mem=2GB +
+   `PYTHONMALLOC=malloc` + `MALLOC_TRIM_THRESHOLD_=65536`) — fetch ~20
+   min, **OOM at 32 GiB ~21 min into shaping** (`42-run-poststate.txt`).
+
+## Blocker 4 — CURRENT (export in-memory build exceeds the platform ceiling)
+
+`sig-exports build --from-spine` holds the whole shaped dataset in RAM by
+design (`fetch_shaping_raw` fetchalls every query; `build_shaped_dataset`
+builds the shaped graph over them — the P30.3 design assumed "several GB"
+for ~2.3M claims). The settled spine is now **2,928,254 claims /
+4,783,704 claim_evidence rows** (+ typed-assertion-era columns: bound_at,
+sightings, lineage) — measured, the in-memory build needs **materially
+more than 32 GiB** (two OOMs at the 32 GiB task limit: ~28 min and ~21
+min into shaping; allocator tuning `PYTHONMALLOC=malloc` +
+`MALLOC_TRIM_THRESHOLD_` did not save enough).
+
+Every declared heavyweight substrate is a **Cloud Run job** (`export.sh`
+4cpu/16Gi, `materialize.sh` 4cpu/16Gi/24h, `exec-host.sh` ephemeral job) —
+the platform caps a job task at **8 vCPU / 32 GiB** (both bounds refused
+verbatim by the API: `16Gi` max at 4cpu; cpu ∈ {.08–1,1,2,4,6,8}). The
+local host (36 GB RAM) is marginal-to-insufficient and outside the
+declared path regardless.
+
+**This is a substrate/engineering decision, not an IAM gap — STOP,
+recorded, not improvised.** Resume paths for the operator:
+
+- a bigger declared substrate (e.g. a GCE exec-host leg with ≥48–64 GiB —
+  a new declaration + its own OM-20 go), or
+- an engineering ticket: a streaming/chunked export build (release the
+  `raw` result sets as they are consumed instead of holding
+  fetchall+dataset simultaneously), or
+- operator-run export on a ≥64 GB host over cloud-sql-proxy writing to a
+  staging dir, then a bucket upload leg (deviates from the declared
+  in-job path — an operator call).
+
+End state: `sig-export` job **restored to the declared shape**
+(4cpu/16Gi, `Ready=True`, gen 10) on the fresh pinned digest
+`…@sha256:7dd590e8` — `SIG_EXPORT_JOB_CPU`/`SIG_EXPORT_JOB_MEMORY`/
+`SIG_EXPORT_RUN_ENV` exist for the next attempt (committed defaults keep
+the declared shape). All five execution prefixes verified **empty** — no
+bucket residue. Registry unchanged (`LOCK` absent, `labels.json`
+untouched, no events this leg). `D-P37.65a-1` remains **OPEN**.
+
+## Mutations performed this leg (exact receipts)
+
+| utc | mutation | prestate → poststate |
+|---|---|---|
+| 14:10:36→14:13:38 | Cloud Build `d49b581f` → image `sig-api:export-4741345e4fb3` digest `…7dd590e8` pushed | tag absent → present |
+| 14:1x | `gcloud run jobs deploy sig-export` (4cpu/16Gi) on `…@sha256:7dd590e8` | template `…bddfef08` → `…7dd590e8`, `Ready=True` gen 8 |
+| 14:14→14:22 | `gcloud run jobs execute` → `sig-export-rtzrn` **failed** (OOM@16Gi, signal 9) | execution created → failed; zero objects |
+| ~14:2x | probe deploy `--memory 32Gi`@4cpu | **refused** (recorded verbatim) |
+| ~14:2x | probe deploy `--cpu 16 --memory 64Gi` | **refused** (recorded verbatim) |
+| 14:2x | `gcloud run jobs deploy` 8cpu/32Gi on `…@sha256:7dd590e8` | limits 4/16Gi → **8/32Gi** gen 9 |
+| 14:24→15:41 | `gcloud run jobs execute` → `sig-export-gl4bd` → `gcloud run jobs executions cancel --quiet` | execution created → **Cancelled** (doomed ETA > 4h timeout); zero objects |
+| ~14:3x→17:1x | read-only probes only: cloud-sql-proxy on :15444 + `psycopg` `sig` session (`pg_stat_activity`, `pg_settings`, table counts, `SHOW work_mem`); PGPASSWORD env-only; proxy stopped | no DB mutation |
+| 15:41→16:28 | `gcloud run jobs execute` (+`PGOPTIONS=--work_mem=2GB`) → `sig-export-k286p` **failed** (OOM@32Gi in shaping) | execution created → failed; zero objects |
+| 16:30→16:32 | `gcloud run jobs execute` → `sig-export-ljvft` **refused exit 4** (host-clock 429) | execution created → refused before any read; zero objects |
+| 16:35→17:16 | `gcloud run jobs execute` (work_mem + malloc tuning) → `sig-export-kftm6` **failed** (OOM@32Gi in shaping) | execution created → failed; zero objects |
+| 17:2x | `gcloud run jobs deploy` 4cpu/16Gi on `…@sha256:7dd590e8` | limits 8/32Gi → **4/16Gi restored** gen 10, `Ready=True` |
+
+Script delta this leg (on this branch, agent-authored, defaults preserve
+the declared shape): `ops/gcp/export.sh` gained `SIG_EXPORT_JOB_CPU`,
+`SIG_EXPORT_JOB_MEMORY`, `SIG_EXPORT_RUN_ENV` parameterisation + comments.
+
 ## Standing constraint carried forward (unchanged from P37.65a-live-1)
 
 `release stage` is strictly serial (`store.insert` + `lock.refresh()` per

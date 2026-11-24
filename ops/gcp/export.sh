@@ -65,6 +65,12 @@ banner "national export next to the spine (P30.3 / GO-LIVE.3)"
 : "${SIG_EXPORT_BOUNDARY_PACK:=}"
 : "${SIG_EXPORT_JURISDICTION_REGISTRY:=}"
 : "${SIG_EXPORT_BOUNDARY_SPEC:=}"
+# OPS-EXPORT-LIVE-1 (2026-11-24): the declared 16 GiB job shape was sized for
+# the 2026-09 spine (~2.3M claims); the settled spine OOM-killed the 14:13Z
+# execution at the limit. The job memory is overridable per deploy via
+# SIG_EXPORT_JOB_MEMORY — the committed default stays the declared shape.
+: "${SIG_EXPORT_JOB_MEMORY:=16Gi}"
+: "${SIG_EXPORT_JOB_CPU:=4}"
 _repo="$(cd "${_here}/../.." && pwd)"
 _sha="$(git -C "${_repo}" rev-parse --short=12 HEAD 2>/dev/null || echo unknown)"
 IMAGE="${SIG_API_IMAGE}:export-${_sha}"
@@ -132,7 +138,7 @@ do_job() {
     --image "${pinned}" --region "${SIG_GCP_REGION}" --project "${SIG_GCP_PROJECT}" \
     --service-account "${SIG_SA_EXPORT}@${SIG_GCP_PROJECT}.iam.gserviceaccount.com" \
     --command sh --args "-c,${SIG_EXPORT_GUARD}" \
-    --tasks 1 --task-timeout 4h --max-retries 0 --cpu 4 --memory 16Gi \
+    --tasks 1 --task-timeout 4h --max-retries 0 --cpu "${SIG_EXPORT_JOB_CPU}" --memory "${SIG_EXPORT_JOB_MEMORY}" \
     --execution-environment gen2 \
     --add-volume "name=restricted,type=cloud-storage,bucket=${SIG_BUCKET_RESTRICTED}" \
     --add-volume-mount "volume=restricted,mount-path=${MOUNT}" \
@@ -144,9 +150,14 @@ do_job() {
 do_run() {
   local mode="${1:---wait}"
   _log "-- run: export as-of ${SIG_EXPORT_AS_OF} → gs://${SIG_BUCKET_RESTRICTED}/${PREFIX}/"
+  # SIG_EXPORT_RUN_ENV: optional per-execution env overrides (--update-env-vars;
+  # OPS-EXPORT-LIVE-1 used PGOPTIONS=-c work_mem=… to keep the claim_source
+  # DISTINCT-ON sort in memory on the small hosted instance).
+  local env_flags=()
+  [ -n "${SIG_EXPORT_RUN_ENV:-}" ] && env_flags+=(--update-env-vars "${SIG_EXPORT_RUN_ENV}")
   run gcloud run jobs execute "${SIG_EXPORT_JOB}" \
     --region "${SIG_GCP_REGION}" --project "${SIG_GCP_PROJECT}" \
-    --args "-c,$(export_cmd)" "${mode}"
+    --args "-c,$(export_cmd)" "${env_flags[@]}" "${mode}"
 }
 
 do_fetch() {
