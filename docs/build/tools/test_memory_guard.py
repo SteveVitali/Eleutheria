@@ -2693,3 +2693,96 @@ def test_replay_all_vacuous_span_is_never_green(repo: Path, tmp_path: Path) -> N
     commit(repo, T_CHANGE, "undated phase-log entry")
     rc, _, out = run_guard(repo, "replay", f"{base_of(repo)}..HEAD")
     assert rc == 3 and "vacuous" in out, out
+
+
+# ── register_commit_map carrier resolution + out-of-span oracle rows ─────────
+# (NIGHTLY-RED-1 repair: the oracle was keyed to a stacked branch's first-parent line
+# while the nightly replays main's — every expectation silently out-of-span.)
+
+
+def test_register_commit_map_side_branch_carrier(repo: Path) -> None:
+    """A side-branch commit carried onto the line by a merge maps to that merge; an
+    in-span commit maps to itself; an unreachable wanted commit stays at itself (and is
+    reported out-of-span downstream — never silently dropped)."""
+    git(repo, "checkout", "-q", "-b", "side")
+    write(repo, "side.txt", "x\n")
+    w = commit(repo, T_CHANGE, "side work")[:8]
+    git(repo, "checkout", "-q", "-")
+    append(repo, "docs/build/LEDGER.md", "- 2026-09-28 — T2 done — demo/t2 · PR pending\n")
+    mainline = commit(repo, T_CHANGE, "mainline work")[:8]
+    git(repo, "merge", "-q", "--no-ff", "-m", "merge side", "side")
+    m = git(repo, "rev-parse", "HEAD").strip()
+    commits = git(repo, "rev-list", "--reverse", "--first-parent", f"{base_of(repo)}..HEAD").split()
+    got = mg.register_commit_map(mg.Git(repo), {w, mainline, "deadbeef"}, commits)
+    assert got[w] == m[:8], got
+    assert got[mainline] == mainline, got
+    assert got["deadbeef"] == "deadbeef", got
+
+
+# The documented NIGHTLY-RED-1 failure cases: register commits carried onto main's
+# first-parent line through a merge's second parent (or deeper side DAG). The old
+# `rev-list --first-parent --merges --ancestry-path w..tip` query surfaced a carrier
+# only when `w` was reachable through first-parent edges — i.e. `w` already on the
+# line — and returned ∅ for a side-branch commit, silently leaving the row keyed to
+# itself. `03ac3b06`→`f79f9d2a` is the direct-second-parent shape the old query did
+# see; the rest returned ∅. On main's fp line `e2175c93` is not a carrier at all —
+# `c2055d96`'s cell (which the stacked-line oracle keyed to e2175c93) re-keys to
+# `d9fa3f5d`, the PR merge that carried the whole p26-16 branch.
+@pytest.mark.parametrize(
+    "wanted,carrier",
+    [
+        ("065d8aa0", "b79a05c6"),  # PR #135 — side DAG, old query ∅
+        ("03450cb8", "f87fcbe4"),  # PR #148 — side DAG, old query ∅ (stacked-line oracle
+        #                           keyed this family near e2175c93, not on main's line)
+        ("04895cdc", "7086d2a5"),  # PR #178 — side DAG, old query ∅
+        ("03ac3b06", "f79f9d2a"),  # PR #159 — direct second parent, old query already saw
+        ("c2055d96", "d9fa3f5d"),  # PR #108 — the old oracle's e2175c93 cell re-keys here
+    ],
+)
+def test_register_commit_map_keys_to_main_line_carrier(wanted: str, carrier: str) -> None:
+    """Each documented wanted commit maps to the earliest merge on main's first-parent
+    line whose side set contains it — the carrier the nightly replay judges."""
+    if not (_have(wanted) and _have(carrier)):
+        pytest.skip("real history not in this clone (shallow)")
+    commits = git(
+        ROOT, "rev-list", "--reverse", "--first-parent", f"{carrier}^1..{carrier}"
+    ).split()
+    got = mg.register_commit_map(mg.Git(ROOT), {wanted}, commits)
+    assert got[wanted] == carrier[:8], got
+
+
+def test_register_commit_map_earliest_on_main_line() -> None:
+    """Over the whole judged line the carrier is the EARLIEST first-parent merge
+    containing the commit — `03450cb8` is also an ancestor of every later merge, but the
+    map must name `f87fcbe4` (the merge that brought it onto the line)."""
+    pairs = {
+        "065d8aa0": "b79a05c6",
+        "03450cb8": "f87fcbe4",
+        "04895cdc": "7086d2a5",
+        "03ac3b06": "f79f9d2a",
+        "c2055d96": "d9fa3f5d",
+    }
+    if not all(_have(s) for s in list(pairs) + list(pairs.values())):
+        pytest.skip("real history not in this clone (shallow)")
+    tip = git(ROOT, "rev-parse", "origin/main").strip()
+    commits = git(
+        ROOT, "rev-list", "--reverse", "--first-parent", f"a33177c7..{tip}"
+    ).split()
+    got = mg.register_commit_map(mg.Git(ROOT), set(pairs), commits)
+    for w, carrier in pairs.items():
+        assert got[w] == carrier, (w, got[w])
+
+
+def test_replay_oracle_out_of_span_row_fails(repo: Path, tmp_path: Path) -> None:
+    """An expectation keyed to a commit outside the judged span is inert — it is
+    reported and fails the comparison, so `missed=0` can never again be vacuous
+    (NIGHTLY-RED-1: the whole oracle was out-of-span and silently skipped)."""
+    append(repo, "docs/build/LEDGER.md", "- 2026-09-28 — T2 done — demo/t2 · PR pending\n")
+    commit(repo, T_CHANGE, "clean append")
+    oracle = _oracle_csv(
+        tmp_path,
+        [("violation", "deadbeef", "docs/build/LEDGER.md", "*", "*", "test", "")],
+    )
+    rc, doc, out = run_guard(repo, "replay", f"{base_of(repo)}..HEAD", "--oracle", oracle)
+    assert rc == 1 and doc["disagreements"]["out-of-span"], out
+    assert "outside the judged span" in out

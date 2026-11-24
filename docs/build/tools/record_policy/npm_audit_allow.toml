@@ -8,45 +8,36 @@
 #   - per PR (the `security` job): `npm audit --omit=dev` — production deps only;
 #     the list currently covers NO production finding (astro GHSA-26w7-cxv4-gfx2
 #     was fixed by the 7.2.4 → 7.3.5 pin, not allowed).
-#   - nightly (nightly.yml `npm` stage): a full `npm audit` — the entries below
-#     cover the `@lhci/cli` (Lighthouse runner) DEV toolchain. `lhci` executes
-#     the performance-budget audit locally in CI; nothing it ships reaches the
-#     static bundle the public surface serves (the bundle is built by astro,
-#     not by lhci), so the exposure is a build-time toolchain risk only.
+#   - nightly (nightly.yml `npm` stage): a full `npm audit` — the remaining
+#     entries below cover the `astro` (static-site builder) PROD-scope chain.
+#     `astro` produces the public bundle at build time; the vulnerable paths
+#     are in its build machinery, never shipped in the static bytes.
 #
 # Every entry: `package` + `advisories` (the GHSA ids npm reports), `scope`,
 # `reason`, `tracking` (the row/ADR that retires it) and `expires` (a UTC date).
 # An expired entry fails the gate loudly — a dead grant is renewed deliberately
-# or removed, never kept stale. The only "fix" npm offers for this chain is
-# `@lhci/cli@0.1.0` — a 15-major downgrade that removes the runner — so the
-# entries stand until the toolchain moves (tracking: D-P34.2-1).
-
-[[allow]]
-id = "LHCI-CHAIN-BASIC-FTP"
-package = "basic-ftp"
-advisories = ["GHSA-c475-qrg2-pj4r"]
-scope = "dev-only"
-reason = "quadratic-time DoS in basic-ftp's Unix directory-listing parser; reachable only via get-uri ← pac-proxy-agent ← proxy-agent inside @lhci/cli — build-time Lighthouse tooling, never shipped in the static bundle"
-tracking = "D-P34.2-1 — replace or upgrade the @lhci/cli audit-runner chain"
-expires = "2026-11-30"
-
-[[allow]]
-id = "LHCI-CHAIN-EXTRACT-ZIP"
-package = "extract-zip"
-advisories = ["GHSA-jmr9-qjv8-65gv", "GHSA-7pqw-9j4j-h8q3"]
-scope = "dev-only"
-reason = "extract-zip zip-slip / DoS pair reachable only via @puppeteer/browsers ← puppeteer-core ← lighthouse ← @lhci/cli — the browser-download helper of the dev-only Lighthouse runner"
-tracking = "D-P34.2-1 — replace or upgrade the @lhci/cli audit-runner chain"
-expires = "2026-11-30"
-
-[[allow]]
-id = "LHCI-CHAIN-TMP"
-package = "tmp"
-advisories = ["GHSA-ph9p-34f9-6g65"]
-scope = "dev-only"
-reason = "tmp arbitrary-write via symlink reachable only inside @lhci/cli's external-editor path — dev-only tooling on a CI runner, not the shipped surface"
-tracking = "D-P34.2-1 — replace or upgrade the @lhci/cli audit-runner chain"
-expires = "2026-11-30"
+# or removed, never kept stale.
+#
+# History: the `@lhci/cli` (Lighthouse runner) DEV-toolchain entries
+# (basic-ftp, extract-zip ×2, tmp — tracking D-P34.2-1) retired 2026-11-20 when
+# the `@lhci/cli` 0.15.1 → 0.16.1 bump (lighthouse 12.6.1 → 13.6.0,
+# puppeteer-core → 25.x, compression → 1.8.2) dropped the vulnerable chain from
+# the tree — then were partially RESTORED the same day after the head-bound
+# web job failed under Lighthouse 13.6.0: its new measurement set records
+# nonzero total-blocking-time on routes budgeted `<=0` by `sig.page-budgets/1`
+# (`/r/_fixture-record/` TBT found 8, expected <=0 — run 44676844367 attempt
+# 2). `lighthouserc*.json` is generated from `tests/e2e/page-budgets.json` and
+# raising the ceiling needs an ADR-155 amendment — an operator call, not a
+# dependency-repair call — so the repair reverted to the LH12-calibrated
+# 0.15.1 runner instead (OPS-NIGHTLY-RED-1-REPAIR closeout). `basic-ftp` and
+# `tmp` were still resolved by real bumps (npm `overrides` pins 6.2.6 / 0.2.7 —
+# forced past the consumers' declared ranges, so the pins are exact and
+# re-verified by the gate each run). `extract-zip` has no fixed release
+# anywhere (2.0.1 is the vulnerable ceiling AND the latest published) and
+# `zod`'s fix (4.6.6) is a major ahead of chromium-bidi's `^3` pin inside
+# puppeteer-core — both stay covered below until upstream ships or the LH13
+# recalibration lands. D-P34.2-1 was reopened for that residual (event
+# `D-P34.2-1:e2`).
 
 [[allow]]
 id = "ASTRO-CHAIN-HTTP-CACHE-SEMANTICS"
@@ -65,3 +56,21 @@ scope = "prod"
 reason = "ReDoS through single-branch repeated extglobs; the vulnerable input is the glob *pattern string*, which must be attacker-controlled to trigger. Every published release (<=4.0.7) is in range — there is no fix to upgrade to (4.0.7 is latest). Reachable transitively via astro/vite/tinyglobby/@rollup-pluginutils — compile-time file matching over authored glob constants in our own build config; the public surface is pre-built static bytes and no runtime path takes external glob patterns"
 tracking = "D-P37.61e-1 — a picomatch release >4.0.7 (or off the dep chain), then the entry is removed"
 expires = "2026-11-30"
+
+[[allow]]
+id = "LHCI-CHAIN-EXTRACT-ZIP"
+package = "extract-zip"
+advisories = ["GHSA-jmr9-qjv8-65gv", "GHSA-7pqw-9j4j-h8q3"]
+scope = "dev-only"
+reason = "extract-zip zip-slip / DoS pair reachable only via @puppeteer/browsers <- puppeteer-core <- lighthouse <- @lhci/cli — the browser-download helper of the dev-only Lighthouse runner, never shipped in the static bundle. 2.0.1 is BOTH the vulnerable ceiling and the latest published release — there is no fix to upgrade to; the only drop-the-dep path (@lhci/cli >=0.16 -> lighthouse 13.x) breaks ADR-155's <=0 TBT budgets under LH13's new measurement set (run 44676844367 attempt 2: /r/_fixture-record/ TBT found 8, expected <=0)"
+tracking = "D-P34.2-1 — an extract-zip release >2.0.1, a puppeteer chain off the dep, or the operator's ADR-155 LH13 recalibration; entry is removed when any lands"
+expires = "2027-02-20"
+
+[[allow]]
+id = "LHCI-CHAIN-ZOD"
+package = "zod"
+advisories = ["GHSA-mrhx-c7xc-m3w5"]
+scope = "dev-only"
+reason = "zod memory exhaustion on oversized constrained collections; reachable only via chromium-bidi's nested zod@^3 inside puppeteer-core <- lighthouse <- @lhci/cli — CDP protocol parsing in the dev-only runner, never shipped. The fix (4.6.6) is a major ahead of chromium-bidi's declared ^3 range, so the fix rides an upstream puppeteer-core/chromium-bidi release, not an override"
+tracking = "D-P34.2-1 — a puppeteer-core/chromium-bidi release carrying zod 4.6.6+ (or the operator's ADR-155 LH13 recalibration, whose newer chain already resolves it)"
+expires = "2027-02-20"
