@@ -380,9 +380,7 @@ def test_sigpg_leg_proceeds_with_terminal_materialize_history(tmp_path: Path) ->
             {"status": {"conditions": [{"type": "Completed", "status": "True"}]}},
         ],
     )
-    env, log = _stubbed_env(
-        tmp_path, SIG_PROTECT_NOW=OPEN_WINDOW, STUB_MEXEC=mexec
-    )
+    env, log = _stubbed_env(tmp_path, SIG_PROTECT_NOW=OPEN_WINDOW, STUB_MEXEC=mexec)
     proc = _run(["--apply", "instance"], env=env)
     assert proc.returncode == 0, proc.stdout + proc.stderr
     assert proc.stdout.count("SKIP") == 3
@@ -425,9 +423,7 @@ def test_sigpg_leg_refuses_while_materialize_running(tmp_path: Path) -> None:
             {"status": {}},
         ],
     )
-    env, log = _stubbed_env(
-        tmp_path, SIG_PROTECT_NOW=OPEN_WINDOW, STUB_MEXEC=mexec
-    )
+    env, log = _stubbed_env(tmp_path, SIG_PROTECT_NOW=OPEN_WINDOW, STUB_MEXEC=mexec)
     proc = _run(["--apply", "instance"], env=env)
     assert proc.returncode == 42, proc.stdout + proc.stderr
     assert "REFUSED" in proc.stderr
@@ -520,9 +516,7 @@ def test_iam_leg_bucket_probe_is_cache_busted(tmp_path: Path) -> None:
     proc = _run(["--apply", "iam"], env=env)
     assert proc.returncode == 0, proc.stdout + proc.stderr
     bucket_probes = [
-        line
-        for line in clog.read_text().splitlines()
-        if "storage.googleapis.com" in line
+        line for line in clog.read_text().splitlines() if "storage.googleapis.com" in line
     ]
     assert bucket_probes, "direct bucket probe not invoked"
     assert all("sig-protect-probe=" in line for line in bucket_probes)
