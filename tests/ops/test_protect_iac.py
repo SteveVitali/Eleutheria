@@ -306,9 +306,7 @@ def test_sigpg_leg_proceeds_with_terminal_materialize_history(tmp_path: Path) ->
             {"status": {"conditions": [{"type": "Completed", "status": "True"}]}},
         ],
     )
-    env, log = _stubbed_env(
-        tmp_path, SIG_PROTECT_NOW=OPEN_WINDOW, STUB_MEXEC=mexec
-    )
+    env, log = _stubbed_env(tmp_path, SIG_PROTECT_NOW=OPEN_WINDOW, STUB_MEXEC=mexec)
     proc = _run(["--apply", "instance"], env=env)
     assert proc.returncode == 0, proc.stdout + proc.stderr
     assert proc.stdout.count("SKIP") == 3
@@ -326,9 +324,7 @@ def test_sigpg_leg_refuses_while_materialize_running(tmp_path: Path) -> None:
             {"status": {}},
         ],
     )
-    env, log = _stubbed_env(
-        tmp_path, SIG_PROTECT_NOW=OPEN_WINDOW, STUB_MEXEC=mexec
-    )
+    env, log = _stubbed_env(tmp_path, SIG_PROTECT_NOW=OPEN_WINDOW, STUB_MEXEC=mexec)
     proc = _run(["--apply", "instance"], env=env)
     assert proc.returncode == 42, proc.stdout + proc.stderr
     assert "REFUSED" in proc.stderr
