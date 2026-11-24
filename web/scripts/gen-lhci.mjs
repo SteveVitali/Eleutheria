@@ -259,9 +259,9 @@ function assertMatrix(source = "fixtures") {
     assertions: assertionsFor(T0, null, source),
   });
   blocks.push({
-    "//": "T1 content — script ≤ 20 KiB, document ≤ 150 KiB, perf ≥ 0.95, a11y 1.0, LCP ≤ 1.5 s, CLS ≤ 0.02, TBT ≤ 50 ms (K0 §4.3 verbatim). Excludes the T0/T2/T3 blocks and the /sources/ + /sources/runs/ indices (their own blocks carry the recorded LCP measured gaps).",
+    "//": "T1 content — script ≤ 20 KiB, document ≤ 150 KiB, perf ≥ 0.95, a11y 1.0, LCP ≤ 1.5 s, CLS ≤ 0.02, TBT ≤ 50 ms (K0 §4.3 verbatim). Excludes the T0/T2/T3 blocks and the /sources/ + /sources/runs/ + /releases/ + /research-dossier/okc-alpr/ + /entity/ + /coverage-metrics/ indices (their own blocks carry the recorded LCP measured gaps).",
     matchingUrlPattern:
-      "^(?:(?!/curate/|/map/|/network/|/explore/|/search/|/dispute/|/print/|/r/|/intake/|/40[0-9]|/sources/index\\.html|/sources/runs/index\\.html|://[^/]*/index\\.html$).)*$",
+      "^(?:(?!/curate/|/map/|/network/|/explore/|/search/|/dispute/|/print/|/r/|/intake/|/40[0-9]|/sources/index\\.html|/sources/runs/index\\.html|/releases/index\\.html|/research-dossier/okc-alpr/index\\.html|/entity/index\\.html|/coverage-metrics/index\\.html|://[^/]*/index\\.html$).)*$",
     assertions: assertionsFor(T1, null, source),
   });
   const surfaceBlocks = (note, pattern, row, route) => {
@@ -312,7 +312,31 @@ function assertMatrix(source = "fixtures") {
     "/sources/runs/",
   );
   surfaceBlocks(
-    "T1 / home — identical T1 ceilings; the recorded measured gap bounds today's ≈ 1.51 s LCP at its regression bound as error, the ratified 1.5 s as warn — D-P36.64-2 (the K14 section stack's document + one route-scoped stylesheet ride the shared ~1.5 s first-paint floor).",
+    "T1 /releases/ index — identical T1 ceilings; the recorded measured gap bounds today's ≈ 1.51 s LCP at its regression bound as error, the ratified 1.5 s as warn — D-P36.48-1 (the shared ~1.5 s first-paint floor, first recorded holding this route at run 44692468552).",
+    "/releases/index\\.html$",
+    T1,
+    "/releases/",
+  );
+  surfaceBlocks(
+    "T1 /research-dossier/okc-alpr/ — identical T1 ceilings; the recorded measured gap bounds today's ≈ 1.51 s LCP at its regression bound as error, the ratified 1.5 s as warn — D-P36.48-1 (the shared ~1.5 s first-paint floor, first recorded holding this route at run 44692468552).",
+    "/research-dossier/okc-alpr/index\\.html$",
+    T1,
+    "/research-dossier/okc-alpr/",
+  );
+  surfaceBlocks(
+    "T1 /entity/ index — identical T1 ceilings; the recorded measured gap bounds today's ≈ 1.51 s LCP at its regression bound as error, the ratified 1.5 s as warn — D-P36.48-1 (the shared ~1.5 s first-paint floor, first recorded holding this route at run 44692468552).",
+    "/entity/index\\.html$",
+    T1,
+    "/entity/",
+  );
+  surfaceBlocks(
+    "T1 /coverage-metrics/ index — identical T1 ceilings; the recorded measured gap bounds today's ≈ 1.51 s LCP at its regression bound as error, the ratified 1.5 s as warn — D-P36.48-1 (the shared ~1.5 s first-paint floor, first recorded holding this route at run 44692468552).",
+    "/coverage-metrics/index\\.html$",
+    T1,
+    "/coverage-metrics/",
+  );
+  surfaceBlocks(
+    "T1 / home — identical T1 ceilings; the recorded measured gap bounds today's ≈ 1.66 s LCP at its regression bound as error, the ratified 1.5 s as warn — D-P36.64-2 (the K14 section stack's document + one route-scoped stylesheet ride the shared first-paint floor; re-recorded at the ~1.66 s fleet measure, run 44692468552).",
     "://[^/]*/index\\.html$",
     T1,
     "/",
