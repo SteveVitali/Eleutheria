@@ -304,3 +304,84 @@ fixture's frozen `T0` is advanced/frozen-clock on base.
 Tail-recording stops here: each further records commit spawns a run
 with the same deterministic verdict — the next head's python-failure
 row is owed to `flake_log.csv` by whatever lands next.
+
+## Adaptation to main's re-shaped first-parent line (2026-11-24, `date -u`)
+
+- **Harness:** devin/claude-opus-5-5/subagent (this section and its commit).
+- **Cause — main's first-parent line changed shape on 2026-11-23.** The
+  factory fast-forwarded `main` to PR #541's head `144b658b` (P38.3c) so the
+  12 operator-signed GATE DECISIONS rows kept their own signed commits. That
+  head sat on the update merge `0721661e`, whose **first** parent is #541's
+  branch, not main — so `rev-list --first-parent a33177c7..origin/main` now
+  runs through the P38 stack's own branch history: **3069** commits (was 493,
+  one per PR merge, via `89a23c27`). `89a23c27` and the older PR merges are
+  side history now; #540 (`01e7d7f2`) and #542 (`0f567381`) merged after it
+  as normal merges. No rewrite of main.
+- **Operator decision (2026-11-23):** "adapt, and proceed" — adapt this PR
+  to main's actual first-parent history.
+- **What broke:** the hosted python job failed one test,
+  `test_register_commit_map_earliest_on_main_line` (expected
+  `065d8aa0`→`b79a05c6`, got `065d8aa0`) — `065d8aa0` is now itself on the
+  line. `register_commit_map` is **correct** for the new line (carrier =
+  earliest first-parent commit containing `w`; an on-line commit is its own
+  carrier; merges' side sets `rev-list M ^M^1` are disjoint, so the first hit
+  is the only hit) — no code change. The committed oracle was stale the
+  other way: all **132/132** of its keys (the old-line carrier merges) are
+  now off the line, i.e. every row would report `out-of-span`.
+- **Test adapted** (`docs/build/tools/test_memory_guard.py`): the whole-line
+  test now pins the pairs on the line at main's adaptation tip `0f567381` —
+  self-carriers `065d8aa0`/`03450cb8`/`04895cdc`/`03ac3b06` (now on the
+  line); merge-carried `c2055d96`→`e2175c93` (direct second parent),
+  `b79a05c6`/`d9fa3f5d`→`6fc132fd` (deep side DAG of a stack carry-merge),
+  `89a23c27` (old main tip)→`0721661e` (the branch-first update merge) — and
+  re-derives each from ancestry (`_assert_earliest_carrier`: carrier on the
+  line and containing `w`; on-line ⇒ itself; otherwise a merge whose first
+  parent does not contain `w`, with the tip also containing `w` so
+  "earliest, not any later ancestor" is non-vacuous). A new
+  `test_register_commit_map_earliest_on_current_main_line` runs the same
+  ancestry contract over today's `origin/main` with no pinned expectations
+  (and fails if no merge-carried commit is left — never vacuous). Mutation
+  check: mapping carried commits to the line tip fails both tests. The
+  parametrized `carrier^1..carrier` test is unchanged (docstring notes it
+  judges each PR merge's own segment of the pre-2026-11-23 line).
+- **Oracle re-derived over the actual line** —
+  `memory_guard.py oracle-gen a33177c7..origin/main` (origin/main =
+  `0f567381`), the same command as `a589ed1c`, with the `reviewed` input
+  taken from **main's committed oracle** (`c83a4c1a`'s file), not this
+  branch's: main's 304 keys are the stacked-line anchors the adjudications
+  were made on, and all 304 are on today's line (re-key = identity). Feeding
+  this branch's carrier-keyed file instead would re-key carriers-of-carriers
+  and collapse 417 reviewed rows to 178 (lossy, measured) — rejected. The
+  reviewed rows' (kind, path, check, rule, note) set is identical in both
+  files (178 distinct, 0 differences) — `a589ed1c` changed only their keys.
+  Result: **972 rows (467 derived, 505 reviewed preserved)**, 0 out-of-span;
+  byte-diff vs main's file is exactly one added derived row
+  (`violation,6fc132fd,docs/build/LEDGER.md,append-only,*,position-scan,…`
+  — a carry-merge now on the line).
+- **Local replay over the new line** —
+  `memory_guard.py replay a33177c7..origin/main --oracle
+  tests/unit/fixtures/memory_guard/replay_expected.csv` — **RED, exit 1**:
+  3069 judged, 980 with violations, 7 vacuous; oracle **503 expected
+  violation / 311 clean cells; 1749 actual finding cells; 0 missed,
+  0 breached, 1180 unexpected, 161 reviewed-waived, 0 out-of-span**. The
+  167-missed / 91-unexpected / 1-breached drift recorded above is gone (the
+  oracle's anchors are back on the line they were adjudicated on); what is
+  newly surfaced is per-commit history the old one-merge-per-PR line
+  collapsed: **1180 unexpected cells over 727 commits** (724 of them
+  ancestors of the old main tip `89a23c27`; 65 commits / 83 cells predate
+  the oracle's 2026-10-04 derivation head `c83a4c1a`, the rest are later
+  and never adjudicated; 5 merge commits / 9 cells). By check:
+  append-only[append-only] 679, [append-position] 284,
+  [frozen-after-close] 113, record-dates[R1] 21, append-only[row-annotate]
+  14, [frozen] 11, [prefix] 8, [living-archived] 7, record-shape[pr] 6,
+  record-dates[R1-malformed] 5, append-only[chain] 5, record-dates[R2] 5,
+  readouts[readout] 5, readouts[G4b-confirmation] 4, [G4b-verbatim] 4,
+  [G4b-prose] 3, append-only[transition-event] 2, [amendment] 2,
+  readouts[G4b-tick] 1, append-only[schema] 1. Corroborated by main's own
+  scheduled nightly on the new line (run 45316576135 @ `01e7d7f2`,
+  main's code + oracle): 3068 judged, 502 expected, 0 missed, 0 breached,
+  **1181 unexpected** — the one-cell difference is the `6fc132fd` row above.
+  **Not hidden:** no allow-list, waiver or reviewed row was added; whether
+  these cells are adjudicated (and how) is the operator's call, and it
+  stays `D-P34.7-1`'s substance (OPEN).
+- No gate-affecting record touched; nothing signed.

@@ -2725,9 +2725,10 @@ def test_register_commit_map_side_branch_carrier(repo: Path) -> None:
 # only when `w` was reachable through first-parent edges — i.e. `w` already on the
 # line — and returned ∅ for a side-branch commit, silently leaving the row keyed to
 # itself. `03ac3b06`→`f79f9d2a` is the direct-second-parent shape the old query did
-# see; the rest returned ∅. On main's fp line `e2175c93` is not a carrier at all —
-# `c2055d96`'s cell (which the stacked-line oracle keyed to e2175c93) re-keys to
-# `d9fa3f5d`, the PR merge that carried the whole p26-16 branch.
+# see; the rest returned ∅. On main's pre-2026-11-23 fp line `e2175c93` was not a carrier
+# at all — `c2055d96`'s cell re-keyed to `d9fa3f5d`, the PR merge that carried the whole
+# p26-16 branch. (Since the 2026-11-23 topology change main's line IS that stacked line
+# again, and `c2055d96` → `e2175c93` — pinned in the whole-line test below.)
 @pytest.mark.parametrize(
     "wanted,carrier",
     [
@@ -2740,8 +2741,11 @@ def test_register_commit_map_side_branch_carrier(repo: Path) -> None:
     ],
 )
 def test_register_commit_map_keys_to_main_line_carrier(wanted: str, carrier: str) -> None:
-    """Each documented wanted commit maps to the earliest merge on main's first-parent
-    line whose side set contains it — the carrier the nightly replay judges."""
+    """Each documented wanted commit maps to its PR merge over that merge's own
+    first-parent segment (`carrier^1..carrier` — a slice of main's line as it ran before
+    the 2026-11-23 topology change): the side-DAG shapes the old `--ancestry-path` query
+    missed. Over today's line these commits are on the line themselves — see
+    `test_register_commit_map_earliest_on_main_line`."""
     if not (_have(wanted) and _have(carrier)):
         pytest.skip("real history not in this clone (shallow)")
     commits = git(
@@ -2751,26 +2755,89 @@ def test_register_commit_map_keys_to_main_line_carrier(wanted: str, carrier: str
     assert got[wanted] == carrier[:8], got
 
 
+# Main's first-parent line changed shape on 2026-11-23: the factory fast-forwarded main to
+# PR #541's head 144b658b, which sat on the branch-first update merge 0721661e — so the
+# line from a33177c7 now runs through the P38 stack's own branch history (~3069 commits)
+# instead of one PR merge per step (493, via 89a23c27). Commits the old line carried
+# through a merge's second parent (065d8aa0, 03450cb8, 04895cdc, 03ac3b06) are now ON the
+# line and are their own carriers; the old PR merges (b79a05c6 …) and the old tip 89a23c27
+# are now the side history. The pairs below are pinned to the tip main had at that
+# adaptation (0f567381) so they stay deterministic; the property check after them
+# re-derives "earliest" from git ancestry over whatever origin/main is today.
+_LINE_TIP_2026_11_23 = "0f567381"
+_LINE_SELF_CARRIED = ("065d8aa0", "03450cb8", "04895cdc", "03ac3b06")
+_LINE_MERGE_CARRIED = {
+    "c2055d96": "e2175c93",  # direct second parent of the p26-16 stack merge
+    "b79a05c6": "6fc132fd",  # old PR #135 merge — deep side DAG of a stack carry-merge
+    "d9fa3f5d": "6fc132fd",  # old PR #108 merge — same carry-merge
+    "89a23c27": "0721661e",  # the old main tip — carried by #541's branch-first update merge
+}
+
+
+def _assert_earliest_carrier(w: str, carrier: str, line: set[str]) -> None:
+    """The carrier contract, re-derived from ancestry rather than trusted: the carrier is
+    on the judged line and contains `w`; a commit on the line is its own carrier; otherwise
+    the carrier is a merge whose first parent (its predecessor on the line) does NOT
+    contain `w` — so no earlier line commit does either (line ancestry is monotone)."""
+
+    def is_anc(a: str, b: str) -> bool:
+        return (
+            subprocess.run(
+                ["git", "-C", str(ROOT), "merge-base", "--is-ancestor", a, b],
+                capture_output=True,
+            ).returncode
+            == 0
+        )
+
+    assert carrier in line, (w, carrier, "carrier off the judged line")
+    assert is_anc(w, carrier), (w, carrier, "carrier does not contain w")
+    if w in line:
+        assert carrier == w, (w, carrier, "an on-line commit is its own carrier")
+        return
+    parents = git(ROOT, "rev-list", "--parents", "-n", "1", carrier).split()[1:]
+    assert len(parents) >= 2, (w, carrier, "an off-line commit's carrier must be a merge")
+    assert not is_anc(w, f"{carrier}^1"), (w, carrier, "an earlier line commit contains w")
+
+
 def test_register_commit_map_earliest_on_main_line() -> None:
-    """Over the whole judged line the carrier is the EARLIEST first-parent merge
-    containing the commit — `03450cb8` is also an ancestor of every later merge, but the
-    map must name `f87fcbe4` (the merge that brought it onto the line)."""
-    pairs = {
-        "065d8aa0": "b79a05c6",
-        "03450cb8": "f87fcbe4",
-        "04895cdc": "7086d2a5",
-        "03ac3b06": "f79f9d2a",
-        "c2055d96": "d9fa3f5d",
-    }
-    if not all(_have(s) for s in list(pairs) + list(pairs.values())):
+    """Over the whole judged line the carrier is the EARLIEST first-parent commit containing
+    the wanted commit — itself when it is on the line, else the merge that brought it on.
+    `89a23c27` (the old main tip) is an ancestor of every later commit on the line, but
+    the map must name `0721661e`, the update merge that carried it; `b79a05c6` and
+    `d9fa3f5d` must both name `6fc132fd`, not any later carry-merge."""
+    tip = _LINE_TIP_2026_11_23
+    shas = [tip, *_LINE_SELF_CARRIED, *_LINE_MERGE_CARRIED, *_LINE_MERGE_CARRIED.values()]
+    if not all(_have(s) for s in shas):
+        pytest.skip("real history not in this clone (shallow)")
+    commits = git(ROOT, "rev-list", "--reverse", "--first-parent", f"a33177c7..{tip}").split()
+    line = {c[:8] for c in commits}
+    wanted = set(_LINE_SELF_CARRIED) | set(_LINE_MERGE_CARRIED)
+    got = mg.register_commit_map(mg.Git(ROOT), wanted, commits)
+    for w in _LINE_SELF_CARRIED:
+        assert w in line and got[w] == w, (w, got[w])
+    for w, carrier in _LINE_MERGE_CARRIED.items():
+        assert w not in line, w
+        assert got[w] == carrier, (w, got[w])
+        # non-vacuous "earliest": w is also an ancestor of the line's tip, a later commit
+        assert carrier != tip[:8]
+        _assert_earliest_carrier(w, got[w], line)
+
+
+def test_register_commit_map_earliest_on_current_main_line() -> None:
+    """The same contract over today's origin/main line, with no pinned expectations — each
+    wanted commit's mapped carrier is re-checked against git ancestry, so a future change
+    to main's shape cannot silently break the map (nor silently pass this test)."""
+    shas = [*_LINE_SELF_CARRIED, *_LINE_MERGE_CARRIED]
+    if not all(_have(s) for s in shas):
         pytest.skip("real history not in this clone (shallow)")
     tip = git(ROOT, "rev-parse", "origin/main").strip()
-    commits = git(
-        ROOT, "rev-list", "--reverse", "--first-parent", f"a33177c7..{tip}"
-    ).split()
-    got = mg.register_commit_map(mg.Git(ROOT), set(pairs), commits)
-    for w, carrier in pairs.items():
-        assert got[w] == carrier, (w, got[w])
+    commits = git(ROOT, "rev-list", "--reverse", "--first-parent", f"a33177c7..{tip}").split()
+    line = {c[:8] for c in commits}
+    got = mg.register_commit_map(mg.Git(ROOT), set(shas), commits)
+    carried = [w for w in shas if w not in line]
+    assert carried, "no merge-carried wanted commit on the current line — test is vacuous"
+    for w in shas:
+        _assert_earliest_carrier(w, got[w], line)
 
 
 def test_replay_oracle_out_of_span_row_fails(repo: Path, tmp_path: Path) -> None:
