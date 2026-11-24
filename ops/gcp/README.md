@@ -272,3 +272,16 @@ implement-spec spec=docs/tickets/224_P34.21b__attribution-re-export-and-republis
 >   republish, scheduled-window watch, job failure, secret rotation, roll,
 >   cost review, decommission — every command verified against the tree by
 >   `python3 docs/build/tools/check_runbook.py` (`make docs-check` runs it).
+
+> **Update 2026-11-23 (P38.4 Round-11 docs refresh — appended; the entries above stand).**
+> The Wave-C spine posture of record is `sig-pg` on `db-custom-2-7680` (L2 recorded
+> GREEN in the 2026-11-20 PHASE LOG entry); the Round-11 schema re-deploy
+> **clean-failed and fully reverted** (`OPS-SPINE-SCHEMA-DEPLOY`: 19/41 pending
+> changes applied, then `closed_vocabulary` verify division-by-zero over 133
+> pre-existing `skos_concept_iri IS NULL` rows — sqitch reverted all 19;
+> poststate == prestate, `bound_at` absent). Re-deploy is owed a new append-only
+> sqitch change plus a PITR-clone rehearsal; the export `run`/`fetch`/re-cut legs
+> queue behind it, Wave-C L3's strict <2026-11-21T00:00Z window lapsed un-run
+> (reauthorization owed alongside L5), and the twelve keyed secrets stay
+> operator-pending. Authoritative state: `docs/build/LEDGER.md` PHASE LOG +
+> `docs/build/OPERATIONAL_READINESS.md` §(g).
