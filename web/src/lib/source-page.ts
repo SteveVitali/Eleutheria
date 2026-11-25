@@ -39,7 +39,8 @@
  * interim "description pending review".
  */
 
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync, readFileSync, statSync } from "node:fs";
+import { readJsonlRowsCached } from "./jsonl";
 import { dataSource, exportDir, getTermsDisclosure } from "./data";
 import { AS_OF } from "./fixtures";
 import { resolveSourceId } from "./alias";
@@ -48,6 +49,7 @@ import {
   isSourceRowsDoc,
   type LifecycleState,
   type SourceRow,
+  type SourceRowsDoc,
 } from "./source-counts";
 
 export const SOURCE_PAGE_SCHEMA = "sig.source-page/2";
@@ -558,13 +560,32 @@ function fixturePageIds(): string[] {
   return SOURCE_ROWS_DOC_FIXTURE.sources.map((r) => r.source_id).sort();
 }
 
-function exportPageIds(): string[] {
-  const path = `${exportDir()}/transparency/sources.json`;
-  if (!existsSync(path)) return [];
+/**
+ * The `transparency/sources.json` document, parsed once per file revision
+ * (D-P37.65a-2 (b)): every source page's model AND every contradiction-side
+ * name lookup resolves through it — the per-call re-parse was O(pages ×
+ * doc), quadratic beside the corpus readers.
+ */
+const _sourcesDocCache = new Map<string, { mtimeMs: number; size: number; doc: SourceRowsDoc }>();
+
+function exportSourcesDoc(path: string): SourceRowsDoc | null {
+  if (!existsSync(path)) return null;
+  const st = statSync(path);
+  const hit = _sourcesDocCache.get(path);
+  if (hit !== undefined && hit.mtimeMs === st.mtimeMs && hit.size === st.size) {
+    return hit.doc;
+  }
   const parsed: unknown = JSON.parse(readFileSync(path, "utf-8"));
   if (!isSourceRowsDoc(parsed)) {
     throw new Error(`${path}: not a valid sig.source-row/1 document`);
   }
+  _sourcesDocCache.set(path, { mtimeMs: st.mtimeMs, size: st.size, doc: parsed });
+  return parsed;
+}
+
+function exportPageIds(): string[] {
+  const parsed = exportSourcesDoc(`${exportDir()}/transparency/sources.json`);
+  if (parsed === null) return [];
   return parsed.sources.map((s) => s.source_id).sort();
 }
 
@@ -578,11 +599,8 @@ export function getSourcePageIds(): string[] {
 
 function exportRow(sourceId: string): SourcePageRow | null {
   const path = `${exportDir()}/transparency/sources.json`;
-  if (!existsSync(path)) return null;
-  const parsed: unknown = JSON.parse(readFileSync(path, "utf-8"));
-  if (!isSourceRowsDoc(parsed)) {
-    throw new Error(`${path}: not a valid sig.source-row/1 document`);
-  }
+  const parsed = exportSourcesDoc(path);
+  if (parsed === null) return null;
   for (const raw of parsed.sources as unknown[]) {
     const o = raw as { source_id?: unknown };
     if (typeof o.source_id === "string" && resolveSourceId(o.source_id) === sourceId) {
@@ -595,18 +613,12 @@ function exportRow(sourceId: string): SourcePageRow | null {
   return null;
 }
 
-function readJsonl(path: string): unknown[] {
-  return readFileSync(path, "utf-8")
-    .split("\n")
-    .map((l) => l.trim())
-    .filter(Boolean)
-    .map((l) => JSON.parse(l) as unknown);
-}
-
 function exportExecutions(sourceId: string): ExecutionRecord[] | null {
   const path = `${exportDir()}/transparency/sources/${sourceId}/executions.jsonl`;
   if (!existsSync(path)) return null;
-  const rows = readJsonl(path);
+  // Cached per file revision (D-P37.65a-2): the ~8 per-source subpages each
+  // build a page model over the same feed — parsed once, never per page.
+  const rows = readJsonlRowsCached(path);
   for (const r of rows) {
     if (!isExecutionRecord(r)) {
       throw new Error(`${path}: a row is not a valid ${EXECUTION_RECORD_SCHEMA}`);
@@ -618,7 +630,9 @@ function exportExecutions(sourceId: string): ExecutionRecord[] | null {
 function exportFreshness(sourceId: string): SourceFreshness | null {
   const path = `${exportDir()}/transparency/freshness.jsonl`;
   if (!existsSync(path)) return null;
-  for (const raw of readJsonl(path)) {
+  // Cached per file revision (D-P37.65a-2): every source page scans the same
+  // shared feed — parsed once per build, never per source.
+  for (const raw of readJsonlRowsCached(path)) {
     const o = raw as SourceFreshness;
     if (o && typeof o.source_id === "string" && o.source_id === sourceId) return o;
   }
