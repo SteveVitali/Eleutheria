@@ -141,6 +141,10 @@ branch is cut from, so the row is not flipped here. The verify cell reads
 build` completes over the real national export emitting every published entity
 route (both the `v/` and `s/<pub>` dists), with `npm --prefix web run check`
 green". This leg lands the code fix and proves the bound is removed at the
-reader layer over the real export plus steady route emission; the complete
-both-dists emission leg is the remaining evidence the flip needs (the `v/`
-build was still emitting when this ledger was written).
+reader layer over the real export plus steady route emission — the `v/` build
+emitted 366 HTML pages + evidence/artifact JSON streams over ~19 min of route
+generation, past the exact phase where both P37.65a-live-1 builds sat at 0
+routes for hours and at per-route emit pace (never a corpus re-parse), before
+it was stopped to free the box for the uncontended e2e re-runs. The complete
+both-dists emission leg is the remaining evidence the flip needs — a
+multi-hour leg to schedule, not a code bound.
