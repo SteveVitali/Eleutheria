@@ -13,7 +13,7 @@ claim-level-provenance knowledge graph of surveillance infrastructure.
 This repository contains the full **specification and research base** and the **implemented build**:
 all §47 packages built and tested (`make check` green), the claim spine over PostgreSQL 18 + PostGIS,
 the OCFL evidence store, the read API, exports with licence-compartment computation, the Astro web
-surface (zero-JS public content pages plus three opt-in interactive islands), and twenty registered
+surface (zero-JS public content pages plus three opt-in interactive islands), and thirty-six registered
 connectors behind the fail-closed `ingestion_permitted` gate.
 
 **It is also deployed.** The public surface runs on GCP at
@@ -34,12 +34,12 @@ but deliberately **not operating** (`/intake/` answers `503 receiver_not_operati
 | Path | What it is |
 |---|---|
 | `docs/1_deep_research_overview.md` | The source outline: landscape synthesis and project definition (3,314 lines) |
-| `docs/2_canonical_design_spec.md` | **The canonical design and implementation specification** (9,377 lines, 715 numbered requirement ids, v1.1.0) |
+| `docs/2_canonical_design_spec.md` | **The canonical design and implementation specification** (10,648 lines, 994 numbered requirement ids, v1.2.0) |
 | `docs/research/` | The evidence base: 13 research workstreams, 26,818 lines, 501 evidence-formatted findings |
 | `docs/research/_meta/` | Traceability index, adversarial gap analysis, lead-agent spot-checks, and the spec's section sources |
 | `docs/governance/` | The adopted governance and safety policies: takedown/corrections/suppression, governance & Code of Conduct, the anti-misuse statement, contributor safety, the intake-receiver operating packet, publication-scope analyses |
 | `docs/evaluation/` | The independent human-evaluation campaign packet: rubric, training pilot, reviewer provisioning, shadow-gate readout (prepared — **no human labels exist yet**) |
-| `docs/adr/` | Architecture Decision Records (144 — Appendix F) |
+| `docs/adr/` | Architecture Decision Records (251 — Appendix F) |
 | `docs/tickets/` | The ordered ticket backlog — the build's committed contract record (`00_MANIFEST.md` is the order; each `PXX.Y` file is one ticket) |
 | `docs/build/` | Durable build memory: planning ledger, build index, decision memo, capstone/backlog/reconciliation reports, the integration plan and release notes |
 
@@ -61,6 +61,9 @@ but deliberately **not operating** (`/intake/` answers `503 receiver_not_operati
 - **Part X** — the phased implementation plan
 - **Part XI** — the Round-10 contract extension (§55: typed assertions, dossiers, human evaluation,
   immutable releases + FTS5 discovery, correction intake, acquisition, build memory)
+- **Part XII** — the Round-11 contract extension (§56: build-memory truth, operations, security,
+  releases, confidence, transparency and the public surface — the SIG-MEM/ENG/OPS/SEC/REL/CONF/TRANSP
+  families plus the appended acquisition, engagement, docs and evaluation ids)
 - **Appendices A–G** — traceability matrix, the 37 mandatory questions answered, consolidated DDL, a worked example, glossary, ADR index, corrections to the outline
 
 ### Three properties it asserts, and how they are checked
@@ -104,7 +107,7 @@ ADR-023 records the deviation. Each is a plain CLI (`uv run python -m <pkg> --he
 |---|---|
 | `ontology` | The single LinkML source of truth + SKOS vocabularies and the deterministic generators (§20.1, ADR-007). |
 | `db` | The physical claim spine: the L0–L3 schema on PostgreSQL 18 + PostGIS, sqitch migrations, append-only + RLS, and the DuckDB/Parquet analytics boundary (§16, §18, ADR-001). |
-| `connectors` | The eight-stage connector framework, the source registry + fail-closed ingestion gate, and twenty registered connectors — fixture-replayable offline; live fetch only where the source's review record is green (§21–§23, ADR-026/088). |
+| `connectors` | The eight-stage connector framework, the source registry + fail-closed ingestion gate, and thirty-six registered connectors — fixture-replayable offline; the gated live fetch runs only where the source's review record is green (§21–§23, ADR-026/088). |
 | `parsing` | The layered document-parsing stack — the §24 parser interface every connector extracts through, incl. the layer-3/4 table + clause engines (ADR-033/071). |
 | `resolution` | The jurisdiction/organization identity registries and deterministic + probabilistic (Splink) entity resolution (§11, §14, ADR-029). |
 | `reconcile` | The deterministic `RESOLVE` engine, the §29 reconciliation workflows, and `Contradiction` as a first-class object (§28–§29, ADR-036/037). |
@@ -114,7 +117,7 @@ ADR-023 records the deviation. Each is a plain CLI (`uv run python -m <pkg> --he
 | `exports` | Bulk export builders with per-compartment licence computation + the ODbL split, Zenodo deposits, object-store push and tiles (§38, §42, ADR-048/067). |
 | `orchestration` | The pipeline-composition boundary — the only package allowed to import a workflow orchestrator (SIG-ENG-013, ADR-016). |
 | `policy` | The executable crawler / licence / publication / threat / sensitivity policy (real tested code, not prose — §42–§46, SIG-ENG-014). |
-| `ops` | Runtime composition (`sig-ops`) of the PG spine + read API + static site — deposits/egress/degraded-mode, hosted deploy + scheduled ingest (`ops/gcp/`), recovery/release/dossier-packet verification verbs (P21.4/P21.5/P24.1, ADR-066/067/075/081, Round-10 ADR-125/132/137–139/142/144). |
+| `ops` | Runtime composition (`sig-ops`) of the PG spine + read API + static site — deposits/egress/degraded-mode, the gated hosted-deploy + scheduled-ingest lane (`ops/gcp/`), recovery/release/dossier-packet verification verbs, and the Round-11 release toolchain + gated leg-runner declarations (`release*`, `publish-web`, `wave-*`, `*-acceptance`, `capstone-*` — P21.4/P21.5/P24.1, ADR-066/067/075/081, Round-10 ADR-125/132/137–139/142/144, Round-11 SIG-OPS/SIG-REL). |
 | `evidence` | The OCFL 1.1 write-once evidence store: content addressing, the capture pipeline, and sensitivity tiers (§17, ADR-006/023). |
 
 The TypeScript `web/` package (SIG-ENG-010) is the zero-JS-by-default Astro public shell; it consumes
@@ -178,7 +181,7 @@ A subset of sources *is* green-reviewed and the hosted scheduled jobs do fetch t
 [`docs/tickets/DEFERRALS.md`](./docs/tickets/DEFERRALS.md). See
 [`docs/build/OPERATIONAL_READINESS.md`](./docs/build/OPERATIONAL_READINESS.md).
 
-#### Deployed state (Round 10, 2026-09-28)
+#### Deployed state (Round 10, 2026-09-28 — Round-11 additions below are bounded records, nothing re-probed)
 
 Distinct from the local paths above, the hosted deployment exists and is public:
 
@@ -197,6 +200,14 @@ Distinct from the local paths above, the hosted deployment exists and is public:
   `mechanical_complete` with `review.status=not_run`. Authoritative current state:
   [`docs/build/OPERATIONAL_READINESS.md`](./docs/build/OPERATIONAL_READINESS.md) §(f) and
   [`docs/build/CAPSTONE_CLOSURE.md`](./docs/build/CAPSTONE_CLOSURE.md) §(f).
+- **Round-11 (as recorded 2026-11-20 — [`docs/build/LEDGER.md`](./docs/build/LEDGER.md) PHASE LOG,
+  [`docs/build/OPERATIONAL_READINESS.md`](./docs/build/OPERATIONAL_READINESS.md) §(g))** — a second
+  republish landed 2026-11-16 (`docs/build/reports/p37.61a-sig-web-republish/`); the Round-11
+  re-cut chain stays **queued**: the schema deploy clean-failed and fully reverted (poststate ==
+  prestate — nothing applied; re-deploy is owed a new append-only sqitch change plus a PITR-clone
+  rehearsal), the export/re-cut legs queue behind it, and the release candidate's promote chain stays
+  `prepared_not_executed` awaiting the operator-signed `sig.promotion-approval/1`. The newest
+  committed `sig.probe-run/1` record is dated 2026-11-16 — nothing fresher is asserted here.
 
 ### Releases
 
@@ -206,11 +217,11 @@ the operator and `v0.1.0` remains untagged. The change history is in
 [`CHANGELOG.md`](./CHANGELOG.md) (Keep a Changelog format). No ticket merges, tags, or pushes
 `main` — the operator integrates the stacked-PR chain following the current, read-only-verified
 procedure in
-[`docs/build/reports/p33.6-integration-plan/INTEGRATION_PLAN.md`](./docs/build/reports/p33.6-integration-plan/INTEGRATION_PLAN.md)
-(re-run `sh docs/build/tools/merge_dryrun.sh`, retarget + merge the open PRs in ascending order with
-the documented conflict resolutions, then the post-merge verification; it has **no tag step** — the
-P20.3 [`docs/build/INTEGRATION_PLAN.md`](./docs/build/INTEGRATION_PLAN.md) it supersedes is kept as
-the dated record). Contribution workflow: [`CONTRIBUTING.md`](./CONTRIBUTING.md).
+[`docs/build/reports/p38.3c-integration-plan/INTEGRATION_PLAN.md`](./docs/build/reports/p38.3c-integration-plan/INTEGRATION_PLAN.md)
+(the Round-11 plan, P38.3c — retarget + merge the open PRs in ascending order with the documented
+conflict resolutions, then the post-merge verification; it has **no tag step** — the P33.6 and P20.3
+[`docs/build/INTEGRATION_PLAN.md`](./docs/build/INTEGRATION_PLAN.md) plans it supersedes are kept as
+the dated records). Contribution workflow: [`CONTRIBUTING.md`](./CONTRIBUTING.md).
 
 ## Method note
 

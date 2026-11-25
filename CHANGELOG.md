@@ -2929,7 +2929,7 @@ public-behaviour path set (`web/src/pages/**`, `web/src/layouts/**`,
   the Round-11 public channel stays e-mail-only (WV-05/ADR-180), and
   `[intake].operational` remains `false` (B-8).
 
-## [0.1.0] — unreleased (REL.1 marker skipped-by-operator; the current integration plan has no tag step — `docs/build/reports/p33.6-integration-plan/INTEGRATION_PLAN.md`)
+## [0.1.0] — unreleased (REL.1 marker skipped-by-operator; the current integration plan has no tag step — `docs/build/reports/p38.3c-integration-plan/INTEGRATION_PLAN.md`, which supersedes the dated P33.6 plan)
 
 First tagged snapshot of the Surveillance Infrastructure Graph (SIG): the complete
 specification-driven build (Phases 0–18), the post-build capstone, reconciliation and

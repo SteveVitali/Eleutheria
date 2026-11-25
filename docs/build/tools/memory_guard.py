@@ -4228,9 +4228,11 @@ def oracle_compare(
     - every `violation` row must be matched by a finding (a register positive may not be missed);
     - every finding must be covered by a `violation` row (a benign row or an uncovered commit may
       not be flagged);
-    - every `clean` row forbids findings of that check on that (commit, path) cell.
+    - every `clean` row forbids findings of that check on that (commit, path) cell;
+    - every row must name a commit inside the judged span — an out-of-span row is inert here
+      and fails the comparison (NIGHTLY-RED-1: `missed=0` must never be vacuous).
 
-    Returns (exit_code, {missing, unexpected, clean-breached}).
+    Returns (exit_code, {missing, unexpected, clean-breached, out-of-span}).
     """
     span8 = {c[:8] for c in commits}
     actual = {(f.commit[:8], f.path, f.check, f.rule) for f in findings}
@@ -4250,10 +4252,16 @@ def oracle_compare(
         )
 
     missing, unexpected, breached = [], [], []
+    # An oracle row keyed to a commit outside the judged span is inert — it can never be
+    # checked here, so `missed=0` alone asserts nothing about it (NIGHTLY-RED-1: the whole
+    # oracle was keyed to a stacked branch's fp line while the nightly judged main's, and
+    # every expectation was silently skipped). Out-of-span rows are reported explicitly and
+    # fail the comparison: the oracle must name only cells the span judges.
+    out_of_span = [r for r in oracle if r.commit not in span8]
     n_waived = 0
     for row in oracle:
         if row.commit not in span8 or row.kind == "waived":
-            continue  # the row names a commit outside this replay's span — not owed here
+            continue  # out-of-span rows are collected above and reported below — never silent
         if waived(row):
             # a hand-reviewed withdrawal — the register's claim and the adjudication are
             # both on file; it is neither expected nor asserted clean
@@ -4282,13 +4290,28 @@ def oracle_compare(
         )
     for c8, path, check, rule in unexpected:
         print(f"  oracle-unexpected: {c8} {path} {check}[{rule}] flagged but not expected")
+    for row in out_of_span:
+        print(
+            f"  oracle-out-of-span: {row.commit} {row.path} {row.check}[{row.rule}] "
+            f"({row.kind}, {row.source}) names a commit outside the judged span"
+        )
     print(
         f"oracle: {sum(1 for r in oracle if r.kind == 'violation')} expected violation cell(s), "
         f"{sum(1 for r in oracle if r.kind == 'clean')} clean cell(s); {len(actual)} actual "
         f"finding cell(s); {len(missing)} missed, {len(breached)} breached, "
-        f"{len(unexpected)} unexpected, {n_waived} reviewed-waived"
+        f"{len(unexpected)} unexpected, {n_waived} reviewed-waived, "
+        f"{len(out_of_span)} out-of-span"
     )
-    rc = EXIT_VIOLATIONS if (missing or breached or unexpected) else EXIT_OK
+    if out_of_span:
+        print(
+            f"oracle: {len(out_of_span)} expectation(s) name commits outside the judged "
+            f"span — they assert nothing here (re-key through register_commit_map or drop them)"
+        )
+    rc = (
+        EXIT_VIOLATIONS
+        if (missing or breached or unexpected or out_of_span)
+        else EXIT_OK
+    )
     return rc, {
         "missing": [
             {"commit": r.commit, "path": r.path, "check": r.check, "rule": r.rule, "source": r.source}
@@ -4301,26 +4324,48 @@ def oracle_compare(
             {"commit": r.commit, "path": r.path, "check": r.check, "source": r.source}
             for r in breached
         ],
+        "out-of-span": [
+            {"commit": r.commit, "path": r.path, "check": r.check, "kind": r.kind, "source": r.source}
+            for r in out_of_span
+        ],
     }
 
 
 def register_commit_map(git: "Git", wanted: set[str], commits: list[str]) -> dict[str, str]:
     """Map each wanted register commit (8-char prefix) to the first-parent commit of `commits`
-    that carries it: itself, or the earliest merge on the first-parent path that contains it."""
+    that carries it: itself, or the earliest merge on the first-parent path that contains it.
+
+    A merge M on the first-parent line carries exactly the DAG ``rev-list M ^M^1`` — the side
+    history the merge brings onto the line. For a wanted commit `w` not itself on the line,
+    `w` is an ancestor of M iff it sits in that side set, so the earliest merge on the line
+    containing `w` is the first merge (oldest-first) whose side set names it — no per-pair
+    `merge-base` probe needed. (`rev-list --first-parent --merges --ancestry-path w..tip` was
+    unreliable here: it surfaced a carrier only when `w` was reachable through first-parent
+    edges — i.e. `w` already on the line — and returned ∅ for a side-branch commit carried
+    through a second parent, silently re-keying the row to itself; NIGHTLY-RED-1.)
+    """
     in_span = {c[:8] for c in commits}
     out: dict[str, str] = {}
-    tip = commits[-1] if commits else "HEAD"
+    pending: set[str] = set()
     for w in wanted:
         if w in in_span:
             out[w] = w
-            continue
-        merges = git.text(
-            "rev-list", "--first-parent", "--merges", "--ancestry-path", f"{w}..{tip}"
-        ).split()
-        if merges:
-            out[w] = merges[-1][:8]  # rev-list is newest-first; the earliest merge is last
         else:
-            out[w] = w  # no carrier — the row stays at its own commit and reports as missed
+            pending.add(w)
+    if pending and commits:
+        tip = commits[-1]
+        merge_set = set(git.text("rev-list", "--min-parents=2", tip).split())
+        for m in commits:  # oldest-first: the first carrier found is the earliest on the line
+            if not pending:
+                break
+            if m not in merge_set:
+                continue
+            side = {c[:8] for c in git.text("rev-list", m, f"^{m}^1").split()}
+            for w in sorted(pending & side):
+                out[w] = m[:8]
+                pending.discard(w)
+    for w in pending:
+        out[w] = w  # no carrier in this span — stays at its own commit, reports out-of-span
     return out
 
 
@@ -4659,6 +4704,29 @@ def cmd_oracle(args: argparse.Namespace) -> int:
     out = Path(args.out or (root / ORACLE_REL))
     if out.is_file():
         reviewed = [r for r in load_oracle(out) if r.source == "reviewed"]
+    if reviewed:
+        # A reviewed row adjudicates a (commit, path, check) cell on the judged first-parent
+        # line. Re-deriving over a different line re-anchors each row to its commit's
+        # carrier merge — the same map the derived rows use — so an adjudication keeps the
+        # cell it judged instead of going silently out-of-span (NIGHTLY-RED-1). kind, path,
+        # check, rule, source and note are preserved verbatim; the re-key is a recorded
+        # namespace correction, never a silent re-baseline.
+        span_commits = git.text("rev-list", "--reverse", "--first-parent", args.span).split()
+        rekey = register_commit_map(git, {r.commit for r in reviewed}, span_commits)
+        reviewed = list(
+            dict.fromkeys(
+                OracleRow(
+                    r.kind,
+                    rekey.get(r.commit, r.commit),
+                    r.path,
+                    r.check,
+                    r.rule,
+                    r.source,
+                    r.note,
+                )
+                for r in reviewed
+            )
+        )
     rows = sorted(
         derived + reviewed,
         key=lambda r: (r.commit, r.path, r.check, r.rule, r.kind),
@@ -4736,7 +4804,12 @@ def cmd_replay(args: argparse.Namespace) -> int:
         # vacuous is never green (EXIT_VACUOUS)
         print("memory-guard replay: every commit judged vacuous — nothing was evaluated")
     disagree_rc = 0
-    disagreements: dict[str, list] = {"missing": [], "unexpected": [], "clean-breached": []}
+    disagreements: dict[str, list] = {
+        "missing": [],
+        "unexpected": [],
+        "clean-breached": [],
+        "out-of-span": [],
+    }
     if oracle is not None:
         disagree_rc, disagreements = oracle_compare(git, args.span, commits, oracle, findings)
     if args.json:
