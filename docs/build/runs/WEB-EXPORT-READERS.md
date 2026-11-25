@@ -95,8 +95,19 @@
   `check:snapshot` / `check:dom` / `check:figures` / `check:tokens` /
   `check:lexicon` / `check:copy` / `check:feeds` / `check:dsrc` /
   `check:runtime-deps`: **all PASS**.
-- `npx playwright test` (fixtures dist): in-flight at ledger write — see the
-  commit record for the final count.
+- `npx playwright test` (fixtures dist): **6026 passed / 6 failed — every
+  failure a `Test timeout of 30000ms exceeded` on a whole-route fetch sweep,
+  none an assertion** (`acceptance-crawl` non-HTML crawl, `brand` favicon +
+  OG-card sweeps, `budget` `/map/` bytes, `chrome` title/meta + sitemap,
+  `transparency-acceptance` J4 cite-mode sweep). The suite ran concurrently
+  with the real-export `astro build` over the 4.2 GiB corpus; the sweeps
+  fetch ~500 routes serially inside one 30 s test and were starved
+  (`brand.spec.ts:126` passed the first run at 29.6 s — at the cap).
+  Re-run of the five affected spec files: **558 passed / 2 failed** (the two
+  remaining brand sweeps), then `brand.spec.ts` alone with no competing
+  load: **9/9 passed in 36.7 s** (favicon sweep 6.3 s, OG-card sweep 8.7 s).
+  Every once-failed spec is green uncontended — load-induced flakes, not
+  regressions; no shipped byte changed (the fix is build-time only).
 - **Real-bytes reader smoke** (throwaway vitest, `SIG_DATA_SOURCE=export
   SIG_EXPORT_DIR=exports/out/national`, node v24.21.0): every corpus reader over
   the real 2026-11-25 export, cold → memoized:
