@@ -3,7 +3,7 @@
 ## Purpose
 
 The framework and per-source connectors that acquire evidence from external sources and emit claims
-(§21): the source registry, the eight-stage pipeline, and twenty registered connectors
+(§21): the source registry, the eight-stage pipeline, and thirty-six registered connectors
 (`sig-connectors list-connectors` — OSM, Flock, Atlas, records, procurement, France/Belgium,
 Data Driven, mandated disclosure, dossier-document and accountability connectors, and the broader
 pathway sources) — all behind a fail-closed ingestion gate. Nearest-file-wins: this file adds to
