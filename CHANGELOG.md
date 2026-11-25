@@ -2700,6 +2700,30 @@ public-behaviour path set (`web/src/pages/**`, `web/src/layouts/**`,
 
 ### Fixed
 
+- **Display-label collision extension + the SR-route camera-name screen**
+  (SIG-UI-111 / OPS-EXPORT-GCE-2 Blocker 6; K2 §3.2/§3.3; report
+  `docs/build/reports/sig-ui-111-label-collision.md`) — the spine export
+  refused at `check_unique_labels` when two members of one display-label
+  group drew the same `#{hash4}` suffix (a 20-bit space: collisions are
+  certain at real scale). `resolve_disambiguators`' last step now applies
+  the slug registry's freeze rule (`slug_history.freeze_hashes`): members
+  in sorted `entity_id` order take the shortest `entity_hash` prefix not
+  already taken — the first keeps `#{hash4}`, a colliding member extends
+  one base32 character at a time (`… #tyvj` / `… #tyvjw`) — and the
+  disambiguator's width is reserved so a long base label truncates before
+  it, never through it; the `· {place}` / `· {source}` steps win only when
+  their suffixed labels actually separate the group (casefolded, as the
+  gate compares) and otherwise fall through. These changes touch only
+  groups the old cascade could not separate; `check_unique_labels` stays
+  fail-closed. And DOT camera names that lead with a State Route
+  designation ("SR 167 at MP 21.3: 84th Ave S") no longer read as
+  person-shaped under the Part VIII screen: `natural_person_signal`
+  counts the post-nominal tokens (`jr`/`sr`/`ii`/`iii`/`iv`/`esq`) as
+  person evidence only in terminal position, so those sites publish their
+  own `camera_name` label instead of the derived
+  `surveillance camera in <place>` fallback ("John Smith Sr" still
+  screens). `partner_identity` entity minting is unchanged.
+  `live_verification=false`.
 - **Freshness honesty + map suppression parity** (P35.20b / row 301,
   PKG-10 b-half; closes ED-43/ED-44; cites SIG-METRIC-006/007,
   SIG-RECON-058, SIG-UI-018/037, GQ-15, ADR-104(e), ED-29) — two public
