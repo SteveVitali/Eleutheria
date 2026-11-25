@@ -292,24 +292,6 @@ rerun_cell = '''`implement-spec spec=docs/tickets/221_P34.18__personal-handle-so
   live_dependants = ["P34.21b"]
 
 [[row]]
-key = "P34.21a"
-kind = "leg"
-obligations = ["D-P34.21a-1"]
-obligations_cell = '''D-P34.21a-1'''
-gates_cell = '''`hosted`, window-bound (≥2026-10-13T12:00Z, outside 03:00–06:30Z/d, pref. 14-20Z — AR-3); pre-authorised: S5-3 11A (expires GATE-G4; void: red-probe/restore-fail); `live:P34.3`, AR-2 restore + pre-state, `probe-run/1` ≤24 h'''
-operator_cell = '''pre-auth — wait out window, re-check unexpired/un-voided; AR-2 + ≤ 24 h probe record'''
-rerun_cell = '''`implement-spec spec=docs/tickets/223_P34.21a__attribution-gate-sink-rights-and-backfill.md live_verification=true` (L1 attribution-corrections dry-run→apply→read-back)'''
-
-  [[row.legs]]
-  id = "P34.21a-L1"
-  obligations = ["D-P34.21a-1"]
-  earliest = '''2026-10-13T12:00Z'''
-  excluded = ["03:00–06:30Z", "AR-3"]
-  go = '''pre-authorised: S5-3'''
-  rerun = '''implement-spec spec=docs/tickets/223_P34.21a__attribution-gate-sink-rights-and-backfill.md live_verification=true'''
-  live_dependants = ["P34.21b"]
-
-[[row]]
 key = "P34.21b"
 kind = "leg"
 obligations = ["D-P34.21b-1", "D-P34.21b-2"]
