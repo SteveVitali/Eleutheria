@@ -514,6 +514,29 @@ def test_surface_license_labels() -> None:
     assert surface_license({"ODbL-1.0", "CC0-1.0"}) == "CC0-1.0 AND ODbL-1.0"
 
 
+def test_queue_shard_compartment_mixed_union_files_in_web() -> None:
+    """SIG-LIC-004a (OPS-EXPORT-GCE-4): an `AND` union across queue subjects
+    has no compartment row — the shard set files in `web`, never raises."""
+    from exports.spine_export import _queue_shard_compartment
+
+    mixed = (
+        "LicenseRef-DerivedFacts-Citations AND "
+        "LicenseRef-PublicRecord-FactualCompilation"
+    )
+    assert _queue_shard_compartment(mixed, None) == "web"
+    # An unmapped single licence lands identically (the raise is the same).
+    assert _queue_shard_compartment("LicenseRef-NoSuchLicence", None) == "web"
+
+
+def test_queue_shard_compartment_single_union_uses_real_compartment() -> None:
+    """A single-licence union still lands in that licence's real compartment,
+    not the web pseudo-compartment."""
+    from exports.spine_export import _queue_shard_compartment
+
+    comp = _queue_shard_compartment("LicenseRef-DerivedFacts-Citations", None)
+    assert comp == "derived_facts"
+
+
 def test_per_source_slice_recomputes_its_own_envelope() -> None:
     # Two sources disagree on the coordinate of the SAME subject. The aggregate site
     # is conflicted (null point), but each source's slice keeps ITS OWN resolved point

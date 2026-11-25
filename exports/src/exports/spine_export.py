@@ -74,11 +74,12 @@ from policy.labels import (
     kind_for,
     resolve_disambiguators,
 )
-from policy.licensing import _registry as _license_registry
 from policy.licensing import (
+    LicenseIncompatibilityError,
     compute_export_license,
     export_refusal_reason,
 )
+from policy.licensing import _registry as _license_registry
 from policy.licensing import (
     license_url as policy_license_url,
 )
@@ -2215,6 +2216,23 @@ def surface_license(licences: set[str] | frozenset[str]) -> str:
     if not ordered:
         return _SIG_SPDX
     return ordered[0] if len(ordered) == 1 else " AND ".join(ordered)
+
+
+def _queue_shard_compartment(
+    queue_license: str, registry: Mapping[str, Any] | None
+) -> str:
+    """The compartment label for queue-v2 task shards.
+
+    A single-licence union lands in that licence's real compartment. A
+    mixed-union ``AND`` expression (ADR-106 §4) has no compartment row by
+    construction — `compartment_for_license` raises rather than returning
+    falsy, so the shard set files in the `web` pseudo-compartment like every
+    other mixed-label web artifact.
+    """
+    try:
+        return C.compartment_for_license(queue_license, None, registry)
+    except LicenseIncompatibilityError:
+        return _WEB_COMPARTMENT
 
 
 # --------------------------------------------------------------------------- #
@@ -6557,9 +6575,7 @@ def build_spine_export(
     _queue_license = (
         surface_license(_queue_subject_licences) if _queue_subject_licences else _SIG_SPDX
     )
-    _queue_compartment = (
-        C.compartment_for_license(_queue_license, None, registry) or _WEB_COMPARTMENT
-    )
+    _queue_compartment = _queue_shard_compartment(_queue_license, registry)
     handles_path = f"{_WEB_DIR}/task_handles_history.json"
     web_artifacts[handles_path] = _web_bytes(queue_v2.handles_history)
     web_licenses[handles_path] = _SIG_SPDX
