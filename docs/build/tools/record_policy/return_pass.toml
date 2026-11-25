@@ -130,24 +130,6 @@ operator_cell = '''the merge sitting for #141–#190, bounded at #190 (OP-08)'''
 rerun_cell = '''none — operator action, not in `returnPass`'''
 
 [[row]]
-key = "P34.3"
-kind = "leg"
-obligations = ["D-P34.3-1"]
-obligations_cell = '''D-P34.3-1'''
-gates_cell = '''`hosted`, `live`-window only (mutations never 03:00–10:00Z; `sig-pg` legs outside AR-3, no `sig-materialize`); 5 mutations pre-auth (S5-3 11A list, expires GATE-G4); window guard x42'''
-operator_cell = '''a verbatim go outside window, or `protect.sh --apply` directly (AR-2 backup gates first patch)'''
-rerun_cell = '''`r11/P34.3-live-<n>` dispatch or `implement-spec spec=docs/tickets/204_P34.3__ops-data-protection.md live_verification=true`'''
-
-  [[row.legs]]
-  id = "P34.3-live"
-  obligations = ["D-P34.3-1"]
-  earliest = '''any permitted time — `date -u` outside the excluded hours; the AR-2 backup gates the first patch'''
-  excluded = ["03:00–10:00Z", "AR-3", "sig-materialize"]
-  go = '''pre-authorised: S5-3'''
-  rerun = '''implement-spec spec=docs/tickets/204_P34.3__ops-data-protection.md live_verification=true'''
-  live_dependants = ["P34.17", "P34.18", "P34.21a", "P34.21b"]
-
-[[row]]
 key = "P34.4"
 kind = "leg"
 obligations = ["D-P34.4-1", "D-P34.4-2"]
