@@ -519,10 +519,7 @@ def test_queue_shard_compartment_mixed_union_files_in_web() -> None:
     has no compartment row — the shard set files in `web`, never raises."""
     from exports.spine_export import _queue_shard_compartment
 
-    mixed = (
-        "LicenseRef-DerivedFacts-Citations AND "
-        "LicenseRef-PublicRecord-FactualCompilation"
-    )
+    mixed = "LicenseRef-DerivedFacts-Citations AND LicenseRef-PublicRecord-FactualCompilation"
     assert _queue_shard_compartment(mixed, None) == "web"
     # An unmapped single licence lands identically (the raise is the same).
     assert _queue_shard_compartment("LicenseRef-NoSuchLicence", None) == "web"
@@ -989,6 +986,50 @@ def test_provenance_without_binding_rows_is_honest_absence() -> None:
     assert entities == set()  # no captures without binding rows
     # …but the source agents + the export run still stand (the skeleton).
     assert (URIRef(f"{_PROV}source/src_a"), RDF.type, PROV.Agent) in graph
+
+
+def test_provenance_mints_an_agent_for_a_bound_but_unsurfaced_source() -> None:
+    """OPS-EXPORT-GCE-6 (SIG-INGEST-016): a source with a bound capture in
+    ``claim_binding_detail`` but zero surfaced sites/freshness rows is still a
+    ``prov:Agent`` — the docstring's invariant is every source the export drew
+    from, and an un-typed ``wasAttributedTo`` target fails the SIG-INGEST-016
+    validator (the ``okc_council_statement`` live refusal)."""
+    claims = _site("A", "35.46", "-97.51", "Oklahoma")
+    detail = [
+        _binding_detail(
+            "A-src_a-lat",
+            capture_id="cap-a",
+            artifact_id="art-a",
+            artifact_source_id="src_a",
+            retrieved_at="2026-05-01T12:00:00+00:00",
+            run_id="run-a",
+            connector_name="camreg",
+            connector_version="1.2",
+            run_started="2026-05-01T11:59:00+00:00",
+            run_finished="2026-05-01T12:01:00+00:00",
+        ),
+        _binding_detail(
+            "orphan-claim",
+            capture_id="cap-o",
+            artifact_id="art-o",
+            artifact_source_id="src_orphan",
+            retrieved_at="2026-05-02T12:00:00+00:00",
+            run_id="run-o",
+            connector_name="docsrc",
+            connector_version="3.0",
+            run_started="2026-05-02T11:59:00+00:00",
+            run_finished="2026-05-02T12:01:00+00:00",
+        ),
+    ]
+    export = _build(claims, raw_over={"claim_binding_detail": detail})
+    graph = Graph()
+    graph.parse(data=export.provenance.decode("utf-8"), format="nt")
+    validate_prov_graph(graph)
+
+    orphan = URIRef(f"{_PROV}source/src_orphan")
+    cap_o = URIRef(f"{_PROV}capture/cap-o")
+    assert (orphan, RDF.type, PROV.Agent) in graph
+    assert (cap_o, PROV.wasAttributedTo, orphan) in graph
 
 
 def test_export_is_byte_deterministic(tmp_path: Path) -> None:
