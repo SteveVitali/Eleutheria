@@ -394,6 +394,7 @@ def _run_attribution_corrections(args: argparse.Namespace) -> int:
         empty_attribution_count,
         load_corrections,
         plan_corrections,
+        resolved_spine_source_ids,
     )
 
     try:
@@ -403,7 +404,8 @@ def _run_attribution_corrections(args: argparse.Namespace) -> int:
         return 2
     apply = args.apply or args.capture_terms
     with psycopg.connect(args.dsn, autocommit=False) as conn:
-        before = empty_attribution_count(conn, [c.source_id for c in corrections])
+        spine_ids = resolved_spine_source_ids(conn, corrections)
+        before = empty_attribution_count(conn, spine_ids)
         if not apply:
             report = plan_corrections(conn, corrections)
             report["empty_attribution_claims"] = {"before": before, "after": None}
@@ -462,7 +464,7 @@ def _run_attribution_corrections(args: argparse.Namespace) -> int:
             conn.rollback()
             print(f"attribution-corrections: refused — {exc}", file=sys.stderr)
             return 2
-        after = empty_attribution_count(conn, [c.source_id for c in corrections])
+        after = empty_attribution_count(conn, spine_ids)
         report["capture_terms"] = capture_notes
         report["empty_attribution_claims"] = {"before": before, "after": after}
         conn.commit()
