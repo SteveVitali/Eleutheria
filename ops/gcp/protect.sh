@@ -218,11 +218,18 @@ try:
     rows = json.loads(os.environ["SIG_MEXEC"])
 except Exception:
     sys.exit(1)
-running = any(
-    not any(
-        c.get("type") == "Completed" and str(c.get("status")) == "True"
-        for c in ((e.get("status") or {}).get("conditions")) or [])
-    for e in (rows if isinstance(rows, list) else []))
+# Terminal = a `Completed` condition in either state (True = succeeded,
+# False = failed/cancelled — both terminal) or a recorded completionTime.
+# Running = neither marker — still executing (or never scheduled, which the
+# fail-closed reading also refuses to clear). Same semantics as
+# restore-drill.sh — terminal failure history is not a running execution.
+def terminal(e):
+    s = e.get("status") or {}
+    if s.get("completionTime"):
+        return True
+    return any(
+        c.get("type") == "Completed" for c in s.get("conditions") or [])
+running = any(not terminal(e) for e in (rows if isinstance(rows, list) else []))
 sys.exit(1 if running else 0)
 PY
 }
@@ -235,7 +242,7 @@ _assert_sql_flags() {
   for flag in --deletion-protection --retain-backups-on-delete \
               --maintenance-window-day --maintenance-window-hour \
               --storage-auto-increase-limit; do
-    printf '%s' "$help_text" | grep -q -- "$flag" || {
+    grep -q -- "$flag" <<<"$help_text" || {
       echo "protect.sh: gcloud does not advertise '$flag' on 'sql instances patch' — check the CLI version before mutating" >&2
       exit 4; }
   done
@@ -531,8 +538,11 @@ _bucket_versioning_on() {
     | python3 -c "
 import json,sys
 d=json.load(sys.stdin)
+# gcloud >= ~580 emits flat versioning_enabled; older shapes nest
+# versioning.enabled — accept both.
 v=d.get('versioning') or {}
-sys.exit(0 if v.get('enabled') in (True,'true','True') else 1)"
+enabled=v.get('enabled', d.get('versioning_enabled'))
+sys.exit(0 if enabled in (True,'true','True') else 1)"
 }
 
 _bucket_has_our_rule() {
@@ -548,7 +558,10 @@ def norm(o):
     if isinstance(o,list): return [norm(v) for v in o]
     return o
 d=norm(d)
-for r in ((d.get('lifecycle') or {}).get('rule')) or []:
+# gcloud >= ~580 emits lifecycle_config; older shapes nest lifecycle — both
+# normalize to d['lifecycle'] here.
+d['lifecycle'] = d.get('lifecycle') or d.get('lifecycle_config') or {}
+for r in (d.get('lifecycle') or {}).get('rule') or []:
     a,c=r.get('action') or {},r.get('condition') or {}
     if a.get('type')=='Delete' and (c.get('days_since_noncurrent_time',-1)>=want
         or (c.get('is_live') is False and c.get('age',-1)>=want)):
@@ -569,7 +582,8 @@ def norm(o):
     if isinstance(o,list): return [norm(v) for v in o]
     return o
 d=norm(d)
-print(len(((d.get('lifecycle') or {}).get('rule')) or []))"
+d['lifecycle'] = d.get('lifecycle') or d.get('lifecycle_config') or {}
+print(len((d.get('lifecycle') or {}).get('rule') or []))"
 }
 
 act_buckets() {
@@ -702,8 +716,12 @@ act_iam() {
     exit 7
   fi
   local bcode
+  # Cache-bust: index.html serves `cache-control: public, max-age=3600`, so a
+  # bare-URL 200 can be an edge-cached copy from before the removal (the
+  # attempt-3 false red — Age'd, impossible live under UBLA). A unique query
+  # misses the cache and reads the real anonymous verdict.
   bcode="$(curl -s -o /dev/null -w '%{http_code}' \
-           "https://storage.googleapis.com/$SIG_BUCKET_WEB/index.html" || true)"
+           "https://storage.googleapis.com/$SIG_BUCKET_WEB/index.html?sig-protect-probe=$(date +%s%N)" || true)"
   echo "site-check: direct bucket URL -> $bcode (want 403/404)"
   case "$bcode" in 403|404) : ;;
     *) echo "protect.sh: bucket still publicly readable ($bcode) — IAM removal did not take" >&2
@@ -782,6 +800,12 @@ for suffix, days in (("sig-restricted", 90), ("sig-public", 30), ("sig-web", 30)
         report(False, f"qa-6:{suffix}", "no describe json in state dir")
         continue
     d = norm(d)
+    # gcloud >= ~580 emits flat versioning_enabled / lifecycle_config; older
+    # shapes nest versioning.enabled / lifecycle.rule — accept both.
+    if "versioning" not in d and "versioning_enabled" in d:
+        d["versioning"] = {"enabled": bool(d["versioning_enabled"])}
+    if "lifecycle" not in d and isinstance(d.get("lifecycle_config"), dict):
+        d["lifecycle"] = {"rule": (d["lifecycle_config"].get("rule")) or []}
     v = d.get("versioning") or {}
     report(v.get("enabled") is True, f"qa-6:{suffix}:versioning",
            f"live {v.get('enabled')!r}")
