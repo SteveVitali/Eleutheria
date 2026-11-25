@@ -13,14 +13,24 @@ public verdict (SIG-ENG-042).
 | `scrub-audit` | deterministic | ran in this dispatch — **273 published-transparency files scanned, 0 secret-shaped hits** (`policy.transparency.find_secrets` over the fresh emitted dist); `sig.scrub-audit/1` record at `scrub-audit.json` beside this packet | fixture-verified |
 | `journeys` | deterministic | **4/4 pass (chromium)** — the J1/J4 deterministic legs in `web/tests/e2e/transparency-acceptance.spec.ts` (agent walkthrough, never user research) | fixture-verified |
 | `budgets` | deterministic | **523/523 budgets green** — `national_budget_leg.sh budgets` wire-measured over the real-sized national build (the recorded `measured_gaps` rows held inside their regression bounds) | fixture-verified |
-| `release-cut` | production-mutation | **prepared_not_executed** — queues exit 42 | deferred (`D-P37.65a-1`) |
-| `live-crawl` | live | **prepared_not_executed** — queues exit 42 | deferred (`D-P37.65a-1`) |
+| `release-cut` | production-mutation | **executed, machinery-bound stop** (re-cut leg, 2026-11-25, operator go `99018e1b`): `cut` + `built` journaled — `registry/events/000006-…-cut-root.json` (16:38:24Z) + `000007-…-built-p-31371dfb.json` (17:52:32Z) for `p-31371dfb4b2b26453f818fefd311ea07be50ef8413aa9185be1ede927a773a8b` / `sig-2026-11-25.1` over the real national export (`export_manifest_sha256` `39e6549b…8153c` matches `manifest.json` verbatim; integrity manifest 462,494 artifacts re-verified `complete`); `sites` never invoked — both export-mode Astro dists hit the verified `ERR_STRING_TOO_LONG` bound (`osm_physical/statements.jsonl` 1,013,125,905 B > V8's `0x1fffffe8` cap, `web/src/lib/data.ts:2029`, reproduced via `vitest` under pinned node v24.21.0) plus the non-memoized per-page full-corpus re-parse; `stage --apply` measured **~0.014 obj/s** (~7 serial GCS calls/object each paying a 5–6 s `gcloud` ADC token subprocess) then **died** at 8/462,497 objects on the token-timeout path (`GcsError: no GCS access token available`, verbatim in `docs/build/logs/p37.65a-live-1/11-stage.txt`) — `staged` never emitted; lock left held `{verb:stage, 19:41:59Z}` + 8 residue objects, append-only forensic state | deferred (`D-P37.65a-1`; new bounds `D-P37.65a-2` / `D-P37.65a-3`) |
+| `live-crawl` | live | **never reached** — no `staged` candidate exists; even a completed stage hits V14 (no prior `latest.json`) + V15 (no `sig.quality-report/1`) as blocking skips per SIG-ENG-042 | deferred (`D-P37.65a-1`) |
 
-## The cut that did not run — recorded, never fabricated
+## The cut — deferred once, then executed to the machinery's bounds
 
-The ticket's named production mutation is the final release cut (a release
+**Re-cut leg (2026-11-25, this leg):** once `D-P35.53-1` landed (the real
+registry `gs://zeta-medley-508121-u7-sig-release` + the IAM-only staging
+origins exist) and project ADC/`SIG_GCP_PROJECT` were present inside a
+valid window, the leg ran end-to-end at the machinery's own boundaries —
+see the `release-cut`/`live-crawl` rows above and the run ledger
+`docs/build/runs/P37.65a-live-1.md`. The cut + build journaled green; the
+web dist builds, `sites`, `staged` and `verify` hit verified bounds,
+recorded verbatim — never fabricated.
+
+**Original dispatch (2026-11-18, history):** the ticket's named production
+mutation is the final release cut (a release
 build under the plan's window text: `final release cut never inside AR-3
-windows (12-06 -> 12-13T12:00Z)` — verbatim). This dispatch could not run it
+windows (12-06 -> 12-13T12:00Z)` — verbatim). That dispatch could not run it
 honestly:
 
 - **The hosted release registry does not exist.** `gsutil ls
