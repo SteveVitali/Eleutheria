@@ -732,10 +732,19 @@ def resolve_disambiguators(labels: Iterable[EntityLabel]) -> list[EntityLabel]:
 
     ``label → label · {place} → label · {source} → label#{hash4}`` — pure
     function of the emitted rows: same release inputs, same suffixes.  Every
-    group's members end with pairwise-distinct full display labels; when the
-    ``{place}``/``{source}`` steps cannot separate a group, ``#{hash4}``
-    always can (hash collisions are slug-registry concerns, handled by
-    extension — the *display* disambiguator uses hash4 deterministically).
+    group's members end with pairwise-distinct full display labels.
+
+    The ``#{hash4}`` last step is a 20-bit space: at real scale colliding
+    hash4s inside one group are statistically certain (the SIG-UI-111
+    refusal), so the step applies the same extension rule the slug registry
+    uses for its 7-char hash (K2 §3.3 / :func:`slug_history.freeze_hashes`):
+    members in sorted ``entity_id`` order take the shortest
+    ``entity_hash`` prefix not already taken — first-come keeps
+    ``#{hash4}``, a colliding member grows one base32 character at a time
+    until unique.  Steps 1/2 likewise only win when their suffixed labels
+    actually separate the group (a ``LABEL_MAX`` truncation can erase the
+    very suffix that was meant to distinguish); a step that fails to
+    separate falls through to the next instead of emitting duplicates.
     """
     rows = list(labels)
     groups: dict[tuple[str, str | None], list[EntityLabel]] = {}
@@ -750,27 +759,53 @@ def resolve_disambiguators(labels: Iterable[EntityLabel]) -> list[EntityLabel]:
             resolved[id(members[0])] = members[0]
             continue
         members.sort(key=lambda m: m.entity_id)  # deterministic order
-        # Step 1 — `· {place}`: only where every member's place differs.
+
+        def _distinct(stepped: Mapping[int, EntityLabel]) -> bool:
+            # The gate compares casefolded labels — so must this check.
+            texts = [r.label or "" for r in stepped.values()]
+            return len({t.casefold() for t in texts}) == len(texts)
+
+        # Step 1 — `· {place}`: only where every member's place differs and
+        # the suffixed labels still do.
         places = {m.place_hint for m in members}
         if len(places) == len(members) and None not in places:
-            for m in members:
-                resolved[id(m)] = _with_disambig(m, f" · {m.place_hint}")
-            continue
+            stepped = {id(m): _with_disambig(m, f" · {m.place_hint}") for m in members}
+            if _distinct(stepped):
+                resolved.update(stepped)
+                continue
         # Step 2 — `· {source}`.
         sources = {m.source_hint for m in members}
         if len(sources) == len(members) and None not in sources:
-            for m in members:
-                resolved[id(m)] = _with_disambig(m, f" · {m.source_hint}")
-            continue
-        # Step 3 — `#{hash4}`.
+            stepped = {id(m): _with_disambig(m, f" · {m.source_hint}") for m in members}
+            if _distinct(stepped):
+                resolved.update(stepped)
+                continue
+        # Step 3 — `#{hash}`, extended like the slug registry's freeze rule:
+        # first-come keeps `#{hash4}`, a colliding member grows one base32
+        # char until its disambiguator is unique within the group.  The
+        # suffix width is reserved so truncation can never cut it off.
+        taken: set[str] = set()
         for m in members:
-            resolved[id(m)] = _with_disambig(m, f" #{hash4(m.entity_id)}")
+            length = HASH4_LEN
+            dis = entity_hash(m.entity_id, length=length)
+            while dis in taken:
+                length += 1
+                dis = entity_hash(m.entity_id, length=length)
+            taken.add(dis)
+            resolved[id(m)] = _with_disambig(m, f" #{dis}", reserve_suffix=True)
     # Input order preserved; non-colliding rows pass through untouched.
     return [resolved.get(id(r), r) for r in rows]
 
 
-def _with_disambig(m: EntityLabel, suffix: str) -> EntityLabel:
-    label = sanitize_label(f"{m.label}{suffix}")
+def _with_disambig(m: EntityLabel, suffix: str, *, reserve_suffix: bool = False) -> EntityLabel:
+    if reserve_suffix:
+        # The suffix is the unique part: reserve its width up front so a
+        # long base label truncates *before* the disambiguator, never
+        # through it — the emitted label can then never lose the very
+        # characters that distinguish it.
+        label = sanitize_label(m.label or "", limit=LABEL_MAX - len(suffix)) + suffix
+    else:
+        label = sanitize_label(f"{m.label}{suffix}")
     slug = name_slug(label, state_slug=_state_slug(m.place_jkey))
     url = (
         entity_url(m.url_type or "entity", slug, m.hash or entity_hash(m.entity_id))
