@@ -65,3 +65,13 @@ note = "the Round-10 capstone closure packet (frozen artifact; living_records.to
 path = "docs/build/CAPSTONE_GAP_ANALYSIS.md"
 date = "2026-09-28"
 note = "the P19.2 whole-spec gap analysis with its appended P33.1 pass — predates the vocabulary"
+
+[[packets.exempt]]
+path = "docs/build/readouts/GATE-ACCEPT-R11.md"
+date = "2026-11-19"
+note = "the signed Round-11 acceptance readout (Status: SIGNED 2026-11-19); its counts 646 MET · 246 MET-ENGINEERED · satisfied 650 were true when signed and are superseded by #554's SIG-OPS-002 re-verdict (MET-ENGINEERED(D-P34.3-1) -> MET, leg DONE) — exemption operator-approved 2026-11-24 ('Exempt + recount'); no signed bytes change"
+
+[[packets.exempt]]
+path = "docs/build/readouts/GATE-ANNOUNCE.md"
+date = "2026-11-23"
+note = "the PENDING P38.5 announce-readiness packet (drafted 2026-11-23, sha256 recorded in runs/P38.5.md); a readout is append-only except its Status: line (memory_guard BM-INDEX-03), so its 646 · 246 · 650 counts cannot be recounted in place after #554's SIG-OPS-002 re-verdict (now 647 MET · 245 MET-ENGINEERED · satisfied 651) — operator-approved 2026-11-24 ('Exempt + recount'); the packet is re-drafted with recomputed counts before the operator signs it (runs/P34.3-live-4.md), and this entry is removed then"
