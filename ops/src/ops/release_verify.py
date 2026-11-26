@@ -35,6 +35,7 @@ duplicated here.
 
 from __future__ import annotations
 
+import bisect
 import hashlib
 import html as _html
 import http.server
@@ -49,7 +50,7 @@ import time
 import tomllib
 import urllib.error
 import urllib.request
-from collections.abc import Mapping
+from collections.abc import Iterator, Mapping
 from dataclasses import dataclass
 from datetime import UTC, datetime
 from html.parser import HTMLParser
@@ -456,14 +457,63 @@ class VerifyContext:
 _HTML_SUFFIXES = (".html",)
 
 
-def _html_files(*roots: Path) -> list[Path]:
+def _html_files(*roots: Path) -> Iterator[Path]:
     """Every emitted HTML page under the release namespaces — the crawl
-    set V4/V5/V11/V13 share."""
-    out: list[Path] = []
+    set V4/V5/V11/V13 share. Lazy: entries sort per directory as the walk
+    reaches them, so the resident set is O(dir fan-out), never the
+    whole-corpus ~1.28 M-Path sorted list per check that the release-scale
+    tree suite was OS-killed holding (P37.65a finding 5)."""
     for root in roots:
         if root.is_dir():
-            out.extend(p for p in sorted(root.rglob("*")) if p.suffix in _HTML_SUFFIXES)
-    return out
+            yield from _walk_sorted(root)
+
+
+def _walk_sorted(directory: Path) -> Iterator[Path]:
+    """Depth-first over ``directory`` in full-path sorted order — a
+    directory's subtree ranks under ``<name>/`` exactly as
+    ``sorted(rglob)`` ordered it (``/`` sorts after ``.`` and every other
+    name character a same-named file could carry) — yielding ``.html``
+    files only, one directory's entries resident at a time."""
+    try:
+        children = sorted(
+            directory.iterdir(),
+            key=lambda e: e.name + "/" if e.is_dir() else e.name,
+        )
+    except OSError:
+        return
+    for entry in children:
+        if entry.is_dir():
+            yield from _walk_sorted(entry)
+        elif entry.suffix in _HTML_SUFFIXES:
+            yield entry
+
+
+#: The deepest witness depth any ``check_v5`` consumer takes —
+#: ``sorted(referrers)[0]`` for a containment escape, ``[:2]`` for a dead
+#: link's "linked from" evidence.
+_WITNESS_CAP = 2
+
+
+def _witness_add(
+    bag: dict[str, list[str]], route: str, referrer: str, cap: int = _WITNESS_CAP
+) -> None:
+    """Accumulate ``referrer`` into ``bag[route]``, resident-bounded: keep
+    only the ``cap`` smallest referrers — the exact prefix
+    ``sorted(full_set)[:cap]`` would produce — without the full referrer
+    set ever materialising (~25 M string pairs at release scale, the
+    P37.65a finding-5 kill). Redundant referrers drop; a violation still
+    surfaces with every witness its consumer would have shown."""
+    witnesses = bag.get(route)
+    if witnesses is None:
+        bag[route] = [referrer]
+        return
+    if referrer in witnesses:
+        return
+    if len(witnesses) == cap and referrer >= witnesses[-1]:
+        return
+    bisect.insort(witnesses, referrer)
+    if len(witnesses) > cap:
+        witnesses.pop()
 
 
 def _namespace_dirs(work_dir: Path, pub: str) -> dict[str, Path]:
@@ -863,8 +913,12 @@ def check_v3(ctx: VerifyContext) -> dict[str, Any]:
         denied_routes=allowlist.denied_routes,
         required=allowlist.required,
     )
+    # the snapshot additionally carries ``page_index.json`` — the J3 §8.1
+    # withdrawal index ``assemble_site_trees`` writes (P36.66b; V10 reads
+    # ``s/`` + ``v/`` pages through it): pipeline-emitted like
+    # ``release.json``, so allow-listed, never ``required``.
     allowed_s = _publish.PublicAllowlist(
-        top_level=allowlist.top_level | {"release.json"},
+        top_level=allowlist.top_level | {"release.json", "page_index.json"},
         denied_routes=allowlist.denied_routes,
         required=allowlist.required,
     )
@@ -972,9 +1026,10 @@ def check_v4(ctx: VerifyContext) -> dict[str, Any]:
     want_header = latest_header or expected_header
 
     failures: list[str] = []
-    pages = _html_files(*_namespace_dirs(ctx.work_dir, ctx.pub).values())
     fetched = 0
-    for page in pages:
+    crawled = 0
+    for page in _html_files(*_namespace_dirs(ctx.work_dir, ctx.pub).values()):
+        crawled += 1
         route = _served_route(page, ctx.work_dir, ctx.pub)
         res = ctx.fetcher.get(route)
         if res.status != 200:
@@ -1026,7 +1081,7 @@ def check_v4(ctx: VerifyContext) -> dict[str, Any]:
             failures.append(f"{route}: X-SIG-Release {hdr!r} != {expected_header!r}")
 
     evidence = {
-        "pages_crawled": len(pages),
+        "pages_crawled": crawled,
         "pages_fetched": fetched,
         "expected_header": expected_header,
         "failures": failures[:30],
@@ -1035,7 +1090,7 @@ def check_v4(ctx: VerifyContext) -> dict[str, Any]:
         "V4",
         ctx.mode,
         "fail" if failures else "pass",
-        f"{fetched}/{len(pages)} pages crawled on {ctx.origin} — "
+        f"{fetched}/{crawled} pages crawled on {ctx.origin} — "
         f"{len(failures)} stamp/header violation(s)",
         evidence=evidence,
         duration=time.monotonic() - t0,
@@ -1050,11 +1105,13 @@ def check_v5(ctx: VerifyContext) -> dict[str, Any]:
     failures: list[str] = []
     evidence: dict[str, Any] = {}
     ns = _namespace_dirs(ctx.work_dir, ctx.pub)
-    pages = _html_files(*ns.values())
 
-    links: dict[str, set[str]] = {}  # route -> {page routes linking it}
-    containment_targets: dict[str, set[str]] = {}
-    for page in pages:
+    # route -> the ≤2 smallest page routes linking it (bounded-resident —
+    # consumers take ≤2 witnesses, so the full referrer set never
+    # materialises: O(routes), not O(edges); P37.65a finding 5)
+    links: dict[str, list[str]] = {}
+    containment_targets: dict[str, list[str]] = {}  # route -> the smallest referrer
+    for page in _html_files(*ns.values()):
         page_route = _served_route(page, ctx.work_dir, ctx.pub)
         try:
             text = page.read_text(encoding="utf-8")
@@ -1066,15 +1123,15 @@ def check_v5(ctx: VerifyContext) -> dict[str, Any]:
             route = _resolve_href(page_route, href)
             if route is None:
                 continue
-            links.setdefault(route, set()).add(page_route)
+            _witness_add(links, route, page_route)
             if page_route.startswith(f"/s/{ctx.pub}/"):
-                containment_targets.setdefault(route, set()).add(page_route)
+                _witness_add(containment_targets, route, page_route, cap=1)
 
     # -- containment (§5.3): a /s/<pub>/ page's links stay inside the
     #    snapshot prefix except /r/<pub>/, /releases/ and the declared
     #    latest-version targets ----------------------------------------- #
     latest_version_targets: set[str] = set()
-    for page in pages:
+    for page in _html_files(*ns.values()):
         if not _served_route(page, ctx.work_dir, ctx.pub).startswith(f"/s/{ctx.pub}/"):
             continue
         text = page.read_text(encoding="utf-8", errors="replace")
@@ -1092,7 +1149,7 @@ def check_v5(ctx: VerifyContext) -> dict[str, Any]:
             continue
         if any(route.startswith(r) or route == r.rstrip("/") for r in allowed_roots):
             continue
-        escapes.append(f"{sorted(from_pages)[0]} → {route}")
+        escapes.append(f"{from_pages[0]} → {route}")
     failures.extend(f"containment escape: {e}" for e in escapes[:20])
     evidence["containment_escapes"] = escapes[:20]
     evidence["latest_version_targets"] = sorted(latest_version_targets)
@@ -1111,7 +1168,7 @@ def check_v5(ctx: VerifyContext) -> dict[str, Any]:
             continue
         if res.status == 410 and route in ctx.declared_410:
             continue
-        bad.append(f"{route} → {res.status} (linked from {sorted(links[route])[:2]})")
+        bad.append(f"{route} → {res.status} (linked from {links[route]})")
         dead_map.setdefault(res.status, []).append(route)
     failures.extend(bad[:20])
     evidence["links_total"] = len(links)

@@ -27,6 +27,7 @@ Everything runs on the tree origin — a fixture answer recorded as
 from __future__ import annotations
 
 import json
+import random
 import sys
 from datetime import UTC, datetime
 from pathlib import Path
@@ -190,7 +191,8 @@ def _write_site_tree(
 ) -> None:
     """The ``v/<pub>/`` + ``s/<pub>/`` site trees the pipeline's Astro legs
     emit: every allow-list ``required`` entry, the stamp on every page, the
-    ``release.json`` copy, ``page-types.json``, the ``/entity/`` convenience
+    ``release.json`` copy, ``page-types.json``, the ``s/`` tree's J3 §8.1
+    ``page_index.json`` withdrawal index, the ``/entity/`` convenience
     stubs + ``compat_index.json`` in the latest view (the §4.2 serving map
     lands them under ``v/<latest>``), and the ``s/<pub>/`` tree
     self-contained under its prefix (§5.3)."""
@@ -248,6 +250,15 @@ def _write_site_tree(
         (root / "_astro" / "app.css").write_text("body{}\n", encoding="utf-8")
         (root / "page-types.json").write_text(page_types, encoding="utf-8")
         (root / "release.json").write_bytes(site_rel)
+        if ns == "s":
+            # the J3 §8.1 withdrawal index ``assemble_site_trees`` writes
+            # into every snapshot tree — V3's s/ allow-list names it
+            # (pipeline-emitted like release.json, D-P37.65a-4)
+            (root / "page_index.json").write_text(
+                json.dumps({"schema": "sig.page-index/1", "publication_id": pub, "pages": []})
+                + "\n",
+                encoding="utf-8",
+            )
         (root / "index.html").write_text(
             _site_page(fields, describedby, basis=basis), encoding="utf-8"
         )
@@ -775,6 +786,23 @@ def test_v3_fails_when_a_denied_route_answers(tmp_path: Path) -> None:
     assert any("/curate/" in f for f in row["evidence"]["failures"])
 
 
+def test_v3_allows_the_page_index_withdrawal_index(tmp_path: Path) -> None:
+    """D-P37.65a-4 (P37.65a finding 1) — ``s/<pub>/page_index.json`` is the
+    J3 §8.1 withdrawal index ``assemble_site_trees`` emits: V3's effective
+    ``s/`` allow-list names it (allow-listed, never ``required``), while an
+    actually-unlisted top-level entry still fails the same check."""
+    work_dir, pub, store = _build_candidate(tmp_path)
+    sroot = work_dir / "s" / pub
+    assert (sroot / "page_index.json").is_file()  # the fixture emits it like the pipeline
+    row = rv.check_v3(_ctx(work_dir, pub, store))
+    assert row["status"] == "pass", row["evidence"]["failures"]
+    (sroot / "unlisted").mkdir()
+    (sroot / "unlisted" / "index.html").write_text("<html>x</html>")
+    row = rv.check_v3(_ctx(work_dir, pub, store))
+    assert row["status"] == "fail"
+    assert any("unlisted" in f for f in row["evidence"]["failures"])
+
+
 def test_v4_fails_on_a_missing_stamp(tmp_path: Path) -> None:
     work_dir, pub, store = _build_candidate(tmp_path)
     victim = work_dir / "v" / pub / "index.html"
@@ -816,6 +844,71 @@ def test_v5_fails_on_a_dead_link(tmp_path: Path) -> None:
     row = rv.check_v5(_ctx(work_dir, pub, store))
     assert row["status"] == "fail"
     assert "404" in json.dumps(row["evidence"]["dead_or_undeclared"])
+
+
+def test_v5_referrer_sets_are_resident_bounded(tmp_path: Path) -> None:
+    """D-P37.65a-8 (P37.65a finding 5) — referrer accumulation keeps only
+    the ``cap`` smallest witnesses: the exact prefix
+    ``sorted(full_set)[:cap]``, with the full referrer set never resident
+    (O(routes), not O(edges)). Duplicates and late arrivals never grow the
+    window."""
+    referrers = [f"/v/p-x/page-{i:05d}/" for i in range(2_000)]
+    rng = random.Random(20261125)
+    rng.shuffle(referrers)
+    bag: dict[str, list[str]] = {}
+    for ref in referrers + referrers:  # duplicates ride along
+        rv._witness_add(bag, "/target/", ref)
+    assert bag["/target/"] == sorted(set(referrers))[: rv._WITNESS_CAP]
+    assert len(bag["/target/"]) == rv._WITNESS_CAP
+    # the cap-1 form — the containment min-referrer
+    one: dict[str, list[str]] = {}
+    for ref in referrers:
+        rv._witness_add(one, "/target/", ref, cap=1)
+    assert one["/target/"] == [min(referrers)]
+
+
+def test_v5_escape_witnesses_stay_bounded(tmp_path: Path) -> None:
+    """A dead route linked from more pages than the witness cap still
+    fails — bounded accumulation drops only *redundant* referrers, never
+    the violation; the recorded escape witness is the smallest referrer."""
+    work_dir, pub, store = _build_candidate(tmp_path)
+    for rel in ("index.html", "map/index.html", "search/index.html"):
+        page = work_dir / "s" / pub / rel
+        page.write_text(
+            page.read_text(encoding="utf-8").replace(
+                "</main>", '</main><a href="/gone/">escape</a>'
+            ),
+            encoding="utf-8",
+        )
+    row = rv.check_v5(_ctx(work_dir, pub, store))
+    assert row["status"] == "fail"
+    # containment leg: one escape, witnessed by the smallest s/ referrer
+    escapes = row["evidence"]["containment_escapes"]
+    assert escapes == [f"/s/{pub}/ → /gone/"], escapes
+    # dead-link leg: the same route still surfaces as dead, not dropped
+    assert "/gone/" in row["evidence"]["dead_or_undeclared"].get(404, [])
+
+
+def test_html_files_streams_in_sorted_order(tmp_path: Path) -> None:
+    """``_html_files`` is a lazy iterator — never the materialised
+    whole-corpus list — and keeps ``sorted(rglob)`` order: a directory's
+    children rank under ``<name>/`` (``.`` sorts before ``/``), non-HTML
+    files are skipped, absent roots contribute nothing."""
+    root = tmp_path / "s" / "p-x"
+    (root / "a").mkdir(parents=True)
+    (root / "a" / "b.html").write_text("x")
+    (root / "a.txt.html").write_text("x")  # sorts before a/'s children
+    (root / "z.html").write_text("x")
+    (root / "notes.txt").write_text("x")
+    result = rv._html_files(root, tmp_path / "v" / "p-x")  # v/ absent
+    assert iter(result) is result  # an iterator, not a list
+    assert [p.relative_to(root).as_posix() for p in result] == [
+        "a.txt.html",
+        "a/b.html",
+        "z.html",
+    ]
+    # a second call re-walks — the consumed iterator is honestly spent
+    assert not list(result)
 
 
 def test_v11_fails_on_a_script_tag(tmp_path: Path) -> None:
