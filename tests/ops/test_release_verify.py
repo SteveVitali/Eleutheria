@@ -151,14 +151,28 @@ def _stamp_fields(site_release: dict[str, Any]) -> dict[str, str]:
     }
 
 
-def _site_page(fields: dict[str, str], describedby: str, *, basis: str) -> str:
+def _site_page(
+    fields: dict[str, str],
+    describedby: str,
+    *,
+    basis: str,
+    chrome: str | None = "full",
+) -> str:
     """A minimal stamped page — the §6.1 contract's markup verbatim:
     one ``sig-release`` meta, one ``describedby`` link, one stamp block,
     the mut-basis line carrying the "API is live" sentence, and one J3
     §5.4 figure element (``data-artifact``/``data-pointer``/
-    ``data-figure-value``) whose pointer must recompute — the V6 leg."""
+    ``data-figure-value``) whose pointer must recompute — the V6 leg.
+
+    ``chrome`` mirrors the ``data-sig-chrome`` marker ``BaseLayout`` and
+    the standalone print/curate shells emit on ``<html>``; the basis
+    sentence renders only on ``chrome == "full"`` pages (the
+    ``chrome === "full"`` footer gate — D-P37.65a-6), ``None`` emits no
+    marker at all (the ``r/`` archive emitter's shape)."""
+    chrome_attr = f' data-sig-chrome="{chrome}"' if chrome is not None else ""
+    basis_line = f'<p class="stamp mut">{basis}</p>' if chrome == "full" else ""
     return (
-        '<!DOCTYPE html><html lang="en"><head><meta charset="utf-8">'
+        f'<!DOCTYPE html><html lang="en"{chrome_attr}><head><meta charset="utf-8">'
         "<title>fixture — SIG released record</title>"
         f'<meta name="sig-release" content="{fields["label"]} {fields["pub"]}">'
         f'<link rel="describedby" type="application/json" href="{describedby}">'
@@ -172,10 +186,15 @@ def _site_page(fields: dict[str, str], describedby: str, *, basis: str) -> str:
         f"<code>{fields['commit8']}</code> · "
         f"<code>{fields['pub_short']}</code> · "
         f'<a href="{describedby}"><code>release.json</code></a></p>'
-        f'<p class="stamp mut">{basis}</p>'
+        f"{basis_line}"
         "</footer></body></html>"
     )
 
+
+#: The required branded error pages — ``BaseLayout`` renders them
+#: ``chrome="minimal"`` (P34.13/QW-11): stamped, but outside the §6.1
+#: basis-sentence's full-chrome scope.
+_ERROR_PAGES = frozenset({"404.html", "403.html", "410.html", "500.html"})
 
 _LIVE_BASIS = 'The public API also serves newer, unreleased records, labelled "live".'
 _LATEST_BASIS = (
@@ -230,9 +249,13 @@ def _write_site_tree(
                 continue  # written below
             if entry.endswith(".html"):
                 # the chrome error pages are stamped pages too — V4's
-                # "every HTML page" criterion is verbatim
+                # "every HTML page" criterion is verbatim — but they emit
+                # ``data-sig-chrome="minimal"`` and never the basis
+                # sentence (P34.13; D-P37.65a-6's legitimate exclusion)
+                chrome = "minimal" if entry in _ERROR_PAGES else "full"
                 (root / entry).write_text(
-                    _site_page(fields, describedby, basis=basis), encoding="utf-8"
+                    _site_page(fields, describedby, basis=basis, chrome=chrome),
+                    encoding="utf-8",
                 )
             elif "." in entry or entry in ("403", "410"):
                 (root / entry).write_text(f"fixture {entry}\n", encoding="utf-8")
@@ -995,6 +1018,75 @@ def test_v13_passes_when_the_disclosure_renders(tmp_path: Path) -> None:
         page.write_text(page.read_text().replace("</main>", f"{DISCLOSURE_TEXT}</main>"))
     row = rv.check_v13(_ctx(work_dir, pub, store, disclosures_path=toml))
     assert row["status"] == "pass", row["evidence"].get("failures")
+
+
+def test_v13_passes_when_every_full_chrome_page_carries_the_live_line(
+    tmp_path: Path,
+) -> None:
+    """The green fixture — every ``data-sig-chrome="full"`` stamped page
+    carries the basis sentence; the excluded classes are counted, not
+    silent (D-P37.65a-6's evidence contract)."""
+    work_dir, pub, store = _build_candidate(tmp_path)
+    row = rv.check_v13(_ctx(work_dir, pub, store))
+    assert row["status"] == "pass", row["evidence"].get("failures")
+    assert row["evidence"]["live_line_missing"] == []
+    evidence = row["evidence"]
+    # the fixture's stamped set partitions cleanly: evaluated full-chrome
+    # pages + counted exclusions (the minimal-chrome error pages, the
+    # marker-less r/ archive + v/ entity stubs)
+    assert evidence["stamped_pages"] > evidence["chrome_excluded"] > 0
+    assert f"{evidence['chrome_excluded']} chrome-excluded" in row["detail"]
+
+
+def test_v13_fails_when_a_full_chrome_page_lacks_the_live_line(tmp_path: Path) -> None:
+    """Fail-closed inside scope (D-P37.65a-6): a ``data-sig-chrome="full"``
+    stamped page without the basis sentence is still a V13 violation."""
+    work_dir, pub, store = _build_candidate(tmp_path)
+    victim = work_dir / "s" / pub / "about" / "index.html"
+    body = victim.read_text()
+    assert rv.LIVE_API_LINE in body
+    victim.write_text(body.replace(rv.LIVE_API_LINE, ""), encoding="utf-8")
+    row = rv.check_v13(_ctx(work_dir, pub, store))
+    assert row["status"] == "fail"
+    assert row["evidence"]["live_line_missing"] == [f"s/{pub}/about/index.html"]
+    assert any("API is live" in f for f in row["evidence"]["failures"])
+
+
+def test_v13_excludes_non_full_chrome_pages_without_failing(tmp_path: Path) -> None:
+    """D-P37.65a-6 (the 2026-11-26 "Full-chrome, stamp v/ too" decision):
+    a stamped page of any other or absent chrome class is out of the
+    basis-sentence contract's scope — counted ``chrome_excluded``, never
+    a failure, never smoothed. Fixture pages per class: ``minimal``,
+    ``print``, ``curate``, and no marker at all."""
+    work_dir, pub, store = _build_candidate(tmp_path)
+    baseline = rv.check_v13(_ctx(work_dir, pub, store))
+    assert baseline["status"] == "pass", baseline["evidence"].get("failures")
+
+    site_release = json.loads((work_dir / f"releases/{pub}/release.json").read_bytes())
+    fields = _stamp_fields(site_release)
+    root = work_dir / "s" / pub
+    for name, chrome in (
+        ("print-dossier", "print"),
+        ("curate-shell", "curate"),
+        ("minimal-extra", "minimal"),
+        ("no-chrome-marker", None),
+    ):
+        page_dir = root / name
+        page_dir.mkdir()
+        (page_dir / "index.html").write_text(
+            _site_page(
+                fields,
+                f"/s/{pub}/release.json",
+                basis=_LIVE_BASIS,
+                chrome=chrome,
+            ),
+            encoding="utf-8",
+        )
+    row = rv.check_v13(_ctx(work_dir, pub, store))
+    assert row["status"] == "pass", row["evidence"].get("failures")
+    assert row["evidence"]["live_line_missing"] == []
+    assert row["evidence"]["stamped_pages"] == baseline["evidence"]["stamped_pages"] + 4
+    assert row["evidence"]["chrome_excluded"] == baseline["evidence"]["chrome_excluded"] + 4
 
 
 # --------------------------------------------------------------------------- #

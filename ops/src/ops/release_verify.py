@@ -121,6 +121,16 @@ AXE_SERIOUS = ("serious", "critical")
 #: ``exports.release_pages`` — V13's "API is live" line (G3 §6.1).
 LIVE_API_LINE = 'The public API also serves newer, unreleased records, labelled "live".'
 
+#: The chrome class the §6.1 basis sentence binds (D-P37.65a-6 — the
+#: operator's 2026-11-26 "Full-chrome, stamp v/ too" decision): the
+#: sentence renders only inside ``BaseLayout``'s ``chrome === "full"``
+#: footer, so V13's live-line leg evaluates stamped pages whose ``<html>``
+#: carries ``data-sig-chrome="full"``; stamped pages of any other or absent
+#: chrome class (error/minimal, print, curate, the ``r/`` archive emitter)
+#: are legitimately without it — counted ``chrome_excluded``, never
+#: smoothed.
+_FULL_CHROME_RE = re.compile(r'<html[^>]*data-sig-chrome="full"')
+
 #: Evaluation-status phrases that must never appear on a surface whose
 #: descriptor declares less than ``certified`` (V13 — the same
 #: forbidden-assertion classes ``release_publish_verify``'s disclosure
@@ -1497,8 +1507,9 @@ def check_v13(ctx: VerifyContext) -> dict[str, Any]:
     """Disclosures — every descriptor ``{id, text_sha256}`` resolves
     against the committed inventory (digest re-checked), and its text
     renders on its target pages; the "API is live" line is on every
-    stamped page; the surface's evaluation-status wording never claims
-    more than ``evaluation.status`` declares."""
+    stamped ``data-sig-chrome="full"`` page (D-P37.65a-6); the surface's
+    evaluation-status wording never claims more than
+    ``evaluation.status`` declares."""
     t0 = time.monotonic()
     descriptor = _descriptor(ctx.work_dir, ctx.pub)
     site = _site_release(ctx.work_dir, ctx.pub) or {}
@@ -1570,19 +1581,27 @@ def check_v13(ctx: VerifyContext) -> dict[str, Any]:
         checked_disclosures.append(did)
     evidence["disclosures_checked"] = checked_disclosures
 
-    # -- the "API is live" line on every stamped page ------------------- #
+    # -- the "API is live" line on every full-chrome stamped page ------- #
     live_missing: list[str] = []
     stamped = 0
+    chrome_excluded = 0
     norm_live = " ".join(_html.unescape(LIVE_API_LINE).split())
     for page in pages:
         text = page.read_text(encoding="utf-8", errors="replace")
         if 'name="sig-release"' not in text:
             continue
         stamped += 1
+        # D-P37.65a-6: the §6.1 basis sentence binds full-chrome pages
+        # only — a stamped page of any other/absent chrome class is out
+        # of scope, counted so the exclusion stays visible.
+        if not _FULL_CHROME_RE.search(text):
+            chrome_excluded += 1
+            continue
         if norm_live not in _text_of(text):
             live_missing.append(page.relative_to(ctx.work_dir).as_posix())
     failures.extend(f"{p}: the stamp's 'API is live' line is absent" for p in live_missing[:10])
     evidence["stamped_pages"] = stamped
+    evidence["chrome_excluded"] = chrome_excluded
     evidence["live_line_missing"] = live_missing[:10]
 
     # -- eval-status wording never outruns evaluation.status ------------ #
@@ -1612,7 +1631,8 @@ def check_v13(ctx: VerifyContext) -> dict[str, Any]:
         "V13",
         ctx.mode,
         _aggregate(legs),
-        f"{len(checked_disclosures)} disclosure(s) · {stamped} stamped pages · "
+        f"{len(checked_disclosures)} disclosure(s) · {stamped} stamped pages "
+        f"({chrome_excluded} chrome-excluded) · "
         f"eval={status}" + (f" — {len(failures)} violation(s)" if failures else ""),
         evidence={**evidence, "failures": failures[:30]},
         duration=time.monotonic() - t0,
