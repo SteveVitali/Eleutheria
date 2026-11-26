@@ -2351,11 +2351,24 @@ function readAnalytics<T>(name: string, pick: (envelope: AnalyticsEnvelope & Rec
 /**
  * The remaining OPTIONAL presentation artifact — the SIG-PUB-017 demo dossiers
  * (`web/presentation/jurisdiction_dossiers.json`, P30.3). Deliberately demo
- * content the fixture-export harness ships for the e2e surface; absent → `[]`.
+ * content the fixture-export harness ships for the e2e surface; absent → the
+ * caller's fallback (`[]` for the dossier-LIST use).
  */
 function readPresentation<T>(name: string, fallback: T): T {
+  return readPresentationOrNull<T>(name) ?? fallback;
+}
+
+/**
+ * The same read, NULLABLE — `null` when the release carries no
+ * `web/presentation/<name>.json` at all. The artifact-payload read
+ * (`getReleaseArtifactPayload`) needs this form: a served `/artifact/` route
+ * must never be minted for bytes the export does not carry (D-P37.65a-5 —
+ * the `[]` fallback that is correct for the dossier list would synthesize a
+ * phantom route serving an empty array for an absent artifact).
+ */
+function readPresentationOrNull<T>(name: string): T | null {
   const path = `${exportDir()}/web/presentation/${name}.json`;
-  if (!existsSync(path)) return fallback;
+  if (!existsSync(path)) return null;
   try {
     return JSON.parse(readFileSync(path, "utf-8")) as T;
   } catch (cause) {
@@ -2778,13 +2791,17 @@ export function getSourceRows(): SourceRowsDoc {
   });
 }
 
-/** P36.48: the freshness rows as an artifact payload (`freshness.jsonl`). */
-function getFreshnessRecords(): unknown[] {
+/** P36.48: the freshness rows as an artifact payload (`freshness.jsonl`) —
+ *  `null` when the release emits no file (D-P37.65a-5: an absent artifact
+ *  never mints a route serving a synthesized `[]` — the same absent-artifact
+ *  contract the table's staleness cells already honour by deriving from this
+ *  file only when it exists). */
+function getFreshnessRecords(): unknown[] | null {
   if (dataSource() !== "export") {
     return Object.values(SOURCE_FRESHNESS_FIXTURE);
   }
   const path = `${exportDir()}/transparency/freshness.jsonl`;
-  if (!existsSync(path)) return [];
+  if (!existsSync(path)) return null;
   return readFileSync(path, "utf-8")
     .split("\n")
     .map((l) => l.trim())
@@ -3139,9 +3156,14 @@ export function getReleaseArtifactPayload(artifactPath: string): unknown | null 
     case "web/leverage.json":
       return getLeverageMetric();
     case "web/presentation/jurisdiction_dossiers.json":
+      // D-P37.65a-5: the demo dossiers file is OPTIONAL (P30.3) — a real
+      // export carries no `web/presentation/` subtree, and the payload must
+      // then be `null` so no `/artifact/` route is emitted for bytes the
+      // release does not have. The `[]` fallback belongs to the dossier-LIST
+      // reader (`jurisdictionDemos`), never to a served payload.
       return dataSource() !== "export"
         ? JURISDICTION_DOSSIERS
-        : readPresentation<Dossier[]>("jurisdiction_dossiers", []);
+        : readPresentationOrNull<Dossier[]>("jurisdiction_dossiers");
     default: {
       // P36.48: the per-source execution feeds the table's run-cell
       // figures point at (the P36.46 sig.execution-record/1 rows).
