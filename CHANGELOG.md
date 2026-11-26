@@ -2700,6 +2700,19 @@ public-behaviour path set (`web/src/pages/**`, `web/src/layouts/**`,
 
 ### Fixed
 
+- **Mixed-union licence queue shards + bound-source PROV agents**
+  (SIG-LIC-004a / OPS-EXPORT-GCE-4 and OPS-EXPORT-GCE-6 refusals) — the
+  spine export refused when a queue-v2 task shard set's subject licences
+  formed a mixed-union `AND` expression (ADR-106 §4): such an expression
+  has no compartment row, and `compartment_for_license` raises rather than
+  returning falsy. Those shards now file in the `web` pseudo-compartment,
+  like every other mixed-label web artifact, while single-licence shards
+  keep their real compartment. Every source a bound capture draws from is
+  now minted as a `prov:Agent` even when it surfaced no sites or freshness
+  rows, so `prov:wasAttributedTo` never targets an untyped agent. The tiles
+  leg takes the pure-python path for an empty compartment instead of
+  tippecanoe's `EXIT_NODATA`.
+
 - **Display-label collision extension + the SR-route camera-name screen**
   (SIG-UI-111 / OPS-EXPORT-GCE-2 Blocker 6; K2 §3.2/§3.3; report
   `docs/build/reports/sig-ui-111-label-collision.md`) — the spine export
