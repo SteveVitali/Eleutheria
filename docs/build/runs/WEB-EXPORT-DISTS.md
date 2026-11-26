@@ -97,9 +97,14 @@ SIG_DATA_SOURCE=export SIG_EXPORT_DIR=/Users/stevenvitali/Eleutheria/exports/out
   tallies identical to `v/` (id 257,794 · task 22,148 · sources 3,571 ·
   research-queue 3,040 · evidence 518 · dossier 253 · watch 228 ·
   disagreements 59 · changes 17 · entity 10 · …).
-- **Base containment spot-check:** in-site links carry the snapshot prefix
+- **Base containment:** in-site links carry the snapshot prefix
   (`href="/s/p-31371dfb…/_astro/…"`, `…/favicon.svg`, …) — the SIG-REL-008
-  withBase() seam on real bytes.
+  withBase() seam on real bytes. A sampled sweep reusing the gate's own
+  `scanHtml` (`scripts/check-snapshot-mount.mjs`) with `base:
+  /s/p-31371dfb…/` over **2,970 of the 287,681 emitted HTML files** (every
+  97th file + every top-level page): **0 containment violations** — every
+  same-origin link stays inside the base or a declared `/r/`/`/releases/`/
+  `/v1/`/`/intake/` exception.
 - **Release stamp:** `<meta name="sig-release" content="sig-2026-11-25.1
   p-31371dfb4b2b26453f818fefd311ea07be50ef8413aa9185be1ede927a773a8b">` — the
   bound candidate identity renders; `sig-2026-11-25.1` label present in the
