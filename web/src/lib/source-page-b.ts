@@ -37,6 +37,7 @@
  */
 
 import { existsSync, readFileSync, readdirSync } from "node:fs";
+import { readJsonlRowsCached, readLinesSync } from "./jsonl";
 import { dataSource, exportDir, getEntityLabelRows, getEntityPageTwins } from "./data";
 import { getSourcePage, getSourcePageIds, isRegistryOnly } from "./source-page";
 import type { SourcePageModel } from "./source-page";
@@ -336,11 +337,10 @@ export function pageSlice<T>(rows: readonly T[], page: number, per: number = SUB
 // ---------------------------------------------------------------------------
 
 function readJsonl(path: string): unknown[] {
-  return readFileSync(path, "utf-8")
-    .split("\n")
-    .map((l) => l.trim())
-    .filter(Boolean)
-    .map((l) => JSON.parse(l) as unknown);
+  // Parsed once per file revision (D-P37.65a-2): every per-source page
+  // filters the same release-level `captures.jsonl` — never a per-page
+  // re-parse, and never a >512 MiB whole-file string (V8 cap).
+  return readJsonlRowsCached(path);
 }
 
 /** One source's `sig.capture-record/1` rows — `null` when no captures
@@ -388,50 +388,74 @@ export function getSourceVersions(sourceId: string): SourceVersionsDoc | null {
  * record the source's rights govern), plus contract-A entity twins whose
  * claim groups cite the source. Withdrawn subjects are dropped (P34.19).
  */
-export function getSourceEntities(sourceId: string): SourceEntityRow[] {
-  if (dataSource() === "export") {
-    const rows = new Map<string, SourceEntityRow>();
-    const root = exportDir();
-    const compEntries = existsSync(root) ? readdirSync(root) : [];
-    for (const comp of compEntries) {
-      const p = `${root}/${comp}/sites.jsonl`;
-      if (!existsSync(p)) continue;
-      for (const line of readFileSync(p, "utf-8").split("\n")) {
-        const t = line.trim();
-        if (!t) continue;
-        const row = JSON.parse(t) as {
-          entity_id?: unknown;
-          entity_type?: unknown;
-          label?: unknown;
-          name?: unknown;
-          jurisdiction?: unknown;
-          _rights?: { source_id?: unknown };
-        };
-        if (typeof row.entity_id !== "string") continue;
-        if (isWithdrawn(row.entity_id)) continue;
-        const rights = row._rights as { source_id?: unknown } | undefined;
-        if (rights?.source_id !== sourceId) continue;
-        rows.set(row.entity_id, {
-          entity_id: row.entity_id,
-          entity_type: typeof row.entity_type === "string" ? row.entity_type : "deployment",
-          label: typeof row.label === "string" ? row.label : typeof row.name === "string" ? row.name : row.entity_id,
-          jurisdiction: typeof row.jurisdiction === "string" ? row.jurisdiction : null,
-          record_href: null,
-          compartment: comp,
-        });
+/**
+ * The `source_id → entity_id → row` index behind `getSourceEntities`,
+ * memoised per export dir (D-P37.65a-2): built in ONE pass over the
+ * compartment `sites.jsonl` corpus plus one pass over the label registry's
+ * twins — the previous shape re-scanned the full multi-GB corpus once per
+ * source page (O(sources × corpus), quadratic at national scale). The
+ * leg-order is preserved verbatim: contract-A rows overwrite a `_rights`
+ * row for the same (source, entity) exactly as the per-source loop did.
+ */
+const _sourceEntitiesCache = new Map<string, Map<string, Map<string, SourceEntityRow>>>();
+
+function sourceEntitiesIndex(root: string): Map<string, Map<string, SourceEntityRow>> {
+  const hit = _sourceEntitiesCache.get(root);
+  if (hit !== undefined) return hit;
+  const bySource = new Map<string, Map<string, SourceEntityRow>>();
+  const put = (sid: string, entityId: string, row: SourceEntityRow): void => {
+    let m = bySource.get(sid);
+    if (m === undefined) {
+      m = new Map<string, SourceEntityRow>();
+      bySource.set(sid, m);
+    }
+    m.set(entityId, row);
+  };
+  const compEntries = existsSync(root) ? readdirSync(root) : [];
+  for (const comp of compEntries) {
+    const p = `${root}/${comp}/sites.jsonl`;
+    if (!existsSync(p)) continue;
+    for (const line of readLinesSync(p)) {
+      const t = line.trim();
+      if (!t) continue;
+      const row = JSON.parse(t) as {
+        entity_id?: unknown;
+        entity_type?: unknown;
+        label?: unknown;
+        name?: unknown;
+        jurisdiction?: unknown;
+        _rights?: { source_id?: unknown };
+      };
+      if (typeof row.entity_id !== "string") continue;
+      if (isWithdrawn(row.entity_id)) continue;
+      const rights = row._rights as { source_id?: unknown } | undefined;
+      if (typeof rights?.source_id !== "string") continue;
+      put(rights.source_id, row.entity_id, {
+        entity_id: row.entity_id,
+        entity_type: typeof row.entity_type === "string" ? row.entity_type : "deployment",
+        label: typeof row.label === "string" ? row.label : typeof row.name === "string" ? row.name : row.entity_id,
+        jurisdiction: typeof row.jurisdiction === "string" ? row.jurisdiction : null,
+        record_href: null,
+        compartment: comp,
+      });
+    }
+  }
+  // Contract-A entities: a label row whose twin cites the source. Each
+  // entity's twins are read ONCE and every cited source id collects the row.
+  for (const lr of getEntityLabelRows()) {
+    if (!lr.url_type || !lr.slug || !lr.hash) continue;
+    const key = `${lr.slug}--${lr.hash}`;
+    const cited = new Set<string>();
+    for (const twin of getEntityPageTwins(lr.url_type, key)) {
+      for (const g of [...twin.claims, ...twin.access.degree_only]) {
+        for (const s of g.sources) cited.add(s.id);
+      }
+      for (const g of twin.relations) {
+        for (const i of g.items) for (const s of i.sources) cited.add(s.id);
       }
     }
-    // Contract-A entities: a label row whose twin cites the source.
-    for (const lr of getEntityLabelRows()) {
-      if (!lr.url_type || !lr.slug || !lr.hash) continue;
-      const key = `${lr.slug}--${lr.hash}`;
-      const cites = getEntityPageTwins(lr.url_type, key).some((twin) =>
-        [...twin.claims, ...twin.access.degree_only].some((g) =>
-          g.sources.some((s) => s.id === sourceId),
-        ) || twin.relations.some((g) => g.items.some((i) => i.sources.some((s) => s.id === sourceId))),
-      );
-      if (!cites) continue;
-      rows.set(lr.entity_id, {
+    for (const sid of cited) {
+      put(sid, lr.entity_id, {
         entity_id: lr.entity_id,
         entity_type: lr.url_type,
         label: lr.label ?? lr.entity_id,
@@ -440,7 +464,15 @@ export function getSourceEntities(sourceId: string): SourceEntityRow[] {
         compartment: null,
       });
     }
-    return sortEntityRows([...rows.values()]);
+  }
+  _sourceEntitiesCache.set(root, bySource);
+  return bySource;
+}
+
+export function getSourceEntities(sourceId: string): SourceEntityRow[] {
+  if (dataSource() === "export") {
+    const rows = sourceEntitiesIndex(exportDir()).get(sourceId);
+    return sortEntityRows(rows === undefined ? [] : [...rows.values()]);
   }
   return sortEntityRows([...(SOURCE_ENTITIES_FIXTURE[sourceId] ?? [])]);
 }

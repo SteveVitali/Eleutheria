@@ -24,7 +24,8 @@
  * identical in both modes.
  */
 
-import { existsSync, readFileSync, readdirSync } from "node:fs";
+import { existsSync, readFileSync, readdirSync, statSync } from "node:fs";
+import { hasNonBlankLine, readJsonlRows, readLinesSync } from "./jsonl";
 import { rootPath, withBase } from "./paths";
 import { gunzipSync } from "node:zlib";
 import { fileURLToPath } from "node:url";
@@ -282,22 +283,17 @@ function readNationalArtifact<T>(
   validate: (parsed: unknown, path: string) => T,
 ): T {
   const path = `${nationalDir()}/web/${name}`;
-  let raw: string;
+  let parsed: unknown;
   try {
-    raw = readFileSync(path, "utf-8");
+    parsed = readJsonArtifact(path);
   } catch (cause) {
+    if (isJsonParseFailure(cause)) throw cause;
     throw new Error(
       `SIG_DATA_SOURCE=national but the national fixture artifact is missing: ${path}. ` +
         "Regenerate the fixture (`npm run fixture:national`, " +
         "scripts/ci/build_national_fixture.py) — the overlay names this artifact.",
       { cause },
     );
-  }
-  let parsed: unknown;
-  try {
-    parsed = JSON.parse(raw);
-  } catch (cause) {
-    throw new Error(`${path}: not valid JSON`, { cause });
   }
   return validate(parsed, path);
 }
@@ -308,6 +304,25 @@ function readNationalArtifact<T>(
  */
 function layoutDir(): string {
   return dataSource() === "national" ? nationalDir() : exportDir();
+}
+
+/**
+ * Per-build memoisation for the corpus-scale indexes (D-P37.65a-2 (b)):
+ * every entity/claim route resolves against these maps, so without the memo
+ * each of the ~258k entity pages re-parsed the full multi-GB statements /
+ * sites corpus — O(corpus) per route, quadratic over the build. The key
+ * folds in the resolved data root, so a flipped `SIG_DATA_SOURCE` /
+ * `SIG_EXPORT_DIR` / `SIG_NATIONAL_DIR` (unit tests, a second dist build in
+ * one process) re-reads honestly, while one build over one layout parses
+ * exactly once — O(corpus) total.
+ */
+const _corpusCaches = new Map<string, unknown>();
+
+function cachedCorpus<T>(key: string, build: () => T): T {
+  if (_corpusCaches.has(key)) return _corpusCaches.get(key) as T;
+  const value = build();
+  _corpusCaches.set(key, value);
+  return value;
 }
 
 /**
@@ -532,25 +547,54 @@ export function getLeverageMetric(): LeverageMetric {
 // the §3.1 defining standard).
 // --------------------------------------------------------------------------- //
 
+/**
+ * Parsed-artifact cache for the document readers (D-P37.65a-2 (b)): the
+ * per-page getters re-read + re-parsed multi-MB artifacts on every route
+ * (`map.json` ~110 MB, `research_queue.json` ~17 MB at national scale —
+ * O(artifact) per page, quadratic over the build). Keyed on path and
+ * validated on `mtimeMs` + `size`, so a rewritten artifact re-reads honestly
+ * while an unchanged one parses exactly once per build.
+ */
+const _artifactDocCache = new Map<string, { mtimeMs: number; size: number; doc: unknown }>();
+
+/** `readFileSync` + `JSON.parse`, once per file revision. Throws the same
+ *  `not valid JSON` error the inline parses did; fs failures propagate. */
+function readJsonArtifact(path: string): unknown {
+  const st = statSync(path);
+  const hit = _artifactDocCache.get(path);
+  if (hit !== undefined && hit.mtimeMs === st.mtimeMs && hit.size === st.size) {
+    return hit.doc;
+  }
+  let doc: unknown;
+  try {
+    doc = JSON.parse(readFileSync(path, "utf-8"));
+  } catch (cause) {
+    throw new Error(`${path}: not valid JSON`, { cause });
+  }
+  _artifactDocCache.set(path, { mtimeMs: st.mtimeMs, size: st.size, doc });
+  return doc;
+}
+
+/** True for the "not valid JSON" error `readJsonArtifact` raises — lets the
+ *  caller keep its distinct missing-vs-malformed messages. */
+function isJsonParseFailure(cause: unknown): boolean {
+  return cause instanceof Error && cause.message.endsWith(": not valid JSON");
+}
+
 /** Read + parse `<exportDir>/web/<name>`, failing LOUD (never a silent fixtures fall-back). */
 function readExportArtifact<T>(name: string, validate: (parsed: unknown, path: string) => T): T {
   const path = `${exportDir()}/web/${name}`;
-  let raw: string;
+  let parsed: unknown;
   try {
-    raw = readFileSync(path, "utf-8");
+    parsed = readJsonArtifact(path);
   } catch (cause) {
+    if (isJsonParseFailure(cause)) throw cause;
     throw new Error(
       `SIG_DATA_SOURCE=export but the export artifact is missing: ${path}. ` +
         "Run `sig-exports build --from-spine --dsn <dsn> --out <dir>` (or, for a local " +
         "fixture-equivalent bundle, `node web/scripts/build-fixture-export.<dir>`) first.",
       { cause },
     );
-  }
-  let parsed: unknown;
-  try {
-    parsed = JSON.parse(raw);
-  } catch (cause) {
-    throw new Error(`${path}: not valid JSON`, { cause });
   }
   return validate(parsed, path);
 }
@@ -1090,45 +1134,51 @@ export function getDossierArtifactRef(slug: string): DossierArtifactRef | null {
 // --------------------------------------------------------------------------- //
 
 export function getRecordBasisIndex(): ReadonlyMap<string, RecordBasis> {
-  const out = new Map<string, RecordBasis>();
-  if (dataSource() === "export" || dataSource() === "national") {
-    const root = dataSource() === "national" ? `${nationalDir()}/web` : exportDir();
-    if (!existsSync(root)) return out;
-    for (const entry of readdirSync(root)) {
-      const p = `${root}/${entry}/sites.jsonl`;
-      if (!existsSync(p)) continue;
-      for (const line of readFileSync(p, "utf-8").split("\n")) {
-        const t = line.trim();
-        if (!t) continue;
-        const row = JSON.parse(t) as Record<string, unknown> & { entity_id?: unknown };
-        if (typeof row.entity_id !== "string" || out.has(row.entity_id)) continue;
-        const basis = recordBasis(row as DedupFields, {
-          placementCheck: row["placement_check"] ?? row["placementCheck"],
-          jurisdictionName:
-            typeof row["jurisdiction_slug_path"] === "string"
-              ? (row["jurisdiction_slug_path"] as string)
-              : typeof row["jurisdiction"] === "string"
-                ? (row["jurisdiction"] as string)
-                : null,
-          technology: row["technology"],
-          technologyStatus: row["technology_status"] ?? row["technologyStatus"],
-        });
-        if (basis) out.set(row.entity_id, basis);
+  const mode = dataSource();
+  const root =
+    mode === "national" ? `${nationalDir()}/web` : mode === "export" ? exportDir() : null;
+  // Memoised per data root (D-P37.65a-2): every claim/entity page resolves
+  // against this index — the compartment `sites.jsonl` corpus parses once.
+  return cachedCorpus(`recordBasis|${mode}|${root ?? ""}`, () => {
+    const out = new Map<string, RecordBasis>();
+    if (mode === "export" || mode === "national") {
+      if (!existsSync(root!)) return out;
+      for (const entry of readdirSync(root!)) {
+        const p = `${root}/${entry}/sites.jsonl`;
+        if (!existsSync(p)) continue;
+        for (const line of readLinesSync(p)) {
+          const t = line.trim();
+          if (!t) continue;
+          const row = JSON.parse(t) as Record<string, unknown> & { entity_id?: unknown };
+          if (typeof row.entity_id !== "string" || out.has(row.entity_id)) continue;
+          const basis = recordBasis(row as DedupFields, {
+            placementCheck: row["placement_check"] ?? row["placementCheck"],
+            jurisdictionName:
+              typeof row["jurisdiction_slug_path"] === "string"
+                ? (row["jurisdiction_slug_path"] as string)
+                : typeof row["jurisdiction"] === "string"
+                  ? (row["jurisdiction"] as string)
+                  : null,
+            technology: row["technology"],
+            technologyStatus: row["technology_status"] ?? row["technologyStatus"],
+          });
+          if (basis) out.set(row.entity_id, basis);
+        }
       }
+      return out;
+    }
+    for (const asset of MAP_ASSETS) {
+      const basis = recordBasis(asset as DedupFields, {
+        placementCheck: asset.placementCheck,
+        jurisdictionName: asset.jurisdiction,
+        technology: asset.technology,
+        technologyStatus: asset.technologyStatus,
+        technologySourceName: asset.sources?.[0],
+      });
+      if (basis) out.set(asset.id, basis);
     }
     return out;
-  }
-  for (const asset of MAP_ASSETS) {
-    const basis = recordBasis(asset as DedupFields, {
-      placementCheck: asset.placementCheck,
-      jurisdictionName: asset.jurisdiction,
-      technology: asset.technology,
-      technologyStatus: asset.technologyStatus,
-      technologySourceName: asset.sources?.[0],
-    });
-    if (basis) out.set(asset.id, basis);
-  }
-  return out;
+  });
 }
 
 /** One record's basis block, or `null` — the sparse absence. */
@@ -1157,40 +1207,45 @@ export function getMapCountInterval():
 }
 
 export function getJurisdictionCompartments(): Map<string, string> {
-  const out = new Map<string, string>();
-  if (dataSource() !== "export") return out;
-  const root = exportDir();
-  for (const entry of readdirSync(root)) {
-    const p = `${root}/${entry}/sites.jsonl`;
-    if (!existsSync(p)) continue;
-    for (const line of readFileSync(p, "utf-8").split("\n")) {
-      const t = line.trim();
-      if (!t) continue;
-      const row = JSON.parse(t) as {
-        jurisdiction?: unknown;
-        jurisdiction_key?: unknown;
-        jurisdiction_slug_path?: unknown;
-      };
-      const j = row.jurisdiction;
-      const jkey =
-        typeof row.jurisdiction_key === "string" && row.jurisdiction_key
-          ? row.jurisdiction_key
-          : j && typeof j === "object" && typeof (j as { jkey?: unknown }).jkey === "string"
-            ? ((j as { jkey: string }).jkey)
-            : null;
-      const slugPath =
-        typeof row.jurisdiction_slug_path === "string" && row.jurisdiction_slug_path
-          ? row.jurisdiction_slug_path
-          : j && typeof j === "object" && typeof (j as { slug_path?: unknown }).slug_path === "string"
-            ? ((j as { slug_path: string }).slug_path)
-            : null;
-      const declared = typeof j === "string" && j ? j : null;
-      for (const key of [jkey, slugPath, declared]) {
-        if (key && !out.has(key)) out.set(key, entry);
+  const mode = dataSource();
+  const root = mode === "export" ? exportDir() : null;
+  // Memoised per data root (D-P37.65a-2): dossier pages look this up per
+  // route — the compartment `sites.jsonl` corpus parses once.
+  return cachedCorpus(`jurisdictionCompartments|${mode}|${root ?? ""}`, () => {
+    const out = new Map<string, string>();
+    if (root === null) return out;
+    for (const entry of readdirSync(root)) {
+      const p = `${root}/${entry}/sites.jsonl`;
+      if (!existsSync(p)) continue;
+      for (const line of readLinesSync(p)) {
+        const t = line.trim();
+        if (!t) continue;
+        const row = JSON.parse(t) as {
+          jurisdiction?: unknown;
+          jurisdiction_key?: unknown;
+          jurisdiction_slug_path?: unknown;
+        };
+        const j = row.jurisdiction;
+        const jkey =
+          typeof row.jurisdiction_key === "string" && row.jurisdiction_key
+            ? row.jurisdiction_key
+            : j && typeof j === "object" && typeof (j as { jkey?: unknown }).jkey === "string"
+              ? ((j as { jkey: string }).jkey)
+              : null;
+        const slugPath =
+          typeof row.jurisdiction_slug_path === "string" && row.jurisdiction_slug_path
+            ? row.jurisdiction_slug_path
+            : j && typeof j === "object" && typeof (j as { slug_path?: unknown }).slug_path === "string"
+              ? ((j as { slug_path: string }).slug_path)
+              : null;
+        const declared = typeof j === "string" && j ? j : null;
+        for (const key of [jkey, slugPath, declared]) {
+          if (key && !out.has(key)) out.set(key, entry);
+        }
       }
     }
-  }
-  return out;
+    return out;
+  });
 }
 
 // --------------------------------------------------------------------------- //
@@ -1514,7 +1569,7 @@ export function getEntitySlugHistory(): EntitySlugHistoryRow[] {
   if (dataSource() !== "export") return ENTITY_SLUG_HISTORY_FIXTURE.rows;
   const path = `${exportDir()}/web/entity_slug_history.json`;
   if (!existsSync(path)) return [];
-  const parsed = JSON.parse(readFileSync(path, "utf-8")) as {
+  const parsed = readJsonArtifact(path) as {
     rows?: EntitySlugHistoryRow[];
   };
   return parsed.rows ?? [];
@@ -1529,20 +1584,25 @@ export function getEntitySlugHistory(): EntitySlugHistoryRow[] {
  * entity-label fixture rows.
  */
 export function getEntityLabelRows(): EntityLabelRow[] {
-  if (dataSource() !== "export") return ENTITY_LABEL_FIXTURES;
-  const root = `${exportDir()}/labels`;
-  if (!existsSync(root)) return [];
-  const seen = new Map<string, EntityLabelRow>();
-  for (const entry of readdirSync(root)) {
-    if (!entry.endsWith(".jsonl")) continue;
-    const lines = readFileSync(`${root}/${entry}`, "utf-8").split("\n");
-    for (const line of lines) {
-      if (line.trim() === "") continue;
-      const row = JSON.parse(line) as EntityLabelRow;
-      if (!seen.has(row.entity_id)) seen.set(row.entity_id, row);
+  const mode = dataSource();
+  const root = mode === "export" ? `${exportDir()}/labels` : null;
+  // Memoised per data root (D-P37.65a-2): every entity route's getStaticPaths
+  // + frontmatter resolves the registry — the `labels/*.jsonl` streams parse
+  // once per build, never per page.
+  return cachedCorpus(`entityLabelRows|${mode}|${root ?? ""}`, () => {
+    if (root === null) return ENTITY_LABEL_FIXTURES;
+    if (!existsSync(root)) return [];
+    const seen = new Map<string, EntityLabelRow>();
+    for (const entry of readdirSync(root)) {
+      if (!entry.endsWith(".jsonl")) continue;
+      for (const line of readLinesSync(`${root}/${entry}`)) {
+        if (line.trim() === "") continue;
+        const row = JSON.parse(line) as EntityLabelRow;
+        if (!seen.has(row.entity_id)) seen.set(row.entity_id, row);
+      }
     }
-  }
-  return [...seen.values()];
+    return [...seen.values()];
+  });
 }
 
 /**
@@ -1976,26 +2036,31 @@ export function getEntityCompartments(): Map<
   string,
   { compartment: string; entityType: string }
 > {
-  const out = new Map<string, { compartment: string; entityType: string }>();
-  if (dataSource() !== "export") return out;
-  const root = exportDir();
-  for (const entry of readdirSync(root)) {
-    const p = `${root}/${entry}/sites.jsonl`;
-    if (!existsSync(p)) continue;
-    for (const line of readFileSync(p, "utf-8").split("\n")) {
-      const t = line.trim();
-      if (!t) continue;
-      const row = JSON.parse(t) as { entity_id?: unknown; entity_type?: unknown };
-      // P34.19 (F-337): a withdrawn subject has no released record — no route.
-      if (typeof row.entity_id === "string" && !isWithdrawn(row.entity_id)) {
-        out.set(row.entity_id, {
-          compartment: entry,
-          entityType: typeof row.entity_type === "string" ? row.entity_type : "deployment",
-        });
+  const mode = dataSource();
+  const root = mode === "export" ? exportDir() : null;
+  // Memoised per data root (D-P37.65a-2): the compartment `sites.jsonl`
+  // corpus parses once per build, never per route.
+  return cachedCorpus(`entityCompartments|${mode}|${root ?? ""}`, () => {
+    const out = new Map<string, { compartment: string; entityType: string }>();
+    if (root === null) return out;
+    for (const entry of readdirSync(root)) {
+      const p = `${root}/${entry}/sites.jsonl`;
+      if (!existsSync(p)) continue;
+      for (const line of readLinesSync(p)) {
+        const t = line.trim();
+        if (!t) continue;
+        const row = JSON.parse(t) as { entity_id?: unknown; entity_type?: unknown };
+        // P34.19 (F-337): a withdrawn subject has no released record — no route.
+        if (typeof row.entity_id === "string" && !isWithdrawn(row.entity_id)) {
+          out.set(row.entity_id, {
+            compartment: entry,
+            entityType: typeof row.entity_type === "string" ? row.entity_type : "deployment",
+          });
+        }
       }
     }
-  }
-  return out;
+    return out;
+  });
 }
 
 /**
@@ -2015,31 +2080,37 @@ export function getEntityCompartments(): Map<
  * never a build error and never a fabricated statement.
  */
 export function getStatementIndex(): Map<string, StatementRow> {
-  const out = new Map<string, StatementRow>();
-  const rows =
-    dataSource() !== "export"
-      ? STATEMENT_FIXTURES
-      : (() => {
-          const collected: StatementRow[] = [];
-          const root = exportDir();
-          if (!existsSync(root)) return collected;
-          for (const entry of readdirSync(root)) {
-            const p = `${root}/${entry}/statements.jsonl`;
-            if (!existsSync(p)) continue;
-            for (const line of readFileSync(p, "utf-8").split("\n")) {
-              const t = line.trim();
-              if (!t) continue;
-              collected.push(JSON.parse(t) as StatementRow);
+  const mode = dataSource();
+  const root = mode === "export" ? exportDir() : null;
+  // Memoised per data root (D-P37.65a-2): every claim panel / entity page
+  // resolves against this index — the compartment `statements.jsonl` corpus
+  // (multi-GB at national scale) parses once per build, never per route.
+  return cachedCorpus(`statementIndex|${mode}|${root ?? ""}`, () => {
+    const out = new Map<string, StatementRow>();
+    const rows =
+      root === null
+        ? STATEMENT_FIXTURES
+        : (() => {
+            const collected: StatementRow[] = [];
+            if (!existsSync(root)) return collected;
+            for (const entry of readdirSync(root)) {
+              const p = `${root}/${entry}/statements.jsonl`;
+              if (!existsSync(p)) continue;
+              for (const line of readLinesSync(p)) {
+                const t = line.trim();
+                if (!t) continue;
+                collected.push(JSON.parse(t) as StatementRow);
+              }
             }
-          }
-          return collected;
-        })();
-  for (const row of rows) {
-    if (typeof row.claim_id === "string" && !isWithdrawn(row.claim_id)) {
-      out.set(row.claim_id, row);
+            return collected;
+          })();
+    for (const row of rows) {
+      if (typeof row.claim_id === "string" && !isWithdrawn(row.claim_id)) {
+        out.set(row.claim_id, row);
+      }
     }
-  }
-  return out;
+    return out;
+  });
 }
 
 /**
@@ -2072,7 +2143,9 @@ export function getTermsDisclosure(): TermsDisclosure {
   // so the disclosure is never absent where it applies. An export genuinely
   // without express-terms rows still returns the honest empty list.
   const accepted = `${exportDir()}/operator_accepted/sites.jsonl`;
-  if (!existsSync(accepted) || readFileSync(accepted, "utf-8").trim() === "") {
+  // hasNonBlankLine streams the check — `sites.jsonl` can exceed the V8
+  // string cap (D-P37.65a-2), so a whole-file readFileSync would throw here.
+  if (!existsSync(accepted) || !hasNonBlankLine(accepted)) {
     return { ...TERMS_DISCLOSURE_FIXTURE, sources: [] };
   }
   const policyPath = `${repoRoot()}policy/src/policy/data/express_terms.json`;
@@ -2697,21 +2770,27 @@ export function getRationaleTemplates(): readonly string[] {
  * carry. Fixtures mode returns the small demonstration set.
  */
 export function getSourceLicenceTable(): SourceLicenceRow[] {
-  if (dataSource() !== "export") return SOURCES_FIXTURE;
-  // P35.37 (SIG-TRANSP-013): `web/sources.json` is the manifest-listed artifact
-  // the /sources/ page's figures point at — when the export emits it (P35.37+),
-  // the page renders THE artifact rows (never a re-derivation that could drift);
-  // a pre-P35.37 export falls back to the sites.jsonl aggregation it was built
-  // from (the same computation, honest absence of the artifact).
-  const emitted = `${exportDir()}/web/sources.json`;
-  if (existsSync(emitted)) {
-    const parsed: unknown = JSON.parse(readFileSync(emitted, "utf-8"));
-    if (!isSourceLicenceArtifact(parsed)) {
-      throw new Error(`${emitted}: not a valid sig.source-licence-table/1 artifact`);
+  const mode = dataSource();
+  const root = mode === "export" ? exportDir() : null;
+  // Memoised per data root (D-P37.65a-2): the sites.jsonl aggregation
+  // fallback scans the whole corpus — once per build, never per route.
+  return cachedCorpus(`sourceLicenceTable|${mode}|${root ?? ""}`, () => {
+    if (root === null) return SOURCES_FIXTURE;
+    // P35.37 (SIG-TRANSP-013): `web/sources.json` is the manifest-listed artifact
+    // the /sources/ page's figures point at — when the export emits it (P35.37+),
+    // the page renders THE artifact rows (never a re-derivation that could drift);
+    // a pre-P35.37 export falls back to the sites.jsonl aggregation it was built
+    // from (the same computation, honest absence of the artifact).
+    const emitted = `${root}/web/sources.json`;
+    if (existsSync(emitted)) {
+      const parsed: unknown = JSON.parse(readFileSync(emitted, "utf-8"));
+      if (!isSourceLicenceArtifact(parsed)) {
+        throw new Error(`${emitted}: not a valid sig.source-licence-table/1 artifact`);
+      }
+      return parsed.rows;
     }
-    return parsed.rows;
-  }
-  return sourceLicenceTable(exportDir());
+    return sourceLicenceTable(root);
+  });
 }
 
 // --------------------------------------------------------------------------- //
@@ -2785,11 +2864,7 @@ function getFreshnessRecords(): unknown[] {
   }
   const path = `${exportDir()}/transparency/freshness.jsonl`;
   if (!existsSync(path)) return [];
-  return readFileSync(path, "utf-8")
-    .split("\n")
-    .map((l) => l.trim())
-    .filter(Boolean)
-    .map((l) => JSON.parse(l) as unknown);
+  return readJsonlRows(path);
 }
 
 /** P36.48: one source's `sig.execution-record/1` feed (P36.46) — `null`
@@ -2800,11 +2875,7 @@ function getSourceExecutionsArtifact(sourceId: string): unknown[] | null {
   }
   const path = `${exportDir()}/transparency/sources/${sourceId}/executions.jsonl`;
   if (!existsSync(path)) return null;
-  return readFileSync(path, "utf-8")
-    .split("\n")
-    .map((l) => l.trim())
-    .filter(Boolean)
-    .map((l) => JSON.parse(l) as unknown);
+  return readJsonlRows(path);
 }
 
 /**

@@ -21,6 +21,7 @@
  */
 
 import { existsSync, readFileSync } from "node:fs";
+import { readJsonlRows } from "./jsonl";
 import { dataSource, exportDir } from "./data";
 import { isSourceRowsDoc, SOURCE_ROWS_DOC_FIXTURE } from "./source-counts";
 
@@ -145,11 +146,7 @@ export function getIssues(): SourceIssue[] {
   if (dataSource() !== "export") return ISSUES_FIXTURE;
   const path = `${exportDir()}/transparency/issues.jsonl`;
   if (!existsSync(path)) return [];
-  const rows = readFileSync(path, "utf-8")
-    .split("\n")
-    .map((l) => l.trim())
-    .filter(Boolean)
-    .map((l) => JSON.parse(l) as unknown);
+  const rows = readJsonlRows(path);
   for (const r of rows) {
     if (!isIssueRecord(r)) {
       throw new Error(`${path}: a row is not a valid ${ISSUE_RECORD_SCHEMA}`);

@@ -352,10 +352,19 @@ export function reviewCountByUrlType(
  *  refreshes only to an emitted successor (K13 R-6: never link a 404); an
  *  entity the label registry did not page (or a fixture the release does
  *  not carry) gets the honest explanation variant instead. */
+// D-P37.65a-2 (b): the `/id/<type>/<uuid>` pages re-derive this O(labels)
+// set per page — keyed on the (memoised) index object so the set is built
+// once per corpus, never per route.
+const _emittedPathsMemo = new WeakMap<{ rows: EntityLabelRow[] }, Set<string>>();
+
 export function emittedEntityPaths(index: { rows: EntityLabelRow[] }): Set<string> {
-  return new Set(
+  const hit = _emittedPathsMemo.get(index);
+  if (hit !== undefined) return hit;
+  const out = new Set(
     index.rows.map((r) => withBase(`entity/${r.url_type}/${r.slug}--${r.hash}/`)),
   );
+  _emittedPathsMemo.set(index, out);
+  return out;
 }
 
 // ---------------------------------------------------------------------------

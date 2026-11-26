@@ -13,7 +13,8 @@
  * ships a small demonstration set.
  */
 
-import { existsSync, readFileSync, readdirSync } from "node:fs";
+import { existsSync, readdirSync } from "node:fs";
+import { readLinesSync } from "./jsonl";
 import { resolveSourceId, resolveTextIds } from "./alias";
 
 export interface SourceLicenceRow {
@@ -69,7 +70,9 @@ export function sourceLicenceTable(exportDir: string): SourceLicenceRow[] {
   for (const entry of readdirSync(exportDir)) {
     const path = `${exportDir}/${entry}/sites.jsonl`;
     if (!existsSync(path)) continue;
-    for (const line of readFileSync(path, "utf-8").split("\n")) {
+    // readLinesSync streams the rows — a compartment `sites.jsonl` can
+    // exceed the V8 whole-string cap at national scale (D-P37.65a-2).
+    for (const line of readLinesSync(path)) {
       const t = line.trim();
       if (!t) continue;
       const row = JSON.parse(t) as SiteRow;
