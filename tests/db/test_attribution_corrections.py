@@ -248,6 +248,122 @@ def test_correction_repairs_shared_record_attribution(conn: object) -> None:
     assert dec[2] == "https://fixture.gov/terms"
 
 
+def test_correction_on_a_suppressed_source_keys_the_decision_on_the_recorded_id(
+    conn: object,
+) -> None:
+    """ADR-178: the spine records the retired source_id; the artifact names the
+    public id + the retired id's sha256 digest only (never the handle). The
+    decision must be keyed on the recorded id — the latest_decision join
+    matches nothing on the public id — and reports must repeat no handle."""
+    import hashlib
+
+    from db.rights_corrections import resolved_spine_source_ids
+
+    retired = "retired_handle_9f2c"
+    digest = "sha256:" + hashlib.sha256(retired.encode("utf-8")).hexdigest()
+    seed = _seed_shared_record(conn, source_ids=(retired,), attribution=None)
+    corr = _corr(source_id="camreg_und_x", source_id_digests=(digest,))
+    # The digest resolution finds the recorded spine id; the public id alone
+    # would see no priors at all.
+    assert resolved_spine_source_ids(conn, [corr]) == ["camreg_und_x", retired]
+    assert empty_attribution_count(conn, resolved_spine_source_ids(conn, [corr])) == 2
+    report = apply_correction(conn, corr)
+    assert report["decisions_inserted"] == 1
+    assert report["claims_affected"] == 2
+    # The decision row is keyed on the spine's RECORDED id; the report names
+    # only the digest — the handle is never echoed back out.
+    dec = conn.execute("SELECT source_id, prior_rights_id::text FROM rights_decision").fetchone()
+    assert str(dec[0]) == retired
+    assert str(dec[1]) == seed["shared_id"]
+    assert retired not in str(report)
+    assert report["decisions"][0]["decision_source"] == digest
+    for cid in seed["claims"][retired]:
+        assert _effective(conn, cid) == (
+            "CC-BY-4.0",
+            "Fixture City Council open data",
+            "https://fixture.gov/terms",
+        )
+    assert empty_attribution_count(conn, [retired]) == 0
+    # And a public-id-keyed decision alone would have redirected nothing —
+    # proving the recorded-id key is the operative one.
+    empty = conn.execute(
+        "SELECT count(*) FROM rights_decision WHERE source_id = 'camreg_und_x'"
+    ).fetchone()[0]
+    assert int(empty) == 0
+
+
+def test_source_id_digests_validation(conn: object) -> None:
+    assert validate_correction(_corr(source_id_digests=("not-a-digest",)))
+    import hashlib
+
+    own = "sha256:" + hashlib.sha256(b"fixture_src").hexdigest()
+    assert validate_correction(_corr(source_id_digests=(own,)))
+    assert not validate_correction(_corr())
+
+
+def test_correction_scoped_to_a_prior_pair_leaves_other_priors_untouched(
+    conn: object,
+) -> None:
+    """The (source → defective record) pair form (E2-12): a source whose
+    recorded priors span two licences corrects exactly the named defective
+    prior — the other licence's records are out_of_scope, never relicensed."""
+    cur = conn.cursor()
+    # A second prior under a DIFFERENT licence (CC0) with claims of its own.
+    cur.execute(
+        "INSERT INTO rights_record(spdx_expression,attribution_text,redistributable,"
+        "derivative_permitted,terms_url,retrieval_date) "
+        "VALUES('CC0-1.0',NULL,'yes','yes',NULL,'2026-01-01') RETURNING rights_id"
+    )
+    cc0_id = str(cur.fetchone()[0])
+    seed = _seed_shared_record(conn, source_ids=("fixture_src",), attribution=None)
+    prereqs = seed_claim_prerequisites(conn)
+    prereqs["rights_id"] = cc0_id
+    cur.execute("SELECT artifact_id FROM evidence_artifact WHERE source_id='fixture_src'")
+    artifact_id = cur.fetchone()[0]
+    cur.execute(
+        "INSERT INTO evidence_capture(artifact_id,content_digest,byte_size,media_type,"
+        "retrieved_at,retrieved_by_run_id,ocfl_object_id,ocfl_version,capture_method,"
+        "capture_tool_version) VALUES(%s,'d2',10,'text/html',now(),%s,'o','v1','x','v') "
+        "RETURNING capture_id",
+        (artifact_id, prereqs["run_id"]),
+    )
+    capture_id = cur.fetchone()[0]
+    cc0_claim = insert_claim(conn, prereqs)
+    cur.execute(
+        "INSERT INTO claim_evidence(claim_id,capture_id,role) VALUES(%s,%s,'establishes')",
+        (cc0_claim, capture_id),
+    )
+    # Correct only the defective CC-BY pair; a corr.spdx matching it would be a
+    # licence change on the CC0 prior — the scope makes the pair correction
+    # expressible at all.
+    corr = _corr(prior_rights_ids=(seed["shared_id"],))
+    plan = plan_corrections(conn, [corr])
+    kinds = {p["prior_rights_id"]: p["kind"] for p in plan["sources"][0]["priors"]}
+    assert kinds == {seed["shared_id"]: "correct", cc0_id: "out_of_scope"}
+    assert not plan["refused"]
+    report = apply_correction(conn, corr)
+    assert report["decisions_inserted"] == 1
+    for cid in seed["claims"]["fixture_src"]:
+        assert _effective(conn, cid)[0] == "CC-BY-4.0"
+    # The out-of-scope CC0 prior resolves exactly as before.
+    assert _effective(conn, str(cc0_claim)) == ("CC0-1.0", None, None)
+
+
+def test_prior_rights_ids_naming_a_non_prior_refuses(conn: object) -> None:
+    """A declared pair the spine never linked is an artifact/spine
+    disagreement — refused, never silently dropped."""
+    _seed_shared_record(conn, source_ids=("fixture_src",))
+    corr = _corr(
+        prior_rights_ids=("01999999-0000-7000-8000-000000000000",),
+    )
+    plan = plan_corrections(conn, [corr])
+    assert plan["refused"]
+    assert any("not a prior" in r for r in plan["refused"])
+    with pytest.raises(AttributionCorrectionError):
+        apply_correction(conn, corr)
+    assert conn.execute("SELECT count(*) FROM rights_decision").fetchone()[0] == 0
+
+
 def test_correction_refuses_a_licence_change(conn: object) -> None:
     """A correction that would change a resolved record's spdx is NOT an
     attribution correction — refused loudly, and nothing is written."""
