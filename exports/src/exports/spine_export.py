@@ -2218,9 +2218,7 @@ def surface_license(licences: set[str] | frozenset[str]) -> str:
     return ordered[0] if len(ordered) == 1 else " AND ".join(ordered)
 
 
-def _queue_shard_compartment(
-    queue_license: str, registry: Mapping[str, Any] | None
-) -> str:
+def _queue_shard_compartment(queue_license: str, registry: Mapping[str, Any] | None) -> str:
     """The compartment label for queue-v2 task shards.
 
     A single-licence union lands in that licence's real compartment. A
@@ -8014,6 +8012,13 @@ def _provenance_lineage(
     captures_by_id: dict[str, dict[str, Any]] = {}
     runs_by_id: dict[str, dict[str, Any]] = {}
     for row in _tuples_to_dicts(binding_detail, _stmt.BINDING_DETAIL_COLUMNS):
+        # Every source the export drew from is a prov:Agent — a bound capture
+        # cites the export even when the source surfaced no sites/freshness
+        # rows (the OPS-EXPORT-GCE-6 okc_council_statement refusal: an
+        # un-typed wasAttributedTo target fails closed).
+        bound_src = str(row.get("artifact_source_id") or "")
+        if bound_src:
+            source_ids.add(bound_src)
         cid = str(row.get("capture_id") or "")
         if not cid or cid in captures_by_id:
             continue

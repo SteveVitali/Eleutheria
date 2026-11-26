@@ -12,13 +12,13 @@ is kept separate from the rest. Nearest-file-wins: this file adds to the root `A
 
 | File | Lines | Purpose |
 |---|---|---|
-| `exports/src/exports/cli.py` | ~1310 | `sig-exports` entry point (`build`, `release`, `provo`, `deposit`, …) |
+| `exports/src/exports/cli.py` | ~2610 | `sig-exports` entry point (`build`, `release`, `provo`, `deposit`, …) |
 | `exports/src/exports/release.py` · `published_record.py` · `search_index.py` | ~n/a | the immutable release builder (two-stage namespace + integrity manifest, ADR-132), addressable records, and the per-compartment FTS5 search artifacts served read-only by `api/` |
-| `exports/src/exports/bundle.py` | ~340 | assembles a versioned export bundle + manifest |
-| `exports/src/exports/compartments.py` | ~280 | the licence-compartment split (ODbL kept separate) |
-| `exports/src/exports/manifest.py` | ~210 | the export manifest / release metadata |
-| `exports/src/exports/dossier.py` | ~420 | per-entity dossier rendering (feeds `web/`) |
-| `exports/src/exports/provo.py` | ~300 | PROV-O lineage serialisation (§21.6) |
+| `exports/src/exports/bundle.py` | ~500 | assembles a versioned export bundle + manifest |
+| `exports/src/exports/compartments.py` | ~420 | the licence-compartment split (ODbL kept separate) |
+| `exports/src/exports/manifest.py` | ~390 | the export manifest / release metadata |
+| `exports/src/exports/dossier.py` | ~460 | per-entity dossier rendering (feeds `web/`) |
+| `exports/src/exports/provo.py` | ~340 | PROV-O lineage serialisation (§21.6) |
 | `exports/src/exports/deposits.py` | ~70 | Zenodo deposit orchestration (dry-run default) |
 
 ## Build & Test

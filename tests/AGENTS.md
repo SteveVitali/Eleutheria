@@ -24,8 +24,8 @@ tests/
 | File | Lines | Purpose |
 |---|---|---|
 | `tests/support.py` | ~200 | `REPO_ROOT` + the exact §47 dir tuple used by layout tests |
-| `tests/db/conftest.py` | ~230 | PG18+PostGIS testcontainer; `SIG_REQUIRE_DB_TESTS` fail-loud switch |
-| `tests/e2e/test_composed_stack.py` | ~860 | the composed-stack seams + the `LD-`/xfail convention |
+| `tests/db/conftest.py` | ~380 | PG18+PostGIS testcontainer; `SIG_REQUIRE_DB_TESTS` fail-loud switch |
+| `tests/e2e/test_composed_stack.py` | ~1250 | the composed-stack seams + the `LD-`/xfail convention |
 | `tests/unit/test_package_layout.py` | ~30 | asserts the frozen §47 layout (SIG-ENG-012) |
 | `tests/unit/test_policy_adrs.py` | ~40 | asserts every ADR names a `## Revisit trigger` (SIG-STORE-007) |
 
