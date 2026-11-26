@@ -2845,6 +2845,28 @@ def build_parser() -> argparse.ArgumentParser:
         help="(v2) the JUR-01 jurisdiction-boundaries content root",
     )
 
+    plbind = rsub.add_parser(
+        "label-bind",
+        help="bind an allocated label to an already-built publication id — "
+        "the recorded reconciliation form of build's post-build bind "
+        "(D-P37.65a-7): fills in a stranded labels.json entry under the "
+        "registry lock and journals `label-bound`",
+    )
+    _rel_common(plbind)
+    plbind.add_argument("--label", required=True, help="the allocated sig-YYYY-MM-DD.N")
+    plbind.add_argument(
+        "--publication",
+        required=True,
+        help="the p-<sha256> publication id the label binds to",
+    )
+    plbind.add_argument(
+        "--reason",
+        default=None,
+        metavar="TEXT",
+        help="the recorded reconciliation reason — the authorisation ref "
+        "(go / gate-decision row) the bind rides",
+    )
+
     psites = rsub.add_parser(
         "sites",
         help="P36.66b (TX-13b b, ADR-161/162, D-J3-6 [B-19] = yes): assemble "

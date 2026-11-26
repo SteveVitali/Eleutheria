@@ -504,6 +504,32 @@ def test_labels_conf_carries_label_aliases(tmp_path):
     assert f"location = /releases/sig-2026-10-01.1/ {{ return 301 /releases/{PUB1}/; }}" in body
 
 
+def test_read_label_map_resolves_bound_labels_and_skips_null_pubs(tmp_path):
+    """D-P37.65a-7: ``read_label_map`` resolves entries whose
+    ``publication_id`` binds a real pub — allocated-but-unbound entries
+    (``publication_id: null``, the stranded-residue shape) and malformed
+    pubs are skipped, never aliased."""
+    reg = tmp_path / "registry"
+    reg.mkdir(parents=True, exist_ok=True)
+    (reg / "labels.json").write_text(
+        json.dumps(
+            {
+                "schema": "sig.release-labels/1",
+                "labels": [
+                    {"label": "sig-2026-10-01.1", "publication_id": PUB1},
+                    {"label": "sig-2026-10-02.1", "publication_id": None},
+                    {"label": "sig-2026-10-03.1", "publication_id": "not-a-pub"},
+                    {"label": "sig-2026-10-04.1"},
+                ],
+            }
+        ),
+        encoding="utf-8",
+    )
+    assert rc.read_label_map(_store(tmp_path)) == {PUB1: "sig-2026-10-01.1"}
+    # and absent labels.json reads as the empty map
+    assert rc.read_label_map(_store(tmp_path / "empty")) == {}
+
+
 # --------------------------------------------------------------------------- #
 # The approval check                                                          #
 # --------------------------------------------------------------------------- #

@@ -15,7 +15,10 @@ from __future__ import annotations
 import json
 import subprocess
 import sys
+from datetime import UTC, datetime
 from pathlib import Path
+from types import SimpleNamespace
+from typing import Any
 
 import pytest
 
@@ -39,6 +42,58 @@ def _release_tree(work: Path, pub: str = "p-" + "a" * 64) -> Path:
         d.mkdir(parents=True, exist_ok=True)
         (d / "index.html").write_text(f"<html>{ns}</html>", encoding="utf-8")
     return work
+
+
+BUILD_NOW = datetime(2026, 10, 16, 13, 0, 0, tzinfo=UTC)
+TEST_LABEL = "sig-2026-10-16.1"  # derives from the fixture's snapshot.as_of_world
+
+
+def _export_dir(root: Path) -> Path:
+    """A minimal export bundle ``verb_build`` can release-build — the
+    test_release_verify fixture's shape (one ``sig_graph`` compartment,
+    two site rows, a manifest carrying the P35.12 ``snapshot`` block whose
+    ``as_of_world`` is 2026-10-16)."""
+    from test_release_verify import _write_export
+
+    return _write_export(root)
+
+
+def _labels_doc(store: rp.LocalDirStore) -> dict[str, Any]:
+    body = store.read("registry/labels.json")
+    return json.loads(body) if body else {"labels": []}
+
+
+def _label_entry(store: rp.LocalDirStore, label: str) -> dict[str, Any] | None:
+    for entry in _labels_doc(store).get("labels") or []:
+        if entry.get("label") == label:
+            return entry
+    return None
+
+
+def _seed_label_entry(store: rp.LocalDirStore, label: str, pub: str | None) -> None:
+    """A ``sig.release-labels/1`` document holding one allocated entry —
+    the stranded-residue shape (``publication_id: null``) or a bound one."""
+    reg = store.root / "registry"
+    reg.mkdir(parents=True, exist_ok=True)
+    (reg / "labels.json").write_text(
+        json.dumps(
+            {
+                "schema": "sig.release-labels/1",
+                "labels": [
+                    {
+                        "label": label,
+                        "publication_id": pub,
+                        "as_of_world_date": "2026-10-16",
+                        "ordinal": 1,
+                        "allocated_at": "2026-10-16T00:00:00Z",
+                        "environment": "production",
+                        "state": "allocated",
+                    }
+                ],
+            }
+        ),
+        encoding="utf-8",
+    )
 
 
 # --------------------------------------------------------------------------- #
@@ -372,3 +427,231 @@ def test_eviction_guard_cli_refuses_and_names_the_path(tmp_path: Path) -> None:
     )
     assert out.returncode == 1
     assert "p-" + "8" * 64 in out.stderr
+
+
+# --------------------------------------------------------------------------- #
+# build — the label allocate→bind path (D-P37.65a-7)
+#
+# The pre-fix defect: ``verb_build`` allocated ``publication_id: null``
+# then passed ``labels_registry=None``, so ``record_label_publication``
+# was unreachable and every ops-path label stranded — and the
+# allocation's own labels.json write shifted the state digest under the
+# held lock, so the verb refused ``stale-generation`` after building.
+# --------------------------------------------------------------------------- #
+
+
+def test_build_allocates_then_binds_the_label(tmp_path: Path) -> None:
+    store = _store(tmp_path)
+    out = rp.verb_build(
+        store,
+        apply_=True,
+        export_dir=_export_dir(tmp_path / "export"),
+        work_dir=tmp_path / "work",
+        environment="production",
+        now=BUILD_NOW,
+    )
+    assert out["applied"] is True
+    assert out["label"] == TEST_LABEL
+    pub = out["publication_id"]
+    assert out["label_bound"] is True
+    # labels.json binds the allocated label to the built pub — the
+    # stranded ``publication_id: null`` residue is gone.
+    entry = _label_entry(store, TEST_LABEL)
+    assert entry is not None
+    assert entry["publication_id"] == pub
+    # the journal folds built → label-bound, in append order
+    events = rp.list_events(store)
+    assert [e["verb"] for e in events] == ["built", "label-bound"]
+    assert events[0]["publication_id"] == pub
+    assert events[1]["publication_id"] == pub
+    assert events[1]["outcome"] == "recorded"
+    assert events[1]["label"] == TEST_LABEL
+    # the built event still carries the label for the forensics trail
+    assert events[0]["label"] == TEST_LABEL
+    # and the held lock released cleanly (the verb's own writes are
+    # re-baselined, not drift).
+    assert store.read("registry/LOCK") is None
+
+
+def test_build_binds_a_preallocated_label(tmp_path: Path) -> None:
+    """The residue-resume shape: a stranded ``publication_id: null`` entry
+    (an earlier allocation) binds when ``--label`` names it."""
+    store = _store(tmp_path)
+    _seed_label_entry(store, TEST_LABEL, None)
+    out = rp.verb_build(
+        store,
+        apply_=True,
+        export_dir=_export_dir(tmp_path / "export"),
+        work_dir=tmp_path / "work",
+        environment="production",
+        label=TEST_LABEL,
+        now=BUILD_NOW,
+    )
+    assert out["label_bound"] is True
+    assert _label_entry(store, TEST_LABEL)["publication_id"] == out["publication_id"]
+
+
+def test_build_label_map_and_conf_alias_follow_the_bind(tmp_path: Path) -> None:
+    """The downstream consumers the stranded label starved: a bound label
+    resolves in ``read_label_map`` and lands in ``labels.conf`` as the
+    301 alias the promotion writes."""
+    from ops.release_conf import read_label_map, render_labels_conf
+
+    store = _store(tmp_path)
+    out = rp.verb_build(
+        store,
+        apply_=True,
+        export_dir=_export_dir(tmp_path / "export"),
+        work_dir=tmp_path / "work",
+        environment="production",
+        now=BUILD_NOW,
+    )
+    pub = out["publication_id"]
+    label_map = read_label_map(store)
+    assert label_map == {pub: TEST_LABEL}
+    conf = render_labels_conf(label_map, gen=1).decode()
+    assert f"location = /releases/{TEST_LABEL} {{ return 301 /releases/{pub}/; }}" in conf
+    assert f"location = /releases/{TEST_LABEL}/ {{ return 301 /releases/{pub}/; }}" in conf
+
+
+def test_build_typed_label_without_an_allocation_journals_the_skip(
+    tmp_path: Path,
+) -> None:
+    """A ``--label`` that was never allocated in this registry still
+    builds — the bind reports ``skipped`` instead of inventing an entry."""
+    store = _store(tmp_path)
+    out = rp.verb_build(
+        store,
+        apply_=True,
+        export_dir=_export_dir(tmp_path / "export"),
+        work_dir=tmp_path / "work",
+        environment="production",
+        label=TEST_LABEL,  # valid derivation, but no labels.json entry exists
+        now=BUILD_NOW,
+    )
+    assert out["label_bound"] is False
+    events = rp.list_events(store)
+    assert [e["verb"] for e in events] == ["built", "label-bound"]
+    assert events[1]["outcome"] == "skipped"
+    assert _label_entry(store, TEST_LABEL) is None
+
+
+def test_build_label_date_derives_from_the_snapshot(tmp_path: Path) -> None:
+    """The allocated label's date is the export's ``as_of_world`` — never
+    the build instant (a next-day build must not mint a next-day label)."""
+    store = _store(tmp_path)
+    out = rp.verb_build(
+        store,
+        apply_=True,
+        export_dir=_export_dir(tmp_path / "export"),
+        work_dir=tmp_path / "work",
+        environment="production",
+        # a build run the day AFTER the snapshot — the label still
+        # derives 2026-10-16, or the descriptor check would refuse it.
+        now=datetime(2026, 10, 17, 9, 0, 0, tzinfo=UTC),
+    )
+    assert out["label"] == TEST_LABEL
+
+
+# --------------------------------------------------------------------------- #
+# label-bind — the recorded residue reconciliation (D-P37.65a-7)
+# --------------------------------------------------------------------------- #
+
+
+def test_label_bind_binds_stranded_residue(tmp_path: Path) -> None:
+    store = _store(tmp_path)
+    pub = "p-" + "d" * 64
+    _seed_label_entry(store, TEST_LABEL, None)
+    rp.emit_event(store, "built", pub, {"outcome": "recorded", "label": TEST_LABEL})
+    out = rp.verb_label_bind(
+        store,
+        apply_=True,
+        label=TEST_LABEL,
+        publication_id=pub,
+        reason="test residue bind",
+        now=BUILD_NOW,
+    )
+    assert out["applied"] is True and out["label_bound"] is True
+    assert _label_entry(store, TEST_LABEL)["publication_id"] == pub
+    events = rp.list_events(store)
+    assert [e["verb"] for e in events] == ["built", "label-bound"]
+    bind_ev = events[1]
+    assert bind_ev["outcome"] == "recorded"
+    assert bind_ev["publication_history"] == ["built"]
+    assert bind_ev["reason"] == "test residue bind"
+    assert store.read("registry/LOCK") is None
+
+
+def test_label_bind_is_idempotent_on_the_same_pub(tmp_path: Path) -> None:
+    store = _store(tmp_path)
+    pub = "p-" + "d" * 64
+    _seed_label_entry(store, TEST_LABEL, pub)
+    out = rp.verb_label_bind(
+        store, apply_=True, label=TEST_LABEL, publication_id=pub, now=BUILD_NOW
+    )
+    assert out["label_bound"] is True
+    assert _label_entry(store, TEST_LABEL)["publication_id"] == pub
+
+
+def test_label_bind_refuses_a_rebind_to_a_different_pub(tmp_path: Path) -> None:
+    store = _store(tmp_path)
+    pub_a = "p-" + "a" * 64
+    pub_b = "p-" + "b" * 64
+    _seed_label_entry(store, TEST_LABEL, pub_a)
+    with pytest.raises(rp.PipelineError) as exc:
+        rp.verb_label_bind(
+            store, apply_=True, label=TEST_LABEL, publication_id=pub_b, now=BUILD_NOW
+        )
+    assert exc.value.code == "label-rebind"
+    # the refusal mutated nothing — the entry still binds the first pub
+    assert _label_entry(store, TEST_LABEL)["publication_id"] == pub_a
+
+
+def test_label_bind_skips_a_missing_allocation_entry(tmp_path: Path) -> None:
+    store = _store(tmp_path)
+    pub = "p-" + "d" * 64
+    out = rp.verb_label_bind(
+        store, apply_=True, label=TEST_LABEL, publication_id=pub, now=BUILD_NOW
+    )
+    assert out["label_bound"] is False
+    events = rp.list_events(store)
+    assert [e["verb"] for e in events] == ["label-bound"]
+    assert events[0]["outcome"] == "skipped"
+    assert _label_entry(store, TEST_LABEL) is None
+
+
+def test_label_bind_validates_label_and_pub(tmp_path: Path) -> None:
+    store = _store(tmp_path)
+    with pytest.raises(rp.PipelineError) as exc:
+        rp.verb_label_bind(store, apply_=True, label="not-a-label", publication_id="p-" + "d" * 64)
+    assert exc.value.code == "bad-input"
+    with pytest.raises(rp.PipelineError) as exc:
+        rp.verb_label_bind(store, apply_=True, label=TEST_LABEL, publication_id="x")
+    assert exc.value.code == "bad-input"
+
+
+def test_label_bind_dry_run_writes_nothing(tmp_path: Path) -> None:
+    store = _store(tmp_path)
+    pub = "p-" + "d" * 64
+    _seed_label_entry(store, TEST_LABEL, None)
+    out = rp.verb_label_bind(
+        store, apply_=False, label=TEST_LABEL, publication_id=pub, now=BUILD_NOW
+    )
+    assert out["dry_run"] is True
+    assert store.read("registry/LOCK") is None
+    assert store.list("registry/events/") == []
+    assert _label_entry(store, TEST_LABEL)["publication_id"] is None
+
+
+def test_run_verb_dispatches_label_bind(tmp_path: Path) -> None:
+    args = SimpleNamespace(
+        registry=str(tmp_path / "reg"),
+        apply=False,
+        release_command="label-bind",
+        break_lock=None,
+        label=TEST_LABEL,
+        publication="p-" + "f" * 64,
+        reason="t",
+    )
+    out = rp.run_verb(args)
+    assert out["verb"] == "label-bind" and out["dry_run"] is True

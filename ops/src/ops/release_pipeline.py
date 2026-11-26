@@ -716,6 +716,11 @@ def _allocate_label(store: Store, as_of: str, *, environment: str | None) -> str
     the registry's label-bearing files — for a dir store the mirror is the
     registry itself; for a bucket the mirror is a scratch dir the labels
     document is written back from under a metageneration-matched replace.
+
+    The write shifts the registry-state digest (``labels.json`` is a state
+    file): the caller re-baselines the lock afterwards — the
+    ``release_reversal._rebaseline`` convention — so ``refresh()`` still
+    refuses NEW drift, never the verb's own sanctioned write.
     """
     from exports.release_identity import allocate_label
 
@@ -742,6 +747,65 @@ def _allocate_label(store: Store, as_of: str, *, environment: str | None) -> str
         return label
 
 
+def bind_label(store: Store, label: str, publication_id: str) -> bool:
+    """Bind an allocated label to its publication id — the post-build
+    fill-in ``exports.release_identity.record_label_publication``
+    performs, over the registry's ``labels.json`` under the already-held
+    lock (D-P37.65a-7).
+
+    The same mirror contract as :func:`_allocate_label`: a dir store binds
+    in place; a bucket binds a scratch mirror of the labels document and
+    writes it back under a metageneration-matched replace.
+
+    Returns ``True`` when a matching allocation entry bound; ``False``
+    when ``labels.json`` carries no entry for ``label`` (a typed
+    ``--label`` that was never allocated in this registry — the caller
+    journals the honest outcome; no entry is invented). An entry already
+    bound to a *different* publication refuses — a label never moves
+    (SIG-REL-001); re-binding the same pub is a legal resume.
+    """
+    from exports.release_identity import load_labels, record_label_publication
+
+    def _bind(root: Path) -> bool:
+        doc = load_labels(root)
+        entries = [e for e in doc.get("labels") or [] if e.get("label") == label]
+        if not entries:
+            return False
+        for entry in entries:
+            bound = entry.get("publication_id")
+            if bound is not None and bound != publication_id:
+                raise PipelineError(
+                    "label-rebind",
+                    f"label {label!r} already binds {bound} — a label never "
+                    "moves to a different publication (SIG-REL-001); a wrong "
+                    "bind is corrected with a new label, never a re-point",
+                )
+        record_label_publication(root, label, publication_id)
+        return True
+
+    if isinstance(store, LocalDirStore):
+        return _bind(store.root / "registry")
+    with tempfile.TemporaryDirectory(prefix="sig-labels-") as td:
+        mirror = Path(td)
+        body = store.read(LABELS_OBJECT)
+        if body is not None:
+            (mirror / "labels.json").write_bytes(body)
+        if not _bind(mirror):
+            return False
+        new_doc = (mirror / "labels.json").read_bytes()
+        meta = store.stat(LABELS_OBJECT)
+        if meta is None:
+            store.insert(LABELS_OBJECT, new_doc, content_type="application/json")
+        else:
+            store.replace(
+                LABELS_OBJECT,
+                new_doc,
+                generation=int(meta["generation"]),
+                content_type="application/json",
+            )
+        return True
+
+
 def verb_build(
     store: Store,
     *,
@@ -758,9 +822,16 @@ def verb_build(
 ) -> dict[str, Any]:
     """``build`` — wrap ``exports.release.build_release`` (v2 descriptor by
     default — the only promotable shape; v1 stays selectable for parity /
-    replay) + allocate the human label under the registry lock. The built
-    tree stays local (``work_dir``); nothing is staged by build."""
+    replay) + allocate the human label under the registry lock + bind the
+    label to the built publication id (D-P37.65a-7). The built tree stays
+    local (``work_dir``); nothing is staged by build.
+
+    Journal ordering is ``built`` → ``label-bound``: each event lands
+    after the work it records, so a crash between them leaves the honest
+    stranded residue (allocated, ``publication_id: null``) that
+    ``label-bind`` re-binds — never a bind the journal never saw."""
     from exports.release import build_release
+    from exports.release_identity import DESCRIPTOR_SCHEMA_V2
 
     export_dir = Path(export_dir)
     work_dir = Path(work_dir)
@@ -778,19 +849,40 @@ def verb_build(
             f"allocate label under {store.describe()}/registry (lock)",
             f"exports.release.build_release({export_dir} → {work_dir})",
             "journal `built` event",
+            "bind the label → publication_id in labels.json + journal `label-bound`",
         ]
         return result
     now = now or _now()
     with acquire_lock(store, "build", break_lock=break_lock, now=now) as lock:
         manifest = json.loads((export_dir / "manifest.json").read_bytes())
-        as_of = str(manifest.get("as_of_world") or manifest.get("as_of") or _iso(now))
-        label = label or _allocate_label(store, as_of, environment=environment)
+        # The label's date derives from the export's recorded snapshot
+        # instant — ``snapshot.as_of_world`` (P35.12), falling back to the
+        # date-grain reproducibility pair — the same chain the v2
+        # descriptor itself validates the label against. The build
+        # instant is only the last resort (a legacy manifest carrying no
+        # as-of at all).
+        snap_block = manifest.get("snapshot") or {}
+        repro = manifest.get("reproducibility_inputs") or {}
+        as_of = str(
+            snap_block.get("as_of_world")
+            or manifest.get("as_of_world")
+            or manifest.get("as_of")
+            or (f"{repro['as_of_snapshot']}T00:00:00Z" if repro.get("as_of_snapshot") else "")
+            or _iso(now)
+        )
+        if label is None:
+            label = _allocate_label(store, as_of, environment=environment)
+            # The allocation is the verb's own sanctioned labels.json
+            # write — it shifts the registry-state digest, so the lock
+            # re-baselines (the release_reversal._rebaseline convention):
+            # refresh() still refuses NEW drift, never our own write.
+            lock.state_digest = registry_state_digest(store)
         build = build_release(
             export_dir,
             work_dir,
             renderer_revision=renderer_revision,  # v1-only input; v2 binds code.commit itself
             descriptor_version=descriptor_version,
-            labels_registry=None,
+            labels_registry=None,  # the registry is a Store, not a path — the bind runs below
             label=label,
             environment=environment,
             boundaries_root=boundaries_root,
@@ -811,11 +903,39 @@ def verb_build(
             },
             now=now,
         )
+        # The label→pub bind (D-P37.65a-7): allocated at
+        # ``publication_id: null``, filled in once the build names the
+        # pub — the ``record_label_publication`` call ``build_release``
+        # only reaches for a filesystem registry (release.py:876). Same
+        # guard as there: a v1 descriptor carries no label, so a v1 build
+        # binds nothing — the skip is journaled, never silent.
+        bound: bool | None = None
+        bind_name: str | None = None
+        if build.descriptor.get("schema") == DESCRIPTOR_SCHEMA_V2:
+            lock.refresh()  # registry state must not have moved before the bind write
+            bound = bind_label(store, label, build.publication_id)
+            # Re-baseline the verb's own bind write — refresh()/release()
+            # still refuse NEW drift, never our own.
+            lock.state_digest = registry_state_digest(store)
+            bind_name = emit_event(
+                store,
+                "label-bound",
+                build.publication_id,
+                {
+                    "outcome": "recorded" if bound else "skipped",
+                    "label": label,
+                    "publication_id": build.publication_id,
+                    **({} if bound else {"reason": "no allocation entry in labels.json"}),
+                },
+                now=now,
+            )
         result.update(
             applied=True,
             publication_id=build.publication_id,
             label=label,
+            label_bound=bound,
             event=name,
+            label_event=bind_name,
         )
     return result
 
@@ -865,6 +985,80 @@ def _stage_one(
         if meta.get("md5Hash") == md5:
             return "resumed", 0  # raced into existence, identical — a resume
         raise NameCollision(name) from exc
+def verb_label_bind(
+    store: Store,
+    *,
+    apply_: bool,
+    label: str,
+    publication_id: str,
+    reason: str | None = None,
+    break_lock: str | None = None,
+    now: datetime | None = None,
+) -> dict[str, Any]:
+    """``label-bind`` — the recorded reconciliation form of the post-build
+    bind (D-P37.65a-7): under the registry lock, bind an allocated label
+    to an already-built publication id and journal ``label-bound``.
+
+    A green ``build`` never needs it — it binds inline. It exists for the
+    residue a build leaves when it dies between ``built`` and the bind
+    write (pre-fix, every ops-path build): the descriptor already welds
+    ``label → publication_id`` (the pub is the descriptor's sha), so the
+    bind asserts a fact the bytes prove — journaled as its own event,
+    never rewritten into the earlier ``built`` record. ``reason`` records
+    the authorisation ref (the go / gate-decision row the bind rides).
+    """
+    from exports.release import PUBLICATION_RE
+    from exports.release_identity import LABEL_RE
+
+    result: dict[str, Any] = {
+        "verb": "label-bind",
+        "label": label,
+        "publication_id": publication_id,
+        "applied": False,
+    }
+    if not LABEL_RE.match(label):
+        raise PipelineError("bad-input", f"--label {label!r} is not sig-YYYY-MM-DD.N")
+    if not PUBLICATION_RE.match(publication_id):
+        raise PipelineError(
+            "bad-input", f"--publication {publication_id!r} is not a p-<64hex> publication id"
+        )
+    if not apply_:
+        result["dry_run"] = True
+        result["plan"] = [
+            f"bind labels.json entry {label} → {publication_id} under "
+            f"{store.describe()}/registry (lock)",
+            "journal `label-bound` event",
+        ]
+        return result
+    now = now or _now()
+    with acquire_lock(store, "label-bind", break_lock=break_lock, now=now) as lock:
+        lock.refresh()
+        bound = bind_label(store, label, publication_id)
+        # Re-baseline the verb's own write — see verb_build.
+        lock.state_digest = registry_state_digest(store)
+        # Evidence: what the journal already knew about the pair (the
+        # residue bind lands after `built`, never inside it).
+        history = [
+            str(e.get("verb") or "")
+            for e in list_events(store)
+            if e.get("publication_id") == publication_id
+        ]
+        name = emit_event(
+            store,
+            "label-bound",
+            publication_id,
+            {
+                "outcome": "recorded" if bound else "skipped",
+                "label": label,
+                "publication_id": publication_id,
+                "publication_history": history,
+                "reason": reason,
+                **({} if bound else {"skip_reason": "no allocation entry in labels.json"}),
+            },
+            now=now,
+        )
+        result.update(applied=True, label_bound=bound, event=name)
+    return result
 
 
 def verb_stage(
@@ -1690,6 +1884,15 @@ def run_verb(args: Any) -> dict[str, Any]:
             renderer_revision=getattr(args, "renderer_revision", None),
             break_lock=break_lock,
         )
+    if verb == "label-bind":
+        return verb_label_bind(
+            store,
+            apply_=apply_,
+            label=args.label,
+            publication_id=args.publication,
+            reason=getattr(args, "reason", None),
+            break_lock=break_lock,
+        )
     if verb == "sites":
         from . import site_trees
 
@@ -1907,6 +2110,7 @@ __all__ = [
     "VERB_OWNERS",
     "VerbDeferred",
     "acquire_lock",
+    "bind_label",
     "emit_event",
     "fold_state",
     "list_events",
@@ -1916,6 +2120,7 @@ __all__ = [
     "verb_build",
     "verb_classify",
     "verb_cut",
+    "verb_label_bind",
     "verb_stage",
     "verb_status",
     "verb_verify",
