@@ -54,6 +54,7 @@ import { AS_OF } from "./fixtures";
 import { dataSource, exportDir, getDownloadListing } from "./data";
 import type { DownloadFile } from "./downloads";
 import { existsSync, readFileSync } from "node:fs";
+import { readJsonlRowsCached } from "./jsonl";
 
 export const SOURCES_TABLE_SCHEMA = "sig.sources-table/1";
 export const TABLESCHEMA_PROFILE = "https://datapackage.org/profiles/2.0/tableschema.json";
@@ -158,11 +159,9 @@ function sourcesDoc(): SourceRowsDoc {
 function exportExecutions(sourceId: string): ExecutionRecord[] | null {
   const path = `${exportDir()}/transparency/sources/${sourceId}/executions.jsonl`;
   if (!existsSync(path)) return null;
-  const rows = readFileSync(path, "utf-8")
-    .split("\n")
-    .map((l) => l.trim())
-    .filter(Boolean)
-    .map((l) => JSON.parse(l) as unknown);
+  // Cached per file revision (D-P37.65a-2): every table view composes a row
+  // per source over the same feed — parsed once, never a >512 MiB string.
+  const rows = readJsonlRowsCached(path);
   for (const r of rows) {
     if (!isExecutionRecord(r)) {
       throw new Error(`${path}: a row is not a valid sig.execution-record/1`);
@@ -175,10 +174,9 @@ function exportFreshnessMap(): Map<string, SourceFreshness> {
   const map = new Map<string, SourceFreshness>();
   const path = `${exportDir()}/transparency/freshness.jsonl`;
   if (!existsSync(path)) return map;
-  for (const line of readFileSync(path, "utf-8").split("\n")) {
-    const t = line.trim();
-    if (!t) continue;
-    const o = JSON.parse(t) as SourceFreshness;
+  // Cached parsed rows (D-P37.65a-2) — the shared feed parses once per build.
+  for (const raw of readJsonlRowsCached(path)) {
+    const o = raw as SourceFreshness;
     if (o && typeof o.source_id === "string") map.set(o.source_id, o);
   }
   return map;
