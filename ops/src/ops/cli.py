@@ -2884,6 +2884,23 @@ def build_parser() -> argparse.ArgumentParser:
         default=None,
         help="the p-<sha256> id (default: the tree's lone releases/<pub>/)",
     )
+    pstage.add_argument(
+        "--workers",
+        type=int,
+        default=None,
+        help="the bounded insert pool's width (D-P37.65a-3; default "
+        "16: 1 = serial). A worker refusal fails the verb closed with "
+        "the lock held — never an ambiguous write",
+    )
+    pstage.add_argument(
+        "--lock-refresh-s",
+        type=float,
+        default=None,
+        metavar="SECONDS",
+        help="the stale-generation heartbeat interval (D-P37.65a-3; default "
+        "60s, also every 512 objects). The digest is always re-checked at "
+        "lock release",
+    )
 
     pver = rsub.add_parser(
         "verify",

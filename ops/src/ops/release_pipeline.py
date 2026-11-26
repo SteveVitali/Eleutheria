@@ -54,12 +54,14 @@ check is unevaluable — RM-6 fail-closed.
 from __future__ import annotations
 
 import base64
+import concurrent.futures
 import hashlib
 import json
 import os
 import re
 import tempfile
-from collections.abc import Iterable
+import time
+from collections.abc import Callable, Iterable
 from dataclasses import dataclass
 from datetime import UTC, datetime
 from pathlib import Path
@@ -105,6 +107,16 @@ LABELS_OBJECT = "registry/labels.json"
 
 #: Journal schema id — one object per applied verb.
 EVENT_SCHEMA = "sig.release-event/1"
+
+#: D-P37.65a-3 — the stage loop's throughput knobs. The serial
+#: insert-refresh per object measured ~0.014 obj/s live (a ~380-day plan);
+#: the verb now inserts through a bounded worker pool and refreshes the
+#: lock's state digest on a time/count interval — the refresh is a liveness
+#: heartbeat, not per-object correctness, and ``lock.release()`` still
+#: re-checks the digest at close, so a drifted registry is still refused.
+STAGE_WORKERS = 16
+STAGE_LOCK_REFRESH_S = 60.0
+STAGE_LOCK_REFRESH_N = 512
 
 #: §3.4 lifecycle kinds (the fold order status prints).
 LIFECYCLE_KINDS: tuple[str, ...] = (
@@ -217,6 +229,7 @@ class Store(Protocol):
     ) -> dict[str, Any]: ...
     def delete(self, name: str) -> None: ...
     def list(self, prefix: str) -> list[str]: ...
+    def details(self, prefix: str) -> dict[str, dict[str, Any]]: ...
     def describe(self) -> str: ...
 
 
@@ -299,6 +312,9 @@ class LocalDirStore:
             return []
         return sorted(str(p.relative_to(root)) for p in base.rglob("*") if p.is_file())
 
+    def details(self, prefix: str) -> dict[str, dict[str, Any]]:
+        return {n: self.stat(n) or {} for n in self.list(prefix)}
+
 
 class GcsStore:
     """The store over ``gs://<bucket>[/<prefix>]`` — the production path."""
@@ -354,6 +370,20 @@ class GcsStore:
 
     def list(self, prefix: str) -> list[str]:
         return self.client.list_objects(self._name(prefix))
+
+    def details(self, prefix: str) -> dict[str, dict[str, Any]]:
+        """name → ``{md5Hash, size, …}`` for every object under ``prefix`` —
+        one paged listing carries the whole parity basis (D-P37.65a-3): a
+        resume decides skip/collision from it instead of paying a
+        create-if-absent POST + a stat per object."""
+        out: dict[str, dict[str, Any]] = {}
+        lead = f"{self.prefix}/" if self.prefix else ""
+        for item in self.client.list_object_details(self._name(prefix)):
+            name = str(item.get("name") or "")
+            if lead and name.startswith(lead):
+                name = name[len(lead) :]
+            out[name] = item
+        return out
 
 
 def open_store(registry: str) -> Store:
@@ -790,20 +820,78 @@ def verb_build(
     return result
 
 
+def _staged_existing(store: Store, pub: str) -> dict[str, dict[str, Any]] | None:
+    """The objects already staged under this publication's namespaces — the
+    parity basis a resume decides from (name → metadata), one paged listing
+    per namespace. ``None`` when the store can't pre-list; the create-if-absent
+    POST + stat path then decides per object."""
+    details = getattr(store, "details", None)
+    if not callable(details):
+        return None
+    existing: dict[str, dict[str, Any]] = {}
+    for ns in STAGED_NAMESPACES:
+        existing.update(details(f"staged/{ns}/{pub}/"))
+    return existing
+
+
+def _stage_one(
+    store: Store,
+    existing: dict[str, dict[str, Any]] | None,
+    name: str,
+    path: Path,
+) -> tuple[str, int]:
+    """Insert one plan object; returns ``("staged"|"resumed", nbytes)``.
+
+    The identical-byte skip is decided from the staged listing when the store
+    carries one (D-P37.65a-3) — a resume needs no POST+stat pair — else from
+    the create-if-absent POST's 412 + a stat, the pre-D-P37.65a-3 contract. A
+    same-named object with different bytes is a :class:`NameCollision` either
+    way: nothing staged is ever overwritten (SIG-REL-005).
+    """
+    body = path.read_bytes()
+    md5 = _md5_b64(body)
+    if existing is not None and name in existing:
+        prior_md5 = str((existing[name] or {}).get("md5Hash") or "")
+        if prior_md5:
+            if prior_md5 == md5:
+                return "resumed", 0
+            raise NameCollision(name)
+        # A listing row without md5Hash can't decide — the POST path does.
+    try:
+        store.insert(name, body, content_type=_media_type(name))
+        return "staged", len(body)
+    except _gcs.GcsPreconditionFailed as exc:
+        meta = store.stat(name) or {}
+        if meta.get("md5Hash") == md5:
+            return "resumed", 0  # raced into existence, identical — a resume
+        raise NameCollision(name) from exc
+
+
 def verb_stage(
     store: Store,
     *,
     apply_: bool,
     work_dir: str | Path,
     publication_id: str | None = None,
+    workers: int = STAGE_WORKERS,
+    lock_refresh_seconds: float = STAGE_LOCK_REFRESH_S,
+    lock_refresh_objects: int = STAGE_LOCK_REFRESH_N,
     break_lock: str | None = None,
     now: datetime | None = None,
+    clock: Callable[[], float] = time.monotonic,
 ) -> dict[str, Any]:
     """``stage`` — upload ``staged/{r,v,s,releases}/<pub>/`` create-if-absent.
 
     Resume contract: an existing object with identical bytes is skipped;
     a same-named object with different bytes is a name-collision refusal —
-    nothing staged is overwritten (SIG-REL-005)."""
+    nothing staged is overwritten (SIG-REL-005).
+
+    D-P37.65a-3: the plan runs through a bounded ``workers`` pool (plan order
+    stays fixed; results are collected in order per chunk; a worker refusal
+    fails the verb closed with the lock still held — never an ambiguous
+    write), and the lock refresh is a liveness heartbeat on a time/count
+    interval — ``lock.release()`` still re-checks the state digest at close.
+    """
     work_dir = Path(work_dir)
     pub = publication_id or _publication_id_of(work_dir)
     plan = _stage_plan(work_dir, pub)
@@ -817,26 +905,58 @@ def verb_stage(
         raise PipelineError("empty-plan", f"nothing under {work_dir}/{{r,v,s,releases}}/{pub}/")
     if not apply_:
         result["dry_run"] = True
-        result["plan"] = [f"insert {len(plan)} objects under staged/*/{pub}/ (if-absent)"]
+        result["plan"] = [
+            f"insert {len(plan)} objects under staged/*/{pub}/ (if-absent, workers={workers})"
+        ]
         return result
     now = now or _now()
     staged = 0
     skipped = 0
     nbytes = 0
     with acquire_lock(store, "stage", break_lock=break_lock, now=now) as lock:
-        for name, path in plan:
-            body = path.read_bytes()
-            try:
-                store.insert(name, body, content_type=_media_type(name))
+        existing = _staged_existing(store, pub)
+        last_refresh = clock()
+        since_refresh = 0
+
+        def heartbeat() -> None:
+            nonlocal last_refresh, since_refresh
+            if (
+                since_refresh >= lock_refresh_objects
+                or (clock() - last_refresh) >= lock_refresh_seconds
+            ):
+                lock.refresh()  # the stale-generation guard — a heartbeat
+                last_refresh = clock()
+                since_refresh = 0
+
+        def tally(outcome: str, nb: int) -> None:
+            nonlocal staged, skipped, nbytes, since_refresh
+            if outcome == "staged":
                 staged += 1
-                nbytes += len(body)
-            except _gcs.GcsPreconditionFailed as exc:
-                meta = store.stat(name) or {}
-                if meta.get("md5Hash") == _md5_b64(body):
-                    skipped += 1  # identical bytes already there — a resume
-                    continue
-                raise NameCollision(name) from exc
-            lock.refresh()
+                nbytes += nb
+            else:
+                skipped += 1
+            since_refresh += 1
+
+        if workers > 1:
+            # The pool is bounded and chunk-submitted so a refusal propagates
+            # with at most a chunk in flight — the inserted objects stay (the
+            # resume contract), the lock stays held, and nothing half-writes.
+            chunk = max(4 * workers, 16)
+            with concurrent.futures.ThreadPoolExecutor(max_workers=workers) as pool:
+                for start in range(0, len(plan), chunk):
+                    futs = [
+                        pool.submit(_stage_one, store, existing, name, path)
+                        for name, path in plan[start : start + chunk]
+                    ]
+                    for fut in futs:
+                        outcome, nb = fut.result()
+                        tally(outcome, nb)
+                    heartbeat()
+        else:
+            for name, path in plan:
+                outcome, nb = _stage_one(store, existing, name, path)
+                tally(outcome, nb)
+                heartbeat()
         event_name = emit_event(
             store,
             "staged",
@@ -847,10 +967,18 @@ def verb_stage(
                 "objects_resumed": skipped,
                 "bytes": nbytes,
                 "namespaces": [ns for ns in STAGED_NAMESPACES if (work_dir / ns / pub).is_dir()],
+                "stage_workers": workers,
             },
             now=now,
         )
-    result.update(applied=True, staged=staged, resumed=skipped, bytes=nbytes, event=event_name)
+    result.update(
+        applied=True,
+        staged=staged,
+        resumed=skipped,
+        bytes=nbytes,
+        event=event_name,
+        workers=workers,
+    )
     return result
 
 
@@ -1580,6 +1708,10 @@ def run_verb(args: Any) -> dict[str, Any]:
             apply_=apply_,
             work_dir=args.work_dir,
             publication_id=getattr(args, "publication", None),
+            workers=int(getattr(args, "workers", None) or STAGE_WORKERS),
+            lock_refresh_seconds=float(
+                getattr(args, "lock_refresh_s", None) or STAGE_LOCK_REFRESH_S
+            ),
             break_lock=break_lock,
         )
     if verb == "verify":
@@ -1767,6 +1899,9 @@ __all__ = [
     "PipelineError",
     "REGISTRY_STATE_FILES",
     "STAGED_NAMESPACES",
+    "STAGE_LOCK_REFRESH_N",
+    "STAGE_LOCK_REFRESH_S",
+    "STAGE_WORKERS",
     "StaleGeneration",
     "Store",
     "VERB_OWNERS",
