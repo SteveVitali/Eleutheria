@@ -23,6 +23,7 @@ of form.
 from __future__ import annotations
 
 import os
+import re
 from collections.abc import Iterable, Mapping, Sequence
 from html import escape
 from typing import Any
@@ -150,6 +151,18 @@ EXTERNAL_LINK_ROUTES: frozenset[str] = frozenset(
 #: (the ``/entity/<type>/<id>/`` convenience stubs — mutable pointers, never
 #: citations). Checked after :data:`EXTERNAL_LINK_ROUTES`.
 EXTERNAL_LINK_PREFIXES: tuple[str, ...] = ("entity/",)
+
+#: Routes the activation overlay emits that archive pages may link to but
+#: cannot enumerate verbatim — the publication id only exists once the cut
+#: lands. P35.39 (SIG-TRANSP-016 / J3 §6.6): every stamped page carries a
+#: second ``<link rel="describedby">`` at
+#: ``releases/<pub>/datapackage.json`` — the publication-bound Frictionless
+#: descriptor ``_emit_activation_metadata`` writes at activation, the same
+#: overlay class as ``releases/catalog.jsonld`` above. ``fullmatch``-
+#: checked, never a wildcard under ``releases/``.
+EXTERNAL_LINK_PATTERNS: tuple[re.Pattern[str], ...] = (
+    re.compile(r"releases/p-[0-9a-f]{64}/datapackage\.json"),
+)
 
 
 def _site_nav() -> str:

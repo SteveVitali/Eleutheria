@@ -76,6 +76,7 @@ from .published_record import (
 )
 from .release_pages import (
     CORRECTIONS_HREF,
+    EXTERNAL_LINK_PATTERNS,
     EXTERNAL_LINK_PREFIXES,
     EXTERNAL_LINK_ROUTES,
     browse_page,
@@ -1876,6 +1877,8 @@ def _route_is_external_or_denied(route: str, denied: frozenset[str]) -> bool:
     if norm in EXTERNAL_LINK_ROUTES:
         return True
     if any(norm.startswith(p) for p in EXTERNAL_LINK_PREFIXES):
+        return True
+    if any(p.fullmatch(norm) for p in EXTERNAL_LINK_PATTERNS):
         return True
     return norm in denied or f"{norm}/index.html" in denied
 

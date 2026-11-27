@@ -126,6 +126,39 @@ def test_crawl_treats_explicitly_denied_routes_as_410(tmp_path: Path) -> None:
     assert link_crawl_failures(root, denied_routes=["denied/route/index.html"]) == []
 
 
+def test_crawl_resolves_the_activation_overlay_datapackage_route(tmp_path: Path) -> None:
+    """P35.39's stamped-page ``<link rel="describedby">`` →
+    ``releases/<pub>/datapackage.json`` resolves though the descriptor only
+    exists post-activation — the same activation-overlay class as
+    ``releases/catalog.jsonld``, parametric because the pub id only exists
+    once the cut lands. The match is pub-shaped, never a wildcard under
+    ``releases/``."""
+    root = tmp_path / "corpus"
+    (root / "s" / "page").mkdir(parents=True)
+    pub = "p-" + "ab" * 32
+    (root / "s" / "page" / "index.html").write_text(
+        f'<link rel="describedby" href="/releases/{pub}/datapackage.json">',
+        encoding="utf-8",
+    )
+    assert link_crawl_failures(root) == []
+    # a non-pub-shaped same-name path still fails — the pattern is not a
+    # releases/ wildcard
+    (root / "s" / "page" / "index.html").write_text(
+        '<a href="/releases/latest/datapackage.json">x</a>', encoding="utf-8"
+    )
+    failures = link_crawl_failures(root)
+    assert len(failures) == 1
+    assert "releases/latest/datapackage.json" in failures[0]
+    # and a sibling path under the real pub dir still fails — only the
+    # descriptor route is overlay-owned
+    (root / "s" / "page" / "index.html").write_text(
+        f'<a href="/releases/{pub}/missing.json">x</a>', encoding="utf-8"
+    )
+    failures = link_crawl_failures(root)
+    assert len(failures) == 1
+    assert "missing.json" in failures[0]
+
+
 def test_validate_release_fails_on_a_planted_broken_link(tmp_path: Path) -> None:
     """AC: a planted broken link makes ``validate_release`` fail with page and
     target named — the integrity manifest is repaired first so ONLY the crawl
