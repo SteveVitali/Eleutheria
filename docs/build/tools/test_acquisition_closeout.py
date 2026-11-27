@@ -130,16 +130,20 @@ def test_duty_leads_covered() -> None:
 
 def test_every_row_has_e0_anchor() -> None:
     records = [json.loads(l) for l in EVENTS.read_text().splitlines() if l.strip()]
+    events = {e["event_id"]: e for e in records}
     lines = DEFERRALS.read_text().splitlines()
-    for rid, ln in p3766_rows().items():
+    rows = p3766_rows()
+    # exactly one e0 anchor per row, and exactly one DEFERRALS line per row id
+    # (a dict keyed by id would otherwise collapse a duplicate silently).
+    anchor_ids = [e["event_id"] for e in records if e["event_id"] in {f"{r}:e0" for r in rows}]
+    assert sorted(anchor_ids) == sorted(set(anchor_ids)), f"duplicate e0 anchors: {anchor_ids}"
+    row_ids = [m.group(1) for l in lines if (m := ROW_RE.match(l))]
+    assert sorted(row_ids) == sorted(set(row_ids)), f"duplicate D-P37.66 row ids: {row_ids}"
+    row_at = {m.group(1): i for i, l in enumerate(lines, 1) if (m := ROW_RE.match(l))}
+    for rid, ln in rows.items():
         eid = f"{rid}:e0"
-        anchors = [e for e in records if e["event_id"] == eid]
-        assert anchors, f"{rid} has no obligation-event/1 anchor"
-        assert len(anchors) == 1, f"{rid} has {len(anchors)} e0 anchors, expected exactly one"
-        ev = anchors[0]
-        # the row is located by its id, and the id must name exactly one line.
-        id_lines = [i for i, l in enumerate(lines, 1) if (m := ROW_RE.match(l)) and m.group(1) == rid]
-        assert len(id_lines) == 1, f"{rid} names {len(id_lines)} DEFERRALS lines, expected exactly one"
+        assert eid in events, f"{rid} has no obligation-event/1 anchor"
+        ev = events[eid]
         # record-to-record: the e0 anchor's recorded status must match the
         # committed row's status cell (no status-word literal — OM-15).
         status_cell = ln.rstrip().removesuffix("|").rstrip().rsplit("|", 1)[-1].strip()
@@ -161,8 +165,8 @@ def test_every_row_has_e0_anchor() -> None:
             i for i, l in enumerate(lines, 1)
             if hashlib.sha256(l.encode()).hexdigest() == anchor["row_sha256"]
         ]
-        assert hits == id_lines, (
-            f"{rid}: anchor digest names lines {hits}, the row is at {id_lines}"
+        assert hits == [row_at[rid]], (
+            f"{rid}: anchor digest names lines {hits}, the row is at line {row_at[rid]}"
         )
         assert isinstance(anchor["row_line"], int) and anchor["row_line"] >= 1, (
             f"{rid}: anchor row_line {anchor['row_line']!r} is not a line number"
