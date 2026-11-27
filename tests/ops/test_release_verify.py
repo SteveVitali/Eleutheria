@@ -168,24 +168,48 @@ def _site_page(
     the standalone print/curate shells emit on ``<html>``; the basis
     sentence renders only on ``chrome == "full"`` pages (the
     ``chrome === "full"`` footer gate — D-P37.65a-6), ``None`` emits no
-    marker at all (the ``r/`` archive emitter's shape)."""
+    marker at all (the ``r/`` archive emitter's shape). The Astro stamp
+    rides P35.39's describedby pair — the identity link plus the
+    publication-bound ``releases/<pub>/datapackage.json`` overlay route —
+    and the visible ``<p class="stamp">`` block only where the footer
+    actually renders (full chrome and the archive chrome; error/print
+    pages carry the machine stamp only — D-P37.65a-9)."""
     chrome_attr = f' data-sig-chrome="{chrome}"' if chrome is not None else ""
     basis_line = f'<p class="stamp mut">{basis}</p>' if chrome == "full" else ""
-    return (
-        f'<!DOCTYPE html><html lang="en"{chrome_attr}><head><meta charset="utf-8">'
-        "<title>fixture — SIG released record</title>"
-        f'<meta name="sig-release" content="{fields["label"]} {fields["pub"]}">'
-        f'<link rel="describedby" type="application/json" href="{describedby}">'
-        "</head><body><main><h1>fixture</h1><p>fixture page</p>"
-        '<figure data-figure-id="sites-total" data-artifact="web/coverage.json" '
-        'data-pointer="/totals/sites" data-figure-value="2">2 sites</figure>'
-        "</main><footer>"
+    datapackage_link = (
+        f'<link rel="describedby" type="application/json" '
+        f'href="/releases/{fields["pub"]}/datapackage.json">'
+        if chrome is not None
+        else ""
+    )
+    catalog_link = (
+        '<link rel="alternate" type="application/ld+json" '
+        'href="/releases/catalog.jsonld">'
+        if chrome is not None
+        else ""
+    )
+    stamp_block = (
         '<p class="stamp">Release '
         f"{fields['label']} · data as of {fields['as_of']} · "
         f"built {fields['built']} from code "
         f"<code>{fields['commit8']}</code> · "
         f"<code>{fields['pub_short']}</code> · "
         f'<a href="{describedby}"><code>release.json</code></a></p>'
+        if chrome in ("full", None)
+        else ""
+    )
+    return (
+        f'<!DOCTYPE html><html lang="en"{chrome_attr}><head><meta charset="utf-8">'
+        "<title>fixture — SIG released record</title>"
+        f'<meta name="sig-release" content="{fields["label"]} {fields["pub"]}">'
+        f'<link rel="describedby" type="application/json" href="{describedby}">'
+        f"{datapackage_link}"
+        f"{catalog_link}"
+        "</head><body><main><h1>fixture</h1><p>fixture page</p>"
+        '<figure data-figure-id="sites-total" data-artifact="web/coverage.json" '
+        'data-pointer="/totals/sites" data-figure-value="2">2 sites</figure>'
+        "</main><footer>"
+        f"{stamp_block}"
         f"{basis_line}"
         "</footer></body></html>"
     )
@@ -512,6 +536,26 @@ def _build_candidate(
     # previous release's tree staged first, exactly as its own promote left it
     rp.verb_stage(store, apply_=True, work_dir=old_dir, now=T0)
     rp.verb_stage(store, apply_=True, work_dir=work_dir, now=T0)
+    if promoted:
+        # the activation overlay _emit_activation_metadata writes into the
+        # staged tree at activation — the publication-bound Frictionless
+        # descriptor every stamped page's second describedby names
+        # (D-P37.65a-9). Absent pre-activation by design; present once the
+        # fixture poses the promoted posture.
+        dp = work_dir / "releases" / pub / "datapackage.json"
+        dp.write_text(
+            json.dumps(
+                {
+                    "profile": "data-package",
+                    "name": pub,
+                    "version": pub,
+                    "created": T0.isoformat(),
+                    "resources": [],
+                }
+            ),
+            encoding="utf-8",
+        )
+        rp.verb_stage(store, apply_=True, work_dir=work_dir, now=T0)
     return work_dir, pub, store
 
 
@@ -847,6 +891,24 @@ def test_v4_fails_on_a_wrong_release_header(tmp_path: Path) -> None:
     row = rv.check_v4(ctx)
     assert row["status"] == "fail"
     assert any("X-SIG-Release" in f for f in row["evidence"]["failures"])
+
+
+def test_v4_fails_on_a_wrong_datapackage_describedby(tmp_path: Path) -> None:
+    """D-P37.65a-9: the P35.39 datapackage describedby must resolve to the
+    candidate's own overlay route — a drift to another publication's is
+    flagged, never exempted (the target is verified by contract, not
+    fetched: the file cannot exist pre-activation)."""
+    work_dir, pub, store = _build_candidate(tmp_path)
+    victim = work_dir / "s" / pub / "index.html"
+    victim.write_text(
+        victim.read_text().replace(
+            f"/releases/{pub}/datapackage.json",
+            f"/releases/p-{'0' * 64}/datapackage.json",
+        )
+    )
+    row = rv.check_v4(_ctx(work_dir, pub, store))
+    assert row["status"] == "fail"
+    assert any("datapackage" in f for f in row["evidence"]["failures"])
 
 
 def test_v5_fails_on_a_containment_escape(tmp_path: Path) -> None:

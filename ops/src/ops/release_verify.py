@@ -131,6 +131,13 @@ LIVE_API_LINE = 'The public API also serves newer, unreleased records, labelled 
 #: smoothed.
 _FULL_CHROME_RE = re.compile(r'<html[^>]*data-sig-chrome="full"')
 
+#: Any Astro chrome class marker at all — the exports-rendered archive
+#: pages (``r/`` + ``releases/`` chrome) carry none, so a page without the
+#: attribute is the archive chrome's own surface (D-P37.65a-9 — V4's
+#: visible-stamp leg binds the same {full, archive} pair the stamp footer
+#: actually renders on).
+_CHROME_ATTR_RE = re.compile(r'<html[^>]*data-sig-chrome="')
+
 #: Evaluation-status phrases that must never appear on a surface whose
 #: descriptor declares less than ``certified`` (V13 — the same
 #: forbidden-assertion classes ``release_publish_verify``'s disclosure
@@ -567,6 +574,45 @@ def _page_links(text: str) -> list[tuple[str, str, dict[str, str]]]:
     return out
 
 
+#: Activation-overlay routes a page may link before activation emits
+#: them (D-P37.65a-9): ``_emit_overlay`` owns the ``releases/`` index set
+#: + ``compat_index.json``; ``_emit_activation_metadata`` owns the
+#: publication-bound descriptor + per-release DCAT dataset. Absent from
+#: the staged tree by design — V5's dead-link leg resolves them by
+#: contract (the same posture the exports link crawl gives them), counted
+#: in evidence. Never the deny-gated ``releases/catalog.jsonld`` in
+#: P-mode — the recorded D-P35.56-1 serving defect is never smoothed.
+_ACTIVATION_OVERLAY_ROUTES: frozenset[str] = frozenset(
+    {
+        "releases/index.html",
+        "releases/catalog.json",
+        "releases/catalog.jsonld",
+        "compat_index.json",
+    }
+)
+_ACTIVATION_OVERLAY_PATTERNS: tuple[re.Pattern[str], ...] = (
+    re.compile(r"releases/p-[0-9a-f]{64}/datapackage\.json"),
+    re.compile(r"releases/p-[0-9a-f]{64}/catalog\.jsonld"),
+)
+
+
+def _overlay_or_shell_route(route: str, *, mode: str) -> bool:
+    """Whether a same-origin route whose staged file is absent is still a
+    designed resolution — an activation-overlay object the pipeline emits
+    only at activation (``_ACTIVATION_OVERLAY_*``), so V5's dead-link leg
+    and V1's ``link_crawl_failures`` read the same truth for the
+    pre-activation corpus (D-P37.65a-9). The exemption is S-mode only:
+    post-activation every linked route must answer for real — the
+    recorded ``releases/catalog.jsonld`` deny-gate defect (D-P35.56-1)
+    is never smoothed."""
+    if mode != "S":
+        return False
+    norm = route.strip("/")
+    return norm in _ACTIVATION_OVERLAY_ROUTES or any(
+        p.fullmatch(norm) for p in _ACTIVATION_OVERLAY_PATTERNS
+    )
+
+
 def _served_route(file_path: Path, work_dir: Path, pub: str) -> str:
     """The site-root route a staged file answers at — the §4.2 layout:
     ``v/<pub>/x`` → ``/x``; ``r/``, ``s/``, ``releases/`` keep their
@@ -986,7 +1032,13 @@ def check_v3(ctx: VerifyContext) -> dict[str, Any]:
 
 _STAMP_META_RE = re.compile(r'<meta\s+name="sig-release"\s+content="([^"]*)"')
 _DESCRIBEDBY_RE = re.compile(r'<link\s+rel="describedby"[^>]*href="([^"]*)"')
-_STAMP_BLOCK_RE = re.compile(r'<p class="stamp">')
+#: The visible stamp paragraph under either chrome generation: the
+#: exports archive chrome's ``<p class="stamp">`` and the Astro
+#: full-chrome footer's ``<p class="sig-stamp" data-testid="page-stamp">``
+#: (P34.13). ``class="stamp mut"`` and the ``sig-footer__stamp`` pair are
+#: deliberately unmatched — the count stays exactly 1 where the contract
+#: binds.
+_STAMP_BLOCK_RE = re.compile(r'<p class="(?:sig-)?stamp"')
 
 
 def check_v4(ctx: VerifyContext) -> dict[str, Any]:
@@ -1053,35 +1105,61 @@ def check_v4(ctx: VerifyContext) -> dict[str, Any]:
         elif metas[0] != expected_header:
             failures.append(f"{route}: stamp names {metas[0]!r}, expected {expected_header!r}")
         links = _DESCRIBEDBY_RE.findall(body)
-        if len(links) != 1:
-            failures.append(f"{route}: {len(links)} describedby links (need exactly 1)")
+        # The release-identity describedby — exactly one, naming a
+        # release.json whose fields equal the staged release.json's.
+        identity = [h for h in links if h.endswith("release.json")]
+        if len(identity) != 1:
+            failures.append(
+                f"{route}: {len(identity)} release.json describedby links "
+                f"of {len(links)} (need exactly 1)"
+            )
         else:
-            href = links[0]
-            if not href.endswith("release.json"):
-                failures.append(f"{route}: describedby href {href!r} is not release.json")
+            href = identity[0]
+            rj = ctx.fetcher.get(_resolve_href(route, href) or href)
+            if rj.status != 200:
+                failures.append(f"{route}: describedby {href} answers {rj.status}")
             else:
-                rj = ctx.fetcher.get(_resolve_href(route, href) or href)
-                if rj.status != 200:
-                    failures.append(f"{route}: describedby {href} answers {rj.status}")
-                else:
-                    doc = json.loads(rj.body)
-                    for fld in ("label", "publication_id", "as_of_world"):
-                        if str(doc.get(fld)) != str(site.get(fld)):
-                            failures.append(
-                                f"{route}: release.json {fld} {doc.get(fld)!r} != {site.get(fld)!r}"
-                            )
-                    if (doc.get("code") or {}).get("commit") != commit:
-                        failures.append(f"{route}: release.json commit mismatch")
+                doc = json.loads(rj.body)
+                for fld in ("label", "publication_id", "as_of_world"):
+                    if str(doc.get(fld)) != str(site.get(fld)):
+                        failures.append(
+                            f"{route}: release.json {fld} {doc.get(fld)!r} != {site.get(fld)!r}"
+                        )
+                if (doc.get("code") or {}).get("commit") != commit:
+                    failures.append(f"{route}: release.json commit mismatch")
+        # P35.39 (D-P37.65a-9): any non-identity describedby is the
+        # publication-bound Frictionless descriptor — where emitted (the
+        # Astro stamp rides one on every page) it must resolve to the
+        # candidate's own datapackage route, asserted by contract never
+        # fetched: the target is an activation-overlay object that cannot
+        # exist pre-activation. Archive-chrome pages legitimately carry
+        # the identity link alone.
+        expected_dp = f"/releases/{ctx.pub}/datapackage.json"
+        for h in links:
+            if h.endswith("release.json"):
+                continue
+            if _resolve_href(route, h) != expected_dp:
+                failures.append(
+                    f"{route}: describedby href {h!r} is not the candidate's "
+                    f"{expected_dp}"
+                )
+        # The visible stamp block + its named fields bind where the
+        # footer actually renders: the Astro ``data-sig-chrome="full"``
+        # pages and the archive chrome (no attribute). Error/minimal/
+        # print pages carry the machine stamp only — D-P37.65a-6's chrome
+        # scope, applied to V4's legs here (D-P37.65a-9).
+        stamp_bound = bool(_FULL_CHROME_RE.search(body)) or not _CHROME_ATTR_RE.search(body)
         blocks = len(_STAMP_BLOCK_RE.findall(body))
-        if blocks != 1:
+        if stamp_bound and blocks != 1:
             failures.append(f"{route}: {blocks} visible stamp blocks (need exactly 1)")
         for needle, what in (
             (label, "label"),
             (ctx.pub[:10], "publication id short form"),
-            (commit[:8], "commit8"),
         ):
             if needle and needle not in body:
                 failures.append(f"{route}: stamp omits the {what} ({needle!r})")
+        if stamp_bound and commit[:8] and commit[:8] not in body:
+            failures.append(f"{route}: stamp omits the commit8 ({commit[:8]!r})")
         hdr = res.headers.get("X-SIG-Release") or res.headers.get("x-sig-release")
         if hdr is None:
             failures.append(f"{route}: no X-SIG-Release header")
@@ -1172,11 +1250,21 @@ def check_v5(ctx: VerifyContext) -> dict[str, Any]:
         evidence["sample_rule"] = f"P-mode: {cap} routes by sha256 order"
     bad: list[str] = []
     dead_map: dict[int, list[str]] = {}
+    contract_resolved: list[str] = []
     for route in routes:
         res = ctx.fetcher.get(route)
         if res.status == 200:
             continue
         if res.status == 410 and route in ctx.declared_410:
+            continue
+        if _overlay_or_shell_route(route, mode=ctx.mode):
+            # the route is owned by the activation overlay or the site
+            # shell — the pipeline emits it at activation or serves it
+            # outside the release namespaces, so an absent staged file is
+            # a designed resolution, never a dead link (D-P37.65a-9; the
+            # same set the exports link crawl resolves by contract).
+            # Counted in evidence, never silent.
+            contract_resolved.append(route)
             continue
         bad.append(f"{route} → {res.status} (linked from {links[route]})")
         dead_map.setdefault(res.status, []).append(route)
@@ -1185,6 +1273,7 @@ def check_v5(ctx: VerifyContext) -> dict[str, Any]:
     evidence["links_fetched"] = len(routes)
     evidence["dead_or_undeclared"] = dead_map
     evidence["declared_410"] = sorted(ctx.declared_410)
+    evidence["contract_resolved"] = sorted(contract_resolved)
 
     return _row(
         "V5",
