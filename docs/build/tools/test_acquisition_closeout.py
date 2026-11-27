@@ -129,16 +129,17 @@ def test_duty_leads_covered() -> None:
 
 
 def test_every_row_has_e0_anchor() -> None:
-    events = {
-        json.loads(l)["event_id"]: json.loads(l)
-        for l in EVENTS.read_text().splitlines()
-        if l.strip()
-    }
+    records = [json.loads(l) for l in EVENTS.read_text().splitlines() if l.strip()]
     lines = DEFERRALS.read_text().splitlines()
     for rid, ln in p3766_rows().items():
         eid = f"{rid}:e0"
-        assert eid in events, f"{rid} has no obligation-event/1 anchor"
-        ev = events[eid]
+        anchors = [e for e in records if e["event_id"] == eid]
+        assert anchors, f"{rid} has no obligation-event/1 anchor"
+        assert len(anchors) == 1, f"{rid} has {len(anchors)} e0 anchors, expected exactly one"
+        ev = anchors[0]
+        # the row is located by its id, and the id must name exactly one line.
+        id_lines = [i for i, l in enumerate(lines, 1) if (m := ROW_RE.match(l)) and m.group(1) == rid]
+        assert len(id_lines) == 1, f"{rid} names {len(id_lines)} DEFERRALS lines, expected exactly one"
         # record-to-record: the e0 anchor's recorded status must match the
         # committed row's status cell (no status-word literal — OM-15).
         status_cell = ln.rstrip().removesuffix("|").rstrip().rsplit("|", 1)[-1].strip()
@@ -149,8 +150,22 @@ def test_every_row_has_e0_anchor() -> None:
         assert anchor["row_sha256"] == hashlib.sha256(ln.encode()).hexdigest(), (
             f"{rid}: anchor sha drifts from the committed row bytes"
         )
-        assert lines[anchor["row_line"] - 1] == ln, (
-            f"{rid}: anchor row_line no longer names the row"
+        # ADR-126: the migration anchor records "the raw cell status and digest
+        # at migration"; MIGRATION.md: `anchor.row_sha256` + `anchor.row_line` are
+        # "the original raw digest and location of the migrated row". row_line is
+        # therefore historical — rule-3 inserts into earlier sections legitimately
+        # shift it, and events.jsonl is append-only (no re-anchor). The current
+        # location is proven by the digest instead: it must name exactly one
+        # DEFERRALS line, and that line must be this id's row.
+        hits = [
+            i for i, l in enumerate(lines, 1)
+            if hashlib.sha256(l.encode()).hexdigest() == anchor["row_sha256"]
+        ]
+        assert hits == id_lines, (
+            f"{rid}: anchor digest names lines {hits}, the row is at {id_lines}"
+        )
+        assert isinstance(anchor["row_line"], int) and anchor["row_line"] >= 1, (
+            f"{rid}: anchor row_line {anchor['row_line']!r} is not a line number"
         )
 
 
