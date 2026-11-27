@@ -170,7 +170,7 @@ const placeOptionLabel = (d: IndexRowType) =>
     {" · "}
     <a href={withBase("map/")}>Browse on the map</a>
     {" · "}
-    <a href={artifactHref("web/dossiers/index.json")}>index JSON</a>
+    <a href={withBase(artifactHref("web/dossiers/index.json"))}>index JSON</a>
   </p>
 
   {dossiers.length === 0 && <EmptyState surface="dossierIndex" />}

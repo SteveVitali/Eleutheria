@@ -140,7 +140,7 @@ const asOfWorld = meta.asOf.as_of_world;
       <IssuesSourceSections entries={pages[0]!} names={names} />
       <p data-copy="IL-13">
         The machine-readable log is{" "}
-        <a href={artifactHref("transparency/issues.jsonl")}>issues.jsonl</a>;
+        <a href={withBase(artifactHref("transparency/issues.jsonl"))}>issues.jsonl</a>;
         curated entries are recorded in the committed{" "}
         <code>known_issues.toml</code>.
       </p>

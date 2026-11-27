@@ -13,7 +13,7 @@
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import { getDataDictionary } from "../../lib/data";
 import { getReleaseStamp } from "../../lib/release-stamp";
-import { withBase } from "../../lib/paths";
+import { rootPath, withBase } from "../../lib/paths";
 
 const dictionary = getDataDictionary();
 const stamp = getReleaseStamp();
@@ -21,8 +21,8 @@ const stamp = getReleaseStamp();
 // the site is built against an activated release (the stamp). In a dev build
 // they are named, not linked (a link that cannot resolve is never emitted).
 const metadataBase = stamp ? `releases/${stamp.publicationId}` : null;
-const catalogHref = withBase("releases/catalog.jsonld");
-const provenanceHref = withBase("provenance.jsonld");
+const catalogHref = rootPath("releases/catalog.jsonld");
+const provenanceHref = rootPath("provenance.jsonld");
 ---
 
 <BaseLayout
@@ -42,9 +42,9 @@ const provenanceHref = withBase("provenance.jsonld");
     Machine-readable forms — linked, never inlined (D-J3-7):{" "}
     {metadataBase ? (
       <>
-        <a href={withBase(`${metadataBase}/datapackage.json`)}><code>datapackage.json</code></a> ·{" "}
+        <a href={rootPath(`${metadataBase}/datapackage.json`)}><code>datapackage.json</code></a> ·{" "}
         <a href={catalogHref}><code>catalog.jsonld</code> (DCAT&nbsp;v3)</a> ·{" "}
-        <a href={withBase(`${metadataBase}/catalog.jsonld`)}><code>catalog.jsonld</code> for this release</a> ·{" "}
+        <a href={rootPath(`${metadataBase}/catalog.jsonld`)}><code>catalog.jsonld</code> for this release</a> ·{" "}
         <a href={provenanceHref}><code>provenance.jsonld</code> (PROV-O)</a>
       </>
     ) : (

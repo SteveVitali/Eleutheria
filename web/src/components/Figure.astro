@@ -21,7 +21,7 @@
 //                             contract + the evidence line. The check still
 //                             verifies the value's digits appear in the region.
 import { groupDigits } from "../lib/format";
-import { withBase } from "../lib/paths";
+import { dataHref, withBase } from "../lib/paths";
 import type { FigureSpec } from "../lib/figures";
 
 interface Props {
@@ -41,9 +41,13 @@ const { figure, class: cls = "", order = "value-first", testid } = Astro.props;
 const Tag = (Astro.props.tag ?? "span") as any;
 const unit = figure.unit ? ` ${figure.unit}` : "";
 
-// `#…` hrefs are in-page anchors — joined verbatim; every other internal route
-// goes through withBase() (P35.65 / SIG-REL-008).
-const link = (href: string): string => (href.startsWith("#") ? href : withBase(href));
+// `#…` hrefs are in-page anchors — joined verbatim; `/…` hrefs go through
+// dataHref() so the OUTSIDE-base namespaces (`/r/`, `/releases/`, …) stay
+// root-absolute under a `/s/<pub>/` base; bare paths (`artifact/…`) join the
+// base through withBase() (P35.65 / SIG-REL-008; the root-absolute branch is
+// P37.65a / SIG-REL-D08 — `r/…` targets arrive `/`-prefixed for exactly this).
+const link = (href: string): string =>
+  href.startsWith("#") ? href : href.startsWith("/") ? dataHref(href) : withBase(href);
 ---
 
 <!-- sig-figure -->

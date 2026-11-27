@@ -463,7 +463,10 @@ const compartment =
   null;
 const recordList =
   stamp && compartment
-    ? `r/${stamp.publicationId}/c/${compartment}/jurisdiction/${dossier.slug}/`
+    ? // P37.65a (SIG-REL-D08): `/r/` is an OUTSIDE-base namespace — the
+      // `/`-prefixed form routes through dataHref at render and stays
+      // root-absolute under the `/s/<pub>/` base.
+      `/r/${stamp.publicationId}/c/${compartment}/jurisdiction/${dossier.slug}/`
     : null;
 const FIGURES = defineFigures(
   `dossier/${dossier.slug}`,

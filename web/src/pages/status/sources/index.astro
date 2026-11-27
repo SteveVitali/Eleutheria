@@ -15,6 +15,7 @@ import { getStatusLane } from "../../../lib/status-lane";
 import { getSiteMetadata } from "../../../lib/data";
 import { fmtInt } from "../../../lib/format";
 import { artifactHref, defineFigures } from "../../../lib/figures";
+import { withBase } from "../../../lib/paths";
 
 const lane = getStatusLane();
 const slug = (s: string): string =>
@@ -125,7 +126,7 @@ const withdrawn = lane ? fmtInt(lane.counts.withdrawn) : "0";
 
       <p data-copy="SS-15">
         The machine-readable heartbeat is <code>state.json</code>; the lane
-        document is <a href={artifactHref("status/lane.json")}>lane.json</a>.
+        document is <a href={withBase(artifactHref("status/lane.json"))}>lane.json</a>.
       </p>
     </>
   ) : (

@@ -12,7 +12,7 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
 import { getDownloadListing } from "../../lib/data";
 import { filesByPath, formatBytes } from "../../lib/downloads";
 import { getReleaseStamp } from "../../lib/release-stamp";
-import { withBase } from "../../lib/paths";
+import { rootPath, withBase } from "../../lib/paths";
 
 const listing = getDownloadListing();
 const stamp = getReleaseStamp();
@@ -40,23 +40,23 @@ const mirror = listing.mirror;
   <p>
     The citable, immutable listing:{" "}
     {releaseDataHref ? (
-      <a href={withBase(releaseDataHref)}><code>/{releaseDataHref}</code></a>
+      <a href={rootPath(releaseDataHref)}><code>/{releaseDataHref}</code></a>
     ) : (
       <code>/releases/&lt;pub&gt;/data/</code>
     )}{" "}
     · machine-readable:{" "}
     {releaseDataHref ? (
-      <a href={withBase(`${releaseDataHref}download_listing.json`)}><code>download_listing.json</code></a>
+      <a href={rootPath(`${releaseDataHref}download_listing.json`)}><code>download_listing.json</code></a>
     ) : (
       <code>download_listing.json</code>
     )}{" "}
     · linked metadata (never inlined): <a href={withBase("data/dictionary/")}>data dictionary</a> ·{" "}
     {metadataBase ? (
-      <a href={withBase(`${metadataBase}/datapackage.json`)}><code>datapackage.json</code></a>
+      <a href={rootPath(`${metadataBase}/datapackage.json`)}><code>datapackage.json</code></a>
     ) : (
       <code>datapackage.json</code>
     )}{" "}
-    · <a href={withBase("releases/catalog.jsonld")}><code>catalog.jsonld</code> (DCAT&nbsp;v3)</a> ·{" "}
+    · <a href={rootPath("releases/catalog.jsonld")}><code>catalog.jsonld</code> (DCAT&nbsp;v3)</a> ·{" "}
     
     <a href={withBase("data/api/")}>API & JSON twins</a>
   </p>

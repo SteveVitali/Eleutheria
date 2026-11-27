@@ -186,7 +186,7 @@ const fig = (id: string) => {
       registry rows in this release. Connectors, capture hosts, mirrors, and
       tenants are attributes of a row, never sources of their own, and the
       counts recompute from the emitted rows in{" "}
-      <a href={artifactHref("transparency/sources.json")}>the source-rows artifact</a>.
+      <a href={withBase(artifactHref("transparency/sources.json"))}>the source-rows artifact</a>.
     </p>
 
     <h3 id="lifecycle-heading" data-copy="SC-03">The lifecycle partition</h3>

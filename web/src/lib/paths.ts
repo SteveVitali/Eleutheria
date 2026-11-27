@@ -60,6 +60,14 @@ export function joinBase(base: string, path: string): string {
  * a configured `/s/<pub>/` base it returns the path inside the snapshot.
  */
 export function withBase(path: string): string {
+  // P37.65a (SIG-REL-D08): idempotent on an already-based path — many callers
+  // hand `path`/`pathname` props that already carry the configured base, and
+  // re-wrapping would emit `/s/<pub>/s/<pub>/…` (the double-prefixed canonical
+  // and og:url defect). A root base (`normaliseBase` → "") never triggers the
+  // guard, so every path still normalises through joinBase there.
+  const b = normaliseBase(BASE);
+  const p = `/${path.replace(/^\/+/, "")}`;
+  if (b !== "" && (p === b || p.startsWith(`${b}/`))) return p;
   return joinBase(BASE, path);
 }
 
