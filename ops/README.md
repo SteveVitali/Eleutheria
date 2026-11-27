@@ -95,8 +95,8 @@ uv run sig-ops dashboard [--out FILE] [--verify-keepalive]  # render the readout
 
 ## Hosted operations, deploy, and the public surface
 
-Beyond the local verbs above, `sig-ops` carries the hosted-ops and Round-10
-verification surface (`uv run sig-ops --help` for the exact flags):
+Beyond the local verbs above, `sig-ops` carries the gated hosted-ops surface and the
+Round-10 + Round-11 verification surface (`uv run sig-ops --help` for the exact flags):
 
 | verb family | what it does | posture |
 |---|---|---|
@@ -106,6 +106,8 @@ verification surface (`uv run sig-ops --help` for the exact flags):
 | `dossier-packet`, `dossier-packet-tulsa`, `dossier-packet-san-diego`, `seed-correct` | the reviewed three-dossier evidence sets + the authored OKC seed-correction packet (ADR-137/138/139) | offline fixture replay; `review.status=not_run` |
 | `disposition` | the ADR-124/159 allow verb (`record --allow --from <sig.disposition-list/1>`; INSERT-only, dry-run default, `--apply` writes) + the read-only `publication_review_required` census → `sig.org-census/1` (P34.26, G2-ADR124 + D-K2-1 [A-10]) | read-only census (`--role` SET ROLE + read-only txn); `record --apply` is the only writer — dry-run otherwise |
 | `swh-save`, `egress-report`, `degraded`, `keepalive-check`, `probe`, `alerts`/`alert`, `dashboard` | Software Heritage save request, egress budget, degraded static posture, observability | mixed — see each verb's help |
+| `release`, `web-conf`, `lb-map`, `route-compare`, `renamed-routes`, `iam`, `mirror-push`, `deletion`, `release-cadence`, `live-diff`, `status-publish`, `watch-publish` | the Round-11 release + publish-path toolchain — the content-addressed release builder/promoter (`sig.release/1`, SIG-REL-001…015), the route allow-list + withdrawal-conf surfaces, IAM diffs, mirror push and cadence | engineered; every mutating leg is window-gated and stays `prepared_not_executed` under its own deferral |
+| `republish-probe`, `post-cutover-probe`, `conf-gen-probe`, `sentinel-scan`, `claim-marker-scan`, `probe-sweep`, `probe-registry`, `cloudsql-drill`, `sqitch-rehearsal`, `roll-gate`, `wave-{a,b,c,d}-{gate,plan}`, `wave-verify`, `acceptance-sweep{,-11b,-11c}`, `map-acceptance`, `transparency-acceptance`, `capstone-*`, `dossier-live-pass`, `dossier-part-viii-clear`, `intake-op`, `exec-host`, `db-login`, `at-rest`, `basemap`, `slo-readout`, `observe-gate`, `scheduled-readback`, `scheduled-firstfire`, `backfill-run-reports`, `dispatch-due`, `acq-generate`, `coverage-delta`, `alert-serve`, `ar-cleanup`, `monitoring-defs` | the Round-11 gated leg-runner + probe machinery — every declaration renders `sig.*/1` packets whose mutating legs exit 42 `prepared_not_executed` until the verbatim go + window; the deterministic legs (acceptance sweeps, probe/registry scans, drills) run offline | gated legs only — nothing here executes a hosted or mutating leg on its own |
 
 **The public surface publishes ONE way (P34.10, SIG-OPS-003/004).** Public bytes
 reach a public bucket only through `sig-ops publish-web` (dry-run by default;
@@ -204,3 +206,13 @@ the national publish serves at `https://surveillancegraph.org` (`LAUNCH_RECORD_2
 analyses (`D-LEGAL.1-1`), the Round-10 production release exposure
 (`D-R10-PUBLISH-1` + upstream `D-R10-LIVE-1`/`D-P32.23a-1`), and the
 `docs/build/reports/PUBLICATION_CHECKLIST.md` items attached to each.
+
+> **Update 2026-11-23 (P38.4 Round-11 docs refresh — appended; the executed record above stands).**
+> A second republish landed 2026-11-16 under P37.61a
+> (`docs/build/reports/p37.61a-sig-web-republish/`); the Round-11 release re-cut chain stays
+> **queued** — the 2026-11-20 LEDGER PHASE LOG records the schema deploy clean-failing and fully
+> reverting (poststate == prestate — nothing applied; a new append-only sqitch change plus a
+> PITR-clone rehearsal are owed before re-deploy), so the export/fetch/re-cut legs queue behind it
+> and the release candidate's promote chain stays `prepared_not_executed` awaiting the
+> operator-signed `sig.promotion-approval/1` (authoritative state: `docs/build/LEDGER.md`,
+> `docs/build/OPERATIONAL_READINESS.md` §(g)). Nothing fresher than the recorded entries is asserted.

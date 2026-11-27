@@ -460,7 +460,16 @@ export interface EntityIndex {
   review_rows: EntityReviewRecord[];
 }
 
+// D-P37.65a-2 (b): `entityIndex(getEntityLabelRows())` runs in every entity
+// route's getStaticPaths AND per-page frontmatter — without the memo each of
+// the ~258k entity pages re-derived this O(labels) index. Keyed on the rows
+// array's identity (the data layer returns one memoised array per data root),
+// so a distinct input still derives honestly — one derivation per corpus.
+const _entityIndexMemo = new WeakMap<readonly EntityLabelRow[], EntityIndex>();
+
 export function entityIndex(rows: readonly EntityLabelRow[]): EntityIndex {
+  const hit = _entityIndexMemo.get(rows);
+  if (hit !== undefined) return hit;
   const counts = new Map<string, number>();
   const pageRows: EntityLabelRow[] = [];
   const reviewRows: EntityReviewRecord[] = [];
@@ -474,7 +483,7 @@ export function entityIndex(rows: readonly EntityLabelRow[]): EntityIndex {
     }
     // withheld and unpaged rows are absent from the index — typed, never silent
   }
-  return {
+  const out = {
     kinds: [...counts.entries()]
       .sort(([a], [b]) => a.localeCompare(b))
       .map(([kind, count]) => ({ kind, count, er_disclosure: ER_DISCLOSURE })),
@@ -485,5 +494,7 @@ export function entityIndex(rows: readonly EntityLabelRow[]): EntityIndex {
     ),
     review_rows: reviewRows,
   };
+  _entityIndexMemo.set(rows, out);
+  return out;
 }
 

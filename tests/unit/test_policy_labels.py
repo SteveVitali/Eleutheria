@@ -27,6 +27,7 @@ from policy.labels import (
     resolve_disambiguators,
     sanitize_label,
 )
+from policy.slug_history import check_unique_labels
 from resolution.partner_identity import natural_person_signal
 
 
@@ -342,6 +343,31 @@ def test_person_entities_are_never_labelled():
     assert r.part8 == "fallback"
 
 
+def test_sr_route_camera_name_labels():
+    """SIG-UI-111 sub-issue 2: a leading "SR" is a State Route designation,
+    not the post-nominal "Sr" — the screen must not suppress it."""
+    for name in (
+        "SR 167 at MP 21.3: 84th Ave S",
+        "SR 16 at MP 7.5: TNB EB East Anchorage",
+    ):
+        assert natural_person_signal(name) is None
+        r = derive(facts(entity_type="camera", disposition="allow", fields={"camera_name": name}))
+        assert r.label == name
+        assert r.label_basis == "source_name"
+        assert r.part8 == "pass"
+
+
+def test_post_nominal_suffix_still_screens():
+    """The positional rule keeps its recall: a suffix at the END of a name
+    still evidences a person (names chosen without given-name tokens so the
+    suffix itself is what screens)."""
+    for name in ("Kowalski Sr", "Okafor Jr", "Beaumont Esq", "Quimby III"):
+        assert natural_person_signal(name) == "person_shaped"
+        r = derive(facts(entity_type="camera", disposition="allow", fields={"camera_name": name}))
+        assert r.label != name
+        assert r.part8 == "fallback"
+
+
 def test_default_screen_failclosed_never_crashes():
     def bad_screen(_t: str) -> bool:
         raise RuntimeError("boom")
@@ -450,6 +476,44 @@ def test_noncolliding_rows_untouched():
     b = derive(facts(entity_type="thing", disposition="allow", fields={"name": "Row B"}))
     out = resolve_disambiguators([a, b])
     assert [r.disambiguator for r in out] == [None, None]
+
+
+def test_disambiguation_extends_hash_on_hash4_collision():
+    """SIG-UI-111: hash4 is a 20-bit space — at scale two members of one
+    collision group share it. The step-3 disambiguator then extends like the
+    slug registry's freeze rule: first-come (sorted entity_id) keeps
+    ``#{hash4}``, the colliding member grows one base32 char until unique.
+
+    The ids are the real OPS-EXPORT-GCE-2 colliding pair (dot_511_wa
+    cameras) — ``entity_hash`` verified: ``tyvjdr9`` / ``tyvjwn5``.
+    """
+    e_first = "01a0b0d1-462b-70bf-b40e-880db02b6161"  # tyvj…
+    e_second = "01a0b0e6-03bb-7486-a807-47e73838e324"  # tyvj…
+    assert hash4(e_first) == hash4(e_second) == "tyvj"
+    assert entity_hash(e_second, length=5) == "tyvjw"
+
+    def mk(eid: str) -> EntityLabel:
+        return derive(
+            facts(
+                entity_id=eid,
+                entity_type="deployment",
+                disposition="allow",
+                place="iso3166-2:US-WA",
+            )
+        )
+
+    out = {r.entity_id: r for r in resolve_disambiguators([mk(e_second), mk(e_first)])}
+    first, second = out[e_first], out[e_second]
+    # deterministic + spec-shaped: `{base} #{disambiguator}` — only the
+    # colliding member grew past hash4.
+    assert first.label == "surveillance camera in iso3166-2:US-WA #tyvj"
+    assert second.label == "surveillance camera in iso3166-2:US-WA #tyvjw"
+    assert first.disambiguator == "#tyvj"
+    assert second.disambiguator == "#tyvjw"
+    assert len({first.label.casefold(), second.label.casefold()}) == 2
+    # check_unique_labels must accept the resolved set — the invariant the
+    # gate enforces (fail-closed, unchanged).
+    check_unique_labels(out)
 
 
 # ---------------------------------------------------------------------------

@@ -2700,6 +2700,43 @@ public-behaviour path set (`web/src/pages/**`, `web/src/layouts/**`,
 
 ### Fixed
 
+- **Mixed-union licence queue shards + bound-source PROV agents**
+  (SIG-LIC-004a / OPS-EXPORT-GCE-4 and OPS-EXPORT-GCE-6 refusals) — the
+  spine export refused when a queue-v2 task shard set's subject licences
+  formed a mixed-union `AND` expression (ADR-106 §4): such an expression
+  has no compartment row, and `compartment_for_license` raises rather than
+  returning falsy. Those shards now file in the `web` pseudo-compartment,
+  like every other mixed-label web artifact, while single-licence shards
+  keep their real compartment. Every source a bound capture draws from is
+  now minted as a `prov:Agent` even when it surfaced no sites or freshness
+  rows, so `prov:wasAttributedTo` never targets an untyped agent. The tiles
+  leg takes the pure-python path for an empty compartment instead of
+  tippecanoe's `EXIT_NODATA`.
+
+- **Display-label collision extension + the SR-route camera-name screen**
+  (SIG-UI-111 / OPS-EXPORT-GCE-2 Blocker 6; K2 §3.2/§3.3; report
+  `docs/build/reports/sig-ui-111-label-collision.md`) — the spine export
+  refused at `check_unique_labels` when two members of one display-label
+  group drew the same `#{hash4}` suffix (a 20-bit space: collisions are
+  certain at real scale). `resolve_disambiguators`' last step now applies
+  the slug registry's freeze rule (`slug_history.freeze_hashes`): members
+  in sorted `entity_id` order take the shortest `entity_hash` prefix not
+  already taken — the first keeps `#{hash4}`, a colliding member extends
+  one base32 character at a time (`… #tyvj` / `… #tyvjw`) — and the
+  disambiguator's width is reserved so a long base label truncates before
+  it, never through it; the `· {place}` / `· {source}` steps win only when
+  their suffixed labels actually separate the group (casefolded, as the
+  gate compares) and otherwise fall through. These changes touch only
+  groups the old cascade could not separate; `check_unique_labels` stays
+  fail-closed. And DOT camera names that lead with a State Route
+  designation ("SR 167 at MP 21.3: 84th Ave S") no longer read as
+  person-shaped under the Part VIII screen: `natural_person_signal`
+  counts the post-nominal tokens (`jr`/`sr`/`ii`/`iii`/`iv`/`esq`) as
+  person evidence only in terminal position, so those sites publish their
+  own `camera_name` label instead of the derived
+  `surveillance camera in <place>` fallback ("John Smith Sr" still
+  screens). `partner_identity` entity minting is unchanged.
+  `live_verification=false`.
 - **Freshness honesty + map suppression parity** (P35.20b / row 301,
   PKG-10 b-half; closes ED-43/ED-44; cites SIG-METRIC-006/007,
   SIG-RECON-058, SIG-UI-018/037, GQ-15, ADR-104(e), ED-29) — two public
@@ -2929,7 +2966,7 @@ public-behaviour path set (`web/src/pages/**`, `web/src/layouts/**`,
   the Round-11 public channel stays e-mail-only (WV-05/ADR-180), and
   `[intake].operational` remains `false` (B-8).
 
-## [0.1.0] — unreleased (REL.1 marker skipped-by-operator; the current integration plan has no tag step — `docs/build/reports/p33.6-integration-plan/INTEGRATION_PLAN.md`)
+## [0.1.0] — unreleased (REL.1 marker skipped-by-operator; the current integration plan has no tag step — `docs/build/reports/p38.3c-integration-plan/INTEGRATION_PLAN.md`, which supersedes the dated P33.6 plan)
 
 First tagged snapshot of the Surveillance Infrastructure Graph (SIG): the complete
 specification-driven build (Phases 0–18), the post-build capstone, reconciliation and
