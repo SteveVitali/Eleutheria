@@ -29,6 +29,7 @@ import {
   getNetwork,
   getNetworkFocusEntityId,
   getQueueAsOf,
+  getReleaseArtifactPayload,
   getResearchQueue,
   getResearchQueueProvenance,
   getSiteMetadata,
@@ -723,6 +724,65 @@ describe("P35.45 web data layer — the keyed dossier artifact set", () => {
       index: 0,
     });
     rmSync(old, { recursive: true, force: true });
+  });
+});
+
+describe("D-P37.65a-5 — an absent optional artifact yields no payload (no phantom /artifact/ route)", () => {
+  it("web/presentation/jurisdiction_dossiers.json reads null when the export carries no file", () => {
+    // `bundle` has no web/presentation/ subtree — the real export's shape
+    // (the P27.5 harness alone ships the demo dossiers file).
+    process.env.SIG_DATA_SOURCE = "export";
+    process.env.SIG_EXPORT_DIR = bundle;
+    expect(
+      getReleaseArtifactPayload("web/presentation/jurisdiction_dossiers.json"),
+    ).toBeNull();
+  });
+
+  it("web/presentation/jurisdiction_dossiers.json serves its own bytes when shipped", () => {
+    const withDemo = mkdtempSync(join(tmpdir(), "sig-export-demo-"));
+    mkdirSync(join(withDemo, "web", "presentation"), { recursive: true });
+    const demos = [{ slug: "sig-pub-017-demo", sections: [] }];
+    writeFileSync(
+      join(withDemo, "web", "presentation", "jurisdiction_dossiers.json"),
+      JSON.stringify(demos),
+    );
+    process.env.SIG_DATA_SOURCE = "export";
+    process.env.SIG_EXPORT_DIR = withDemo;
+    expect(
+      getReleaseArtifactPayload("web/presentation/jurisdiction_dossiers.json"),
+    ).toEqual(demos);
+    rmSync(withDemo, { recursive: true, force: true });
+  });
+
+  it("fixtures mode still serves the committed demo dossiers payload", () => {
+    process.env.SIG_DATA_SOURCE = "fixtures";
+    const payload = getReleaseArtifactPayload(
+      "web/presentation/jurisdiction_dossiers.json",
+    );
+    expect(Array.isArray(payload)).toBe(true);
+    expect((payload as unknown[]).length).toBeGreaterThan(0);
+  });
+
+  it("transparency/freshness.jsonl reads null when the export emits no file (same []-mask class)", () => {
+    // `bundle` carries no transparency/ subtree.
+    process.env.SIG_DATA_SOURCE = "export";
+    process.env.SIG_EXPORT_DIR = bundle;
+    expect(getReleaseArtifactPayload("transparency/freshness.jsonl")).toBeNull();
+  });
+
+  it("transparency/freshness.jsonl serves the emitted rows when shipped", () => {
+    const withFresh = mkdtempSync(join(tmpdir(), "sig-export-fresh-"));
+    mkdirSync(join(withFresh, "transparency"), { recursive: true });
+    writeFileSync(
+      join(withFresh, "transparency", "freshness.jsonl"),
+      `${JSON.stringify({ source_id: "demo_source", freshness_state: "ok" })}\n`,
+    );
+    process.env.SIG_DATA_SOURCE = "export";
+    process.env.SIG_EXPORT_DIR = withFresh;
+    expect(getReleaseArtifactPayload("transparency/freshness.jsonl")).toEqual([
+      { source_id: "demo_source", freshness_state: "ok" },
+    ]);
+    rmSync(withFresh, { recursive: true, force: true });
   });
 });
 
