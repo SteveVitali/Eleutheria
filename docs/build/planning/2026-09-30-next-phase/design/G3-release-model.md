@@ -316,8 +316,9 @@ lands, J3 §8.1's fallback applies: the stamp cites the data (`/releases/<pub>/`
 ### 5.4 Route allow-list
 
 `ops/public_routes.toml` (ACT-05/G1 §3.2) applies to the top level of `v/<pub>/` and `s/<pub>/`. Added prefixes: `r/`,
-`s/`, `releases/`, `status/`, `release.json`. Removed: `releases/` from the Astro tree. Any change to the allow-list makes
-the release Class S. The file's sha256 is recorded in `release.json` (`routes_sha256`).
+`s/`, `releases/`, `status/`, `release.json`, `page_index.json` (the J3 §8.1 withdrawal index — `s/<pub>/` only;
+`assemble_site_trees` emits it and V10 consumes it). Removed: `releases/` from the Astro tree. Any change to the
+allow-list makes the release Class S. The file's sha256 is recorded in `release.json` (`routes_sha256`).
 
 ### 5.5 Verification suite (REL-04a/04b; gates promotion)
 
