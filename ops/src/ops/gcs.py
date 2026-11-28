@@ -18,6 +18,11 @@ token resolved in this order:
 
 The token provider and the URL opener are injectable so the whole client is
 deterministic in tests — no socket is opened unless the caller asks for one.
+The default provider is :class:`CachingTokenProvider` (D-P37.65a-3): the
+token resolves once, is reused until near expiry, and a transient failure is
+a bounded retry — never the per-request ``gcloud`` subprocess (~5–6 s wall,
+measured) nor the hard mid-plan exit that made ``release stage --apply``
+infeasible at national scale.
 Append-only by default: audit/record writers use per-run timestamped names and
 never rewrite objects (P1–P3). The single exception is
 :meth:`GcsBucket.delete_object`, added for P34.10 — the repository-owned
@@ -30,11 +35,13 @@ from __future__ import annotations
 import json
 import os
 import subprocess
+import threading
+import time
 import urllib.error
 import urllib.parse
 import urllib.request
 from collections.abc import Callable
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 #: The Cloud Run / GCE metadata server token endpoint (link-local, GCP-internal).
 _METADATA_TOKEN_URL = (
@@ -45,14 +52,30 @@ _GCS_API = "https://storage.googleapis.com"
 #: A POST that succeeds (object written) or raises — never silently skipped.
 _HTTPOpener = Callable[[urllib.request.Request, float], tuple[int, bytes]]
 
+#: D-P37.65a-3 — the per-request costs the release-stage leg measured.
+#: Every request below bounded-retries transient failures instead of dying on
+#: the first blip, and a resolved token is cached until near expiry instead of
+#: paying a ``gcloud`` subprocess (~5–6 s wall) per call.
+_REQUEST_ATTEMPTS = 3
+_RETRY_BACKOFF_S = 0.25
+#: A gcloud-issued ADC access token lives ~1 h; refresh well inside that.
+_GCLOUD_TOKEN_TTL_S = 45.0 * 60.0
+#: Re-resolve this far before a declared (metadata-server) expiry.
+_TOKEN_EXPIRY_MARGIN_S = 60.0
+#: HTTP statuses worth a bounded retry — throttling + transient 5xx. A 4xx
+#: other than 429 means the request itself is wrong; it is never retried. A
+#: 412 precondition refusal is handled by the caller's own lane (it is the
+#: create-if-absent signal, not a failure).
+_TRANSIENT_STATUSES = frozenset({408, 429, 500, 502, 503, 504})
+
 
 def _default_opener(req: urllib.request.Request, timeout: float) -> tuple[int, bytes]:
     with urllib.request.urlopen(req, timeout=timeout) as resp:  # noqa: S310 - fixed hosts
         return resp.status, resp.read()
 
 
-def _metadata_server_token(timeout: float = 2.0) -> str | None:
-    """The job service account's access token from the GCP metadata server.
+def _metadata_server_token_doc(timeout: float = 2.0) -> dict | None:
+    """The metadata-server token *document* (``access_token`` + ``expires_in``).
 
     Returns ``None`` off-GCP: the link-local name simply does not resolve (or
     times out) on a laptop, which is the signal to try the gcloud fallback.
@@ -60,9 +83,18 @@ def _metadata_server_token(timeout: float = 2.0) -> str | None:
     req = urllib.request.Request(_METADATA_TOKEN_URL, headers={"Metadata-Flavor": "Google"})
     try:
         with urllib.request.urlopen(req, timeout=timeout) as resp:  # noqa: S310 - metadata IP
-            return str(json.loads(resp.read())["access_token"])
+            doc = json.loads(resp.read())
+            if doc.get("access_token"):
+                return dict(doc)
     except Exception:  # noqa: BLE001 - any failure means "not on GCP"
         return None
+    return None
+
+
+def _metadata_server_token(timeout: float = 2.0) -> str | None:
+    """The job service account's access token from the GCP metadata server."""
+    doc = _metadata_server_token_doc(timeout)
+    return str(doc["access_token"]) if doc else None
 
 
 def _gcloud_adc_token(timeout: float = 15.0) -> str | None:
@@ -91,6 +123,91 @@ def default_token_provider() -> str | None:
     return _metadata_server_token() or _gcloud_adc_token()
 
 
+class CachingTokenProvider:
+    """Resolve an access token ONCE and reuse it until near expiry
+    (D-P37.65a-3).
+
+    The uncached ``default_token_provider`` pays a metadata-server probe plus
+    a ``gcloud`` subprocess for *every* request — measured 5–6 s wall each in
+    an operator shell (gcloud 583.0.0), which made ``release stage --apply``
+    cost ~40–60 s per object at national scale. This provider caches by
+    source:
+
+    * ``SIG_GCS_ACCESS_TOKEN`` — explicit override, trusted for the process;
+    * the metadata server — the response carries ``expires_in``, so the cache
+      refreshes ``_TOKEN_EXPIRY_MARGIN_S`` ahead of the declared expiry;
+    * ``gcloud … print-access-token`` — an opaque token with a ~1 h lifetime,
+      cached for ``_GCLOUD_TOKEN_TTL_S``.
+
+    Resolution itself bounded-retries (``attempts``) so one slow/hung gcloud
+    call is a retry, never a mid-plan hard exit. Thread-safe: the stage
+    verb's insert pool shares the provider.
+    """
+
+    def __init__(
+        self,
+        *,
+        metadata_token: Callable[[float], dict | None] = _metadata_server_token_doc,
+        gcloud_token: Callable[[float], str | None] = _gcloud_adc_token,
+        env: Callable[[str], str | None] = os.environ.get,
+        clock: Callable[[], float] = time.monotonic,
+        sleep: Callable[[float], None] = time.sleep,
+        attempts: int = _REQUEST_ATTEMPTS,
+        gcloud_ttl: float = _GCLOUD_TOKEN_TTL_S,
+        expiry_margin: float = _TOKEN_EXPIRY_MARGIN_S,
+    ) -> None:
+        self._metadata_token = metadata_token
+        self._gcloud_token = gcloud_token
+        self._env = env
+        self._clock = clock
+        self._sleep = sleep
+        self._attempts = max(1, attempts)
+        self._gcloud_ttl = gcloud_ttl
+        self._expiry_margin = expiry_margin
+        self._mutex = threading.Lock()
+        self._token: str | None = None
+        self._expires_at = 0.0
+
+    def __call__(self) -> str | None:
+        with self._mutex:
+            if self._token is not None and self._clock() < self._expires_at:
+                return self._token
+            for attempt in range(self._attempts):
+                token = self._resolve_once()
+                if token:
+                    return token
+                if attempt + 1 < self._attempts:
+                    self._sleep(_RETRY_BACKOFF_S * (attempt + 1))
+            return None
+
+    def invalidate(self) -> None:
+        """Drop the cached token — called on an HTTP 401 so the next request
+        re-resolves (a revoked or early-expired token is never trusted past a
+        refusal)."""
+        with self._mutex:
+            self._token = None
+            self._expires_at = 0.0
+
+    def _resolve_once(self) -> str | None:
+        override = (self._env("SIG_GCS_ACCESS_TOKEN") or "").strip()
+        if override:
+            self._token = override
+            self._expires_at = float("inf")  # an explicit token is trusted
+            return override
+        doc = self._metadata_token(2.0)
+        if doc and doc.get("access_token"):
+            expires_in = float(doc.get("expires_in") or 3600.0)
+            self._token = str(doc["access_token"])
+            self._expires_at = self._clock() + max(expires_in - self._expiry_margin, 5.0)
+            return self._token
+        token = self._gcloud_token(15.0)
+        if token:
+            self._token = token
+            self._expires_at = self._clock() + self._gcloud_ttl
+            return token
+        return None
+
+
 class GcsError(RuntimeError):
     """A GCS call failed — surfaced, never swallowed (honest ops records)."""
 
@@ -111,36 +228,85 @@ class GcsBucket:
     """Read/write objects in one GCS bucket over the JSON API.
 
     ``token_provider``/``opener`` are injectable: tests pass fakes and no
-    network is touched. With the defaults, each call resolves a fresh token
-    (metadata server on Cloud Run, gcloud ADC in an operator shell).
+    network is touched. The default provider is a :class:`CachingTokenProvider`
+    — the token resolves once and is reused until near expiry (D-P37.65a-3);
+    an injected plain callable keeps its per-call semantics.
     """
 
     bucket: str
-    token_provider: Callable[[], str | None] = default_token_provider
+    token_provider: Callable[[], str | None] = field(default_factory=CachingTokenProvider)
     opener: _HTTPOpener = _default_opener
+
+    def _call(
+        self,
+        method: str,
+        url: str,
+        *,
+        body: bytes | None = None,
+        content_type: str | None = None,
+        not_found_none: bool = False,
+        precondition: bool = False,
+    ) -> tuple[int, bytes] | None:
+        """One HTTP call with bounded transient retry (D-P37.65a-3).
+
+        Retries only what is safe to retry: connection/timeout failures,
+        throttling and 5xx; a 401 drops the cached token (when the provider
+        is a :class:`CachingTokenProvider`) and re-resolves once. A 412 with
+        ``precondition=True`` raises :class:`GcsPreconditionFailed` — the
+        create-if-absent signal the release pipeline refuses on, never a
+        retried failure. A 404 with ``not_found_none=True`` returns ``None``.
+        Everything else non-2xx raises :class:`GcsError`.
+        """
+        token_invalidated = False
+        last_exc: Exception | None = None
+        for attempt in range(_REQUEST_ATTEMPTS):
+            token = self.token_provider()
+            if not token:
+                # The provider already bounded-retried its resolution; a None
+                # here means credentials are genuinely absent — fail closed.
+                raise GcsError(
+                    "no GCS access token available (metadata server + gcloud ADC "
+                    "both absent, retried) — the record stays local; nothing was "
+                    "uploaded"
+                )
+            headers = {"Authorization": f"Bearer {token}"}
+            if content_type:
+                headers["Content-Type"] = content_type
+            req = urllib.request.Request(url, data=body, headers=headers, method=method)
+            try:
+                status, payload = self.opener(req, 60.0)
+            except urllib.error.HTTPError as exc:
+                status, payload = exc.code, b""
+            except Exception as exc:  # noqa: BLE001 - transient transport failure
+                last_exc = exc
+                if attempt + 1 < _REQUEST_ATTEMPTS:
+                    time.sleep(_RETRY_BACKOFF_S * (attempt + 1))
+                    continue
+                raise GcsError(f"GCS {method} {url} failed: {exc}") from exc
+            if status == 404 and not_found_none:
+                return None
+            if status == 412 and precondition:
+                raise GcsPreconditionFailed(f"GCS {method} {url} -> HTTP 412")
+            if status == 401 and not token_invalidated:
+                invalidate = getattr(self.token_provider, "invalidate", None)
+                if callable(invalidate):
+                    token_invalidated = True
+                    invalidate()
+                    continue
+            if status in _TRANSIENT_STATUSES and attempt + 1 < _REQUEST_ATTEMPTS:
+                time.sleep(_RETRY_BACKOFF_S * (attempt + 1))
+                continue
+            if not (200 <= status < 300):
+                raise GcsError(f"GCS {method} {url} -> HTTP {status}")
+            return status, payload
+        raise GcsError(f"GCS {method} {url} failed: {last_exc}") from last_exc
 
     def _request(
         self, method: str, url: str, *, body: bytes | None = None, content_type: str | None = None
     ) -> tuple[int, bytes]:
-        token = self.token_provider()
-        if not token:
-            raise GcsError(
-                "no GCS access token available (metadata server + gcloud ADC both "
-                "absent) — the record stays local; nothing was uploaded"
-            )
-        headers = {"Authorization": f"Bearer {token}"}
-        if content_type:
-            headers["Content-Type"] = content_type
-        req = urllib.request.Request(url, data=body, headers=headers, method=method)
-        try:
-            status, payload = self.opener(req, 60.0)
-        except urllib.error.HTTPError as exc:
-            raise GcsError(f"GCS {method} {url} -> HTTP {exc.code}") from exc
-        except Exception as exc:  # noqa: BLE001 - surfaced, not hidden
-            raise GcsError(f"GCS {method} {url} failed: {exc}") from exc
-        if not (200 <= status < 300):
-            raise GcsError(f"GCS {method} {url} -> HTTP {status}")
-        return status, payload
+        out = self._call(method, url, body=body, content_type=content_type)
+        assert out is not None  # not_found_none is unset — a status always returns
+        return out
 
     def put_object(
         self, name: str, body: bytes, *, content_type: str = "application/octet-stream"
@@ -265,27 +431,9 @@ class GcsBucket:
         release pipeline can refuse name collisions / held locks /
         stale generations distinctly.
         """
-        token = self.token_provider()
-        if not token:
-            raise GcsError(
-                "no GCS access token available (metadata server + gcloud ADC both "
-                "absent) — the write stays local; nothing was uploaded"
-            )
-        headers = {"Authorization": f"Bearer {token}", "Content-Type": content_type}
-        req = urllib.request.Request(url, data=body, headers=headers, method="POST")
-        try:
-            status, payload = self.opener(req, 60.0)
-        except urllib.error.HTTPError as exc:
-            if exc.code == 412:
-                raise GcsPreconditionFailed(f"GCS POST {url} -> HTTP 412") from exc
-            raise GcsError(f"GCS POST {url} -> HTTP {exc.code}") from exc
-        except Exception as exc:  # noqa: BLE001 - surfaced, not hidden
-            raise GcsError(f"GCS POST {url} failed: {exc}") from exc
-        if status == 412:
-            raise GcsPreconditionFailed(f"GCS POST {url} -> HTTP 412")
-        if not (200 <= status < 300):
-            raise GcsError(f"GCS POST {url} -> HTTP {status}")
-        return status, payload
+        out = self._call("POST", url, body=body, content_type=content_type, precondition=True)
+        assert out is not None
+        return out
 
     def insert_object(
         self,
@@ -344,29 +492,14 @@ class GcsBucket:
             f"{_GCS_API}/storage/v1/b/{urllib.parse.quote(self.bucket)}/o/"
             f"{urllib.parse.quote(name, safe='')}?alt=json"
         )
-        token = self.token_provider()
-        if not token:
-            raise GcsError(
-                "no GCS access token available (metadata server + gcloud ADC both "
-                "absent) — nothing was read"
-            )
-        req = urllib.request.Request(url, headers={"Authorization": f"Bearer {token}"})
-        try:
-            status, payload = self.opener(req, 60.0)
-        except urllib.error.HTTPError as exc:
-            if exc.code == 404:
-                return None
-            raise GcsError(f"GCS GET {url} -> HTTP {exc.code}") from exc
-        except Exception as exc:  # noqa: BLE001
-            raise GcsError(f"GCS GET {url} failed: {exc}") from exc
-        if status == 404:
+        out = self._call("GET", url, not_found_none=True)
+        if out is None:
             return None
-        if not (200 <= status < 300):
-            raise GcsError(f"GCS GET {url} -> HTTP {status}")
-        return json.loads(payload)
+        return json.loads(out[1])
 
 
 __all__ = [
+    "CachingTokenProvider",
     "GcsBucket",
     "GcsError",
     "GcsPreconditionFailed",

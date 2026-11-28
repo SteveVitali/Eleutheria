@@ -1,0 +1,856 @@
+{
+ "corrections": [
+  {
+   "attribution": "camera registry — GL-GATE-07 basis",
+   "basis": "E2-12 / ADR-194 attribution correction (E2-12-BACKFILL, operator go c3cec493): the source's resolved rights_record carries NULL attribution_text/terms_url where the sources.toml registry declares non-empty — the F-387 defect class. The corrected record keeps the prior's licence (spdx, redistributable, derivative_permitted) — attribution fill only, nothing is relicensed; the 3 D-P34.21a-2 under-review sources are corrected at their DECLARED attribution, and a later licence-review outcome supersedes by the next rights_decision (append-only).",
+   "derivative_permitted": "yes",
+   "prior_rights_ids": [
+    "01a0b98a-c001-7a19-bc54-349f5f508efe"
+   ],
+   "redistributable": "yes",
+   "retrieval_date": "2026-09-18",
+   "review_packet": "docs/build/reports/rights/annex/p2616/camreg_stalbert_ab.md",
+   "reviewed_by": "maintainer (delegated)",
+   "reviewed_on": "2026-09-18",
+   "source_id": "camreg_stalbert_ab",
+   "spdx": "LicenseRef-StAlbert-ODL-1.0",
+   "terms_url": "https://data.stalbert.ca/pages/licence"
+  },
+  {
+   "attribution": "New York City Department of Transportation (republished layer) camera registry",
+   "basis": "E2-12 / ADR-194 attribution correction (E2-12-BACKFILL, operator go c3cec493): the source's resolved rights_record carries NULL attribution_text/terms_url where the sources.toml registry declares non-empty — the F-387 defect class. The corrected record keeps the prior's licence (spdx, redistributable, derivative_permitted) — attribution fill only, nothing is relicensed; the 3 D-P34.21a-2 under-review sources are corrected at their DECLARED attribution, and a later licence-review outcome supersedes by the next rights_decision (append-only).",
+   "derivative_permitted": "yes",
+   "prior_rights_ids": [
+    "01a0b868-776e-72ca-b1c2-18411c3ff7b3"
+   ],
+   "redistributable": "yes",
+   "retrieval_date": "2026-09-18",
+   "review_packet": "docs/build/reports/rights/annex/p2616/camreg_us_ny_001.md",
+   "reviewed_by": "maintainer (delegated)",
+   "reviewed_on": "2026-09-18",
+   "source_id": "camreg_us_ny_001",
+   "source_id_digests": [
+    "sha256:cede6d2064991ae90ed0a28f5b6688ada6674a447f3a2108428409b22edd13a2"
+   ],
+   "spdx": "LicenseRef-PublicRecord-FactualCompilation",
+   "terms_url": "https://www.arcgis.com/home/item.html?id=900bea850d98407ead83b9b0ec392a2a"
+  },
+  {
+   "attribution": "New York City (republished layer) camera registry",
+   "basis": "E2-12 / ADR-194 attribution correction (E2-12-BACKFILL, operator go c3cec493): the source's resolved rights_record carries NULL attribution_text/terms_url where the sources.toml registry declares non-empty — the F-387 defect class. The corrected record keeps the prior's licence (spdx, redistributable, derivative_permitted) — attribution fill only, nothing is relicensed; the 3 D-P34.21a-2 under-review sources are corrected at their DECLARED attribution, and a later licence-review outcome supersedes by the next rights_decision (append-only).",
+   "derivative_permitted": "yes",
+   "prior_rights_ids": [
+    "01a0b868-776e-72ca-b1c2-18411c3ff7b3"
+   ],
+   "redistributable": "yes",
+   "retrieval_date": "2026-09-18",
+   "review_packet": "docs/build/reports/rights/annex/p2616/camreg_us_ny_002.md",
+   "reviewed_by": "maintainer (delegated)",
+   "reviewed_on": "2026-09-18",
+   "source_id": "camreg_us_ny_002",
+   "source_id_digests": [
+    "sha256:c363573bd564f23078ae8343eee8d525a7950e8475f3fea6c3122dfdbfa09267"
+   ],
+   "spdx": "LicenseRef-PublicRecord-FactualCompilation",
+   "terms_url": "https://www.arcgis.com/home/item.html?id=9e90790daf7e4f0592da37a1bda10417"
+  },
+  {
+   "attribution": "Kentucky Transportation Cabinet (KYTC) traffic camera registry",
+   "basis": "E2-12 / ADR-194 attribution correction (E2-12-BACKFILL, operator go c3cec493): the source's resolved rights_record carries NULL attribution_text/terms_url where the sources.toml registry declares non-empty — the F-387 defect class. The corrected record keeps the prior's licence (spdx, redistributable, derivative_permitted) — attribution fill only, nothing is relicensed; the 3 D-P34.21a-2 under-review sources are corrected at their DECLARED attribution, and a later licence-review outcome supersedes by the next rights_decision (append-only).",
+   "derivative_permitted": "yes",
+   "prior_rights_ids": [
+    "01a0b868-776e-72ca-b1c2-18411c3ff7b3"
+   ],
+   "redistributable": "yes",
+   "retrieval_date": "2026-09-17",
+   "review_packet": "docs/build/reports/rights/dot_511_ky.md",
+   "reviewed_by": "maintainer (delegated)",
+   "reviewed_on": "2026-09-17",
+   "source_id": "dot_511_ky",
+   "spdx": "LicenseRef-PublicRecord-FactualCompilation",
+   "terms_url": "https://www.arcgis.com/sharing/rest/content/items/00715d24d2bf42e5abc1fab8a08d45eb"
+  },
+  {
+   "attribution": "Utah Department of Transportation Live View camera registry",
+   "basis": "E2-12 / ADR-194 attribution correction (E2-12-BACKFILL, operator go c3cec493): the source's resolved rights_record carries NULL attribution_text/terms_url where the sources.toml registry declares non-empty — the F-387 defect class. The corrected record keeps the prior's licence (spdx, redistributable, derivative_permitted) — attribution fill only, nothing is relicensed; the 3 D-P34.21a-2 under-review sources are corrected at their DECLARED attribution, and a later licence-review outcome supersedes by the next rights_decision (append-only).",
+   "derivative_permitted": "yes",
+   "prior_rights_ids": [
+    "01a0b868-776e-72ca-b1c2-18411c3ff7b3"
+   ],
+   "redistributable": "yes",
+   "retrieval_date": "2026-09-17",
+   "review_packet": "docs/build/reports/rights/dot_511_ut.md",
+   "reviewed_by": "maintainer (delegated)",
+   "reviewed_on": "2026-09-17",
+   "source_id": "dot_511_ut",
+   "spdx": "LicenseRef-PublicRecord-FactualCompilation",
+   "terms_url": "https://www.arcgis.com/sharing/rest/content/items/d3f7dae59eba45459bd9ba6a37f6ba56"
+  },
+  {
+   "attribution": "ArcGIS community-published traffic-camera registry camera registry",
+   "basis": "E2-12 / ADR-194 attribution correction (E2-12-BACKFILL, operator go c3cec493): the source's resolved rights_record carries NULL attribution_text/terms_url where the sources.toml registry declares non-empty — the F-387 defect class. The corrected record keeps the prior's licence (spdx, redistributable, derivative_permitted) — attribution fill only, nothing is relicensed; the 3 D-P34.21a-2 under-review sources are corrected at their DECLARED attribution, and a later licence-review outcome supersedes by the next rights_decision (append-only).",
+   "derivative_permitted": "yes",
+   "prior_rights_ids": [
+    "01a0b868-dca5-7e8b-958c-46b4fdd4c454"
+   ],
+   "redistributable": "yes",
+   "retrieval_date": "2026-09-18",
+   "review_packet": "docs/build/reports/rights/annex/p2616/camreg_und_001.md",
+   "reviewed_by": "maintainer (delegated)",
+   "reviewed_on": "2026-09-18",
+   "source_id": "camreg_und_001",
+   "source_id_digests": [
+    "sha256:d2876a49c2725eeb55253c763b020e721dc315b9da712b30c9ff4ee74e81519e"
+   ],
+   "spdx": "LicenseRef-OperatorAccepted-DBRight",
+   "terms_url": "https://www.arcgis.com/home/item.html?id=509475945f494a37bcbeefee139a6ecc"
+  },
+  {
+   "attribution": "ArcGIS community-published CCTV registry camera registry",
+   "basis": "E2-12 / ADR-194 attribution correction (E2-12-BACKFILL, operator go c3cec493): the source's resolved rights_record carries NULL attribution_text/terms_url where the sources.toml registry declares non-empty — the F-387 defect class. The corrected record keeps the prior's licence (spdx, redistributable, derivative_permitted) — attribution fill only, nothing is relicensed; the 3 D-P34.21a-2 under-review sources are corrected at their DECLARED attribution, and a later licence-review outcome supersedes by the next rights_decision (append-only).",
+   "derivative_permitted": "yes",
+   "prior_rights_ids": [
+    "01a0b868-dca5-7e8b-958c-46b4fdd4c454"
+   ],
+   "redistributable": "yes",
+   "retrieval_date": "2026-09-18",
+   "review_packet": "docs/build/reports/rights/annex/p2616/camreg_und_002.md",
+   "reviewed_by": "maintainer (delegated)",
+   "reviewed_on": "2026-09-18",
+   "source_id": "camreg_und_002",
+   "source_id_digests": [
+    "sha256:5a736016bcb7c3d623168c6908124c47c4bda0a78bf6dbce5c11dccad2c6f0ac"
+   ],
+   "spdx": "LicenseRef-OperatorAccepted-DBRight",
+   "terms_url": "https://www.arcgis.com/home/item.html?id=8ebed01d37c9486fae407a8e6623e8f4"
+  },
+  {
+   "attribution": "ArcGIS community-published camera registry camera registry",
+   "basis": "E2-12 / ADR-194 attribution correction (E2-12-BACKFILL, operator go c3cec493): the source's resolved rights_record carries NULL attribution_text/terms_url where the sources.toml registry declares non-empty — the F-387 defect class. The corrected record keeps the prior's licence (spdx, redistributable, derivative_permitted) — attribution fill only, nothing is relicensed; the 3 D-P34.21a-2 under-review sources are corrected at their DECLARED attribution, and a later licence-review outcome supersedes by the next rights_decision (append-only).",
+   "derivative_permitted": "yes",
+   "prior_rights_ids": [
+    "01a0b868-dca5-7e8b-958c-46b4fdd4c454"
+   ],
+   "redistributable": "yes",
+   "retrieval_date": "2026-09-18",
+   "review_packet": "docs/build/reports/rights/annex/p2616/camreg_und_003.md",
+   "reviewed_by": "maintainer (delegated)",
+   "reviewed_on": "2026-09-18",
+   "source_id": "camreg_und_003",
+   "source_id_digests": [
+    "sha256:b40f5644b87fb55835b7cf8594530647539e160b29bf53a635a92bad176249ab"
+   ],
+   "spdx": "LicenseRef-OperatorAccepted-DBRight",
+   "terms_url": "https://www.arcgis.com/home/item.html?id=aa12417a64b04fcbb07e67435c84086d"
+  },
+  {
+   "attribution": "ArcGIS community-published CCTV registry camera registry",
+   "basis": "E2-12 / ADR-194 attribution correction (E2-12-BACKFILL, operator go c3cec493): the source's resolved rights_record carries NULL attribution_text/terms_url where the sources.toml registry declares non-empty — the F-387 defect class. The corrected record keeps the prior's licence (spdx, redistributable, derivative_permitted) — attribution fill only, nothing is relicensed; the 3 D-P34.21a-2 under-review sources are corrected at their DECLARED attribution, and a later licence-review outcome supersedes by the next rights_decision (append-only).",
+   "derivative_permitted": "yes",
+   "prior_rights_ids": [
+    "01a0b868-dca5-7e8b-958c-46b4fdd4c454"
+   ],
+   "redistributable": "yes",
+   "retrieval_date": "2026-09-18",
+   "review_packet": "docs/build/reports/rights/annex/p2616/camreg_und_004.md",
+   "reviewed_by": "maintainer (delegated)",
+   "reviewed_on": "2026-09-18",
+   "source_id": "camreg_und_004",
+   "source_id_digests": [
+    "sha256:22293a533d472512415869d82c619e61ad6f879d0448f759acf538c371777e96"
+   ],
+   "spdx": "LicenseRef-OperatorAccepted-DBRight",
+   "terms_url": "https://www.arcgis.com/home/item.html?id=7d7654bc257f40d0aa7aebf71ae971b8"
+  },
+  {
+   "attribution": "ArcGIS community-published surveillance-site registry camera registry",
+   "basis": "E2-12 / ADR-194 attribution correction (E2-12-BACKFILL, operator go c3cec493): the source's resolved rights_record carries NULL attribution_text/terms_url where the sources.toml registry declares non-empty — the F-387 defect class. The corrected record keeps the prior's licence (spdx, redistributable, derivative_permitted) — attribution fill only, nothing is relicensed; the 3 D-P34.21a-2 under-review sources are corrected at their DECLARED attribution, and a later licence-review outcome supersedes by the next rights_decision (append-only).",
+   "derivative_permitted": "yes",
+   "prior_rights_ids": [
+    "01a0b868-dca5-7e8b-958c-46b4fdd4c454"
+   ],
+   "redistributable": "yes",
+   "retrieval_date": "2026-09-18",
+   "review_packet": "docs/build/reports/rights/annex/p2616/camreg_und_005.md",
+   "reviewed_by": "maintainer (delegated)",
+   "reviewed_on": "2026-09-18",
+   "source_id": "camreg_und_005",
+   "source_id_digests": [
+    "sha256:144e1507234fbfe4b4c437783bb612a064725c838b1c535a9e27a3993489197b"
+   ],
+   "spdx": "LicenseRef-OperatorAccepted-DBRight",
+   "terms_url": "https://www.arcgis.com/home/item.html?id=81d052e49e5c4ac8972506a6740adb03"
+  },
+  {
+   "attribution": "University-community-published ALPR camera registry camera registry",
+   "basis": "E2-12 / ADR-194 attribution correction (E2-12-BACKFILL, operator go c3cec493): the source's resolved rights_record carries NULL attribution_text/terms_url where the sources.toml registry declares non-empty — the F-387 defect class. The corrected record keeps the prior's licence (spdx, redistributable, derivative_permitted) — attribution fill only, nothing is relicensed; the 3 D-P34.21a-2 under-review sources are corrected at their DECLARED attribution, and a later licence-review outcome supersedes by the next rights_decision (append-only).",
+   "derivative_permitted": "yes",
+   "prior_rights_ids": [
+    "01a0b868-dca5-7e8b-958c-46b4fdd4c454"
+   ],
+   "redistributable": "yes",
+   "retrieval_date": "2026-09-18",
+   "review_packet": "docs/build/reports/rights/annex/p2616/camreg_und_006.md",
+   "reviewed_by": "maintainer (delegated)",
+   "reviewed_on": "2026-09-18",
+   "source_id": "camreg_und_006",
+   "source_id_digests": [
+    "sha256:ce1101693031b5ff1a3f4e3acae99db2ba053c42f3dfe8aba55f1ef3f3f897b6"
+   ],
+   "spdx": "LicenseRef-OperatorAccepted-DBRight",
+   "terms_url": "https://www.arcgis.com/home/item.html?id=1396d889c2734c57a93184470a11c7f4"
+  },
+  {
+   "attribution": "ArcGIS community-published CCTV registry camera registry",
+   "basis": "E2-12 / ADR-194 attribution correction (E2-12-BACKFILL, operator go c3cec493): the source's resolved rights_record carries NULL attribution_text/terms_url where the sources.toml registry declares non-empty — the F-387 defect class. The corrected record keeps the prior's licence (spdx, redistributable, derivative_permitted) — attribution fill only, nothing is relicensed; the 3 D-P34.21a-2 under-review sources are corrected at their DECLARED attribution, and a later licence-review outcome supersedes by the next rights_decision (append-only).",
+   "derivative_permitted": "yes",
+   "prior_rights_ids": [
+    "01a0b868-dca5-7e8b-958c-46b4fdd4c454"
+   ],
+   "redistributable": "yes",
+   "retrieval_date": "2026-09-18",
+   "review_packet": "docs/build/reports/rights/annex/p2616/camreg_und_007.md",
+   "reviewed_by": "maintainer (delegated)",
+   "reviewed_on": "2026-09-18",
+   "source_id": "camreg_und_007",
+   "source_id_digests": [
+    "sha256:a271e25274fe90e3a279083492d544e38cc89478ed539321ebf3079c0f6b9fa0"
+   ],
+   "spdx": "LicenseRef-OperatorAccepted-DBRight",
+   "terms_url": "https://www.arcgis.com/home/item.html?id=d03b77e0286d4d82b76c76de32c36b27"
+  },
+  {
+   "attribution": "ArcGIS community-published ITS camera registry camera registry",
+   "basis": "E2-12 / ADR-194 attribution correction (E2-12-BACKFILL, operator go c3cec493): the source's resolved rights_record carries NULL attribution_text/terms_url where the sources.toml registry declares non-empty — the F-387 defect class. The corrected record keeps the prior's licence (spdx, redistributable, derivative_permitted) — attribution fill only, nothing is relicensed; the 3 D-P34.21a-2 under-review sources are corrected at their DECLARED attribution, and a later licence-review outcome supersedes by the next rights_decision (append-only).",
+   "derivative_permitted": "yes",
+   "prior_rights_ids": [
+    "01a0b868-dca5-7e8b-958c-46b4fdd4c454"
+   ],
+   "redistributable": "yes",
+   "retrieval_date": "2026-09-18",
+   "review_packet": "docs/build/reports/rights/annex/p2616/camreg_und_008.md",
+   "reviewed_by": "maintainer (delegated)",
+   "reviewed_on": "2026-09-18",
+   "source_id": "camreg_und_008",
+   "source_id_digests": [
+    "sha256:60181fd5377b097099bf5684953c08c0ad7e661dec30698057b13faebe90821d"
+   ],
+   "spdx": "LicenseRef-OperatorAccepted-DBRight",
+   "terms_url": "https://www.arcgis.com/home/item.html?id=d6d80e7f82884caaaeea1e0eed5d595b"
+  },
+  {
+   "attribution": "ArcGIS community-published CCTV asset registry camera registry",
+   "basis": "E2-12 / ADR-194 attribution correction (E2-12-BACKFILL, operator go c3cec493): the source's resolved rights_record carries NULL attribution_text/terms_url where the sources.toml registry declares non-empty — the F-387 defect class. The corrected record keeps the prior's licence (spdx, redistributable, derivative_permitted) — attribution fill only, nothing is relicensed; the 3 D-P34.21a-2 under-review sources are corrected at their DECLARED attribution, and a later licence-review outcome supersedes by the next rights_decision (append-only).",
+   "derivative_permitted": "yes",
+   "prior_rights_ids": [
+    "01a0b868-dca5-7e8b-958c-46b4fdd4c454"
+   ],
+   "redistributable": "yes",
+   "retrieval_date": "2026-09-18",
+   "review_packet": "docs/build/reports/rights/annex/p2616/camreg_und_009.md",
+   "reviewed_by": "maintainer (delegated)",
+   "reviewed_on": "2026-09-18",
+   "source_id": "camreg_und_009",
+   "source_id_digests": [
+    "sha256:a9581cc578ca4889e11337aca37041fcb4041f37a687527fff5de17809137798"
+   ],
+   "spdx": "LicenseRef-OperatorAccepted-DBRight",
+   "terms_url": "https://www.arcgis.com/home/item.html?id=119f3f9304f94b74af62f20798d3c52d"
+  },
+  {
+   "attribution": "ArcGIS community-published camera registry camera registry",
+   "basis": "E2-12 / ADR-194 attribution correction (E2-12-BACKFILL, operator go c3cec493): the source's resolved rights_record carries NULL attribution_text/terms_url where the sources.toml registry declares non-empty — the F-387 defect class. The corrected record keeps the prior's licence (spdx, redistributable, derivative_permitted) — attribution fill only, nothing is relicensed; the 3 D-P34.21a-2 under-review sources are corrected at their DECLARED attribution, and a later licence-review outcome supersedes by the next rights_decision (append-only).",
+   "derivative_permitted": "yes",
+   "prior_rights_ids": [
+    "01a0b868-dca5-7e8b-958c-46b4fdd4c454"
+   ],
+   "redistributable": "yes",
+   "retrieval_date": "2026-09-18",
+   "review_packet": "docs/build/reports/rights/annex/p2616/camreg_und_010.md",
+   "reviewed_by": "maintainer (delegated)",
+   "reviewed_on": "2026-09-18",
+   "source_id": "camreg_und_010",
+   "source_id_digests": [
+    "sha256:7cc62969910d3983f49aaba1cde2a97ccb70105d0afa8990b60e8dba545500ed"
+   ],
+   "spdx": "LicenseRef-OperatorAccepted-DBRight",
+   "terms_url": "https://www.arcgis.com/home/item.html?id=0fa13d7ceac549e5869f30800d2b2a2c"
+  },
+  {
+   "attribution": "University-community-published camera registry camera registry",
+   "basis": "E2-12 / ADR-194 attribution correction (E2-12-BACKFILL, operator go c3cec493): the source's resolved rights_record carries NULL attribution_text/terms_url where the sources.toml registry declares non-empty — the F-387 defect class. The corrected record keeps the prior's licence (spdx, redistributable, derivative_permitted) — attribution fill only, nothing is relicensed; the 3 D-P34.21a-2 under-review sources are corrected at their DECLARED attribution, and a later licence-review outcome supersedes by the next rights_decision (append-only).",
+   "derivative_permitted": "yes",
+   "prior_rights_ids": [
+    "01a0b868-dca5-7e8b-958c-46b4fdd4c454"
+   ],
+   "redistributable": "yes",
+   "retrieval_date": "2026-09-18",
+   "review_packet": "docs/build/reports/rights/annex/p2616/camreg_und_011.md",
+   "reviewed_by": "maintainer (delegated)",
+   "reviewed_on": "2026-09-18",
+   "source_id": "camreg_und_011",
+   "source_id_digests": [
+    "sha256:6777808c21f42a5cb99301d1edff6e30d8e3f447111ecd91f4414745dcaf225a"
+   ],
+   "spdx": "LicenseRef-OperatorAccepted-DBRight",
+   "terms_url": "https://www.arcgis.com/home/item.html?id=38ad4086df4e4ba285792c207fc37da4"
+  },
+  {
+   "attribution": "ArcGIS community-published camera registry camera registry",
+   "basis": "E2-12 / ADR-194 attribution correction (E2-12-BACKFILL, operator go c3cec493): the source's resolved rights_record carries NULL attribution_text/terms_url where the sources.toml registry declares non-empty — the F-387 defect class. The corrected record keeps the prior's licence (spdx, redistributable, derivative_permitted) — attribution fill only, nothing is relicensed; the 3 D-P34.21a-2 under-review sources are corrected at their DECLARED attribution, and a later licence-review outcome supersedes by the next rights_decision (append-only).",
+   "derivative_permitted": "yes",
+   "prior_rights_ids": [
+    "01a0b868-dca5-7e8b-958c-46b4fdd4c454"
+   ],
+   "redistributable": "yes",
+   "retrieval_date": "2026-09-18",
+   "review_packet": "docs/build/reports/rights/annex/p2616/camreg_und_012.md",
+   "reviewed_by": "maintainer (delegated)",
+   "reviewed_on": "2026-09-18",
+   "source_id": "camreg_und_012",
+   "source_id_digests": [
+    "sha256:a1950ee0df3fe8a93ef2756b6c2e7eb59ca7cb1ae8ffcc40370f7ce586907ab6"
+   ],
+   "spdx": "LicenseRef-OperatorAccepted-DBRight",
+   "terms_url": "https://www.arcgis.com/home/item.html?id=3a72754fa9004f9ca5774bb23c6f3504"
+  },
+  {
+   "attribution": "ArcGIS community-published traffic-camera registry camera registry",
+   "basis": "E2-12 / ADR-194 attribution correction (E2-12-BACKFILL, operator go c3cec493): the source's resolved rights_record carries NULL attribution_text/terms_url where the sources.toml registry declares non-empty — the F-387 defect class. The corrected record keeps the prior's licence (spdx, redistributable, derivative_permitted) — attribution fill only, nothing is relicensed; the 3 D-P34.21a-2 under-review sources are corrected at their DECLARED attribution, and a later licence-review outcome supersedes by the next rights_decision (append-only).",
+   "derivative_permitted": "yes",
+   "prior_rights_ids": [
+    "01a0b868-dca5-7e8b-958c-46b4fdd4c454"
+   ],
+   "redistributable": "yes",
+   "retrieval_date": "2026-09-18",
+   "review_packet": "docs/build/reports/rights/annex/p2616/camreg_und_013.md",
+   "reviewed_by": "maintainer (delegated)",
+   "reviewed_on": "2026-09-18",
+   "source_id": "camreg_und_013",
+   "source_id_digests": [
+    "sha256:3dcfcdbb07f04cdb114cad20cd132f0b785053097c3acbaa7099a414898a8c8a"
+   ],
+   "spdx": "LicenseRef-OperatorAccepted-DBRight",
+   "terms_url": "https://www.arcgis.com/home/item.html?id=234686a8453d406bab8f1a2ab5870ce5"
+  },
+  {
+   "attribution": "ArcGIS community-published CCTV registry camera registry",
+   "basis": "E2-12 / ADR-194 attribution correction (E2-12-BACKFILL, operator go c3cec493): the source's resolved rights_record carries NULL attribution_text/terms_url where the sources.toml registry declares non-empty — the F-387 defect class. The corrected record keeps the prior's licence (spdx, redistributable, derivative_permitted) — attribution fill only, nothing is relicensed; the 3 D-P34.21a-2 under-review sources are corrected at their DECLARED attribution, and a later licence-review outcome supersedes by the next rights_decision (append-only).",
+   "derivative_permitted": "yes",
+   "prior_rights_ids": [
+    "01a0b868-dca5-7e8b-958c-46b4fdd4c454"
+   ],
+   "redistributable": "yes",
+   "retrieval_date": "2026-09-18",
+   "review_packet": "docs/build/reports/rights/annex/p2616/camreg_und_014.md",
+   "reviewed_by": "maintainer (delegated)",
+   "reviewed_on": "2026-09-18",
+   "source_id": "camreg_und_014",
+   "source_id_digests": [
+    "sha256:109d60ddb241fbfa10e13a27722fea9d8f860e8252e5a26922da726a8c055c79"
+   ],
+   "spdx": "LicenseRef-OperatorAccepted-DBRight",
+   "terms_url": "https://www.arcgis.com/home/item.html?id=25a5a95fcbd645d0b5cfe08522209591"
+  },
+  {
+   "attribution": "ArcGIS community-published camera registry camera registry",
+   "basis": "E2-12 / ADR-194 attribution correction (E2-12-BACKFILL, operator go c3cec493): the source's resolved rights_record carries NULL attribution_text/terms_url where the sources.toml registry declares non-empty — the F-387 defect class. The corrected record keeps the prior's licence (spdx, redistributable, derivative_permitted) — attribution fill only, nothing is relicensed; the 3 D-P34.21a-2 under-review sources are corrected at their DECLARED attribution, and a later licence-review outcome supersedes by the next rights_decision (append-only).",
+   "derivative_permitted": "yes",
+   "prior_rights_ids": [
+    "01a0b868-dca5-7e8b-958c-46b4fdd4c454"
+   ],
+   "redistributable": "yes",
+   "retrieval_date": "2026-09-18",
+   "review_packet": "docs/build/reports/rights/annex/p2616/camreg_und_015.md",
+   "reviewed_by": "maintainer (delegated)",
+   "reviewed_on": "2026-09-18",
+   "source_id": "camreg_und_015",
+   "source_id_digests": [
+    "sha256:17df48b6f5e2f6578dab0231018927adaaead9e57f5e8044d45513b06888bcd5"
+   ],
+   "spdx": "LicenseRef-OperatorAccepted-DBRight",
+   "terms_url": "https://www.arcgis.com/home/item.html?id=98fa8eeae92946dbadb62b821e756522"
+  },
+  {
+   "attribution": "University-community-published camera registry camera registry",
+   "basis": "E2-12 / ADR-194 attribution correction (E2-12-BACKFILL, operator go c3cec493): the source's resolved rights_record carries NULL attribution_text/terms_url where the sources.toml registry declares non-empty — the F-387 defect class. The corrected record keeps the prior's licence (spdx, redistributable, derivative_permitted) — attribution fill only, nothing is relicensed; the 3 D-P34.21a-2 under-review sources are corrected at their DECLARED attribution, and a later licence-review outcome supersedes by the next rights_decision (append-only).",
+   "derivative_permitted": "yes",
+   "prior_rights_ids": [
+    "01a0b868-dca5-7e8b-958c-46b4fdd4c454"
+   ],
+   "redistributable": "yes",
+   "retrieval_date": "2026-09-18",
+   "review_packet": "docs/build/reports/rights/annex/p2616/camreg_und_016.md",
+   "reviewed_by": "maintainer (delegated)",
+   "reviewed_on": "2026-09-18",
+   "source_id": "camreg_und_016",
+   "source_id_digests": [
+    "sha256:ec626b61991b5dd7773475138bf674ff107f04b6764615c1ab7f83b342d1ac94"
+   ],
+   "spdx": "LicenseRef-OperatorAccepted-DBRight",
+   "terms_url": "https://www.arcgis.com/home/item.html?id=22d52fc22ec440a78813debcf2d1c21a"
+  },
+  {
+   "attribution": "ArcGIS community-published camera registry camera registry",
+   "basis": "E2-12 / ADR-194 attribution correction (E2-12-BACKFILL, operator go c3cec493): the source's resolved rights_record carries NULL attribution_text/terms_url where the sources.toml registry declares non-empty — the F-387 defect class. The corrected record keeps the prior's licence (spdx, redistributable, derivative_permitted) — attribution fill only, nothing is relicensed; the 3 D-P34.21a-2 under-review sources are corrected at their DECLARED attribution, and a later licence-review outcome supersedes by the next rights_decision (append-only).",
+   "derivative_permitted": "yes",
+   "prior_rights_ids": [
+    "01a0b868-dca5-7e8b-958c-46b4fdd4c454"
+   ],
+   "redistributable": "yes",
+   "retrieval_date": "2026-09-18",
+   "review_packet": "docs/build/reports/rights/annex/p2616/camreg_und_017.md",
+   "reviewed_by": "maintainer (delegated)",
+   "reviewed_on": "2026-09-18",
+   "source_id": "camreg_und_017",
+   "source_id_digests": [
+    "sha256:e61557eb6fa6d721b2bda0421e74aed2d94714f7aac34adbf4475374fb3b6633"
+   ],
+   "spdx": "LicenseRef-OperatorAccepted-DBRight",
+   "terms_url": "https://www.arcgis.com/home/item.html?id=22be1b5f269b441ba5f4963c4f4ac665"
+  },
+  {
+   "attribution": "ArcGIS community-published CCTV registry camera registry",
+   "basis": "E2-12 / ADR-194 attribution correction (E2-12-BACKFILL, operator go c3cec493): the source's resolved rights_record carries NULL attribution_text/terms_url where the sources.toml registry declares non-empty — the F-387 defect class. The corrected record keeps the prior's licence (spdx, redistributable, derivative_permitted) — attribution fill only, nothing is relicensed; the 3 D-P34.21a-2 under-review sources are corrected at their DECLARED attribution, and a later licence-review outcome supersedes by the next rights_decision (append-only).",
+   "derivative_permitted": "yes",
+   "prior_rights_ids": [
+    "01a0b868-dca5-7e8b-958c-46b4fdd4c454"
+   ],
+   "redistributable": "yes",
+   "retrieval_date": "2026-09-18",
+   "review_packet": "docs/build/reports/rights/annex/p2616/camreg_und_018.md",
+   "reviewed_by": "maintainer (delegated)",
+   "reviewed_on": "2026-09-18",
+   "source_id": "camreg_und_018",
+   "source_id_digests": [
+    "sha256:ae415fa4c0e6751437a6be7b7d30726e00ec9e278d4f23a774e6e7552a1b99f4"
+   ],
+   "spdx": "LicenseRef-OperatorAccepted-DBRight",
+   "terms_url": "https://www.arcgis.com/home/item.html?id=32b4a83b129646ad985081f5ba654696"
+  },
+  {
+   "attribution": "ArcGIS community-published CCTV registry camera registry",
+   "basis": "E2-12 / ADR-194 attribution correction (E2-12-BACKFILL, operator go c3cec493): the source's resolved rights_record carries NULL attribution_text/terms_url where the sources.toml registry declares non-empty — the F-387 defect class. The corrected record keeps the prior's licence (spdx, redistributable, derivative_permitted) — attribution fill only, nothing is relicensed; the 3 D-P34.21a-2 under-review sources are corrected at their DECLARED attribution, and a later licence-review outcome supersedes by the next rights_decision (append-only).",
+   "derivative_permitted": "yes",
+   "prior_rights_ids": [
+    "01a0b868-dca5-7e8b-958c-46b4fdd4c454"
+   ],
+   "redistributable": "yes",
+   "retrieval_date": "2026-09-18",
+   "review_packet": "docs/build/reports/rights/annex/p2616/camreg_und_019.md",
+   "reviewed_by": "maintainer (delegated)",
+   "reviewed_on": "2026-09-18",
+   "source_id": "camreg_und_019",
+   "source_id_digests": [
+    "sha256:0dd5975e8239565d74b03ee71d6d3ba27199e745ed9dcf4d502f89c1c56c5679"
+   ],
+   "spdx": "LicenseRef-OperatorAccepted-DBRight",
+   "terms_url": "https://www.arcgis.com/home/item.html?id=106e6ceef3c14fb6bceddeb07eb5d8a5"
+  },
+  {
+   "attribution": "ArcGIS community-published camera registry camera registry",
+   "basis": "E2-12 / ADR-194 attribution correction (E2-12-BACKFILL, operator go c3cec493): the source's resolved rights_record carries NULL attribution_text/terms_url where the sources.toml registry declares non-empty — the F-387 defect class. The corrected record keeps the prior's licence (spdx, redistributable, derivative_permitted) — attribution fill only, nothing is relicensed; the 3 D-P34.21a-2 under-review sources are corrected at their DECLARED attribution, and a later licence-review outcome supersedes by the next rights_decision (append-only).",
+   "derivative_permitted": "yes",
+   "prior_rights_ids": [
+    "01a0b868-dca5-7e8b-958c-46b4fdd4c454"
+   ],
+   "redistributable": "yes",
+   "retrieval_date": "2026-09-18",
+   "review_packet": "docs/build/reports/rights/annex/p2616/camreg_und_020.md",
+   "reviewed_by": "maintainer (delegated)",
+   "reviewed_on": "2026-09-18",
+   "source_id": "camreg_und_020",
+   "source_id_digests": [
+    "sha256:a6ba3d3cd1de2cf48f586eb053a93c4c5a9fd2879e95f3e21661d5ad59c1219e"
+   ],
+   "spdx": "LicenseRef-OperatorAccepted-DBRight",
+   "terms_url": "https://www.arcgis.com/home/item.html?id=871da848d25940e890d811ee20280f79"
+  },
+  {
+   "attribution": "University-community-published CCTV registry camera registry",
+   "basis": "E2-12 / ADR-194 attribution correction (E2-12-BACKFILL, operator go c3cec493): the source's resolved rights_record carries NULL attribution_text/terms_url where the sources.toml registry declares non-empty — the F-387 defect class. The corrected record keeps the prior's licence (spdx, redistributable, derivative_permitted) — attribution fill only, nothing is relicensed; the 3 D-P34.21a-2 under-review sources are corrected at their DECLARED attribution, and a later licence-review outcome supersedes by the next rights_decision (append-only).",
+   "derivative_permitted": "yes",
+   "prior_rights_ids": [
+    "01a0b868-dca5-7e8b-958c-46b4fdd4c454"
+   ],
+   "redistributable": "yes",
+   "retrieval_date": "2026-09-18",
+   "review_packet": "docs/build/reports/rights/annex/p2616/camreg_und_021.md",
+   "reviewed_by": "maintainer (delegated)",
+   "reviewed_on": "2026-09-18",
+   "source_id": "camreg_und_021",
+   "source_id_digests": [
+    "sha256:9d21f93a3f767a86900b7bf7314dab047f836432046c9f40d83c88108dce8084"
+   ],
+   "spdx": "LicenseRef-OperatorAccepted-DBRight",
+   "terms_url": "https://www.arcgis.com/home/item.html?id=776c96fa7597423da691513f9fa05a66"
+  },
+  {
+   "attribution": "ArcGIS community-published camera registry camera registry",
+   "basis": "E2-12 / ADR-194 attribution correction (E2-12-BACKFILL, operator go c3cec493): the source's resolved rights_record carries NULL attribution_text/terms_url where the sources.toml registry declares non-empty — the F-387 defect class. The corrected record keeps the prior's licence (spdx, redistributable, derivative_permitted) — attribution fill only, nothing is relicensed; the 3 D-P34.21a-2 under-review sources are corrected at their DECLARED attribution, and a later licence-review outcome supersedes by the next rights_decision (append-only).",
+   "derivative_permitted": "yes",
+   "prior_rights_ids": [
+    "01a0b868-dca5-7e8b-958c-46b4fdd4c454"
+   ],
+   "redistributable": "yes",
+   "retrieval_date": "2026-09-18",
+   "review_packet": "docs/build/reports/rights/annex/p2616/camreg_und_022.md",
+   "reviewed_by": "maintainer (delegated)",
+   "reviewed_on": "2026-09-18",
+   "source_id": "camreg_und_022",
+   "source_id_digests": [
+    "sha256:52e2f74ceee2e6e267b1301f48f080076b2454e081b2268494cf34b4b2804015"
+   ],
+   "spdx": "LicenseRef-OperatorAccepted-DBRight",
+   "terms_url": "https://www.arcgis.com/home/item.html?id=fbb79a6d3cf94464a6b657a59e8cedf1"
+  },
+  {
+   "attribution": "ArcGIS community-published camera registry camera registry",
+   "basis": "E2-12 / ADR-194 attribution correction (E2-12-BACKFILL, operator go c3cec493): the source's resolved rights_record carries NULL attribution_text/terms_url where the sources.toml registry declares non-empty — the F-387 defect class. The corrected record keeps the prior's licence (spdx, redistributable, derivative_permitted) — attribution fill only, nothing is relicensed; the 3 D-P34.21a-2 under-review sources are corrected at their DECLARED attribution, and a later licence-review outcome supersedes by the next rights_decision (append-only).",
+   "derivative_permitted": "yes",
+   "prior_rights_ids": [
+    "01a0b868-dca5-7e8b-958c-46b4fdd4c454"
+   ],
+   "redistributable": "yes",
+   "retrieval_date": "2026-09-18",
+   "review_packet": "docs/build/reports/rights/annex/p2616/camreg_und_023.md",
+   "reviewed_by": "maintainer (delegated)",
+   "reviewed_on": "2026-09-18",
+   "source_id": "camreg_und_023",
+   "source_id_digests": [
+    "sha256:0315d6c130ed716beeff6980eb10de1954b69a881ce7a289d7856ea5c869eeaa"
+   ],
+   "spdx": "LicenseRef-OperatorAccepted-DBRight",
+   "terms_url": "https://www.arcgis.com/home/item.html?id=460290f9870d4d8692048a87221f2080"
+  },
+  {
+   "attribution": "ArcGIS community-published CCTV registry camera registry",
+   "basis": "E2-12 / ADR-194 attribution correction (E2-12-BACKFILL, operator go c3cec493): the source's resolved rights_record carries NULL attribution_text/terms_url where the sources.toml registry declares non-empty — the F-387 defect class. The corrected record keeps the prior's licence (spdx, redistributable, derivative_permitted) — attribution fill only, nothing is relicensed; the 3 D-P34.21a-2 under-review sources are corrected at their DECLARED attribution, and a later licence-review outcome supersedes by the next rights_decision (append-only).",
+   "derivative_permitted": "yes",
+   "prior_rights_ids": [
+    "01a0b868-dca5-7e8b-958c-46b4fdd4c454"
+   ],
+   "redistributable": "yes",
+   "retrieval_date": "2026-09-18",
+   "review_packet": "docs/build/reports/rights/annex/p2616/camreg_und_024.md",
+   "reviewed_by": "maintainer (delegated)",
+   "reviewed_on": "2026-09-18",
+   "source_id": "camreg_und_024",
+   "source_id_digests": [
+    "sha256:c079770cc35eb43d7807c7fa91b6258f43807f5a5313b259030a6d3e0a602f22"
+   ],
+   "spdx": "LicenseRef-OperatorAccepted-DBRight",
+   "terms_url": "https://www.arcgis.com/home/item.html?id=de3248c897b645c6a825c6c56b42b6c5"
+  },
+  {
+   "attribution": "ArcGIS community-published camera registry camera registry",
+   "basis": "E2-12 / ADR-194 attribution correction (E2-12-BACKFILL, operator go c3cec493): the source's resolved rights_record carries NULL attribution_text/terms_url where the sources.toml registry declares non-empty — the F-387 defect class. The corrected record keeps the prior's licence (spdx, redistributable, derivative_permitted) — attribution fill only, nothing is relicensed; the 3 D-P34.21a-2 under-review sources are corrected at their DECLARED attribution, and a later licence-review outcome supersedes by the next rights_decision (append-only).",
+   "derivative_permitted": "yes",
+   "prior_rights_ids": [
+    "01a0b868-dca5-7e8b-958c-46b4fdd4c454"
+   ],
+   "redistributable": "yes",
+   "retrieval_date": "2026-09-18",
+   "review_packet": "docs/build/reports/rights/annex/p2616/camreg_und_025.md",
+   "reviewed_by": "maintainer (delegated)",
+   "reviewed_on": "2026-09-18",
+   "source_id": "camreg_und_025",
+   "source_id_digests": [
+    "sha256:fd9c744b4d2f285f54d1430ba469af10694a02f971ac950e5438f375c0828b40"
+   ],
+   "spdx": "LicenseRef-OperatorAccepted-DBRight",
+   "terms_url": "https://www.arcgis.com/home/item.html?id=650c53bb6fb24aa1aecba07847f1e2fb"
+  },
+  {
+   "attribution": "ArcGIS community-published CCTV registry camera registry",
+   "basis": "E2-12 / ADR-194 attribution correction (E2-12-BACKFILL, operator go c3cec493): the source's resolved rights_record carries NULL attribution_text/terms_url where the sources.toml registry declares non-empty — the F-387 defect class. The corrected record keeps the prior's licence (spdx, redistributable, derivative_permitted) — attribution fill only, nothing is relicensed; the 3 D-P34.21a-2 under-review sources are corrected at their DECLARED attribution, and a later licence-review outcome supersedes by the next rights_decision (append-only).",
+   "derivative_permitted": "yes",
+   "prior_rights_ids": [
+    "01a0b868-dca5-7e8b-958c-46b4fdd4c454"
+   ],
+   "redistributable": "yes",
+   "retrieval_date": "2026-09-18",
+   "review_packet": "docs/build/reports/rights/annex/p2616/camreg_und_026.md",
+   "reviewed_by": "maintainer (delegated)",
+   "reviewed_on": "2026-09-18",
+   "source_id": "camreg_und_026",
+   "source_id_digests": [
+    "sha256:6f8f02add43578cc8c1970da5ba60ceb4b15679661f9b2998862b5567f9f0022"
+   ],
+   "spdx": "LicenseRef-OperatorAccepted-DBRight",
+   "terms_url": "https://www.arcgis.com/home/item.html?id=bce5d44e878d4d71b5895a89ecfac9c7"
+  },
+  {
+   "attribution": "ArcGIS community-published camera registry camera registry",
+   "basis": "E2-12 / ADR-194 attribution correction (E2-12-BACKFILL, operator go c3cec493): the source's resolved rights_record carries NULL attribution_text/terms_url where the sources.toml registry declares non-empty — the F-387 defect class. The corrected record keeps the prior's licence (spdx, redistributable, derivative_permitted) — attribution fill only, nothing is relicensed; the 3 D-P34.21a-2 under-review sources are corrected at their DECLARED attribution, and a later licence-review outcome supersedes by the next rights_decision (append-only).",
+   "derivative_permitted": "yes",
+   "prior_rights_ids": [
+    "01a0b868-dca5-7e8b-958c-46b4fdd4c454"
+   ],
+   "redistributable": "yes",
+   "retrieval_date": "2026-09-18",
+   "review_packet": "docs/build/reports/rights/annex/p2616/camreg_und_027.md",
+   "reviewed_by": "maintainer (delegated)",
+   "reviewed_on": "2026-09-18",
+   "source_id": "camreg_und_027",
+   "source_id_digests": [
+    "sha256:3fa28afb55e9c3076f4cbabadcaa5d76fba84822e16cc1fecda07fd736976d0b"
+   ],
+   "spdx": "LicenseRef-OperatorAccepted-DBRight",
+   "terms_url": "https://www.arcgis.com/home/item.html?id=b28ca74f76ad4b7cb31d380f7679c49f"
+  },
+  {
+   "attribution": "ArcGIS community-published CCTV registry camera registry",
+   "basis": "E2-12 / ADR-194 attribution correction (E2-12-BACKFILL, operator go c3cec493): the source's resolved rights_record carries NULL attribution_text/terms_url where the sources.toml registry declares non-empty — the F-387 defect class. The corrected record keeps the prior's licence (spdx, redistributable, derivative_permitted) — attribution fill only, nothing is relicensed; the 3 D-P34.21a-2 under-review sources are corrected at their DECLARED attribution, and a later licence-review outcome supersedes by the next rights_decision (append-only).",
+   "derivative_permitted": "yes",
+   "prior_rights_ids": [
+    "01a0b868-dca5-7e8b-958c-46b4fdd4c454"
+   ],
+   "redistributable": "yes",
+   "retrieval_date": "2026-09-18",
+   "review_packet": "docs/build/reports/rights/annex/p2616/camreg_und_028.md",
+   "reviewed_by": "maintainer (delegated)",
+   "reviewed_on": "2026-09-18",
+   "source_id": "camreg_und_028",
+   "source_id_digests": [
+    "sha256:c91dfd7aae3a45ba26a85d493eebbfe173c8cbc854d51fd178ee6ce99c2227a9"
+   ],
+   "spdx": "LicenseRef-OperatorAccepted-DBRight",
+   "terms_url": "https://www.arcgis.com/home/item.html?id=4d528bdf8dab4956885c527b41732ae4"
+  },
+  {
+   "attribution": "ArcGIS community-published camera registry camera registry",
+   "basis": "E2-12 / ADR-194 attribution correction (E2-12-BACKFILL, operator go c3cec493): the source's resolved rights_record carries NULL attribution_text/terms_url where the sources.toml registry declares non-empty — the F-387 defect class. The corrected record keeps the prior's licence (spdx, redistributable, derivative_permitted) — attribution fill only, nothing is relicensed; the 3 D-P34.21a-2 under-review sources are corrected at their DECLARED attribution, and a later licence-review outcome supersedes by the next rights_decision (append-only).",
+   "derivative_permitted": "yes",
+   "prior_rights_ids": [
+    "01a0b868-dca5-7e8b-958c-46b4fdd4c454"
+   ],
+   "redistributable": "yes",
+   "retrieval_date": "2026-09-18",
+   "review_packet": "docs/build/reports/rights/annex/p2616/camreg_und_029.md",
+   "reviewed_by": "maintainer (delegated)",
+   "reviewed_on": "2026-09-18",
+   "source_id": "camreg_und_029",
+   "source_id_digests": [
+    "sha256:ba9983e6e8a01b0497fdd5a7d672538ace766810decdd4b436060deb80526ffe"
+   ],
+   "spdx": "LicenseRef-OperatorAccepted-DBRight",
+   "terms_url": "https://www.arcgis.com/home/item.html?id=718e480ad69e466fbebf3b11c0684f9e"
+  }
+ ],
+ "derived_from": "docs/build/reports/rights/p34_21a_corrections.json sha256 a8c54332d0a3fff25475a4cc75c83c87bdbd13a278c1e4b2207b1f2ceff59c10 (declared attribution/terms_url + review fields carried verbatim); the 3 D-P34.21a-2 under-review sources (camreg_stalbert_ab, dot_511_ky, dot_511_ut) re-keyed to their PRIOR licences — never relicensed under an attribution go; ky/ut scoped to the defective PublicRecord pair only (their CC0-1.0 priors are out_of_scope)",
+ "generated_from": "connectors/src/connectors/data/sources.toml declared rights blocks + the live spine derivation (docs/build/logs/e212-backfill-1/pairs.json)",
+ "generated_on": "2026-11-25",
+ "note": "E2-12-BACKFILL corrections list for `sig-db attribution-corrections` (operator go c3cec493, GATE DECISIONS 2026-11-25T03:30Z): covers all 34 source/record pairs OPS-EXPORT-GCE-3's assert_attribution_rows refused — three defective rights_records with NULL attribution_text/terms_url under attribution-required licences. Each row names its pair via prior_rights_ids; suppressed sources (ADR-178) resolve their recorded spine ids via source_id_digests. Licences are UNCHANGED — attribution fill only.",
+ "pairs": [
+  {
+   "declared_attribution": "camera registry — GL-GATE-07 basis",
+   "licence": "LicenseRef-StAlbert-ODL-1.0",
+   "prior_rights_id": "01a0b98a-c001-7a19-bc54-349f5f508efe",
+   "source_id": "camreg_stalbert_ab"
+  },
+  {
+   "declared_attribution": "New York City Department of Transportation (republished layer) camera registry",
+   "licence": "LicenseRef-PublicRecord-FactualCompilation",
+   "prior_rights_id": "01a0b868-776e-72ca-b1c2-18411c3ff7b3",
+   "source_id": "camreg_us_ny_001"
+  },
+  {
+   "declared_attribution": "New York City (republished layer) camera registry",
+   "licence": "LicenseRef-PublicRecord-FactualCompilation",
+   "prior_rights_id": "01a0b868-776e-72ca-b1c2-18411c3ff7b3",
+   "source_id": "camreg_us_ny_002"
+  },
+  {
+   "declared_attribution": "Kentucky Transportation Cabinet (KYTC) traffic camera registry",
+   "licence": "LicenseRef-PublicRecord-FactualCompilation",
+   "prior_rights_id": "01a0b868-776e-72ca-b1c2-18411c3ff7b3",
+   "source_id": "dot_511_ky"
+  },
+  {
+   "declared_attribution": "Utah Department of Transportation Live View camera registry",
+   "licence": "LicenseRef-PublicRecord-FactualCompilation",
+   "prior_rights_id": "01a0b868-776e-72ca-b1c2-18411c3ff7b3",
+   "source_id": "dot_511_ut"
+  },
+  {
+   "declared_attribution": "ArcGIS community-published traffic-camera registry camera registry",
+   "licence": "LicenseRef-OperatorAccepted-DBRight",
+   "prior_rights_id": "01a0b868-dca5-7e8b-958c-46b4fdd4c454",
+   "source_id": "camreg_und_001"
+  },
+  {
+   "declared_attribution": "ArcGIS community-published CCTV registry camera registry",
+   "licence": "LicenseRef-OperatorAccepted-DBRight",
+   "prior_rights_id": "01a0b868-dca5-7e8b-958c-46b4fdd4c454",
+   "source_id": "camreg_und_002"
+  },
+  {
+   "declared_attribution": "ArcGIS community-published camera registry camera registry",
+   "licence": "LicenseRef-OperatorAccepted-DBRight",
+   "prior_rights_id": "01a0b868-dca5-7e8b-958c-46b4fdd4c454",
+   "source_id": "camreg_und_003"
+  },
+  {
+   "declared_attribution": "ArcGIS community-published CCTV registry camera registry",
+   "licence": "LicenseRef-OperatorAccepted-DBRight",
+   "prior_rights_id": "01a0b868-dca5-7e8b-958c-46b4fdd4c454",
+   "source_id": "camreg_und_004"
+  },
+  {
+   "declared_attribution": "ArcGIS community-published surveillance-site registry camera registry",
+   "licence": "LicenseRef-OperatorAccepted-DBRight",
+   "prior_rights_id": "01a0b868-dca5-7e8b-958c-46b4fdd4c454",
+   "source_id": "camreg_und_005"
+  },
+  {
+   "declared_attribution": "University-community-published ALPR camera registry camera registry",
+   "licence": "LicenseRef-OperatorAccepted-DBRight",
+   "prior_rights_id": "01a0b868-dca5-7e8b-958c-46b4fdd4c454",
+   "source_id": "camreg_und_006"
+  },
+  {
+   "declared_attribution": "ArcGIS community-published CCTV registry camera registry",
+   "licence": "LicenseRef-OperatorAccepted-DBRight",
+   "prior_rights_id": "01a0b868-dca5-7e8b-958c-46b4fdd4c454",
+   "source_id": "camreg_und_007"
+  },
+  {
+   "declared_attribution": "ArcGIS community-published ITS camera registry camera registry",
+   "licence": "LicenseRef-OperatorAccepted-DBRight",
+   "prior_rights_id": "01a0b868-dca5-7e8b-958c-46b4fdd4c454",
+   "source_id": "camreg_und_008"
+  },
+  {
+   "declared_attribution": "ArcGIS community-published CCTV asset registry camera registry",
+   "licence": "LicenseRef-OperatorAccepted-DBRight",
+   "prior_rights_id": "01a0b868-dca5-7e8b-958c-46b4fdd4c454",
+   "source_id": "camreg_und_009"
+  },
+  {
+   "declared_attribution": "ArcGIS community-published camera registry camera registry",
+   "licence": "LicenseRef-OperatorAccepted-DBRight",
+   "prior_rights_id": "01a0b868-dca5-7e8b-958c-46b4fdd4c454",
+   "source_id": "camreg_und_010"
+  },
+  {
+   "declared_attribution": "University-community-published camera registry camera registry",
+   "licence": "LicenseRef-OperatorAccepted-DBRight",
+   "prior_rights_id": "01a0b868-dca5-7e8b-958c-46b4fdd4c454",
+   "source_id": "camreg_und_011"
+  },
+  {
+   "declared_attribution": "ArcGIS community-published camera registry camera registry",
+   "licence": "LicenseRef-OperatorAccepted-DBRight",
+   "prior_rights_id": "01a0b868-dca5-7e8b-958c-46b4fdd4c454",
+   "source_id": "camreg_und_012"
+  },
+  {
+   "declared_attribution": "ArcGIS community-published traffic-camera registry camera registry",
+   "licence": "LicenseRef-OperatorAccepted-DBRight",
+   "prior_rights_id": "01a0b868-dca5-7e8b-958c-46b4fdd4c454",
+   "source_id": "camreg_und_013"
+  },
+  {
+   "declared_attribution": "ArcGIS community-published CCTV registry camera registry",
+   "licence": "LicenseRef-OperatorAccepted-DBRight",
+   "prior_rights_id": "01a0b868-dca5-7e8b-958c-46b4fdd4c454",
+   "source_id": "camreg_und_014"
+  },
+  {
+   "declared_attribution": "ArcGIS community-published camera registry camera registry",
+   "licence": "LicenseRef-OperatorAccepted-DBRight",
+   "prior_rights_id": "01a0b868-dca5-7e8b-958c-46b4fdd4c454",
+   "source_id": "camreg_und_015"
+  },
+  {
+   "declared_attribution": "University-community-published camera registry camera registry",
+   "licence": "LicenseRef-OperatorAccepted-DBRight",
+   "prior_rights_id": "01a0b868-dca5-7e8b-958c-46b4fdd4c454",
+   "source_id": "camreg_und_016"
+  },
+  {
+   "declared_attribution": "ArcGIS community-published camera registry camera registry",
+   "licence": "LicenseRef-OperatorAccepted-DBRight",
+   "prior_rights_id": "01a0b868-dca5-7e8b-958c-46b4fdd4c454",
+   "source_id": "camreg_und_017"
+  },
+  {
+   "declared_attribution": "ArcGIS community-published CCTV registry camera registry",
+   "licence": "LicenseRef-OperatorAccepted-DBRight",
+   "prior_rights_id": "01a0b868-dca5-7e8b-958c-46b4fdd4c454",
+   "source_id": "camreg_und_018"
+  },
+  {
+   "declared_attribution": "ArcGIS community-published CCTV registry camera registry",
+   "licence": "LicenseRef-OperatorAccepted-DBRight",
+   "prior_rights_id": "01a0b868-dca5-7e8b-958c-46b4fdd4c454",
+   "source_id": "camreg_und_019"
+  },
+  {
+   "declared_attribution": "ArcGIS community-published camera registry camera registry",
+   "licence": "LicenseRef-OperatorAccepted-DBRight",
+   "prior_rights_id": "01a0b868-dca5-7e8b-958c-46b4fdd4c454",
+   "source_id": "camreg_und_020"
+  },
+  {
+   "declared_attribution": "University-community-published CCTV registry camera registry",
+   "licence": "LicenseRef-OperatorAccepted-DBRight",
+   "prior_rights_id": "01a0b868-dca5-7e8b-958c-46b4fdd4c454",
+   "source_id": "camreg_und_021"
+  },
+  {
+   "declared_attribution": "ArcGIS community-published camera registry camera registry",
+   "licence": "LicenseRef-OperatorAccepted-DBRight",
+   "prior_rights_id": "01a0b868-dca5-7e8b-958c-46b4fdd4c454",
+   "source_id": "camreg_und_022"
+  },
+  {
+   "declared_attribution": "ArcGIS community-published camera registry camera registry",
+   "licence": "LicenseRef-OperatorAccepted-DBRight",
+   "prior_rights_id": "01a0b868-dca5-7e8b-958c-46b4fdd4c454",
+   "source_id": "camreg_und_023"
+  },
+  {
+   "declared_attribution": "ArcGIS community-published CCTV registry camera registry",
+   "licence": "LicenseRef-OperatorAccepted-DBRight",
+   "prior_rights_id": "01a0b868-dca5-7e8b-958c-46b4fdd4c454",
+   "source_id": "camreg_und_024"
+  },
+  {
+   "declared_attribution": "ArcGIS community-published camera registry camera registry",
+   "licence": "LicenseRef-OperatorAccepted-DBRight",
+   "prior_rights_id": "01a0b868-dca5-7e8b-958c-46b4fdd4c454",
+   "source_id": "camreg_und_025"
+  },
+  {
+   "declared_attribution": "ArcGIS community-published CCTV registry camera registry",
+   "licence": "LicenseRef-OperatorAccepted-DBRight",
+   "prior_rights_id": "01a0b868-dca5-7e8b-958c-46b4fdd4c454",
+   "source_id": "camreg_und_026"
+  },
+  {
+   "declared_attribution": "ArcGIS community-published camera registry camera registry",
+   "licence": "LicenseRef-OperatorAccepted-DBRight",
+   "prior_rights_id": "01a0b868-dca5-7e8b-958c-46b4fdd4c454",
+   "source_id": "camreg_und_027"
+  },
+  {
+   "declared_attribution": "ArcGIS community-published CCTV registry camera registry",
+   "licence": "LicenseRef-OperatorAccepted-DBRight",
+   "prior_rights_id": "01a0b868-dca5-7e8b-958c-46b4fdd4c454",
+   "source_id": "camreg_und_028"
+  },
+  {
+   "declared_attribution": "ArcGIS community-published camera registry camera registry",
+   "licence": "LicenseRef-OperatorAccepted-DBRight",
+   "prior_rights_id": "01a0b868-dca5-7e8b-958c-46b4fdd4c454",
+   "source_id": "camreg_und_029"
+  }
+ ],
+ "schema": "sig.attribution-corrections/1",
+ "totals": {
+  "corrections": 34,
+  "skipped": 0
+ }
+}

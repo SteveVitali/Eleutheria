@@ -130,24 +130,6 @@ operator_cell = '''the merge sitting for #141–#190, bounded at #190 (OP-08)'''
 rerun_cell = '''none — operator action, not in `returnPass`'''
 
 [[row]]
-key = "P34.3"
-kind = "leg"
-obligations = ["D-P34.3-1"]
-obligations_cell = '''D-P34.3-1'''
-gates_cell = '''`hosted`, `live`-window only (mutations never 03:00–10:00Z; `sig-pg` legs outside AR-3, no `sig-materialize`); 5 mutations pre-auth (S5-3 11A list, expires GATE-G4); window guard x42'''
-operator_cell = '''a verbatim go outside window, or `protect.sh --apply` directly (AR-2 backup gates first patch)'''
-rerun_cell = '''`r11/P34.3-live-<n>` dispatch or `implement-spec spec=docs/tickets/204_P34.3__ops-data-protection.md live_verification=true`'''
-
-  [[row.legs]]
-  id = "P34.3-live"
-  obligations = ["D-P34.3-1"]
-  earliest = '''any permitted time — `date -u` outside the excluded hours; the AR-2 backup gates the first patch'''
-  excluded = ["03:00–10:00Z", "AR-3", "sig-materialize"]
-  go = '''pre-authorised: S5-3'''
-  rerun = '''implement-spec spec=docs/tickets/204_P34.3__ops-data-protection.md live_verification=true'''
-  live_dependants = ["P34.17", "P34.18", "P34.21a", "P34.21b"]
-
-[[row]]
 key = "P34.4"
 kind = "leg"
 obligations = ["D-P34.4-1", "D-P34.4-2"]
@@ -307,24 +289,6 @@ rerun_cell = '''`implement-spec spec=docs/tickets/221_P34.18__personal-handle-so
   excluded = ["03:00–06:30Z", "AR-3"]
   go = '''verbatim-go: in-ticket (not on the S5-3 11A OM-20 list)'''
   rerun = '''implement-spec spec=docs/tickets/221_P34.18__personal-handle-source-id-rename.md live_verification=true'''
-  live_dependants = ["P34.21b"]
-
-[[row]]
-key = "P34.21a"
-kind = "leg"
-obligations = ["D-P34.21a-1"]
-obligations_cell = '''D-P34.21a-1'''
-gates_cell = '''`hosted`, window-bound (≥2026-10-13T12:00Z, outside 03:00–06:30Z/d, pref. 14-20Z — AR-3); pre-authorised: S5-3 11A (expires GATE-G4; void: red-probe/restore-fail); `live:P34.3`, AR-2 restore + pre-state, `probe-run/1` ≤24 h'''
-operator_cell = '''pre-auth — wait out window, re-check unexpired/un-voided; AR-2 + ≤ 24 h probe record'''
-rerun_cell = '''`implement-spec spec=docs/tickets/223_P34.21a__attribution-gate-sink-rights-and-backfill.md live_verification=true` (L1 attribution-corrections dry-run→apply→read-back)'''
-
-  [[row.legs]]
-  id = "P34.21a-L1"
-  obligations = ["D-P34.21a-1"]
-  earliest = '''2026-10-13T12:00Z'''
-  excluded = ["03:00–06:30Z", "AR-3"]
-  go = '''pre-authorised: S5-3'''
-  rerun = '''implement-spec spec=docs/tickets/223_P34.21a__attribution-gate-sink-rights-and-backfill.md live_verification=true'''
   live_dependants = ["P34.21b"]
 
 [[row]]
@@ -1827,3 +1791,75 @@ rerun_cell = '`implement-spec spec=docs/tickets/487_P37.59__intake-operation-dar
   excluded = ["03:00-06:30Z", "batch-window-day6T00:00Z-day13T12:00Z"]
   go = 'pre-authorised: GATE-G6 §4 (expiry: acceptance sitting) — ops/gcp/db-logins.sh --role sig_intake_receiver|sig_intake_reviewer apply + credential (HG-09)'
   rerun = 'implement-spec spec=docs/tickets/487_P37.59__intake-operation-dark.md live_verification=true'
+
+[[row]]
+key = "P35.22"
+kind = "leg"
+obligations = []
+obligations_cell = '''legs L2/L3 — the next scheduled runs of affected sources mint under the truthful claim identity + the `/status/` API-basis notice (S6 A-20) + the dedup-parity report lands'''
+gates_cell = '''recorded QUEUED 2026-10-18 (GAP-RP-1: GATE-G4 §4 pre-auth expired at GATE-G5, GATE-G5 §4's list excludes it); fresh verbatim go — the GATE-ACCEPT-R11 GATE DECISIONS row 2026-11-20T00:15Z "Fresh go for the legs" (`D-P38.2-1` disposition b; signed commit `99018e1b`); window `takes effect on next scheduled runs; camera-registry batches days 6–13` — the leg's hosted acts under operator ADC + `SIG_GCP_PROJECT` inside AR-3+AR-2, never inside the AR-3 freeze 12-06→12-13T12:00Z'''
+operator_cell = '''the verbatim go is issued (GATE DECISIONS 2026-11-20T00:15Z) — nothing until the re-run observes the next scheduled runs; the `/status/` notice + parity report post under the same authority'''
+rerun_cell = '''`implement-spec spec=docs/tickets/302_P35.22__truthful-claim-identity.md live_verification=true`'''
+
+  [[row.legs]]
+  id = "P35.22-truthful-claim-identity-live"
+  obligations = []
+  earliest = '''the next scheduled ingest runs of affected sources after the 2026-11-20T00:15Z go — the leg observes them (the camera-registry days-6–13 batches are inside the surface); the hosted verify + `/status/` notice + parity-report acts run under ADC + `SIG_GCP_PROJECT` inside AR-3 + AR-2'''
+  excluded = ["AR-3 freeze 12-06→12-13T12:00Z"]
+  go = '''verbatim-go: the GATE-ACCEPT-R11 GATE DECISIONS row 2026-11-20T00:15Z "Fresh go for the legs" (`D-P38.2-1` disposition b; signed commit `99018e1b`)'''
+  rerun = '''implement-spec spec=docs/tickets/302_P35.22__truthful-claim-identity.md live_verification=true'''
+  live_dependants = []
+
+[[row]]
+key = "P35.27"
+kind = "leg"
+obligations = []
+obligations_cell = '''legs L2/L3 — the rematerialize recomputes resolved values + contradiction states under the truthful inputs + the `/status/` API-basis notice (S6 A-20) + the contradiction-state distribution report'''
+gates_cell = '''recorded QUEUED 2026-10-18 (GAP-RP-1: GATE-G4 §4 pre-auth expired at GATE-G5, GATE-G5 §4's list excludes it); fresh verbatim go — the GATE-ACCEPT-R11 GATE DECISIONS row 2026-11-20T00:15Z "Fresh go for the legs" (`D-P38.2-1` disposition b; signed commit `99018e1b`); `hosted` append-only rematerialize inside AR-3+AR-2 (AR-3 band 14:00-20:00Z weekdays) under ADC + `SIG_GCP_PROJECT`, AR-2 restore point first, never inside the AR-3 freeze 12-06→12-13T12:00Z; rides `live:P35.26` (the P35.26 row's leg lists P35.27 as its live dependant)'''
+operator_cell = '''the verbatim go is issued (GATE DECISIONS 2026-11-20T00:15Z) — nothing until the re-run inside the window; rollback forward-only'''
+rerun_cell = '''`implement-spec spec=docs/tickets/306_P35.27__resolver-input-truth.md live_verification=true`'''
+
+  [[row.legs]]
+  id = "P35.27-resolver-input-live"
+  obligations = []
+  earliest = '''the next AR-3 + AR-2 window after the 2026-11-20T00:15Z go with `live:P35.26` landed — AR-2 restore point → the rematerialize + `/status/` notice → the distribution report'''
+  excluded = ["AR-3 freeze 12-06→12-13T12:00Z"]
+  go = '''verbatim-go: the GATE-ACCEPT-R11 GATE DECISIONS row 2026-11-20T00:15Z "Fresh go for the legs" (`D-P38.2-1` disposition b; signed commit `99018e1b`)'''
+  rerun = '''implement-spec spec=docs/tickets/306_P35.27__resolver-input-truth.md live_verification=true'''
+  live_dependants = []
+
+[[row]]
+key = "P35.32"
+kind = "leg"
+obligations = []
+obligations_cell = '''hosted `sqitch deploy --verify` of the `ingest_run_report` change + the `sig-ops scheduled-ingest` writer on from the next run + the one-shot `sig-ops backfill-run-reports` + `+0` proof + read-back'''
+gates_cell = '''recorded QUEUED 2026-10-19 (GAP-RP-1: GATE-G4 §4 pre-auth expired at GATE-G5, GATE-G5 §4's list excludes it); fresh verbatim go — the GATE-ACCEPT-R11 GATE DECISIONS row 2026-11-20T00:15Z "Fresh go for the legs" (`D-P38.2-1` disposition b; signed commit `99018e1b`); `hosted` deploy + insert-only report rows inside AR-3+AR-2 (preferred 14:00-20:00Z weekdays, never 03:00-06:30Z) under ADC + `SIG_GCP_PROJECT`, AR-2 restore point first, never inside the AR-3 freeze 12-06→12-13T12:00Z'''
+operator_cell = '''the verbatim go is issued (GATE DECISIONS 2026-11-20T00:15Z) — nothing until the re-run inside the window'''
+rerun_cell = '''`implement-spec spec=docs/tickets/310_P35.32__ingest-run-report.md live_verification=true`'''
+
+  [[row.legs]]
+  id = "P35.32-ingest-run-report-live"
+  obligations = []
+  earliest = '''the next AR-3 + AR-2 window after the 2026-11-20T00:15Z go (preferred weekday 14:00-20:00Z) — AR-2 restore point → `sqitch deploy --verify` → writer on next scheduled run → backfill + `+0` → read-back'''
+  excluded = ["03:00-06:30Z", "AR-3 freeze 12-06→12-13T12:00Z"]
+  go = '''verbatim-go: the GATE-ACCEPT-R11 GATE DECISIONS row 2026-11-20T00:15Z "Fresh go for the legs" (`D-P38.2-1` disposition b; signed commit `99018e1b`)'''
+  rerun = '''implement-spec spec=docs/tickets/310_P35.32__ingest-run-report.md live_verification=true'''
+  live_dependants = []
+
+[[row]]
+key = "P35.46"
+kind = "leg"
+obligations = []
+obligations_cell = '''the GATE-G4 §4-named ER-run leg — one append-only ruleset-v3 ER run on the hosted spine (`ops/gcp/er-rerun.sh`): AR-2 restore point → dry-run census → `--apply` → GQ-23 census + GQ-25 origin-distinctness → read-back → `+0` re-run'''
+gates_cell = '''recorded QUEUED 2026-10-22 (GAP-RP-1: GATE-G4 §4 pre-auth expired at GATE-G5, GATE-G5 §4's list excludes it; the leg id `P35.46-er-run-live` is minted at this listing — the recorded name is "the P35.46 GATE-G4-named ER-run leg"); fresh verbatim go — the GATE-ACCEPT-R11 GATE DECISIONS row 2026-11-20T00:15Z "Fresh go for the legs" (`D-P38.2-1` disposition b; signed commit `99018e1b`); inside AR-3+AR-2 (AR-3 band 14:00-20:00Z weekdays) under ADC + `SIG_GCP_PROJECT`, AR-2 restore point first, never concurrent with `sig-materialize`, never inside the AR-3 freeze 12-06→12-13T12:00Z; void: a spine read contradicting a record'''
+operator_cell = '''the verbatim go is issued (GATE DECISIONS 2026-11-20T00:15Z) — nothing until the re-run inside the window; the append-only run is idempotent (a second `--apply` is a `+0` no-op)'''
+rerun_cell = '''`implement-spec spec=docs/tickets/325_P35.46__derivation-collapse-and-possible-duplicates.md live_verification=true`'''
+
+  [[row.legs]]
+  id = "P35.46-er-run-live"
+  obligations = []
+  earliest = '''the next AR-3 + AR-2 window after the 2026-11-20T00:15Z go (AR-3 band 14:00-20:00Z weekdays) — AR-2 restore point → dry-run census green → `--apply` → GQ-23/GQ-25 checks → read-back → `+0`'''
+  excluded = ["AR-3 freeze 12-06→12-13T12:00Z", "concurrent with `sig-materialize`"]
+  go = '''verbatim-go: the GATE-ACCEPT-R11 GATE DECISIONS row 2026-11-20T00:15Z "Fresh go for the legs" (`D-P38.2-1` disposition b; signed commit `99018e1b`)'''
+  rerun = '''implement-spec spec=docs/tickets/325_P35.46__derivation-collapse-and-possible-duplicates.md live_verification=true'''
+  live_dependants = []

@@ -12,7 +12,7 @@ adds to the root `AGENTS.md`. See `ops/README.md` for the operator runbook.
 
 | File | Lines | Purpose |
 |---|---|---|
-| `ops/src/ops/cli.py` | ~2820 | `sig-ops` — the runtime control surface: `up`/`status`/`down`/`seed`, plus the Round-10 verb families (`dossier-packet*`, `recovery-*`, `release-candidate`, `release-serve`, `release-publish`, `journey-verify`, `composed-verify`, `journey-intake`, probes, cadence, alerts, evidence-audit, egress/swh) |
+| `ops/src/ops/cli.py` | ~7290 | `sig-ops` — the runtime control surface: `up`/`status`/`down`/`seed`, plus the Round-10 verb families (`dossier-packet*`, `recovery-*`, `release-candidate`, `release-serve`, `release-publish`, `journey-verify`, `composed-verify`, `journey-intake`, probes, cadence, alerts, evidence-audit, egress/swh) and the Round-11 families (`release`, `web-conf`, `lb-map`, `route-compare`, `iam`, `mirror-push`, `deletion`, the gated leg-runner declarations `wave-{a,b,c,d}-{gate,plan}`/`*-acceptance`/`capstone-*`/`intake-op`/`exec-host`/`db-login`/`at-rest`/`basemap`, and the probe/acceptance/cadence machinery — `ops/README.md`'s verb table) |
 | `ops/src/ops/recovery_apply.py` · `release_candidate.py` · `release_publish_verify.py` · `composed_verify.py` · `journey_verify.py` | ~n/a | the Round-10 composed machinery — bounded recovery apply, the release-candidate build, publish verification, the 20/20 composed-verification fixture run, and the intake journey harness |
 | `ops/src/ops/seed.py` | ~430 | load a jurisdiction slice into the spine via `db.claim_sink.PgClaimSink` |
 | `ops/src/ops/egress.py` | ~120 | egress accounting / `egress-report` |
@@ -44,10 +44,12 @@ adds to the root `AGENTS.md`. See `ops/README.md` for the operator runbook.
 2. **`seed` is append-only.** It loads slice claims through `PgClaimSink` (insert-only); it never
    updates or deletes spine rows.
 3. **Runtime, not tests.** `sig-ops` is for standing the system up; don't route test logic through it.
-4. **The Round-10 release/candidate/intake verbs are offline or staged, never production.** The
-   composed-verification and dossier-packet runs are fixture-bound by design; the live halves are
-   `prepared_not_executed` RETURN PASS packets (`D-R10-LIVE-1`, `D-P32.23a-1`, `D-R10-PUBLISH-1`,
-   `D-P32.16-1`). A fixture green is never a live/hosted/public pass — don't claim one.
+4. **The release/candidate/intake and hosted-leg verbs are offline, staged or window-gated —
+   never run by a writing row.** The composed-verification and dossier-packet runs are
+   fixture-bound by design; the live halves are `prepared_not_executed` RETURN PASS packets
+   (`D-R10-LIVE-1`, `D-P32.23a-1`, `D-R10-PUBLISH-1`, `D-P32.16-1`), and the Round-11 leg-runner
+   declarations exit 42 the same way until their verbatim go + window. A fixture green is never a
+   live/hosted/public pass — don't claim one.
 
 ## Terminology
 

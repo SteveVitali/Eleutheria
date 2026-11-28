@@ -1776,7 +1776,11 @@ def render_compartment_sites_pmtiles(
         src = Path(tmp) / "features.geojson"
         src.write_bytes(emit)
         out = Path(tmp) / "sites.pmtiles"
-        if tippecanoe_available():
+        # tippecanoe exits 110 (EXIT_NODATA) on an empty collection — an
+        # all-unlocated compartment (e.g. derived_facts' document/statute
+        # sources) takes the pure-python path, which already declares the
+        # layer for empty collections (the empty-archive contract).
+        if tippecanoe_available() and emit_features:
             argv = _tippecanoe_argv(str(src), str(out), layer_name=None, attribution=attribution)
             assert_retention_argv(argv)
             subprocess.run(  # noqa: S603 - fixed argv, tippecanoe is a trusted local tool

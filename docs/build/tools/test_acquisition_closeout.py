@@ -129,13 +129,18 @@ def test_duty_leads_covered() -> None:
 
 
 def test_every_row_has_e0_anchor() -> None:
-    events = {
-        json.loads(l)["event_id"]: json.loads(l)
-        for l in EVENTS.read_text().splitlines()
-        if l.strip()
-    }
+    records = [json.loads(l) for l in EVENTS.read_text().splitlines() if l.strip()]
+    events = {e["event_id"]: e for e in records}
     lines = DEFERRALS.read_text().splitlines()
-    for rid, ln in p3766_rows().items():
+    rows = p3766_rows()
+    # exactly one e0 anchor per row, and exactly one DEFERRALS line per row id
+    # (a dict keyed by id would otherwise collapse a duplicate silently).
+    anchor_ids = [e["event_id"] for e in records if e["event_id"] in {f"{r}:e0" for r in rows}]
+    assert sorted(anchor_ids) == sorted(set(anchor_ids)), f"duplicate e0 anchors: {anchor_ids}"
+    row_ids = [m.group(1) for l in lines if (m := ROW_RE.match(l))]
+    assert sorted(row_ids) == sorted(set(row_ids)), f"duplicate D-P37.66 row ids: {row_ids}"
+    row_at = {m.group(1): i for i, l in enumerate(lines, 1) if (m := ROW_RE.match(l))}
+    for rid, ln in rows.items():
         eid = f"{rid}:e0"
         assert eid in events, f"{rid} has no obligation-event/1 anchor"
         ev = events[eid]
@@ -149,8 +154,22 @@ def test_every_row_has_e0_anchor() -> None:
         assert anchor["row_sha256"] == hashlib.sha256(ln.encode()).hexdigest(), (
             f"{rid}: anchor sha drifts from the committed row bytes"
         )
-        assert lines[anchor["row_line"] - 1] == ln, (
-            f"{rid}: anchor row_line no longer names the row"
+        # ADR-126: the migration anchor records "the raw cell status and digest
+        # at migration"; MIGRATION.md: `anchor.row_sha256` + `anchor.row_line` are
+        # "the original raw digest and location of the migrated row". row_line is
+        # therefore historical — rule-3 inserts into earlier sections legitimately
+        # shift it, and events.jsonl is append-only (no re-anchor). The current
+        # location is proven by the digest instead: it must name exactly one
+        # DEFERRALS line, and that line must be this id's row.
+        hits = [
+            i for i, l in enumerate(lines, 1)
+            if hashlib.sha256(l.encode()).hexdigest() == anchor["row_sha256"]
+        ]
+        assert hits == [row_at[rid]], (
+            f"{rid}: anchor digest names lines {hits}, the row is at line {row_at[rid]}"
+        )
+        assert isinstance(anchor["row_line"], int) and anchor["row_line"] >= 1, (
+            f"{rid}: anchor row_line {anchor['row_line']!r} is not a line number"
         )
 
 

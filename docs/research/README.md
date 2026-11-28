@@ -2,7 +2,7 @@
 
 Evidence base for `docs/2_canonical_design_spec.md`. Every material claim in the spec traces here.
 
-**Status: all thirteen workstreams complete.** 26,862 lines · 541 evidence-formatted findings ·
+**Status: all thirteen workstreams complete.** 26,818 lines · 501 evidence-formatted findings ·
 667 emitted requirements. Seven workstreams were interrupted partway by an account spend limit and
 were subsequently finished; spec §0.1 and Appendix G.4 record what was outstanding and how each item
 closed.

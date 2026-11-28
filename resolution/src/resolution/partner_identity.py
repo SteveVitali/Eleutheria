@@ -151,6 +151,16 @@ def scoped_name_key(
 
 _NON_WORD = re.compile(r"[^a-z]")
 
+#: The post-nominal subset of ``person_tokens``: generational suffixes and
+#: ``esq`` evidence a person only at the END of a name ("John Smith Sr",
+#: "Jane Doe Esq"). In any other position the same token is not a suffix —
+#: a leading "SR" is a State Route designation ("SR 167 at MP 21.3"), and a
+#: position-blind token check read every "SR <route> …" camera name as
+#: ``person_shaped`` (the camera_name loss behind SIG-UI-111). The rules
+#: file remains the token authority; this constant only supplies the
+#: position the post-nominal class is meaningful in.
+_POST_NOMINAL_TOKENS: frozenset[str] = frozenset({"jr", "sr", "ii", "iii", "iv", "esq"})
+
 
 @cache
 def _rules() -> dict[str, Any]:
@@ -289,8 +299,10 @@ def natural_person_signal(name: str) -> str | None:
     Returns the person-signal reason — ``"sole_proprietor"`` or
     ``"person_shaped"`` — when the name carries affirmative person evidence,
     else ``None``. Runs only the identity layer's *affirmative* person checks:
-    a sole-trader phrase ("Jane Q. Public dba JQP Consulting"), a person /
-    honorific / given-name token, or a bare role title beside a name
+    a sole-trader phrase ("Jane Q. Public dba JQP Consulting"), an honorific /
+    given-name token, a post-nominal suffix in terminal position ("John Smith
+    Sr" — a leading "SR" is a route designation, not a suffix), or a bare role
+    title beside a name
     ("Sheriff Smith"). The ambiguity refusals are NOT person evidence: a
     two-word name with no organisation marker is merely ambiguous
     ("Magnet Forensics" lands there — a company without a reviewed marker
@@ -309,7 +321,16 @@ def natural_person_signal(name: str) -> str | None:
     if any(_has_run(tokens, p) for p in _phrases("individual_phrases")):
         return "sole_proprietor"
     token_set = set(tokens)
-    if token_set & (_token_set("person_tokens") | _token_set("given_names")):
+    person_tokens = _token_set("person_tokens")
+    # Honorifics evidence a person in any position; the post-nominal
+    # suffixes (jr/sr/ii/iii/iv/esq) only at the end of a real name —
+    # a leading "SR <route>" is a highway designation, never a person.
+    person_hit = (
+        bool(token_set & (person_tokens - _POST_NOMINAL_TOKENS))
+        or (len(tokens) >= 2 and tokens[-1] in person_tokens & _POST_NOMINAL_TOKENS)
+        or bool(token_set & _token_set("given_names"))
+    )
+    if person_hit:
         return "person_shaped"
     if token_set & _token_set("role_tokens") and not token_set & _token_set("head_nouns"):
         return "person_shaped"

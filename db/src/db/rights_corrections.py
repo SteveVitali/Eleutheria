@@ -24,6 +24,16 @@ rows, never an ``UPDATE``:
   its canonical SPDX id, recorded and reviewed, never a silent relabel.
 * **UNDETERMINED priors** lift under the ADR-095 semantics unchanged: the
   corrected record is the resolution.
+* **Suppressed sources** (ADR-178): a cohort of public source ids are neutral
+  re-keys of retired identifiers; the spine still records the retired
+  ``source_id`` on every claim/artifact, and the plaintext map is restricted —
+  never in the repo or any export. A corrections row for such a source names
+  the public id plus ``source_id_digests``: the ``sha256:<hex>`` digests of its
+  retired spine ids (the committed alias table's keys — digest-only, repeating
+  no handle). The writer resolves the recorded spine ids by digest at run time
+  and keys each ``rights_decision`` on the spine's *recorded* id — the only
+  key the ``latest_decision`` join (``rd.source_id = ea.source_id``) matches.
+  A ``camreg_und_*``-keyed decision alone would redirect nothing.
 
 The corrections artifact is a committed, reviewer-prepared file (generated from
 ``sources.toml`` by ``sig-connectors attribution-correction-list``); the writer
@@ -33,7 +43,9 @@ tables are unchanged by an apply (verified in the hosted leg's read-back).
 
 from __future__ import annotations
 
+import hashlib
 import json
+import re
 from dataclasses import dataclass
 from datetime import date
 from pathlib import Path
@@ -44,6 +56,16 @@ DECIDED_VALUES = ("yes", "no", "review_required")
 
 #: The schema id of the committed corrections artifact.
 CORRECTIONS_SCHEMA = "sig.attribution-corrections/1"
+
+#: The ``sha256:<hex>`` digest shape ``source_id_digests`` entries must carry —
+#: the same keyed digest the ADR-178 alias table uses (``sha256`` of the
+#: retired identifier, so the artifact repeats no suppressed handle).
+_DIGEST_RE = re.compile(r"^sha256:[0-9a-f]{64}$")
+
+
+def _digest_token(value: str) -> str:
+    """``sha256:<hex>`` of a recorded identifier — the ADR-178 keyed digest."""
+    return "sha256:" + hashlib.sha256(value.encode("utf-8")).hexdigest()
 
 
 class AttributionCorrectionError(ValueError):
@@ -59,6 +81,23 @@ class AttributionCorrection:
     ``spdx`` (the same licence text under its canonical id — e.g. the malformed
     ``OGL-3.0`` → ``OGL-UK-3.0``). Any other ``spdx`` difference on a resolved
     prior is a licence change and is refused (ADR-194).
+
+    ``source_id_digests`` names the retired spine ``source_id`` values an
+    ADR-178-suppressed public id stands in for — ``sha256`` digests only. The
+    writer resolves them to the spine's recorded ids and keys each decision on
+    the recorded id (the public id resolves nothing on the raw ``source_id``
+    join surfaces).
+
+    ``prior_rights_ids`` optionally scopes the correction to named prior
+    records — the (source → defective record) *pair* form an authorization
+    like E2-12's "source/record pairs" grants. Priors reachable from the
+    source but not named are reported ``out_of_scope`` and left untouched
+    (a source whose recorded priors span two licences — e.g. a defective
+    ``LicenseRef-PublicRecord-FactualCompilation`` record beside unrelated
+    ``CC0-1.0`` records — can then correct exactly the defective pair
+    without a licence change on the rest); a named id that is not a prior
+    of the source is a ``refused`` plan entry — the artifact and the spine
+    disagree, and the run fails closed.
     """
 
     source_id: str
@@ -73,6 +112,8 @@ class AttributionCorrection:
     retrieval_date: date
     review_packet: str | None = None
     spdx_aliases: tuple[str, ...] = ()
+    source_id_digests: tuple[str, ...] = ()
+    prior_rights_ids: tuple[str, ...] = ()
 
 
 def load_corrections(path: str | Path) -> list[AttributionCorrection]:
@@ -100,6 +141,8 @@ def load_corrections(path: str | Path) -> list[AttributionCorrection]:
                     None if row.get("review_packet") is None else str(row["review_packet"])
                 ),
                 spdx_aliases=tuple(str(s) for s in (row.get("spdx_aliases") or ())),
+                source_id_digests=tuple(str(s) for s in (row.get("source_id_digests") or ())),
+                prior_rights_ids=tuple(str(s) for s in (row.get("prior_rights_ids") or ())),
             )
         except (KeyError, ValueError) as exc:
             errors.append(f"row {i} ({row.get('source_id', '?')}): {exc}")
@@ -134,6 +177,16 @@ def validate_correction(corr: AttributionCorrection) -> list[str]:
         )
     if corr.spdx in corr.spdx_aliases:
         errors.append("spdx_aliases must not repeat the corrected spdx")
+    for d in corr.source_id_digests:
+        if not _DIGEST_RE.match(d):
+            errors.append(f"source_id_digests entries must be 'sha256:<64 hex>', got {d!r}")
+    if _digest_token(corr.source_id) in corr.source_id_digests:
+        errors.append("source_id_digests must not repeat the public source_id")
+    for rid in corr.prior_rights_ids:
+        if not str(rid).strip():
+            errors.append("prior_rights_ids entries must be non-empty")
+    if len(set(corr.prior_rights_ids)) != len(corr.prior_rights_ids):
+        errors.append("prior_rights_ids must not repeat an id")
     if not corr.reviewed_by.strip():
         errors.append("reviewed_by is empty — a reviewer ROLE is required (never a name)")
     if not corr.basis.strip():
@@ -207,6 +260,58 @@ def _artifacts_affected(conn: Any, source_id: str, prior_rights_id: str) -> int:
         (source_id, prior_rights_id),
     ).fetchone()
     return 0 if row is None else int(row[0])
+
+
+def _spine_source_ids(conn: Any, corr: AttributionCorrection) -> list[str]:
+    """The spine ``source_id`` values this correction covers — the recorded key.
+
+    Always includes the public ``source_id`` (literal artifacts/registry rows).
+    When the row declares ``source_id_digests`` (ADR-178 suppressed sources),
+    every distinct ``source_id`` recorded on the spine whose ``sha256`` digest
+    is declared is resolved in — the retired ids the ``latest_decision`` join
+    surfaces actually carry. The handle itself is never logged or returned in
+    reports: callers report the digest.
+    """
+    digests = set(corr.source_id_digests)
+    if not digests:
+        return [corr.source_id]
+    rows = conn.execute(
+        "SELECT source_id FROM ("
+        "   SELECT source_id FROM evidence_artifact"
+        "   UNION SELECT source_id FROM source_registry"
+        "   UNION SELECT source_id FROM rights_decision"
+        ") t WHERE source_id IS NOT NULL"
+    ).fetchall()
+    out = {corr.source_id}
+    for (sid,) in rows:
+        if _digest_token(str(sid)) in digests:
+            out.add(str(sid))
+    return sorted(out)
+
+
+def _correction_priors(
+    conn: Any, corr: AttributionCorrection
+) -> tuple[list[str], dict[str, dict[str, Any]], dict[str, list[str]]]:
+    """``(spine_ids, priors, prior -> spine ids reaching it)`` for a correction.
+
+    ``priors`` is the union over the resolved spine ids — a record reachable
+    from several of the source's spine ids is classified once.
+    """
+    spine_ids = _spine_source_ids(conn, corr)
+    priors: dict[str, dict[str, Any]] = {}
+    reach: dict[str, list[str]] = {}
+    for sid in spine_ids:
+        for rid, rec in _source_priors(conn, sid).items():
+            priors.setdefault(rid, rec)
+            reach.setdefault(rid, []).append(sid)
+    return spine_ids, priors, reach
+
+
+def _public_source_label(corr: AttributionCorrection, spine_id: str) -> str:
+    """The report-safe name for a resolved spine id — never a handle."""
+    if spine_id == corr.source_id:
+        return spine_id
+    return _digest_token(spine_id)
 
 
 def _classify_prior(corr: AttributionCorrection, prior: dict[str, Any]) -> tuple[str, str | None]:
@@ -307,17 +412,23 @@ def _ensure_corrected_record(conn: Any, corr: AttributionCorrection) -> str:
 
 def _insert_correction_decision(
     conn: Any,
+    decision_source_id: str,
     corr: AttributionCorrection,
     rights_id: str,
     prior_rights_id: str,
     terms_capture_id: str | None,
 ) -> tuple[str, bool]:
-    """Append one decision row; idempotent on (source, prior, resolved)."""
+    """Append one decision row; idempotent on (source, prior, resolved).
+
+    ``decision_source_id`` is the spine's *recorded* source id — for a
+    suppressed source the resolved retired id, so the ``latest_decision``
+    join (``rd.source_id = ea.source_id`` / ``cs.source_id``) matches.
+    """
     existing = conn.execute(
         "SELECT decision_id FROM rights_decision "
         "WHERE source_id = %s AND prior_rights_id = %s AND rights_id = %s "
         "ORDER BY decided_at DESC, decision_id DESC LIMIT 1",
-        (corr.source_id, prior_rights_id, rights_id),
+        (decision_source_id, prior_rights_id, rights_id),
     ).fetchone()
     if existing is not None:
         return str(existing[0]), False
@@ -327,7 +438,7 @@ def _insert_correction_decision(
         " terms_url, terms_capture_id) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
         " RETURNING decision_id",
         (
-            corr.source_id,
+            decision_source_id,
             rights_id,
             prior_rights_id,
             corr.basis,
@@ -351,17 +462,46 @@ def plan_corrections(conn: Any, corrections: list[AttributionCorrection]) -> dic
     per_source: list[dict[str, Any]] = []
     refused: list[str] = []
     for corr in corrections:
-        priors = _source_priors(conn, corr.source_id)
+        spine_ids, priors, reach = _correction_priors(conn, corr)
+        scope = set(corr.prior_rights_ids)
         entries: list[dict[str, Any]] = []
-        for rid in sorted(priors):
-            kind, reason = _classify_prior(corr, priors[rid])
+        for rid in sorted(set(priors) | scope):
+            sids = reach.get(rid, [])
+            if rid not in priors:
+                entries.append(
+                    {
+                        "prior_rights_id": rid,
+                        "kind": "refused",
+                        "reason": "declared prior_rights_id is not a prior of "
+                        "this source — the artifact and the spine disagree",
+                        "decision_sources": [],
+                        "claims_affected": 0,
+                        "artifacts_affected": 0,
+                    }
+                )
+                refused.append(
+                    f"{corr.source_id} prior {rid}: declared in prior_rights_ids "
+                    "but not a prior of the source"
+                )
+                continue
+            kind: str
+            reason: str | None
+            if scope and rid not in scope:
+                kind, reason = (
+                    "out_of_scope",
+                    "not named in prior_rights_ids — the pair-scoped correction "
+                    "leaves this prior untouched",
+                )
+            else:
+                kind, reason = _classify_prior(corr, priors[rid])
             entries.append(
                 {
                     "prior_rights_id": rid,
                     "kind": kind,
                     "reason": reason,
-                    "claims_affected": _claims_affected(conn, corr.source_id, rid),
-                    "artifacts_affected": _artifacts_affected(conn, corr.source_id, rid),
+                    "decision_sources": [_public_source_label(corr, sid) for sid in sids],
+                    "claims_affected": sum(_claims_affected(conn, sid, rid) for sid in sids),
+                    "artifacts_affected": sum(_artifacts_affected(conn, sid, rid) for sid in sids),
                 }
             )
             if kind == "refused":
@@ -372,9 +512,10 @@ def plan_corrections(conn: Any, corrections: list[AttributionCorrection]) -> dic
                 "spdx": corr.spdx,
                 "attribution": corr.attribution,
                 "terms_url": corr.terms_url,
+                "spine_sources": len(spine_ids),
                 "priors": entries,
                 "decisions_would_write": sum(
-                    1 for e in entries if e["kind"] in ("correct", "lift")
+                    len(e["decision_sources"]) for e in entries if e["kind"] in ("correct", "lift")
                 ),
                 "claims_affected": sum(
                     e["claims_affected"] for e in entries if e["kind"] in ("correct", "lift")
@@ -408,37 +549,53 @@ def apply_correction(
     problems = validate_correction(corr)
     if problems:
         raise AttributionCorrectionError(f"{corr.source_id}: " + "; ".join(problems))
-    priors = _source_priors(conn, corr.source_id)
+    spine_ids, priors, reach = _correction_priors(conn, corr)
+    scope = set(corr.prior_rights_ids)
     refusals = [
         f"prior {rid}: {reason}"
-        for rid in sorted(priors)
-        for kind, reason in [_classify_prior(corr, priors[rid])]
+        for rid in sorted(set(priors) | scope)
+        for kind, reason in [
+            (
+                ("refused", "declared prior_rights_id is not a prior of this source")
+                if rid not in priors
+                else (
+                    ("out_of_scope", None)
+                    if scope and rid not in scope
+                    else _classify_prior(corr, priors[rid])
+                )
+            )
+        ]
         if kind == "refused"
     ]
     if refusals:
         raise AttributionCorrectionError(
             f"{corr.source_id}: the corrections row would relicense resolved "
-            "record(s); refused (ADR-194):\n  " + "\n  ".join(refusals)
+            "record(s) or names a prior the source never linked; refused "
+            "(ADR-194):\n  " + "\n  ".join(refusals)
         )
     rights_id = _ensure_corrected_record(conn, corr)
     decisions: list[dict[str, Any]] = []
     for rid in sorted(priors):
+        if scope and rid not in scope:
+            continue
         kind, _reason = _classify_prior(corr, priors[rid])
         if kind in ("noop", "refused"):
             continue
-        decision_id, inserted = _insert_correction_decision(
-            conn, corr, rights_id, rid, terms_capture_id
-        )
-        decisions.append(
-            {
-                "decision_id": decision_id,
-                "prior_rights_id": rid,
-                "kind": kind,
-                "inserted": inserted,
-                "claims_affected": _claims_affected(conn, corr.source_id, rid),
-                "artifacts_affected": _artifacts_affected(conn, corr.source_id, rid),
-            }
-        )
+        for sid in reach[rid]:
+            decision_id, inserted = _insert_correction_decision(
+                conn, sid, corr, rights_id, rid, terms_capture_id
+            )
+            decisions.append(
+                {
+                    "decision_id": decision_id,
+                    "decision_source": _public_source_label(corr, sid),
+                    "prior_rights_id": rid,
+                    "kind": kind,
+                    "inserted": inserted,
+                    "claims_affected": _claims_affected(conn, sid, rid),
+                    "artifacts_affected": _artifacts_affected(conn, sid, rid),
+                }
+            )
     return {
         "source_id": corr.source_id,
         "spdx": corr.spdx,
@@ -481,6 +638,19 @@ def apply_corrections(
     }
 
 
+def resolved_spine_source_ids(conn: Any, corrections: list[AttributionCorrection]) -> list[str]:
+    """The recorded spine ``source_id`` values a corrections list covers —
+    public ids plus every digest-resolved retired id (ADR-178 suppressed
+    sources). Used to scope :func:`empty_attribution_count` to the rows a
+    leg actually corrects — the public id alone counts nothing on a
+    suppressed source (its claims record the retired id).
+    """
+    out: set[str] = set()
+    for corr in corrections:
+        out.update(_spine_source_ids(conn, corr))
+    return sorted(out)
+
+
 def empty_attribution_count(conn: Any, source_ids: list[str] | None = None) -> int:
     """Claims whose EFFECTIVE record carries no attribution (the defect count).
 
@@ -518,5 +688,6 @@ __all__ = [
     "empty_attribution_count",
     "load_corrections",
     "plan_corrections",
+    "resolved_spine_source_ids",
     "validate_correction",
 ]
