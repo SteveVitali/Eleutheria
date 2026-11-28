@@ -12,7 +12,7 @@ the full narrative.
 
 | File | Lines | Purpose |
 |---|---|---|
-| `db/src/db/claim_sink.py` | ~1860 | `PgClaimSink` — insert-only, chunk-batched writes to the claim spine (ADR-110) |
+| `db/src/db/claim_sink.py` | ~2560 | `PgClaimSink` — insert-only, chunk-batched writes to the claim spine (ADR-110) |
 | `db/src/db/identity_guard.py` | ~240 | `resolve_identities` — one entity per identity-bearing `(scheme, value)` via `entity_identity_key` (ADR-110) |
 | `db/src/db/subject_types.py` + `db/src/db/data/subject_entity_types.toml` | ~n/a | the committed, versioned subject-scheme → entity-type map the sink's mint path consults — longest-prefix, fail-closed (`unknown_subject_scheme` quarantine, never a `deployment` default) (P35.14b) |
 | `db/src/db/typed_identity.py` | ~n/a | the append-only `entity_type_decision` writer correcting pre-P35.14b mistyped subjects — dry-run by default, `+0` on rerun, never `UPDATE`/`DELETE` |

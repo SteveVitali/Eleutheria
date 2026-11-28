@@ -524,6 +524,46 @@ def test_oversized_tile_fails_the_render_loudly() -> None:
         T.render_pmtiles({"type": "FeatureCollection", "features": features}, layer_name="sites")
 
 
+def test_render_empty_compartment_uses_pure_python_even_with_tippecanoe(
+    monkeypatch,
+) -> None:
+    """OPS-EXPORT-GCE-5 blocker 9: an all-unlocated compartment (derived_facts'
+    document/statute sources — geometry:null rows) yields an empty emit;
+    tippecanoe exits 110 (EXIT_NODATA) on it. The emit takes the pure-python
+    path — the empty-archive contract (layer + licence declared for readers).
+    """
+    monkeypatch.setattr(T, "tippecanoe_available", lambda: True)
+
+    def fail_run(*args: object, **kwargs: object) -> None:
+        raise AssertionError("tippecanoe must not run on an empty collection")
+
+    monkeypatch.setattr(T.subprocess, "run", fail_run)
+    unlocated = json.dumps(
+        {
+            "type": "FeatureCollection",
+            "features": [
+                {
+                    "type": "Feature",
+                    "geometry": None,
+                    "properties": {
+                        "entity_id": "doc-1",
+                        "entity_type": "statute",
+                        "sensitivity_tier": 0,
+                        "jurisdiction": "iso3166-2:US-NY",
+                        "source_ids": ["src-doc"],
+                    },
+                }
+            ],
+        }
+    ).encode()
+    rendered = T.render_compartment_sites_pmtiles(
+        "derived_facts", unlocated, "LicenseRef-DerivedFacts-Citations"
+    )
+    assert rendered.renderer == "pure-python"
+    assert rendered.points == 0
+    assert len(rendered.data) > 0  # a real archive — the layer is declared
+
+
 def test_tiles_index_entry_fields() -> None:
     from exports.tiles import render_compartment_sites_pmtiles, tiles_index_entry
 
